@@ -13,7 +13,7 @@ export default function ProjectsTable() {
     getUserProjects(user.uid).then((data) => {
       setProjectsArray(data);
     });
-  }, []);
+  }, [user.uid]);
 
   return (
     <table id="projects-table" style={{ marginTop: '4%' }}>

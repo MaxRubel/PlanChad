@@ -18,6 +18,18 @@ const getUserProjects = (userId) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+const getSingleProject = (projectId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/projects/${projectId}.json`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => resolve(data))
+    .catch(reject);
+});
+
 const createNewProject = (payload) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/projects.json`, {
     method: 'POST',
@@ -44,4 +56,6 @@ const updateProject = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-export { createNewProject, updateProject, getUserProjects };
+export {
+  createNewProject, updateProject, getUserProjects, getSingleProject,
+};
