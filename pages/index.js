@@ -1,27 +1,23 @@
-import { Button } from 'react-bootstrap';
-import { signOut } from '../utils/auth';
-import { useAuth } from '../utils/context/authContext';
+import ProjectsTable from '../components/ProjectsTable';
 
-function Home() {
-  const { user } = useAuth();
+export default function Home() {
+  document.documentElement.style.setProperty('--background1', `
+  linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(46, 45, 253, 1) 100%)
+`);
 
   return (
-    <div
-      className="text-center d-flex flex-column justify-content-center align-content-center"
-      style={{
-        height: '90vh',
-        padding: '30px',
-        maxWidth: '400px',
-        margin: '0 auto',
-      }}
-    >
-      <h1>Hello {user.displayName}! </h1>
-      <p>Click the button below to logout!</p>
-      <Button variant="danger" type="button" size="lg" className="copy-btn" onClick={signOut}>
-        Sign Out
-      </Button>
+    <div className="homePage">
+      <div className="card text-bg-info mb-3">
+        <div className="card-header" style={{ textAlign: 'center', fontSize: '22px' }}>
+          <strong>Welcome to planChad!</strong>
+        </div>
+        <div className="card-body">
+          <h5 className="card-title" style={{ marginTop: '2%' }}>Your Projects:</h5>
+          <p className="card-text">
+            <ProjectsTable />
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
-
-export default Home;

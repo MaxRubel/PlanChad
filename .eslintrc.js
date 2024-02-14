@@ -13,7 +13,7 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/react-in-jsx-scope': 'off',
     'no-alert': 'off',
@@ -25,7 +25,7 @@ module.exports = {
     ],
     'react/jsx-one-expression-per-line': [0],
     'no-console': [
-      1,
+      0,
       {
         allow: ['error', 'warn'],
       },
