@@ -1,5 +1,23 @@
 const endpoint = 'https://planchad-6fcf7-default-rtdb.firebaseio.com';
 
+const getUserProjects = (userId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/projects.json?orderBy="userId"&equalTo="${userId}"`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
 const createNewProject = (payload) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/projects.json`, {
     method: 'POST',
@@ -26,4 +44,4 @@ const updateProject = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-export { createNewProject, updateProject };
+export { createNewProject, updateProject, getUserProjects };

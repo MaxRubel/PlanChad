@@ -1,6 +1,10 @@
 import ProjectsTable from '../components/ProjectsTable';
 
 export default function Home() {
+  document.documentElement.style.setProperty('--background1', `
+  linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(46, 45, 253, 1) 100%)
+`);
+
   return (
     <div className="homePage">
       <div className="card text-bg-info mb-3">
@@ -8,7 +12,7 @@ export default function Home() {
           <strong>Welcome to planChad!</strong>
         </div>
         <div className="card-body">
-          <h5 className="card-title" style={{ marginTop: '2%' }}>Select a Project:</h5>
+          <h5 className="card-title" style={{ marginTop: '2%' }}>Your Projects:</h5>
           <p className="card-text">
             <ProjectsTable />
           </p>

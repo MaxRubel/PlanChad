@@ -18,7 +18,13 @@ export default function NewProjectForm() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    const payload = { ...formInput, user_id: user.uid };
+    const payload = {
+      ...formInput,
+      userId: user.uid,
+      deadline: '',
+      start_date: '',
+      client: '',
+    };
     createNewProject(payload).then(({ name }) => {
       updateProject({ projectId: name }).then(() => {
         router.push(`/project/plan/${name}`);
@@ -30,7 +36,11 @@ export default function NewProjectForm() {
     <form
       id="new-project-form"
       style={{
-        marginTop: '20%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px3px',
+
       }}
       onSubmit={handleSubmit}
     >
@@ -41,7 +51,9 @@ export default function NewProjectForm() {
           padding: '2% 0%',
           paddingBottom: '1%',
         }}>
-          What would you like to call your project?
+          <div className="card-header" style={{ textAlign: 'center', fontSize: '22px' }}>
+            <h6>What would you like to call your project?</h6>
+          </div>
         </div>
         <div className="card-body" style={{ textAlign: 'center' }}>
           <input

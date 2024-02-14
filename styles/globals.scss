@@ -1,10 +1,16 @@
 @import 'bootstrap/dist/css/bootstrap.css';
 
+:root {
+  --font-primary: 'Poppins', Arial, sans-serif;
+  --background1: 'linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(46, 45, 253, 1) 100%)';
+}
+
 body {
-  background: rgb(34, 193, 195);
-  background: linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(46, 45, 253, 1) 100%);
+  background-color: rgb(30, 30, 30);
   height: 100vh;
   width: 100vw;
+  transition: all var(--background1) ease;
+  opacity: 1;
 }
 
 
@@ -31,4 +37,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.minWidth200 {
+  min-width: 200px;
 }

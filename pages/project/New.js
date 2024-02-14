@@ -2,6 +2,8 @@ import NewProjectForm from '../../components/NewProjectForm';
 
 export default function CreateNewProject() {
   return (
-    <NewProjectForm />
+    <div className="homePage">
+      <NewProjectForm />
+    </div>
   );
 }
