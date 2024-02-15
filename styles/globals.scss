@@ -133,17 +133,17 @@ body {
 
 .checkpoint {
   display: grid;
-  grid-template-columns: 1fr 75% 1fr;
+  grid-template-columns: 84px 75% 100px;
   /* First column is 100px, second column is 200px, third column takes the remaining space */
-  gap: 1%;
+  // gap: 1%;
   min-width: 500px;
 }
 
 .task {
   display: grid;
-  grid-template-columns: 20% 66.6% 1fr;
+  grid-template-columns: 84px 8% 67% 100px;
   /* First column is 100px, second column is 200px, third column takes the remaining space */
-  gap: 1%;
+  // gap: 1%;
   min-width: 500px;
 }
 

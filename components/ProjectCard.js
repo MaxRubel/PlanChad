@@ -1,3 +1,5 @@
+/* eslint-disable semi */
+/* eslint-disable arrow-spacing */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-closing-bracket-location */
@@ -64,7 +66,6 @@ export default function ProjectCard({
   };
 
   return (
-
     // -----------------card--header----------------
     <div className="card text-bg-info mb-3">
       <div className="card-header" style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>

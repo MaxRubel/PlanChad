@@ -41,6 +41,11 @@ export default function Task({
         setHasChanged((prevVal) => false);
       });
     }
+    return () => {
+      if (hasChanged) {
+        updateTask(formInput);
+      }
+    };
   }, [save]);
 
   const handleFreshness = () => {
@@ -87,12 +92,16 @@ export default function Task({
     <>
       <div className="task">
         {/* -------line-side------------- */}
-        <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '77% 1fr' }}>
+        <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div id="empty" />
           <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
             <div id="empty" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
             <div />
           </div>
+        </div>
+        <div id="line" style={{ display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+          <div id="top-div" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+          <div id="bottom-div" />
         </div>
         {/* -----------card---------------------- */}
         <div className="card" style={{ margin: '3px 0px' }}>
