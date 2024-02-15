@@ -12,28 +12,46 @@ export default function BigDaddyProject({ projectId }) {
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [min, setMin] = useState(0);
+  const [saveColor, setSaveColor] = useState(0);
+  const [minColor, setMinColor] = useState(0);
 
-  const saveSuccess = () => {
-    document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
-    setTimeout(() => {
-      document.getElementById('saveButton').style.color = 'rgb(200, 200, 200)';
-    }, 1500);
-  };
-
-  const minSuccess = () => {
-    document.getElementById('minButton').style.color = 'rgb(16, 197, 234)';
-    setTimeout(() => {
-      document.getElementById('minButton').style.color = 'rgb(200, 200, 200)';
-    }, 1000);
-  };
-
-  const saveAll = () => {
+  const saveAll = () => { // trigger save all
     setSave((prevVal) => prevVal + 1);
   };
 
-  const minAll = () => {
+  const saveSuccess = () => { // trigger save all animation
+    setSaveColor((prevVal) => prevVal + 1);
+  };
+
+  useEffect(() => { // save animation
+    let saveColorChange;
+    if (saveColor > 0) {
+      document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
+      saveColorChange = setTimeout(() => {
+        document.getElementById('saveButton').style.color = 'rgb(200, 200, 200)';
+      }, 1500);
+    }
+    return () => {
+      clearTimeout(saveColorChange);
+    };
+  }, [saveColor]);
+
+  useEffect(() => { // minimize animation
+    let minColorChange;
+    if (minColor > 0) {
+      document.getElementById('minButton').style.color = 'rgb(16, 197, 234)';
+      minColorChange = setTimeout(() => {
+        document.getElementById('minButton').style.color = 'rgb(200, 200, 200)';
+      }, 1000);
+    }
+    return () => {
+      clearTimeout(minColorChange);
+    };
+  }, [minColor]);
+
+  const minAll = () => { // trigger minAll and animation
     setMin((prevVal) => prevVal + 1);
-    minSuccess();
+    setMinColor((prevVal) => prevVal + 1);
   };
 
   useEffect(() => {
@@ -139,7 +157,7 @@ export default function BigDaddyProject({ projectId }) {
               saveAll={saveAll}
               mimAll={minAll}
               min={min}
-              minSuccess={minSuccess} />
+            />
           ))}
         </div>
       </div>

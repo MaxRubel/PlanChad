@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 // import Checkbox from '@mui/material/Checkbox';
 // import { FormControlLabel, FormGroup } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { trashIcon } from '../public/icons';
 import { deleteCheckpoint, updateCheckpoint } from '../api/checkpoint';
@@ -26,6 +26,7 @@ export default function Checkpoint({
   const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [localRefresh, setLocalRefresh] = useState(0);
+  const creatingTask = useRef(true);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -60,7 +61,9 @@ export default function Checkpoint({
   useEffect(() => {
     if (hasChanged) {
       updateCheckpoint(formInput).then(() => {
-        saveSuccess();
+        if (!creatingTask.current) {
+          saveSuccess();
+        }
         setHasChanged((prevVal) => false);
       });
     }
@@ -75,7 +78,7 @@ export default function Checkpoint({
     }
   };
 
-  useEffect(() => {
+  useEffect(() => { // minimize
     if (formInput.expanded) {
       handleFreshness();
       saveAll();
@@ -137,11 +140,13 @@ export default function Checkpoint({
   };
 
   const addTask = () => {
+    creatingTask.current = true;
     saveAll();
     dance();
     handleFreshness();
     const payload = {
       checkpointId: checkP.checkpointId,
+      name: '',
       startDate: '',
       deadline: '',
       description: '',
@@ -158,6 +163,7 @@ export default function Checkpoint({
       .then(({ name }) => {
         updateTask({ taskId: name })
           .then(() => {
+            creatingTask.current = false;
             setRefresh((prevVal) => prevVal + 1);
           });
       });
@@ -174,147 +180,147 @@ export default function Checkpoint({
             <div />
           </div>
         </div>
-        <div style={{ margin: '1% 0%' }}>
-          <div>
-            <div className="card">
-              <div className="card-header 2">
-                <div className="verticalCenter">
-                  <ButtonBoot
-                    onClick={handleCollapse}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      paddingLeft: '10%',
-                      textAlign: 'left',
-                      color: 'black',
-                      width: '35px',
-                    }}>
-                    {downIcon}
-                  </ButtonBoot>
-                  <ButtonBoot
-                    id={`addTask${checkP.checkpointId}`}
-                    onClick={addTask}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      marginLeft: '10%',
-                      textAlign: 'left',
-                      color: 'black',
-                    }}>
-                    {plusIcon}
-                  </ButtonBoot>
-                </div>
-                <div className="verticalCenter">
-                  <input
-                    className="form-control"
-                    style={{
-                      textAlign: 'center',
-                      border: 'none',
-                      backgroundColor: 'transparent',
-                    }}
-                    placeholder="Enter a checkpoint name..."
-                    value={formInput.name}
-                    name="name"
-                    onChange={handleChange} />
+        {/* <div style={{ margin: '1% 0%' }}> */}
+        {/* <div> */}
+        <div className="card" style={{ margin: '3px 0px' }}>
+          <div className="card-header 2">
+            <div className="verticalCenter">
+              <ButtonBoot
+                onClick={handleCollapse}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '0px',
+                  paddingLeft: '10%',
+                  textAlign: 'left',
+                  color: 'black',
+                  width: '35px',
+                }}>
+                {downIcon}
+              </ButtonBoot>
+              <ButtonBoot
+                id={`addTask${checkP.checkpointId}`}
+                onClick={addTask}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '0px',
+                  marginLeft: '10%',
+                  textAlign: 'left',
+                  color: 'black',
+                }}>
+                {plusIcon}
+              </ButtonBoot>
+            </div>
+            <div className="verticalCenter">
+              <input
+                className="form-control"
+                style={{
+                  textAlign: 'center',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                }}
+                placeholder="Enter a checkpoint name..."
+                value={formInput.name}
+                name="name"
+                onChange={handleChange} />
+            </div>
+            <div
+              className="verticalCenter"
+              style={{
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                paddingRight: '8%',
+              }}>
+              <button
+                type="button"
+                onClick={handleDelete}
+                style={{
+                  paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
+                }}
+              >{trashIcon}
+              </button>
+            </div>
+          </div>
+          {/* --------------card-body------------------------ */}
+          <Collapse in={formInput.expanded}>
+            <div id="whole-card">
+              <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
+                <div
+                  id="row2"
+                  className="cardRow">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                    <div className="verticalCenter">
+                      <label htmlFor="deadline">Deadline:</label>
+                    </div>
+                    <div />
+                  </div>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+                  }}>
+                    <input
+                      className="form-control"
+                      type="date"
+                      value={formInput.deadline}
+                      onChange={handleChange}
+                      name="deadline"
+                      id="deadline"
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
+                  </div>
                 </div>
                 <div
-                  className="verticalCenter"
-                  style={{
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    justifyContent: 'center',
-                    paddingRight: '8%',
-                  }}>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    style={{
-                      paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
-                    }}
-                  >{trashIcon}
-                  </button>
-                </div>
-              </div>
-              {/* --------------card-body------------------------ */}
-              <Collapse in={formInput.expanded}>
-                <div id="whole-card">
-                  <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
-                    <div
-                      id="row2"
-                      className="cardRow">
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                        <div className="verticalCenter">
-                          <label htmlFor="deadline">Deadline:</label>
-                        </div>
-                        <div />
-                      </div>
-                      <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-                      }}>
-                        <input
-                          className="form-control"
-                          type="date"
-                          value={formInput.deadline}
-                          onChange={handleChange}
-                          name="deadline"
-                          id="deadline"
-                          style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
-                      </div>
+                  id="row3"
+                  className="cardRow">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                    <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
+                      <label htmlFor="budget">Start Date:</label>
                     </div>
-                    <div
-                      id="row3"
-                      className="cardRow">
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                        <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
-                          <label htmlFor="budget">Start Date:</label>
-                        </div>
-                        <div />
-                      </div>
-                      <div
-                        className="fullCenter"
-                        style={{ paddingRight: '20%' }}>
-                        <input
-                          id="budget"
-                          className="form-control"
-                          type="date"
-                          value={formInput.startDate}
-                          placeholder="$$$"
-                          onChange={handleChange}
-                          name="startDate"
-                          style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
-                      </div>
-                    </div>
+                    <div />
                   </div>
                   <div
-                    id="description-field"
                     className="fullCenter"
-                    style={{
-                      borderTop: '1px solid rgb(180, 180, 180)', padding: '2% 10%', display: 'flex', flexDirection: 'column',
-                    }}>
-                    <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
-                      <label htmlFor="description" className="form-label" style={{ textAlign: 'center' }}>
-                        Description:
-                      </label>
-                    </div>
-                    <textarea
+                    style={{ paddingRight: '20%' }}>
+                    <input
+                      id="budget"
                       className="form-control"
-                      placeholder="A description of your checkpoint..."
-                      id="description"
-                      rows="3"
-                      value={formInput.description}
+                      type="date"
+                      value={formInput.startDate}
+                      placeholder="$$$"
                       onChange={handleChange}
-                      name="description"
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }} />
+                      name="startDate"
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
                   </div>
                 </div>
-              </Collapse>
+              </div>
+              <div
+                id="description-field"
+                className="fullCenter"
+                style={{
+                  borderTop: '1px solid rgb(180, 180, 180)', padding: '2% 10%', display: 'flex', flexDirection: 'column',
+                }}>
+                <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
+                  <label htmlFor="description" className="form-label" style={{ textAlign: 'center' }}>
+                    Description:
+                  </label>
+                </div>
+                <textarea
+                  className="form-control"
+                  placeholder="A description of your checkpoint..."
+                  id="description"
+                  rows="3"
+                  value={formInput.description}
+                  onChange={handleChange}
+                  name="description"
+                  style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }} />
+              </div>
             </div>
-            {/* -----add-a-task------ */}
-            <div className="marginR" />
-          </div>
+          </Collapse>
         </div>
+        {/* -----add-a-task------ */}
+        <div className="marginR" />
+        {/* </div> */}
+        {/* </div> */}
         <div className="marginR" />
       </div>
       {/* ----add-a-task---- */}
@@ -347,7 +353,8 @@ export default function Checkpoint({
           minAll={minAll}
           save={save}
           saveAll={saveAll}
-          min={min} />
+          min={min}
+          saveSuccess={saveSuccess} />
       ))}
     </>
   );
