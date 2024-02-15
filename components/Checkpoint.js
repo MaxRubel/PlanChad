@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 // import Checkbox from '@mui/material/Checkbox';
 // import { FormControlLabel, FormGroup } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Button } from '@mui/material';
 import Fade from '@mui/material/Fade';
@@ -23,10 +23,25 @@ export default function Checkpoint({
   const [hasChanged, setHasChanged] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
+  const [twirl, setTwirl] = useState(false);
+  const elementRef = useRef(null);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
+    </svg>
+  );
+
+  const plusIcon = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="29px"
+      height="29px"
+      style={{ pointerEvents: 'none' }}
+      fill="currentColor"
+      viewBox="0 0 16 16"
+    >
+      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
     </svg>
   );
 
@@ -50,12 +65,19 @@ export default function Checkpoint({
     }
   }, [save]);
 
+  const dance = () => {
+    document.getElementById(`addTask${checkP.checkpointId}`).animate(
+      [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
+      { duration: 500, iterations: 1 },
+    );
+  };
+
   const handleFreshness = () => {
     if (formInput.fresh) {
       setFormInput((prevVal) => ({ ...prevVal, fresh: false }));
     }
     if (!hasChanged) {
-      setHasChanged((prevVal) => true);
+      setHasChanged((prevVal) => !prevVal);
     }
   };
 
@@ -75,20 +97,27 @@ export default function Checkpoint({
     if (formInput.fresh) {
       deleteCheckpoint(checkP.checkpointId)
         .then(() => {
+          console.log('delete all tasks');
+        })
+        .then(() => {
           handleRefresh();
         });
     }
     if (!formInput.fresh) {
-      console.log(checkP);
       if (window.confirm('Are you sure you would like to delete this task?')) {
-        deleteCheckpoint(checkP.checkpointId).then(() => {
-          handleRefresh();
-        });
+        console.log(checkP.checkpointId);
+        deleteCheckpoint(checkP.checkpointId)
+          .then((data) => {
+            console.log(data);
+            handleRefresh();
+          });
       }
     }
   };
 
   const addTask = () => {
+    dance();
+    handleFreshness();
     const payload = {
       checkpointId: checkP.checkpointId,
       startDate: '',
@@ -135,8 +164,22 @@ export default function Checkpoint({
                       paddingLeft: '10%',
                       textAlign: 'left',
                       color: 'black',
+                      width: '35px',
                     }}>
                     {downIcon}
+                  </ButtonBoot>
+                  <ButtonBoot
+                    id={`addTask${checkP.checkpointId}`}
+                    onClick={addTask}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '0px',
+                      marginLeft: '10%',
+                      textAlign: 'left',
+                      color: 'black',
+                    }}>
+                    {plusIcon}
                   </ButtonBoot>
                 </div>
                 <div className="verticalCenter">
@@ -254,7 +297,7 @@ export default function Checkpoint({
       <div className="checkpoint">
         <div className="marginL" />
         <div id="middle">
-          <Fade in={formInput.expanded}>
+          {/* <Fade in={formInput.expanded}>
             <Button
               variant="outlined"
               className="hello"
@@ -268,14 +311,12 @@ export default function Checkpoint({
               }}>
               Add A Task
             </Button>
-          </Fade>
+          </Fade> */}
         </div>
         <div className="marginR" />
       </div>
       {tasks.map((task) => (
-        <div style={{ color: 'white' }}>
-          <Task />
-        </div>
+        <Task key={task.taskId} />
       ))}
     </>
   );

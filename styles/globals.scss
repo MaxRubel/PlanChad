@@ -74,7 +74,7 @@ body {
 .cardRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  margin: 2% 0%,
+  margin: .5% 0%,
 }
 
 .fullCenter {
@@ -96,6 +96,17 @@ body {
   transition: all ease .5s;
   transform: rotate(-90deg);
 }
+
+.twirldown {
+  transform: rotate(360deg);
+  transition: all ease 1.5s;
+}
+
+.twirlup {
+  transition: all ease 1.5s;
+  transform: rotate(720deg);
+}
+
 
 #project-top-bar {
   color: white;
@@ -153,4 +164,12 @@ body {
 
 .form-control {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.animated {
+  transition: all ease 2s;
+}
+
+.rotate {
+  transform: rotate(360deg);
 }
