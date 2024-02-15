@@ -1,9 +1,16 @@
+/* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Button } from '@mui/material';
 import ProjectCard from './ProjectCard';
+import Checkpoint from './Checkpoint';
+import { createNewCheckpoint, getCheckpointsOfProject, updateCheckpoint } from '../api/checkpoint';
 
 export default function BigDaddyProject({ projectId }) {
   const [save, setSave] = useState(0);
+  const [checkpoints, setCheckpoints] = useState([]);
+  const [refresh, setRefresh] = useState(0);
 
   const saveSuccess = () => {
     document.getElementById('saveButton').style.color = 'rgb(0, 204, 129)';
@@ -12,19 +19,77 @@ export default function BigDaddyProject({ projectId }) {
     }, 1500);
   };
 
+  useEffect(() => {
+    getCheckpointsOfProject(projectId).then((data) => {
+      setCheckpoints(data);
+    });
+  }, [projectId, refresh]);
+
+  const handleRefresh = () => {
+    setRefresh((prevVal) => prevVal + 1);
+  };
+
+  const addCheckpoint = () => {
+    const payload = {
+      projectId,
+      leadId: '',
+      name: '',
+      startDate: '',
+      deadline: '',
+      description: '',
+      listIndex: '',
+      closed: false,
+    };
+    createNewCheckpoint(payload)
+      .then(({ name }) => {
+        updateCheckpoint({ checkpointId: name })
+          .then(() => {
+            handleRefresh();
+          });
+      });
+  };
+
   return (
     <>
-      <div id="project-top-bar">
-        <button
-          id="saveButton"
-          type="button"
-          className="clearButton"
-          onClick={() => setSave((prevVal) => prevVal + 1)}
-        >SAVE
-        </button>
-      </div>
       <div className="bigDad">
-        <ProjectCard projectId={projectId} save={save} saveSuccess={saveSuccess} />
+        <div id="project-container">
+          <div id="project-top-bar" style={{ marginBottom: '3%' }}>
+            <button
+              id="saveButton"
+              type="button"
+              className="clearButton"
+              onClick={() => setSave((prevVal) => prevVal + 1)}>
+              SAVE
+            </button>
+          </div>
+          <ProjectCard
+            projectId={projectId}
+            save={save}
+            saveSuccess={saveSuccess} />
+          <div id="add-checkpt-button" style={{ paddingLeft: '0%' }}>
+            <Button
+              variant="outlined"
+              onClick={addCheckpoint}
+              style={{
+                margin: '1% 0%',
+                color: 'rgb(200, 200, 200)',
+                border: '1px solid rgb(100, 100, 100)',
+              }}>
+              Add A Checkpoint
+            </Button>
+          </div>
+          {checkpoints.map((checkP) => (
+
+            <Checkpoint
+              checkP={checkP}
+              handleRefresh={handleRefresh}
+              save={save}
+              saveSuccess={saveSuccess}
+                />
+
+          ))}
+
+        </div>
       </div>
     </>
   );
