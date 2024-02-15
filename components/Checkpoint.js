@@ -67,6 +67,13 @@ export default function Checkpoint({
         setHasChanged((prevVal) => false);
       });
     }
+    return () => {
+      console.log('going home');
+      if (hasChanged) {
+        console.log('going home');
+        updateCheckpoint(formInput);
+      }
+    };
   }, [save]);
 
   const handleFreshness = () => {
