@@ -4,10 +4,13 @@
 // import Checkbox from '@mui/material/Checkbox';
 // import { FormControlLabel, FormGroup } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { grey } from '@mui/material/colors';
-import { Button, Collapse } from 'react-bootstrap';
+import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
+import { Button } from '@mui/material';
+import Fade from '@mui/material/Fade';
 import { trashIcon } from '../public/icons';
 import { deleteCheckpoint, updateCheckpoint } from '../api/checkpoint';
+import { createNewTask, getTasksOfCheckP, updateTask } from '../api/task';
+import Task from './Task';
 
 export default function Checkpoint({
   checkP,
@@ -18,6 +21,8 @@ export default function Checkpoint({
 }) {
   const [formInput, setFormInput] = useState({});
   const [hasChanged, setHasChanged] = useState(false);
+  const [refresh, setRefresh] = useState(0);
+  const [tasks, setTasks] = useState([]);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -28,6 +33,13 @@ export default function Checkpoint({
   useEffect(() => {
     setFormInput(checkP);
   }, [checkP]);
+
+  useEffect(() => {
+    getTasksOfCheckP(checkP.checkpointId)
+      .then((data) => {
+        setTasks(data);
+      });
+  }, [refresh]);
 
   useEffect(() => {
     if (hasChanged) {
@@ -76,9 +88,32 @@ export default function Checkpoint({
     }
   };
 
+  const addTask = () => {
+    const payload = {
+      checkpointId: checkP.checkpointId,
+      startDate: '',
+      deadline: '',
+      description: '',
+      preps: '',
+      exec: '',
+      debrief: '',
+      list_index: '',
+      weight: '',
+      status: 'open',
+    };
+    createNewTask(payload)
+      .then(({ name }) => {
+        updateTask({ taskId: name })
+          .then(() => {
+            setRefresh((prevVal) => prevVal + 1);
+          });
+      });
+  };
+
   return (
     <>
-      <div key={checkP.checkpointId} className="checkpoint">
+      <div className="checkpoint">
+        {/* -------line-side------------- */}
         <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div id="empty" />
           <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
@@ -91,13 +126,18 @@ export default function Checkpoint({
             <div className="card">
               <div className="card-header 2">
                 <div className="verticalCenter">
-                  <Button
+                  <ButtonBoot
                     onClick={handleCollapse}
                     style={{
-                      backgroundColor: 'transparent', border: 'none', padding: '0px', paddingLeft: '10%', textAlign: 'left', color: 'black',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '0px',
+                      paddingLeft: '10%',
+                      textAlign: 'left',
+                      color: 'black',
                     }}>
                     {downIcon}
-                  </Button>
+                  </ButtonBoot>
                 </div>
                 <div className="verticalCenter">
                   <input
@@ -107,11 +147,10 @@ export default function Checkpoint({
                       border: 'none',
                       backgroundColor: 'transparent',
                     }}
-                    placeholder="Enter a task name..."
+                    placeholder="Enter a checkpoint name..."
                     value={formInput.name}
                     name="name"
-                    onChange={handleChange}
-                  />
+                    onChange={handleChange} />
                 </div>
                 <div
                   className="verticalCenter"
@@ -120,8 +159,7 @@ export default function Checkpoint({
                     alignItems: 'flex-end',
                     justifyContent: 'center',
                     paddingRight: '8%',
-                  }}
-                >
+                  }}>
                   <button
                     type="button"
                     onClick={handleDelete}
@@ -206,11 +244,39 @@ export default function Checkpoint({
                 </div>
               </Collapse>
             </div>
+            {/* -----add-a-task------ */}
             <div className="marginR" />
           </div>
         </div>
         <div className="marginR" />
       </div>
+      {/* ----add-a-task---- */}
+      <div className="checkpoint">
+        <div className="marginL" />
+        <div id="middle">
+          <Fade in={formInput.expanded}>
+            <Button
+              variant="outlined"
+              className="hello"
+              hidden={!formInput.expanded}
+              onClick={addTask}
+              style={{
+                margin: '1% 0%',
+                color: 'rgb(200, 200, 200)',
+                border: '1px solid rgb(100, 100, 100)',
+                display: 'hidden',
+              }}>
+              Add A Task
+            </Button>
+          </Fade>
+        </div>
+        <div className="marginR" />
+      </div>
+      {tasks.map((task) => (
+        <div style={{ color: 'white' }}>
+          <Task />
+        </div>
+      ))}
     </>
   );
 }
