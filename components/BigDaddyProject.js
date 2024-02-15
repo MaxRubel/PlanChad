@@ -94,7 +94,7 @@ export default function BigDaddyProject({ projectId }) {
               Add A Checkpoint
             </Button>
             <div>
-              <Button
+              {/* <Button
                 variant="outlined"
                 // onClick={addCheckpoint}
                 style={{
@@ -103,7 +103,7 @@ export default function BigDaddyProject({ projectId }) {
                   border: '1px solid rgb(100, 100, 100)',
                 }}>
                 Add A Collaborator
-              </Button>
+              </Button> */}
             </div>
           </div>
           {checkpoints.map((checkP) => (
