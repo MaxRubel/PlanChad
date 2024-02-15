@@ -13,10 +13,14 @@ export default function BigDaddyProject({ projectId }) {
   const [refresh, setRefresh] = useState(0);
 
   const saveSuccess = () => {
-    document.getElementById('saveButton').style.color = 'rgb(0, 204, 129)';
+    document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
     setTimeout(() => {
       document.getElementById('saveButton').style.color = 'white';
     }, 1500);
+  };
+
+  const saveAll = () => {
+    setSave((prevVal) => prevVal + 1);
   };
 
   useEffect(() => {
@@ -38,7 +42,8 @@ export default function BigDaddyProject({ projectId }) {
       deadline: '',
       description: '',
       listIndex: '',
-      closed: false,
+      expanded: true,
+      fresh: true,
     };
     createNewCheckpoint(payload)
       .then(({ name }) => {
@@ -58,7 +63,7 @@ export default function BigDaddyProject({ projectId }) {
               id="saveButton"
               type="button"
               className="clearButton"
-              onClick={() => setSave((prevVal) => prevVal + 1)}>
+              onClick={() => saveAll()}>
               SAVE
             </button>
           </div>
@@ -66,7 +71,7 @@ export default function BigDaddyProject({ projectId }) {
             projectId={projectId}
             save={save}
             saveSuccess={saveSuccess} />
-          <div id="add-checkpt-button" style={{ paddingLeft: '0%' }}>
+          <div id="add-checkpt-button" style={{ marginTop: '2%', paddingLeft: '0%' }}>
             <Button
               variant="outlined"
               onClick={addCheckpoint}
@@ -79,14 +84,14 @@ export default function BigDaddyProject({ projectId }) {
             </Button>
           </div>
           {checkpoints.map((checkP) => (
-
             <Checkpoint
+              key={checkP.checkpointId}
               checkP={checkP}
               handleRefresh={handleRefresh}
               save={save}
               saveSuccess={saveSuccess}
-                />
-
+              saveAll={saveAll}
+            />
           ))}
 
         </div>
