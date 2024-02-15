@@ -44,4 +44,18 @@ const getTasksOfCheckP = (checkpointId) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-export { createNewTask, updateTask, getTasksOfCheckP };
+const deleteTask = (taskId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/tasks/${taskId}.json`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => resolve(data))
+    .catch(reject);
+});
+
+export {
+  createNewTask, updateTask, getTasksOfCheckP, deleteTask,
+};
