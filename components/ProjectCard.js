@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-closing-bracket-location */
 import { useEffect, useState } from 'react';
 import { Collapse, Button } from 'react-bootstrap';
 import { getSingleProject, updateProject } from '../api/project';
-import collapseIcon from '../public/icons';
+import { collapseIcon } from '../public/icons';
 
 const initialState = {
   name: '',
@@ -14,11 +15,12 @@ const initialState = {
   start_date: '',
   projectId: '',
   user_id: '',
+  expanded: false,
 };
 
 export default function ProjectCard({ projectId, save, saveSuccess }) {
   const [formInput, setFormInput] = useState(initialState);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
 
   const downIcon = (
@@ -30,6 +32,7 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
   useEffect(() => {
     getSingleProject(projectId).then((data) => {
       setFormInput(data);
+      setOpen(data.expanded);
     });
   }, [projectId]);
 
@@ -41,11 +44,17 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
     }
   }, [save]);
 
-  function handleChange(e) {
+  const handleChange = (e) => {
     setHasChanged((prevVal) => true);
     const { name, value } = e.target;
     setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
-  }
+  };
+
+  const handleCollapse = () => {
+    setOpen(!open);
+    setHasChanged((prevVal) => true);
+    setFormInput((prevVal) => ({ ...prevVal, expanded: !open }));
+  };
 
   return (
 
@@ -53,7 +62,7 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
     <div className="card text-bg-info mb-3">
       <div className="card-header" style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
         <Button
-          onClick={() => setOpen(!open)}
+          onClick={handleCollapse}
           style={{
             backgroundColor: 'transparent', border: 'none', padding: '0px', paddingLeft: '10%', textAlign: 'left', color: 'black',
           }}>

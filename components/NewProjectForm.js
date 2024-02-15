@@ -26,6 +26,7 @@ export default function NewProjectForm() {
       client: '',
       budget: '',
       description: '',
+      expanded: true,
     };
     createNewProject(payload).then(({ name }) => {
       updateProject({ projectId: name }).then(() => {
@@ -42,10 +43,8 @@ export default function NewProjectForm() {
         alignItems: 'center',
         justifyContent: 'center',
         boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px3px',
-
       }}
-      onSubmit={handleSubmit}
-    >
+      onSubmit={handleSubmit}>
       <div className="card text-bg-info mb-3" style={{ minWidth: '400px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px3px', maxWidth: '600px' }}>
         <div style={{
           textAlign: 'center',
@@ -63,8 +62,7 @@ export default function NewProjectForm() {
             placeholder="Project Name"
             value={formInput.name}
             onChange={handleChange}
-            required
-          />
+            required />
         </div>
         <div style={{ textAlign: 'center', padding: '3% 0%', paddingTop: '1%' }}>
           <button type="submit" className="btn btn-outline-dark rounded-0">Submit</button>
