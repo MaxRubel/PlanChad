@@ -3,13 +3,13 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 // import Checkbox from '@mui/material/Checkbox';
 // import { FormControlLabel, FormGroup } from '@mui/material';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
-import { Button } from '@mui/material';
-import Fade from '@mui/material/Fade';
 import { trashIcon } from '../public/icons';
 import { deleteCheckpoint, updateCheckpoint } from '../api/checkpoint';
-import { createNewTask, getTasksOfCheckP, updateTask } from '../api/task';
+import {
+  createNewTask, deleteTask, getTasksOfCheckP, updateTask,
+} from '../api/task';
 import Task from './Task';
 
 export default function Checkpoint({
@@ -18,13 +18,14 @@ export default function Checkpoint({
   save,
   saveSuccess,
   saveAll,
+  minAll,
+  min,
 }) {
   const [formInput, setFormInput] = useState({});
   const [hasChanged, setHasChanged] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
-  const [twirl, setTwirl] = useState(false);
-  const elementRef = useRef(null);
+  const [localRefresh, setLocalRefresh] = useState(0);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -54,7 +55,7 @@ export default function Checkpoint({
       .then((data) => {
         setTasks(data);
       });
-  }, [refresh]);
+  }, [refresh, localRefresh]);
 
   useEffect(() => {
     if (hasChanged) {
@@ -65,13 +66,6 @@ export default function Checkpoint({
     }
   }, [save]);
 
-  const dance = () => {
-    document.getElementById(`addTask${checkP.checkpointId}`).animate(
-      [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
-      { duration: 500, iterations: 1 },
-    );
-  };
-
   const handleFreshness = () => {
     if (formInput.fresh) {
       setFormInput((prevVal) => ({ ...prevVal, fresh: false }));
@@ -79,6 +73,27 @@ export default function Checkpoint({
     if (!hasChanged) {
       setHasChanged((prevVal) => !prevVal);
     }
+  };
+
+  useEffect(() => {
+    if (formInput.expanded) {
+      handleFreshness();
+      saveAll();
+      setFormInput((prevVal) => ({
+        ...prevVal, expanded: false,
+      }));
+    }
+  }, [min]);
+
+  const dance = () => {
+    document.getElementById(`addTask${checkP.checkpointId}`).animate(
+      [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
+      { duration: 500, iterations: 1 },
+    );
+  };
+
+  const handleLocalRefresh = () => {
+    setLocalRefresh((prevVal) => prevVal + 1);
   };
 
   const handleChange = (e) => {
@@ -92,23 +107,29 @@ export default function Checkpoint({
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
+  const deleteAllTasks = () => {
+    const promiseArr = tasks.map((task) => (deleteTask(task.taskId)));
+    Promise.all(promiseArr);
+  };
+
   const handleDelete = () => {
     saveAll();
     if (formInput.fresh) {
       deleteCheckpoint(checkP.checkpointId)
         .then(() => {
-          console.log('delete all tasks');
+          deleteAllTasks();
         })
         .then(() => {
           handleRefresh();
         });
     }
     if (!formInput.fresh) {
-      if (window.confirm('Are you sure you would like to delete this task?')) {
-        console.log(checkP.checkpointId);
+      if (window.confirm('Are you sure you would like to delete this Checkpoint and all of its tasks?')) {
         deleteCheckpoint(checkP.checkpointId)
-          .then((data) => {
-            console.log(data);
+          .then(() => {
+            deleteAllTasks();
+          })
+          .then(() => {
             handleRefresh();
           });
       }
@@ -116,6 +137,7 @@ export default function Checkpoint({
   };
 
   const addTask = () => {
+    saveAll();
     dance();
     handleFreshness();
     const payload = {
@@ -129,6 +151,8 @@ export default function Checkpoint({
       list_index: '',
       weight: '',
       status: 'open',
+      fresh: true,
+      expanded: false,
     };
     createNewTask(payload)
       .then(({ name }) => {
@@ -316,7 +340,14 @@ export default function Checkpoint({
         <div className="marginR" />
       </div>
       {tasks.map((task) => (
-        <Task key={task.taskId} />
+        <Task
+          key={task.taskId}
+          refresh={handleLocalRefresh}
+          task={task}
+          minAll={minAll}
+          save={save}
+          saveAll={saveAll}
+          min={min} />
       ))}
     </>
   );

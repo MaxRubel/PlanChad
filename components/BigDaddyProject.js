@@ -11,16 +11,29 @@ export default function BigDaddyProject({ projectId }) {
   const [save, setSave] = useState(0);
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
+  const [min, setMin] = useState(0);
 
   const saveSuccess = () => {
     document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
     setTimeout(() => {
-      document.getElementById('saveButton').style.color = 'white';
+      document.getElementById('saveButton').style.color = 'rgb(200, 200, 200)';
     }, 1500);
+  };
+
+  const minSuccess = () => {
+    document.getElementById('minButton').style.color = 'rgb(16, 197, 234)';
+    setTimeout(() => {
+      document.getElementById('minButton').style.color = 'rgb(200, 200, 200)';
+    }, 1000);
   };
 
   const saveAll = () => {
     setSave((prevVal) => prevVal + 1);
+  };
+
+  const minAll = () => {
+    setMin((prevVal) => prevVal + 1);
+    minSuccess();
   };
 
   useEffect(() => {
@@ -42,7 +55,7 @@ export default function BigDaddyProject({ projectId }) {
       deadline: '',
       description: '',
       listIndex: '',
-      expanded: true,
+      expanded: false,
       fresh: true,
     };
     saveAll();
@@ -68,11 +81,21 @@ export default function BigDaddyProject({ projectId }) {
               onClick={() => saveAll()}>
               SAVE
             </button>
+            <button
+              id="minButton"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => minAll()}>
+              MINIMIZE All
+            </button>
           </div>
           <ProjectCard
             projectId={projectId}
             save={save}
-            saveSuccess={saveSuccess} />
+            saveSuccess={saveSuccess}
+            min={min}
+            minAll={minAll} />
           <div
             id="add-checkpt-button"
             style={{
@@ -114,9 +137,10 @@ export default function BigDaddyProject({ projectId }) {
               save={save}
               saveSuccess={saveSuccess}
               saveAll={saveAll}
-            />
+              mimAll={minAll}
+              min={min}
+              minSuccess={minSuccess} />
           ))}
-
         </div>
       </div>
     </>

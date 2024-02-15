@@ -34,6 +34,7 @@ body {
   // align-items: center;
   // justify-content: center;
   // padding: 2% 10%;
+  padding-bottom: 50vh;
 }
 
 .btn.btn-outline-dark.rounded-0 {
@@ -113,6 +114,8 @@ body {
   border-bottom: 1px solid rgb(84, 84, 84);
   margin-bottom: 4%;
   margin: 1%;
+  display: flex;
+  gap: 7%
 }
 
 .clearButton {

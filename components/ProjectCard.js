@@ -17,7 +17,9 @@ const initialState = {
   expanded: false,
 };
 
-export default function ProjectCard({ projectId, save, saveSuccess }) {
+export default function ProjectCard({
+  projectId, save, saveSuccess, min,
+}) {
   const [formInput, setFormInput] = useState(initialState);
   const [open, setOpen] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
@@ -43,16 +45,22 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
     }
   }, [save]);
 
-  const handleChange = (e) => {
-    setHasChanged((prevVal) => true);
-    const { name, value } = e.target;
-    setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
-  };
-
   const handleCollapse = () => {
     setOpen(!open);
     setHasChanged((prevVal) => true);
     setFormInput((prevVal) => ({ ...prevVal, expanded: !open }));
+  };
+
+  useEffect(() => {
+    if (formInput.expanded) {
+      handleCollapse();
+    }
+  }, [min]);
+
+  const handleChange = (e) => {
+    setHasChanged((prevVal) => true);
+    const { name, value } = e.target;
+    setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
   };
 
   return (
