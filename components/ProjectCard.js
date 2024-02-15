@@ -4,7 +4,6 @@
 import { useEffect, useState } from 'react';
 import { Collapse, Button } from 'react-bootstrap';
 import { getSingleProject, updateProject } from '../api/project';
-import { collapseIcon } from '../public/icons';
 
 const initialState = {
   name: '',
@@ -58,7 +57,7 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
 
   return (
 
-    // --------------------------card--header------------------------
+    // -----------------card--header----------------
     <div className="card text-bg-info mb-3">
       <div className="card-header" style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
         <Button
@@ -69,7 +68,6 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
           {downIcon}
         </Button>
         <div>
-
           <input
             className="form-control"
             name="name"
@@ -105,7 +103,7 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
                   value={formInput.client}
                   onChange={handleChange}
                   style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
-            />
+                />
               </div>
             </div>
             <div
@@ -128,7 +126,7 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
                   name="deadline"
                   id="deadline"
                   style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
-              />
+                />
               </div>
             </div>
             <div
@@ -152,7 +150,7 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
                   onChange={handleChange}
                   name="budget"
                   style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
-              />
+                />
               </div>
             </div>
           </div>
@@ -174,7 +172,7 @@ export default function ProjectCard({ projectId, save, saveSuccess }) {
               value={formInput.description}
               onChange={handleChange}
               name="description"
-              style={{ minWidth: '250px' }} />
+              style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none', minWidth: '250px' }} />
           </div>
         </div>
       </Collapse>
