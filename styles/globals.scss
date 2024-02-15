@@ -28,7 +28,7 @@ body {
   padding: 10% 4%;
 }
 
-.bigDad{
+.bigDad {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -61,86 +61,87 @@ body {
   min-width: 90px;
 }
 
-.verticalCenter{
+.verticalCenter {
   display: flex;
   align-items: center;
 }
 
-.cardTitle{
+.cardTitle {
   text-align: center;
   font-size: 20px;
 }
 
-.cardRow{
-  display: grid; 
+.cardRow {
+  display: grid;
   grid-template-columns: 1fr 1fr;
   margin: 2% 0%,
 }
 
-.fullCenter{
+.fullCenter {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.form-control{
+.form-control {
   min-width: 129.29px;
 }
 
-.icon-down{
+.icon-down {
   transform: rotate(90deg);
   transition: all ease .5s;
 }
 
-.icon-up{
+.icon-up {
   transition: all ease .5s;
   transform: rotate(-90deg);
 }
 
-#project-top-bar{
-color: white;
-border-bottom: 1px solid white;
-margin-bottom: 4%;
-margin: 1%;
+#project-top-bar {
+  color: white;
+  border-bottom: 1px solid rgb(84, 84, 84);
+  margin-bottom: 4%;
+  margin: 1%;
 }
 
-.clearButton{
+.clearButton {
   background-color: transparent;
   border: none;
   color: white;
   transition: all ease 1.5s;
 }
 
-.bottomRow{
+.bottomRow {
   background-color: rgb(30, 30, 30);
   color: white;
   text-align: center;
 }
 
-.checkpoint{
+.checkpoint {
   display: grid;
-  grid-template-columns: 1fr 75% 1fr; /* First column is 100px, second column is 200px, third column takes the remaining space */
+  grid-template-columns: 1fr 75% 1fr;
+  /* First column is 100px, second column is 200px, third column takes the remaining space */
   gap: 1%;
   min-width: 500px;
 }
 
-#marginL{
+#marginL {
   background-color: rgba(255, 121, 221, 0.448);
 }
 
-.card{
+.card {
   background-color: rgb(225, 225, 225);
 }
 
-.card-header.\32{
+.card-header.\32 {
   display: grid;
   grid-template-columns: 20% 60% 20%;
 }
 
-.container{
-padding: 0px;
+.container {
+  padding: 0px;
 }
 
-.form-control{
+.form-control {
   font-family: Arial, Helvetica, sans-serif;
 }

@@ -45,6 +45,7 @@ export default function BigDaddyProject({ projectId }) {
       expanded: true,
       fresh: true,
     };
+    saveAll();
     createNewCheckpoint(payload)
       .then(({ name }) => {
         updateCheckpoint({ checkpointId: name })
@@ -63,6 +64,7 @@ export default function BigDaddyProject({ projectId }) {
               id="saveButton"
               type="button"
               className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => saveAll()}>
               SAVE
             </button>
@@ -71,7 +73,16 @@ export default function BigDaddyProject({ projectId }) {
             projectId={projectId}
             save={save}
             saveSuccess={saveSuccess} />
-          <div id="add-checkpt-button" style={{ marginTop: '2%', paddingLeft: '0%' }}>
+          <div
+            id="add-checkpt-button"
+            style={{
+              marginTop: '2%',
+              // marginBottom: '.5%',
+              paddingLeft: '0%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
             <Button
               variant="outlined"
               onClick={addCheckpoint}
@@ -82,6 +93,18 @@ export default function BigDaddyProject({ projectId }) {
               }}>
               Add A Checkpoint
             </Button>
+            <div>
+              <Button
+                variant="outlined"
+                // onClick={addCheckpoint}
+                style={{
+                  margin: '1% 0%',
+                  color: 'rgb(200, 200, 200)',
+                  border: '1px solid rgb(100, 100, 100)',
+                }}>
+                Add A Collaborator
+              </Button>
+            </div>
           </div>
           {checkpoints.map((checkP) => (
             <Checkpoint
