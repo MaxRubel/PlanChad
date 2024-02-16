@@ -3,7 +3,7 @@
 import { Collapse } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 
-export default function TaskDeets({ formInput }) {
+export default function TaskDeets({ formInput, min, handleChange }) {
   const [fresh, setFresh] = useState(true);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function TaskDeets({ formInput }) {
         <div id="empty" />
       </div>
       <div className="card" style={{ margin: '3px 0px' }}>
-        {/* --------------card-body------------------------ */}
+        {/* -------card-body------------------------ */}
         <Collapse in={formInput.deetsExpanded}>
           <div id="whole-card">
             <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
@@ -47,16 +47,18 @@ export default function TaskDeets({ formInput }) {
                 className="cardRow2">
                 <div
                   className="fullCenter2"
-                    >
+                >
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
                   }}><label htmlFor="prep">Prep:</label>
                   </div>
                   <div style={{ marginLeft: '4%' }}>
                     <textarea
-                      id="exec"
+                      id="prep"
                       className="form-control"
-                      name="exec"
+                      name="prep"
+                      onChange={handleChange}
+                      value={formInput.prep}
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: '2px solid lightgrey' }} />
                   </div>
                 </div>
@@ -66,7 +68,7 @@ export default function TaskDeets({ formInput }) {
                 className="cardRow2">
                 <div
                   className="fullCenter2"
-                    >
+                >
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
                   }}><label htmlFor="exec">Execution:</label>
@@ -75,6 +77,8 @@ export default function TaskDeets({ formInput }) {
                     <textarea
                       id="exec"
                       className="form-control"
+                      onChange={handleChange}
+                      value={formInput.exec}
                       name="exec"
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: '2px solid lightgrey' }} />
                   </div>
@@ -95,6 +99,8 @@ export default function TaskDeets({ formInput }) {
                       id="debrief"
                       className="form-control"
                       name="debrief"
+                      onChange={handleChange}
+                      value={formInput.debrief}
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: '2px solid lightgrey' }} />
                   </div>
                 </div>

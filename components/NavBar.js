@@ -2,8 +2,9 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-  Navbar, Container, Nav, Button,
+  Navbar, Container, Nav,
 } from 'react-bootstrap';
+import { Button } from '@mui/material';
 import { signOut } from '../utils/auth';
 
 export default function NavBar() {
@@ -23,10 +24,18 @@ export default function NavBar() {
             <Link passHref href="/project/new">
               <Nav.Link>Create New Project</Nav.Link>
             </Link>
-            <Link passHref href="/">
+            <Link passHref href="/404">
               <Nav.Link>Collaborators</Nav.Link>
             </Link>
-            <Button variant="danger" onClick={signOut}>Sign Out</Button>
+            <button
+              type="button"
+              className="clearButton"
+              style={{
+                color: 'rgb(155, 157, 158)',
+              }}
+              onClick={signOut}
+            >Sign Out
+            </button>
           </Nav>
         </Navbar.Collapse>
       </Container>

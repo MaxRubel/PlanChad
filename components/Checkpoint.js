@@ -11,7 +11,6 @@ import {
   createNewTask, deleteTask, getTasksOfCheckP, updateTask,
 } from '../api/task';
 import Task from './Task';
-import TaskDeets from './TaskDeets';
 
 export default function Checkpoint({
   checkP,
@@ -22,12 +21,17 @@ export default function Checkpoint({
   minAll,
   min,
 }) {
-  const [formInput, setFormInput] = useState({});
+  const [formInput, setFormInput] = useState({
+    description: '',
+    name: '',
+    startDate: '',
+    deadline: '',
+  });
   const [hasChanged, setHasChanged] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [localRefresh, setLocalRefresh] = useState(0);
-  const creatingTask = useRef(true);
+  const [creatingTask, setCreatingTask] = useState(false);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -62,16 +66,14 @@ export default function Checkpoint({
   useEffect(() => {
     if (hasChanged) {
       updateCheckpoint(formInput).then(() => {
-        if (!creatingTask.current) {
+        if (!creatingTask) {
           saveSuccess();
         }
         setHasChanged((prevVal) => false);
       });
     }
     return () => {
-      console.log('going home');
       if (hasChanged) {
-        console.log('going home');
         updateCheckpoint(formInput);
       }
     };
@@ -89,7 +91,6 @@ export default function Checkpoint({
   useEffect(() => { // minimize
     if (formInput.expanded) {
       handleFreshness();
-      saveAll();
       setFormInput((prevVal) => ({
         ...prevVal, expanded: false,
       }));
@@ -148,7 +149,7 @@ export default function Checkpoint({
   };
 
   const addTask = () => {
-    creatingTask.current = true;
+    setCreatingTask((prevVal) => true);
     saveAll();
     dance();
     handleFreshness();
@@ -158,7 +159,7 @@ export default function Checkpoint({
       startDate: '',
       deadline: '',
       description: '',
-      preps: '',
+      prep: '',
       exec: '',
       debrief: '',
       list_index: '',
@@ -172,7 +173,7 @@ export default function Checkpoint({
       .then(({ name }) => {
         updateTask({ taskId: name })
           .then(() => {
-            creatingTask.current = false;
+            setCreatingTask((prevVal) => false);
             setRefresh((prevVal) => prevVal + 1);
           });
       });
