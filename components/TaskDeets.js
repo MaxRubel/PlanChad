@@ -1,0 +1,109 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/jsx-closing-bracket-location */
+import { Collapse } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+
+export default function TaskDeets({ formInput }) {
+  const [fresh, setFresh] = useState(true);
+
+  useEffect(() => {
+    let timeout;
+    if (fresh && formInput.taskId) {
+      document.getElementById(`taskDeets${formInput.taskId}`).style.display = 'none';
+      setFresh((prevVal) => !prevVal);
+    }
+    if (!formInput.deetsExpanded && formInput.taskId && !fresh) {
+      timeout = setTimeout(() => {
+        document.getElementById(`taskDeets${formInput.taskId}`).style.display = 'none';
+      }, 266);
+    }
+    if (formInput.deetsExpanded) {
+      document.getElementById(`taskDeets${formInput.taskId}`).style.display = 'grid';
+    }
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [formInput.deetsExpanded, fresh]);
+
+  return (
+    <div id={`taskDeets${formInput.taskId}`} className="taskDeets">
+      <div id="margin" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div id="empty" />
+        <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+          <div style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+        </div>
+      </div>
+      <div id="margin 2" style={{ display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+        <div id="line" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+        <div id="empty" />
+      </div>
+      <div className="card" style={{ margin: '3px 0px' }}>
+        {/* --------------card-body------------------------ */}
+        <Collapse in={formInput.deetsExpanded}>
+          <div id="whole-card">
+            <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
+              <div
+                id="row1"
+                className="cardRow2">
+                <div
+                  className="fullCenter2"
+                    >
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
+                  }}><label htmlFor="prep">Prep:</label>
+                  </div>
+                  <div style={{ marginLeft: '4%' }}>
+                    <textarea
+                      id="exec"
+                      className="form-control"
+                      name="exec"
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: '2px solid lightgrey' }} />
+                  </div>
+                </div>
+              </div>
+              <div
+                id="row2"
+                className="cardRow2">
+                <div
+                  className="fullCenter2"
+                    >
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
+                  }}><label htmlFor="exec">Execution:</label>
+                  </div>
+                  <div style={{ marginLeft: '4%' }}>
+                    <textarea
+                      id="exec"
+                      className="form-control"
+                      name="exec"
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: '2px solid lightgrey' }} />
+                  </div>
+                </div>
+              </div>
+              <div
+                id="row3"
+                className="cardRow2">
+                <div
+                  className="fullCenter2">
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
+                  }}>
+                    <label htmlFor="debrief">Debrief:</label>
+                  </div>
+                  <div style={{ marginLeft: '4%' }}>
+                    <textarea
+                      id="debrief"
+                      className="form-control"
+                      name="debrief"
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: '2px solid lightgrey' }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Collapse>
+      </div>
+      <div id="margin 3" />
+    </div>
+  );
+}
