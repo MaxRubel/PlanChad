@@ -11,6 +11,7 @@ import {
   createNewTask, deleteTask, getTasksOfCheckP, updateTask,
 } from '../api/task';
 import Task from './Task';
+import TaskDeets from './TaskDeets';
 
 export default function Checkpoint({
   checkP,
@@ -165,6 +166,7 @@ export default function Checkpoint({
       status: 'open',
       fresh: true,
       expanded: false,
+      deetsExpanded: false,
     };
     createNewTask(payload)
       .then(({ name }) => {
@@ -325,31 +327,6 @@ export default function Checkpoint({
           </Collapse>
         </div>
         {/* -----add-a-task------ */}
-        <div className="marginR" />
-        {/* </div> */}
-        {/* </div> */}
-        <div className="marginR" />
-      </div>
-      {/* ----add-a-task---- */}
-      <div className="checkpoint">
-        <div className="marginL" />
-        <div id="middle">
-          {/* <Fade in={formInput.expanded}>
-            <Button
-              variant="outlined"
-              className="hello"
-              hidden={!formInput.expanded}
-              onClick={addTask}
-              style={{
-                margin: '1% 0%',
-                color: 'rgb(200, 200, 200)',
-                border: '1px solid rgb(100, 100, 100)',
-                display: 'hidden',
-              }}>
-              Add A Task
-            </Button>
-          </Fade> */}
-        </div>
         <div className="marginR" />
       </div>
       {tasks.map((task) => (

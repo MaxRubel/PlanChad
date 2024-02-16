@@ -59,7 +59,7 @@ body {
 }
 
 .minWidth200 {
-  min-width: 90px;
+  min-width: 150px;
 }
 
 .verticalCenter {
@@ -82,6 +82,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.fullCenter2 {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  justify-content: center;
+  padding: 1% 4%;
 }
 
 .form-control {
@@ -142,6 +149,14 @@ body {
 .task {
   display: grid;
   grid-template-columns: 84px 8% 67% 100px;
+  /* First column is 100px, second column is 200px, third column takes the remaining space */
+  // gap: 1%;
+  min-width: 500px;
+}
+
+.taskDeets {
+  display: grid;
+  grid-template-columns: 84px 16% 59% 100px;
   /* First column is 100px, second column is 200px, third column takes the remaining space */
   // gap: 1%;
   min-width: 500px;
