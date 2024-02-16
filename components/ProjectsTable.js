@@ -45,7 +45,7 @@ export default function ProjectsTable() {
       </thead>
       <tbody>
         {projectsArray.map((project) => (
-          <tr style={{ border: '1px solid black' }}>
+          <tr key={project.projectId} style={{ border: '1px solid black' }}>
             <td style={{ paddingLeft: '1.5%', minWidth: '200px' }}>
               <Link passHref href={`/project/plan/${project.projectId}`}>
                 <Nav.Link>

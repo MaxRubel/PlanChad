@@ -31,13 +31,15 @@ export default function Task({
   );
 
   useEffect(() => {
-    setFormInput((prevVal) => ({
-      ...prevVal, expanded: false,
-    }));
+    if (formInput.expanded || formInput.deetsExpanded) {
+      setFormInput((prevVal) => ({
+        ...prevVal, expanded: false, deetsExpanded: false,
+      }));
+      setHasChanged((prevVal) => true);
+    }
   }, [min]);
 
   useEffect(() => {
-    console.log(task);
     setFormInput(task);
   }, [task]);
 
@@ -261,7 +263,9 @@ export default function Task({
         {/* -----add-a-task------ */}
         <div className="marginR" />
       </div>
-      <TaskDeets formInput={formInput} handleChange={handleChange} />
+      <TaskDeets
+        formInput={formInput}
+        handleChange={handleChange} />
 
     </>
   );
