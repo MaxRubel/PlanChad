@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import uniqid from 'uniqid';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
-import { createNewCheckpoint, getCheckpointsOfProject, updateCheckpoint } from '../api/checkpoint';
+import { getCheckpointsOfProject } from '../api/checkpoint';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function BigDaddyProject({ projectId }) {
   const [save, setSave] = useState(0);
@@ -16,6 +18,7 @@ export default function BigDaddyProject({ projectId }) {
   const [saveColor, setSaveColor] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [reOrdered, setReOrdered] = useState(0);
+  const { addToSaveManager } = useSaveContext();
 
   const saveAll = () => { // trigger save all
     setSave((prevVal) => prevVal + 1);
@@ -73,8 +76,9 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   const addCheckpoint = () => {
-    const payload = {
+    const emptyChckP = {
       projectId,
+      localId: uniqid(),
       leadId: '',
       name: '',
       startDate: '',
@@ -83,15 +87,20 @@ export default function BigDaddyProject({ projectId }) {
       listIndex: '',
       expanded: false,
       fresh: true,
+      checkpointId: null,
+      dragId: uniqid(),
+      tasks: false,
+      type: 'checkpoint',
     };
-    saveAll();
-    createNewCheckpoint(payload)
-      .then(({ name }) => {
-        updateCheckpoint({ checkpointId: name })
-          .then(() => {
-            handleRefresh();
-          });
-      });
+    setCheckpoints((prevVal) => [...prevVal, emptyChckP]);
+  //   saveAll();
+  //   createNewCheckpoint(payload)
+  //     .then(({ name }) => {
+  //       updateCheckpoint({ checkpointId: name })
+  //         .then(() => {
+  //           handleRefresh();
+  //         });
+  //     });
   };
 
   const handleDragEnd = (result) => {
@@ -144,7 +153,6 @@ export default function BigDaddyProject({ projectId }) {
             id="add-checkpt-button"
             style={{
               marginTop: '2%',
-              // marginBottom: '.5%',
               paddingLeft: '0%',
               display: 'flex',
               justifyContent: 'space-between',
@@ -168,7 +176,7 @@ export default function BigDaddyProject({ projectId }) {
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     {checkpoints.map((checkP, index) => (
                       <Checkpoint
-                        key={checkP.checkpointId}
+                        key={checkP.checkpointId ? checkP.checkpointId : checkP.dragId}
                         checkP={checkP}
                         handleRefresh={handleRefresh}
                         save={save}

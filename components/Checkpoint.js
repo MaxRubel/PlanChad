@@ -7,11 +7,12 @@ import { useState, useEffect, useRef } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Draggable } from '@hello-pangea/dnd';
 import { trashIcon } from '../public/icons';
-import { deleteCheckpoint, updateCheckpoint } from '../api/checkpoint';
+import { deleteCheckpoint, updateCheckpoint, createNewCheckpoint } from '../api/checkpoint';
 import {
   createNewTask, deleteTask, getTasksOfCheckP, updateTask,
 } from '../api/task';
 import Task from './Task';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Checkpoint({
   checkP,
@@ -31,13 +32,13 @@ export default function Checkpoint({
     deadline: '',
     index: '',
   });
-
   const [hasChanged, setHasChanged] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [localRefresh, setLocalRefresh] = useState(0);
   const [creatingTask, setCreatingTask] = useState(false);
-  const [fresh, setFresh] = useState(true);
+  const { addToSaveManager } = useSaveContext();
+  const [isLoading, setIsloading] = useState(true);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -63,36 +64,61 @@ export default function Checkpoint({
   }, [checkP]);
 
   useEffect(() => {
-    getTasksOfCheckP(checkP.checkpointId)
-      .then((data) => {
-        setTasks(data);
-      });
+    addToSaveManager(formInput);
+  }, [formInput]);
+
+  useEffect(() => { // local save!
+    if (formInput.taks) {
+      console.log('pulling tasks');
+      getTasksOfCheckP(checkP.checkpointId)
+        .then((data) => {
+          setTasks(data);
+        });
+    }
   }, [refresh, localRefresh]);
 
-  useEffect(() => {
-    if (hasChanged) {
-      updateCheckpoint(formInput).then(() => {
-        if (!creatingTask) {
-          saveSuccess();
-        }
-        setHasChanged((prevVal) => false);
-      });
-    }
-    return () => {
-      if (hasChanged) {
-        updateCheckpoint(formInput);
+  // console.log('hasChanged:', hasChanged);
+  // console.log('fresh: ', formInput.fresh);
+  // console.log(formInput);
+
+  useEffect(() => { // SAVE!
+    if (hasChanged && !formInput.fresh) {
+      if (!checkP.checkpointId) {
+        console.log('creating new');
+        createNewCheckpoint(formInput)
+          .then(({ name }) => {
+            updateCheckpoint({ checkpointId: name })
+              .then(() => {
+                handleRefresh();
+                setHasChanged((prevVal) => !prevVal);
+              });
+          });
       }
-    };
+      if (checkP.checkpointId && hasChanged) {
+        console.log('updating');
+        updateCheckpoint(formInput).then(() => {
+          if (!creatingTask) {
+            saveSuccess();
+          }
+          setHasChanged((prevVal) => false);
+        });
+      }
+    }
   }, [save]);
 
   const handleFreshness = () => {
-    if (fresh) {
-      setFresh((prevVal) => (!prevVal));
+    if (formInput.fresh) {
+      setFormInput((prevVal) => ({ ...prevVal, fresh: false }));
     }
     if (!hasChanged) {
       setHasChanged((prevVal) => !prevVal);
     }
   };
+
+  useEffect(() => { // saveIndex after dragNdrop
+    setFormInput((prevVal) => ({ ...prevVal, index }));
+    handleFreshness();
+  }, [index]);
 
   useEffect(() => { // minimize
     if (formInput.expanded) {
@@ -103,13 +129,11 @@ export default function Checkpoint({
     }
   }, [min]);
 
-  useEffect(() => {
-    handleFreshness();
-  }, [reOrdered]);
-
-  useEffect(() => {
-    setFormInput((prevVal) => ({ ...prevVal, index }));
-  }, [index]);
+  // useEffect(() => {
+  //   if (!formInput.fresh) {
+  //     handleFreshness();
+  //   }
+  // }, [reOrdered]);
 
   const dance = () => {
     document.getElementById(`addTask${checkP.checkpointId}`).animate(
@@ -194,7 +218,7 @@ export default function Checkpoint({
   };
 
   return (
-    <Draggable draggableId={checkP.checkpointId} index={index}>
+    <Draggable draggableId={checkP.checkpointId ? checkP.checkpointId : checkP.dragId} index={index}>
       {(provided) => (
         <div
           id="projectRow"
