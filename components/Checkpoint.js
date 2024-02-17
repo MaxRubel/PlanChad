@@ -63,15 +63,15 @@ export default function Checkpoint({
     addToSaveManager(formInput);
   }, [formInput]);
 
-  useEffect(() => {
-    if (formInput.taks) {
-      console.log('pulling tasks');
-      getTasksOfCheckP(checkP.checkpointId)
-        .then((data) => {
-          setTasks(data);
-        });
-    }
-  }, [refresh, localRefresh]);
+  // useEffect(() => {
+  //   if (formInput.taks) {
+  //     console.log('pulling tasks');
+  //     getTasksOfCheckP(checkP.checkpointId)
+  //       .then((data) => {
+  //         setTasks(data);
+  //       });
+  //   }
+  // }, [refresh, localRefresh]);
 
   const handleFreshness = () => {
     if (formInput.fresh) {
@@ -82,13 +82,13 @@ export default function Checkpoint({
     }
   };
 
-  // useEffect(() => { // saveIndex after dragNdrop
-  //   setFormInput((prevVal) => ({ ...prevVal, index }));
-  //   handleFreshness();
-  //   if (formInput.localId === 'lspoinpe') {
-  //     console.log(index);
-  //   }
-  // }, [index]);
+  useEffect(() => { // saveIndex after dragNdrop
+    setFormInput((prevVal) => ({ ...prevVal, index }));
+    handleFreshness();
+    if (checkP.localId === 'lspqaci4') {
+      console.log('index has changed');
+    }
+  }, [index]);
 
   useEffect(() => { // minimize
     if (formInput.expanded) {

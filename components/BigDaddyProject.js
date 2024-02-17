@@ -19,7 +19,7 @@ export default function BigDaddyProject({ projectId }) {
   const [saveColor, setSaveColor] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [reOrdered, setReOrdered] = useState(0);
-  const [initialLoad, setInitalLoad] = useState(false);
+  const [init, setInit] = useState(true);
   const { addToSaveManager, saveInput } = useSaveContext();
 
   const saveAll = () => { // trigger save all
@@ -62,8 +62,8 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   useEffect(() => {
-    if (!initialLoad) { // grab from server
-      console.log('grabbing checkps from server');
+    if (init) { // grab from server
+      console.log('grabbing checkpoints from server');
       getCheckpointsOfProject(projectId).then((data) => {
         const indexedData = data.map((item, index) => (
           {
@@ -71,14 +71,15 @@ export default function BigDaddyProject({ projectId }) {
             index,
           }
         ));
-        setCheckpoints(indexedData);
         checkpoints.forEach((item) => addToSaveManager(item));
-        setInitalLoad((preVal) => !preVal);
+        setCheckpoints(indexedData);
+        setInit((preVal) => !preVal);
       });
     }
-    if (initialLoad) { // grab from client
-      console.log('setting checkps from context');
-      setCheckpoints(saveInput.checkpoints);
+    if (!init) { // grab from client
+      console.log('grabbing checkpoints from client');
+      const sortedArr = saveInput.checkpoints.sort((a, b) => a.id - b.id);
+      setCheckpoints(sortedArr);
     }
   }, [projectId, refresh]);
 
@@ -111,28 +112,34 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   const handleDragEnd = (result) => {
+    // saveAll();
+    console.log(result);
+
     const { destination, source, draggableId } = result;
-    console.log('dropsource:', source.index);
     if (!destination) {
       return;
     }
-    const reorderedChecks = Array.from(checkpoints);
-    const [reorderedCheckp] = reorderedChecks.splice(result.source.index, 1);
-    reorderedChecks.splice(result.destination.index, 0, reorderedCheckp);
-    const savedIndexes = reorderedChecks.map((item, index) => (
-      {
-        ...item, index,
-      }
+    console.log('source', source.index);
+    console.log('desination', destination.index);
+    const reorderedChecks = [...checkpoints];
+    const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
+    reorderedChecks.splice(destination.index, 0, reorderedCheckp);
+
+    // setCheckpoints(reorderedChecks);
+    const updatedChecks = reorderedChecks.map((item, index) => ({
+      ...item,
+      index,
+    }));
+    console.table(updatedChecks);
+    updatedChecks.forEach((item) => (
+      addToSaveManager(item)
     ));
-    // eslint-disable-next-line no-restricted-syntax
-    // for (const item of savedIndexes) {
-    //   if (item.localId === 'lsppaa92') {
-    //     console.log(item.index);
-    //   }
-    // }
-    console.table(savedIndexes);
-    setCheckpoints(savedIndexes);
-    setReOrdered((prevVal) => prevVal + 1);
+    // setCheckpoints(updatedChecks);
+    // updatedChecks.forEach((object) => {
+    //   console.log(object);
+    //   addToSaveManager(object);
+    // });
+    // handleRefresh();
   };
 
   // const handleDragEnd = (result) => {
