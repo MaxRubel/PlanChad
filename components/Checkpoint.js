@@ -7,11 +7,11 @@ import { useState, useEffect, useRef } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Draggable } from '@hello-pangea/dnd';
 import { trashIcon } from '../public/icons';
-import { deleteCheckpoint, updateCheckpoint } from '../api/checkpoint';
 import {
   createNewTask, deleteTask, getTasksOfCheckP, updateTask,
 } from '../api/task';
 import Task from './Task';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Checkpoint({
   checkP,
@@ -22,7 +22,6 @@ export default function Checkpoint({
   minAll,
   min,
   index,
-  reOrdered,
 }) {
   const [formInput, setFormInput] = useState({
     description: '',
@@ -31,20 +30,17 @@ export default function Checkpoint({
     deadline: '',
     index: '',
   });
-
   const [hasChanged, setHasChanged] = useState(false);
   const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [localRefresh, setLocalRefresh] = useState(0);
-  const [creatingTask, setCreatingTask] = useState(false);
-  const [fresh, setFresh] = useState(true);
-
+  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
+  const [initialLoad, setInitialLoad] = useState(false);
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
     </svg>
   );
-
   const plusIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -60,39 +56,36 @@ export default function Checkpoint({
 
   useEffect(() => {
     setFormInput(checkP);
+    addToSaveManager(formInput);
   }, [checkP]);
 
-  useEffect(() => {
-    getTasksOfCheckP(checkP.checkpointId)
-      .then((data) => {
-        setTasks(data);
-      });
-  }, [refresh, localRefresh]);
+  useEffect(() => { // send to save manager
+    addToSaveManager(formInput);
+  }, [formInput, save]);
 
-  useEffect(() => {
-    if (hasChanged) {
-      updateCheckpoint(formInput).then(() => {
-        if (!creatingTask) {
-          saveSuccess();
-        }
-        setHasChanged((prevVal) => false);
-      });
-    }
-    return () => {
-      if (hasChanged) {
-        updateCheckpoint(formInput);
-      }
-    };
-  }, [save]);
+  // useEffect(() => {
+  //   if (formInput.taks) {
+  //     console.log('pulling tasks');
+  //     getTasksOfCheckP(checkP.checkpointId)
+  //       .then((data) => {
+  //         setTasks(data);
+  //       });
+  //   }
+  // }, [refresh, localRefresh]);
 
   const handleFreshness = () => {
-    if (fresh) {
-      setFresh((prevVal) => (!prevVal));
+    if (formInput.fresh) {
+      setFormInput((prevVal) => ({ ...prevVal, fresh: false }));
     }
     if (!hasChanged) {
       setHasChanged((prevVal) => !prevVal);
     }
   };
+
+  useEffect(() => { // saveIndex after dragNdrop
+    setFormInput((prevVal) => ({ ...prevVal, index }));
+    handleFreshness();
+  }, [index]);
 
   useEffect(() => { // minimize
     if (formInput.expanded) {
@@ -102,14 +95,6 @@ export default function Checkpoint({
       }));
     }
   }, [min]);
-
-  useEffect(() => {
-    handleFreshness();
-  }, [reOrdered]);
-
-  useEffect(() => {
-    setFormInput((prevVal) => ({ ...prevVal, index }));
-  }, [index]);
 
   const dance = () => {
     document.getElementById(`addTask${checkP.checkpointId}`).animate(
@@ -139,62 +124,41 @@ export default function Checkpoint({
   };
 
   const handleDelete = () => {
-    saveAll();
-    if (formInput.fresh) {
-      deleteCheckpoint(checkP.checkpointId)
-        .then(() => {
-          deleteAllTasks();
-        })
-        .then(() => {
-          handleRefresh();
-        });
-    }
-    if (!formInput.fresh) {
-      if (window.confirm('Are you sure you would like to delete this Checkpoint and all of its tasks?')) {
-        deleteCheckpoint(checkP.checkpointId)
-          .then(() => {
-            deleteAllTasks();
-          })
-          .then(() => {
-            handleRefresh();
-          });
-      }
-    }
+    deleteFromSaveManager(formInput);
+    handleRefresh();
   };
 
-  const addTask = () => {
-    setCreatingTask((prevVal) => true);
-    saveAll();
-    dance();
-    handleFreshness();
-    const payload = {
-      checkpointId: checkP.checkpointId,
-      name: '',
-      startDate: '',
-      deadline: '',
-      description: '',
-      prep: '',
-      exec: '',
-      debrief: '',
-      list_index: '',
-      weight: '',
-      status: 'open',
-      fresh: true,
-      expanded: false,
-      deetsExpanded: false,
-    };
-    createNewTask(payload)
-      .then(({ name }) => {
-        updateTask({ taskId: name })
-          .then(() => {
-            setCreatingTask((prevVal) => false);
-            setRefresh((prevVal) => prevVal + 1);
-          });
-      });
-  };
+  // const addTask = () => {
+  //   saveAll();
+  //   dance();
+  //   handleFreshness();
+  //   const payload = {
+  //     checkpointId: checkP.checkpointId,
+  //     name: '',
+  //     startDate: '',
+  //     deadline: '',
+  //     description: '',
+  //     prep: '',
+  //     exec: '',
+  //     debrief: '',
+  //     list_index: '',
+  //     weight: '',
+  //     status: 'open',
+  //     fresh: true,
+  //     expanded: false,
+  //     deetsExpanded: false,
+  //   };
+  //   createNewTask(payload)
+  //     .then(({ name }) => {
+  //       updateTask({ taskId: name })
+  //         .then(() => {
+  //           setRefresh((prevVal) => prevVal + 1);
+  //         });
+  //     });
+  // };
 
   return (
-    <Draggable draggableId={checkP.checkpointId} index={index}>
+    <Draggable draggableId={checkP.checkpointId ? checkP.checkpointId : checkP.dragId} index={index}>
       {(provided) => (
         <div
           id="projectRow"
@@ -231,7 +195,7 @@ export default function Checkpoint({
                   </ButtonBoot>
                   <ButtonBoot
                     id={`addTask${checkP.checkpointId}`}
-                    onClick={addTask}
+                    // onClick={addTask}
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
@@ -270,7 +234,7 @@ export default function Checkpoint({
                     style={{
                       paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
                     }}
-            >{trashIcon}
+                  >{trashIcon}
                   </button>
                 </div>
               </div>

@@ -27,6 +27,7 @@ export default function NewProjectForm() {
       budget: '',
       description: '',
       expanded: true,
+      type: 'project',
     };
     createNewProject(payload).then(({ name }) => {
       updateProject({ projectId: name }).then(() => {

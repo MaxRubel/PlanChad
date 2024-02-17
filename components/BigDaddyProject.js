@@ -1,12 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import uniqid from 'uniqid';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
-import { createNewCheckpoint, getCheckpointsOfProject, updateCheckpoint } from '../api/checkpoint';
+import { getCheckpointsOfProject } from '../api/checkpoint';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function BigDaddyProject({ projectId }) {
   const [save, setSave] = useState(0);
@@ -16,6 +19,8 @@ export default function BigDaddyProject({ projectId }) {
   const [saveColor, setSaveColor] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [reOrdered, setReOrdered] = useState(0);
+  const [init, setInit] = useState(true);
+  const { addToSaveManager, saveInput } = useSaveContext();
 
   const saveAll = () => { // trigger save all
     setSave((prevVal) => prevVal + 1);
@@ -57,15 +62,25 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   useEffect(() => {
-    getCheckpointsOfProject(projectId).then((data) => {
-      const indexedData = data.map((item, index) => (
-        {
-          ...item,
-          index,
-        }
-      ));
-      setCheckpoints(indexedData);
-    });
+    if (init) { // grab from server
+      console.log('grabbing checkpoints from server');
+      getCheckpointsOfProject(projectId).then((data) => {
+        const indexedData = data.map((item, index) => (
+          {
+            ...item,
+            index,
+          }
+        ));
+        checkpoints.forEach((item) => addToSaveManager(item));
+        setCheckpoints(indexedData);
+        setInit((preVal) => !preVal);
+      });
+    }
+    if (!init) { // grab from client
+      console.log('grabbing checkpoints from client');
+      const sortedArr = saveInput.checkpoints.sort((a, b) => a.id - b.id);
+      setCheckpoints(sortedArr);
+    }
   }, [projectId, refresh]);
 
   const handleRefresh = () => {
@@ -73,8 +88,9 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   const addCheckpoint = () => {
-    const payload = {
+    const emptyChckP = {
       projectId,
+      localId: uniqid(),
       leadId: '',
       name: '',
       startDate: '',
@@ -83,34 +99,70 @@ export default function BigDaddyProject({ projectId }) {
       listIndex: '',
       expanded: false,
       fresh: true,
+      checkpointId: null,
+      dragId: uniqid(),
+      tasks: false,
+      type: 'checkpoint',
     };
-    saveAll();
-    createNewCheckpoint(payload)
-      .then(({ name }) => {
-        updateCheckpoint({ checkpointId: name })
-          .then(() => {
-            handleRefresh();
-          });
-      });
+    setCheckpoints((prevVal) => [...prevVal, emptyChckP]);
+  };
+
+  const handleDragStart = () => {
+    // saveAll();
   };
 
   const handleDragEnd = (result) => {
-    saveAll();
     const { destination, source, draggableId } = result;
     if (!destination) {
       return;
     }
-    const reorderedChecks = Array.from(checkpoints);
-    const [reorderedCheckp] = reorderedChecks.splice(result.source.index, 1);
-    reorderedChecks.splice(result.destination.index, 0, reorderedCheckp);
-    const savedIndexes = reorderedChecks.map((item, index) => (
-      {
-        ...item, index,
-      }
-    ));
-    setCheckpoints(savedIndexes);
-    setReOrdered((prevVal) => prevVal + 1);
+    console.log('source', source.index);
+    console.log('desination', destination.index);
+    const reorderedChecks = [...checkpoints];
+    const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
+    reorderedChecks.splice(destination.index, 0, reorderedCheckp);
+
+    // setCheckpoints(reorderedChecks);
+    for (let i = 0; i < reorderedChecks.length; i++) {
+      reorderedChecks[i].listIndex = i;
+      console.log(reorderedChecks[i]);
+      addToSaveManager(reorderedChecks[i]);
+    }
+    // updatedChecks.forEach((item) => (
+    //   addToSaveManager(item)
+    // ));
+    // console.table(updatedChecks);
+    setCheckpoints(reorderedChecks);
+    // updatedChecks.forEach((object) => {
+    //   console.log(object);
+    //   addToSaveManager(object);
+    // });
+    // handleRefresh();
   };
+
+  // const handleDragEnd = (result) => {
+  //   const { destination, source, draggableId } = result;
+  //   if (!destination) {
+  //     return;
+  //   }
+  //   const reorderedCheckPs = [...checkpoints];
+  //   const [removedCheckP] = reorderedCheckPs.splice(source.index, 1);
+  //   reorderedCheckPs.splice(destination.index, 0, removedCheckP);
+  //   const reOrderedFin = reorderedCheckPs.map((item, index) => (
+  //     {
+  //       ...item, index,
+  //     }
+  //   ));
+  //   setCheckpoints(reOrderedFin);
+  //   for (let i = 0; i < reOrderedFin.length; i++) {
+  //     // if (reOrderedFin[i].localId === 'lspoinpe') {
+  //     //   console.log(reOrderedFin[i].index);
+  //     // }
+  //     console.table(reOrderedFin);
+  //     // addToSaveManager(reOrderedFin[i]);
+  //   }
+  //   setReOrdered((prevVal) => prevVal + 1);
+  // };
 
   return (
     <>
@@ -144,7 +196,6 @@ export default function BigDaddyProject({ projectId }) {
             id="add-checkpt-button"
             style={{
               marginTop: '2%',
-              // marginBottom: '.5%',
               paddingLeft: '0%',
               display: 'flex',
               justifyContent: 'space-between',
@@ -162,13 +213,13 @@ export default function BigDaddyProject({ projectId }) {
             </Button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragEnd={handleDragEnd}>
+            <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
               <Droppable droppableId="checkPDrop">
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     {checkpoints.map((checkP, index) => (
                       <Checkpoint
-                        key={checkP.checkpointId}
+                        key={checkP.checkpointId ? checkP.checkpointId : checkP.dragId}
                         checkP={checkP}
                         handleRefresh={handleRefresh}
                         save={save}
