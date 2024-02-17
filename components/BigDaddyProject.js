@@ -106,9 +106,13 @@ export default function BigDaddyProject({ projectId }) {
     setCheckpoints((prevVal) => [...prevVal, emptyChckP]);
   };
 
+  const handleDragStart = () => {
+    setCheckpoints(saveInput.checkpoints);
+  };
+
   const handleDragEnd = (result) => {
-    saveAll();
     const { destination, source, draggableId } = result;
+    console.log('dropsource:', source.index);
     if (!destination) {
       return;
     }
@@ -120,9 +124,40 @@ export default function BigDaddyProject({ projectId }) {
         ...item, index,
       }
     ));
+    // eslint-disable-next-line no-restricted-syntax
+    // for (const item of savedIndexes) {
+    //   if (item.localId === 'lsppaa92') {
+    //     console.log(item.index);
+    //   }
+    // }
+    console.table(savedIndexes);
     setCheckpoints(savedIndexes);
     setReOrdered((prevVal) => prevVal + 1);
   };
+
+  // const handleDragEnd = (result) => {
+  //   const { destination, source, draggableId } = result;
+  //   if (!destination) {
+  //     return;
+  //   }
+  //   const reorderedCheckPs = [...checkpoints];
+  //   const [removedCheckP] = reorderedCheckPs.splice(source.index, 1);
+  //   reorderedCheckPs.splice(destination.index, 0, removedCheckP);
+  //   const reOrderedFin = reorderedCheckPs.map((item, index) => (
+  //     {
+  //       ...item, index,
+  //     }
+  //   ));
+  //   setCheckpoints(reOrderedFin);
+  //   for (let i = 0; i < reOrderedFin.length; i++) {
+  //     // if (reOrderedFin[i].localId === 'lspoinpe') {
+  //     //   console.log(reOrderedFin[i].index);
+  //     // }
+  //     console.table(reOrderedFin);
+  //     // addToSaveManager(reOrderedFin[i]);
+  //   }
+  //   setReOrdered((prevVal) => prevVal + 1);
+  // };
 
   return (
     <>
@@ -173,7 +208,7 @@ export default function BigDaddyProject({ projectId }) {
             </Button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragEnd={handleDragEnd}>
+            <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
               <Droppable droppableId="checkPDrop">
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps}>

@@ -13,7 +13,6 @@ export const SaveContextProvider = ({ children }) => {
 
   const addToSaveManager = (value) => {
     if (value.type === 'project') {
-      console.log('yuh');
       setSaveInput((prevVal) => ({ ...prevVal, project: { ...prevVal.project, ...value } }));
     }
     // ----------checkpoints------------

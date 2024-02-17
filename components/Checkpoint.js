@@ -22,7 +22,6 @@ export default function Checkpoint({
   minAll,
   min,
   index,
-  reOrdered,
 }) {
   const [formInput, setFormInput] = useState({
     description: '',
@@ -83,10 +82,13 @@ export default function Checkpoint({
     }
   };
 
-  useEffect(() => { // saveIndex after dragNdrop
-    setFormInput((prevVal) => ({ ...prevVal, index }));
-    handleFreshness();
-  }, [index]);
+  // useEffect(() => { // saveIndex after dragNdrop
+  //   setFormInput((prevVal) => ({ ...prevVal, index }));
+  //   handleFreshness();
+  //   if (formInput.localId === 'lspoinpe') {
+  //     console.log(index);
+  //   }
+  // }, [index]);
 
   useEffect(() => { // minimize
     if (formInput.expanded) {
@@ -127,27 +129,6 @@ export default function Checkpoint({
   const handleDelete = () => {
     deleteFromSaveManager(formInput);
     handleRefresh();
-    // saveAll();
-    // if (formInput.fresh) {
-    //   deleteCheckpoint(checkP.checkpointId)
-    //     .then(() => {
-    //       deleteAllTasks();
-    //     })
-    //     .then(() => {
-    //       handleRefresh();
-    //     });
-    // }
-    // if (!formInput.fresh) {
-    //   if (window.confirm('Are you sure you would like to delete this Checkpoint and all of its tasks?')) {
-    //     deleteCheckpoint(checkP.checkpointId)
-    //       .then(() => {
-    //         deleteAllTasks();
-    //       })
-    //       .then(() => {
-    //         handleRefresh();
-    //       });
-    //   }
-    // }
   };
 
   // const addTask = () => {
@@ -256,7 +237,7 @@ export default function Checkpoint({
                     style={{
                       paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
                     }}
-            >{trashIcon}
+                  >{trashIcon}
                   </button>
                 </div>
               </div>
