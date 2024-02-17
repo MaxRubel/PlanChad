@@ -6,6 +6,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Draggable } from '@hello-pangea/dnd';
+import uniqid from 'uniqid';
 import { trashIcon } from '../public/icons';
 import {
   createNewTask, deleteTask, getTasksOfCheckP, updateTask,
@@ -15,6 +16,7 @@ import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Checkpoint({
   checkP,
+  refresh,
   handleRefresh,
   save,
   saveSuccess,
@@ -31,11 +33,8 @@ export default function Checkpoint({
     index: '',
   });
   const [hasChanged, setHasChanged] = useState(false);
-  const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
-  const [localRefresh, setLocalRefresh] = useState(0);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
-  const [initialLoad, setInitialLoad] = useState(false);
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
@@ -61,19 +60,23 @@ export default function Checkpoint({
 
   useEffect(() => { // send to save manager
     if (!formInput.fresh) {
-      addToSaveManager(formInput, 'update');
+      addToSaveManager(formInput, 'update', 'checkpoint');
     }
   }, [formInput, save]);
 
-  // useEffect(() => {
-  //   if (formInput.taks) {
-  //     console.log('pulling tasks');
-  //     getTasksOfCheckP(checkP.checkpointId)
-  //       .then((data) => {
-  //         setTasks(data);
-  //       });
-  //   }
-  // }, [refresh, localRefresh]);
+  useEffect(() => {
+    // if (formInput.tasks) {
+    //   console.log('pulling tasks');
+    //   getTasksOfCheckP(checkP.checkpointId)
+    //     .then((data) => {
+    //       setTasks(data);
+    //     });
+    // }
+    console.log('grabbing tasks from save manager');
+    const filterTasks = saveInput.tasks.filter((item) => item.checkpointId === checkP.localId);
+    console.log('update dom:', filterTasks);
+    setTasks((preVal) => filterTasks);
+  }, [refresh]);
 
   const handleFreshness = () => {
     if (formInput.fresh) {
@@ -98,16 +101,16 @@ export default function Checkpoint({
     }
   }, [min]);
 
-  // const dance = () => {
-  //   document.getElementById(`addTask${checkP.checkpointId}`).animate(
-  //     [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
-  //     { duration: 500, iterations: 1 },
-  //   );
-  // };
-
-  const handleLocalRefresh = () => {
-    setLocalRefresh((prevVal) => prevVal + 1);
+  const dance = () => {
+    document.getElementById(`addTask${checkP.localId}`).animate(
+      [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
+      { duration: 500, iterations: 1 },
+    );
   };
+
+  // const handleLocalRefresh = () => {
+  //   setLocalRefresh((prevVal) => prevVal + 1);
+  // };
 
   const handleChange = (e) => {
     handleFreshness();
@@ -126,39 +129,35 @@ export default function Checkpoint({
   };
 
   const handleDelete = () => {
-    deleteFromSaveManager(formInput, 'delete');
-    // saveAll();
+    deleteFromSaveManager(formInput, 'delete', 'checkpoint');
     handleRefresh();
   };
 
-  // const addTask = () => {
-  //   saveAll();
-  //   dance();
-  //   handleFreshness();
-  //   const payload = {
-  //     checkpointId: checkP.checkpointId,
-  //     name: '',
-  //     startDate: '',
-  //     deadline: '',
-  //     description: '',
-  //     prep: '',
-  //     exec: '',
-  //     debrief: '',
-  //     list_index: '',
-  //     weight: '',
-  //     status: 'open',
-  //     fresh: true,
-  //     expanded: false,
-  //     deetsExpanded: false,
-  //   };
-  //   createNewTask(payload)
-  //     .then(({ name }) => {
-  //       updateTask({ taskId: name })
-  //         .then(() => {
-  //           setRefresh((prevVal) => prevVal + 1);
-  //         });
-  //     });
-  // };
+  const addTask = () => {
+    console.log('adding tasks');
+    saveAll();
+    dance();
+    handleFreshness();
+    const emptyTask = {
+      checkpointId: checkP.localId,
+      localId: uniqid(),
+      name: '',
+      startDate: '',
+      deadline: '',
+      description: '',
+      prep: '',
+      exec: '',
+      debrief: '',
+      index: '',
+      weight: '',
+      status: 'open',
+      fresh: true,
+      expanded: false,
+      deetsExpanded: false,
+    };
+    addToSaveManager(emptyTask, 'create', 'task');
+    handleRefresh();
+  };
 
   return (
     <Draggable draggableId={checkP.checkpointId ? checkP.checkpointId : checkP.localId} index={index}>
@@ -173,8 +172,8 @@ export default function Checkpoint({
             {/* -------line-side------------- */}
             <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
               <div id="empty" />
-              <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
-                <div id="empty" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+              <div id="line" style={{ borderLeft: '2px solid rgb(16, 197, 234, .6)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+                <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .6)' }} />
                 <div />
               </div>
             </div>
@@ -197,8 +196,8 @@ export default function Checkpoint({
                     {downIcon}
                   </ButtonBoot>
                   <ButtonBoot
-                    id={`addTask${checkP.checkpointId}`}
-                    // onClick={addTask}
+                    id={`addTask${checkP.localId}`}
+                    onClick={addTask}
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
@@ -321,13 +320,14 @@ export default function Checkpoint({
           {tasks.map((task) => (
             <Task
               key={task.taskId}
-              refresh={handleLocalRefresh}
               task={task}
               minAll={minAll}
               save={save}
               saveAll={saveAll}
               min={min}
-              saveSuccess={saveSuccess} />
+              saveSuccess={saveSuccess}
+              handleRefresh={handleRefresh}
+              />
           ))}
         </div>
       )}

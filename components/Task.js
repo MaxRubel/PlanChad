@@ -4,19 +4,18 @@
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { trashIcon } from '../public/icons';
-import { deleteTask, updateTask } from '../api/task';
 import TaskDeets from './TaskDeets';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Task({
-  refresh,
   task,
   min,
-  save,
   saveAll,
-  saveSuccess,
+  handleRefresh,
 }) {
-  const [formInput, setFormInput] = useState({});
+  const [formInput, setFormInput] = useState({ localId: true, fresh: true, deetsExpanded: false });
   const [hasChanged, setHasChanged] = useState(false);
+  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -30,7 +29,7 @@ export default function Task({
     </svg>
   );
 
-  useEffect(() => {
+  useEffect(() => { // minimze task
     if (formInput.expanded || formInput.deetsExpanded) {
       setFormInput((prevVal) => ({
         ...prevVal, expanded: false, deetsExpanded: false,
@@ -39,23 +38,26 @@ export default function Task({
     }
   }, [min]);
 
-  useEffect(() => {
+  useEffect(() => { // load task details
     setFormInput(task);
+    if (!formInput.deetsExpanded) {
+      console.log('true');
+    }
   }, [task]);
 
-  useEffect(() => {
-    if (hasChanged) {
-      updateTask(formInput).then(() => {
-        saveSuccess();
-        setHasChanged((prevVal) => false);
-      });
-    }
-    return () => {
-      if (hasChanged) {
-        updateTask(formInput);
-      }
-    };
-  }, [save]);
+  // useEffect(() => { //
+  //   if (hasChanged) {
+  //     updateTask(formInput).then(() => {
+  //       saveSuccess();
+  //       setHasChanged((prevVal) => false);
+  //     });
+  //   }
+  //   return () => {
+  //     if (hasChanged) {
+  //       updateTask(formInput);
+  //     }
+  //   };
+  // }, [save]);
 
   const handleFreshness = () => {
     if (formInput.fresh) {
@@ -66,15 +68,19 @@ export default function Task({
     }
   };
 
-  const handleCollapse = () => {
+  const handleCollapse = () => { // collapse main details
     handleFreshness();
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
-  const handleCollapse2 = () => {
+  const handleCollapse2 = () => { // collapse extra details
     handleFreshness();
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
   };
+
+  useEffect(() => {
+    addToSaveManager(formInput, 'update', 'task');
+  }, [formInput]);
 
   const handleChange = (e) => {
     handleFreshness();
@@ -86,20 +92,22 @@ export default function Task({
 
   const handleDelete = () => {
     saveAll();
-    if (formInput.fresh) {
-      deleteTask(task.taskId)
-        .then(() => {
-          refresh();
-        });
-    }
-    if (!formInput.fresh) {
-      if (window.confirm('Are you sure you would like to delete this task?')) {
-        deleteTask(task.taskId)
-          .then(() => {
-            refresh();
-          });
-      }
-    }
+    deleteFromSaveManager(formInput, 'delete', 'task');
+    handleRefresh();
+    // if (formInput.fresh) {
+    //   deleteTask(task.taskId)
+    //     .then(() => {
+    //       refresh();
+    //     });
+    // }
+    // if (!formInput.fresh) {
+    //   if (window.confirm('Are you sure you would like to delete this task?')) {
+    //     dele
+    //       .then(() => {
+    //         refresh();
+    //       });
+    //   }
+    // }
   };
 
   return (
@@ -108,8 +116,8 @@ export default function Task({
         {/* -------line-side------------- */}
         <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div id="empty" />
-          <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
-            <div id="empty" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+          <div id="line" style={{ borderLeft: '2px solid rgb(251, 157, 80, .5)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+            <div id="empty" style={{ borderBottom: '2px solid rgb(251, 157, 80, .5)' }} />
             <div />
           </div>
         </div>
