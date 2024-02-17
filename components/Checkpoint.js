@@ -56,11 +56,13 @@ export default function Checkpoint({
 
   useEffect(() => {
     setFormInput(checkP);
-    addToSaveManager(formInput);
+    // addToSaveManager(formInput, 'update');
   }, [checkP]);
 
   useEffect(() => { // send to save manager
-    addToSaveManager(formInput);
+    if (!formInput.fresh) {
+      addToSaveManager(formInput, 'update');
+    }
   }, [formInput, save]);
 
   // useEffect(() => {
@@ -96,12 +98,12 @@ export default function Checkpoint({
     }
   }, [min]);
 
-  const dance = () => {
-    document.getElementById(`addTask${checkP.checkpointId}`).animate(
-      [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
-      { duration: 500, iterations: 1 },
-    );
-  };
+  // const dance = () => {
+  //   document.getElementById(`addTask${checkP.checkpointId}`).animate(
+  //     [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
+  //     { duration: 500, iterations: 1 },
+  //   );
+  // };
 
   const handleLocalRefresh = () => {
     setLocalRefresh((prevVal) => prevVal + 1);
@@ -124,7 +126,8 @@ export default function Checkpoint({
   };
 
   const handleDelete = () => {
-    deleteFromSaveManager(formInput);
+    deleteFromSaveManager(formInput, 'delete');
+    // saveAll();
     handleRefresh();
   };
 
@@ -158,7 +161,7 @@ export default function Checkpoint({
   // };
 
   return (
-    <Draggable draggableId={checkP.checkpointId ? checkP.checkpointId : checkP.dragId} index={index}>
+    <Draggable draggableId={checkP.checkpointId ? checkP.checkpointId : checkP.localId} index={index}>
       {(provided) => (
         <div
           id="projectRow"
