@@ -8,12 +8,15 @@ export const useSaveContext = () => useContext(saveContext);
 export const SaveContextProvider = ({ children }) => {
   const initState = { project: {}, checkpoints: [], tasks: [] };
   const [saveInput, setSaveInput] = useState(initState);
-  const [test, setTest] = useState(0);
-  console.log(saveInput.checkpoints);
+
+  console.log('save manager says:', saveInput);
+
   const addToSaveManager = (value) => {
     if (value.type === 'project') {
-      console.log('saving project deets');
+      console.log('yuh');
+      setSaveInput((prevVal) => ({ ...prevVal, project: { ...prevVal.project, ...value } }));
     }
+    // ----------checkpoints------------
     if (value.type === 'checkpoint') {
       let inArray = false;
       for (let i = 0; i < saveInput.checkpoints.length; i++) {
@@ -31,13 +34,21 @@ export const SaveContextProvider = ({ children }) => {
         newArray[index] = value;
         setSaveInput((preVal) => ({ ...preVal, checkpoints: newArray }));
       }
+      // ------------tasks-------------
     }
     if (value.type === 'task') {
       console.log('task:', value);
     }
   };
+
+  const deleteFromSaveManager = (value) => {
+    const newArray = [...saveInput.checkpoints];
+    const index = newArray.findIndex((item) => item.localId === value.localId);
+    newArray.splice(index, 1);
+    setSaveInput((prevVal) => ({ ...prevVal, checkpoints: newArray }));
+  };
   return (
-    <saveContext.Provider value={{ addToSaveManager }}>
+    <saveContext.Provider value={{ addToSaveManager, deleteFromSaveManager, saveInput }}>
       {children}
     </saveContext.Provider>
   );

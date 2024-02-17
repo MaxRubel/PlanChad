@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
@@ -18,7 +19,8 @@ export default function BigDaddyProject({ projectId }) {
   const [saveColor, setSaveColor] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [reOrdered, setReOrdered] = useState(0);
-  const { addToSaveManager } = useSaveContext();
+  const [initialLoad, setInitalLoad] = useState(false);
+  const { addToSaveManager, saveInput } = useSaveContext();
 
   const saveAll = () => { // trigger save all
     setSave((prevVal) => prevVal + 1);
@@ -60,15 +62,24 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   useEffect(() => {
-    getCheckpointsOfProject(projectId).then((data) => {
-      const indexedData = data.map((item, index) => (
-        {
-          ...item,
-          index,
-        }
-      ));
-      setCheckpoints(indexedData);
-    });
+    if (!initialLoad) { // grab from server
+      console.log('grabbing checkps from server');
+      getCheckpointsOfProject(projectId).then((data) => {
+        const indexedData = data.map((item, index) => (
+          {
+            ...item,
+            index,
+          }
+        ));
+        setCheckpoints(indexedData);
+        checkpoints.forEach((item) => addToSaveManager(item));
+        setInitalLoad((preVal) => !preVal);
+      });
+    }
+    if (initialLoad) { // grab from client
+      console.log('setting checkps from context');
+      setCheckpoints(saveInput.checkpoints);
+    }
   }, [projectId, refresh]);
 
   const handleRefresh = () => {
@@ -93,14 +104,6 @@ export default function BigDaddyProject({ projectId }) {
       type: 'checkpoint',
     };
     setCheckpoints((prevVal) => [...prevVal, emptyChckP]);
-  //   saveAll();
-  //   createNewCheckpoint(payload)
-  //     .then(({ name }) => {
-  //       updateCheckpoint({ checkpointId: name })
-  //         .then(() => {
-  //           handleRefresh();
-  //         });
-  //     });
   };
 
   const handleDragEnd = (result) => {
