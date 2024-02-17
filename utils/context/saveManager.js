@@ -22,11 +22,6 @@ export const SaveContextProvider = ({ children }) => {
         const newArray = [...saveInput.checkpoints, input];
         setSaveInput((prevVal) => ({ ...prevVal, checkpoints: newArray }));
       }
-      // const existingIndex = saveInput.checkpoints.findIndex((item) => item.localId === value.localId);
-      // if (existingIndex === -1) { // create new item
-      //   console.log('add new');
-      //   const newArray = [...saveInput.checkpoints, value];
-      //   setSaveInput((prevVal) => ({ ...prevVal, checkpoints: newArray }));
       if (action === 'update') { // item exists
         const existingIndex = saveInput.checkpoints.findIndex((item) => item.localId === input.localId);
         // console.log('saveing:', input.index);
@@ -45,20 +40,24 @@ export const SaveContextProvider = ({ children }) => {
   const deleteFromSaveManager = (input, action) => {
     if (action === 'delete') {
       const newArray = [...saveInput.checkpoints];
-      const index = saveInput.checkpoints.findIndex((item) => item.localId === input.localId);
-      console.log('index of item to delete is:', index);
-      // const index = newArray.findIndex((item) => item.localId === value.localId);
-      // console.log('deleting:', newArray[index].name);
-      newArray.splice(index, 1); // delete item
+      const deleteIndex = saveInput.checkpoints.findIndex((item) => item.localId === input.localId);
+      newArray.splice(deleteIndex, 1); // delete item
       newArray.sort((a, b) => a.index - b.index); // sort
       const updatedArray = newArray.map((item, i) => ({ ...item, index: i })); // update indexes
-      console.table(updatedArray);
       setSaveInput((prevVal) => ({ ...prevVal, checkpoints: updatedArray })); // set new array
     }
   };
 
+  const clearSaveManager = () => {
+    console.log('clear save manager');
+    setSaveInput((prevVal) => initState);
+  };
+
   return (
-    <saveContext.Provider value={{ addToSaveManager, deleteFromSaveManager, saveInput }}>
+    <saveContext.Provider value={{
+      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager,
+    }}
+    >
       {children}
     </saveContext.Provider>
   );
