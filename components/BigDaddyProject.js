@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Button } from '@mui/material';
+import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { createNewCheckpoint, getCheckpointsOfProject, updateCheckpoint } from '../api/checkpoint';
@@ -14,6 +15,7 @@ export default function BigDaddyProject({ projectId }) {
   const [min, setMin] = useState(0);
   const [saveColor, setSaveColor] = useState(0);
   const [minColor, setMinColor] = useState(0);
+  const [reOrdered, setReOrdered] = useState(0);
 
   const saveAll = () => { // trigger save all
     setSave((prevVal) => prevVal + 1);
@@ -56,7 +58,13 @@ export default function BigDaddyProject({ projectId }) {
 
   useEffect(() => {
     getCheckpointsOfProject(projectId).then((data) => {
-      setCheckpoints(data);
+      const indexedData = data.map((item, index) => (
+        {
+          ...item,
+          index,
+        }
+      ));
+      setCheckpoints(indexedData);
     });
   }, [projectId, refresh]);
 
@@ -84,6 +92,24 @@ export default function BigDaddyProject({ projectId }) {
             handleRefresh();
           });
       });
+  };
+
+  const handleDragEnd = (result) => {
+    saveAll();
+    const { destination, source, draggableId } = result;
+    if (!destination) {
+      return;
+    }
+    const reorderedChecks = Array.from(checkpoints);
+    const [reorderedCheckp] = reorderedChecks.splice(result.source.index, 1);
+    reorderedChecks.splice(result.destination.index, 0, reorderedCheckp);
+    const savedIndexes = reorderedChecks.map((item, index) => (
+      {
+        ...item, index,
+      }
+    ));
+    setCheckpoints(savedIndexes);
+    setReOrdered((prevVal) => prevVal + 1);
   };
 
   return (
@@ -134,31 +160,32 @@ export default function BigDaddyProject({ projectId }) {
               }}>
               Add A Checkpoint
             </Button>
-            <div>
-              {/* <Button
-                variant="outlined"
-                // onClick={addCheckpoint}
-                style={{
-                  margin: '1% 0%',
-                  color: 'rgb(200, 200, 200)',
-                  border: '1px solid rgb(100, 100, 100)',
-                }}>
-                Add A Collaborator
-              </Button> */}
-            </div>
           </div>
-          {checkpoints.map((checkP) => (
-            <Checkpoint
-              key={checkP.checkpointId}
-              checkP={checkP}
-              handleRefresh={handleRefresh}
-              save={save}
-              saveSuccess={saveSuccess}
-              saveAll={saveAll}
-              mimAll={minAll}
-              min={min}
-            />
-          ))}
+          <div id="dnd-container">
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable droppableId="checkPDrop">
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {checkpoints.map((checkP, index) => (
+                      <Checkpoint
+                        key={checkP.checkpointId}
+                        checkP={checkP}
+                        handleRefresh={handleRefresh}
+                        save={save}
+                        saveSuccess={saveSuccess}
+                        saveAll={saveAll}
+                        minAll={minAll}
+                        min={min}
+                        index={index}
+                        reOrdered={reOrdered}
+                      />
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
         </div>
       </div>
     </>
