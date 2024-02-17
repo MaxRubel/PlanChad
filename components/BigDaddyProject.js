@@ -108,13 +108,10 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   const handleDragStart = () => {
-    setCheckpoints(saveInput.checkpoints);
+    // saveAll();
   };
 
   const handleDragEnd = (result) => {
-    // saveAll();
-    console.log(result);
-
     const { destination, source, draggableId } = result;
     if (!destination) {
       return;
@@ -126,15 +123,16 @@ export default function BigDaddyProject({ projectId }) {
     reorderedChecks.splice(destination.index, 0, reorderedCheckp);
 
     // setCheckpoints(reorderedChecks);
-    const updatedChecks = reorderedChecks.map((item, index) => ({
-      ...item,
-      index,
-    }));
-    console.table(updatedChecks);
-    updatedChecks.forEach((item) => (
-      addToSaveManager(item)
-    ));
-    // setCheckpoints(updatedChecks);
+    for (let i = 0; i < reorderedChecks.length; i++) {
+      reorderedChecks[i].listIndex = i;
+      console.log(reorderedChecks[i]);
+      addToSaveManager(reorderedChecks[i]);
+    }
+    // updatedChecks.forEach((item) => (
+    //   addToSaveManager(item)
+    // ));
+    // console.table(updatedChecks);
+    setCheckpoints(reorderedChecks);
     // updatedChecks.forEach((object) => {
     //   console.log(object);
     //   addToSaveManager(object);

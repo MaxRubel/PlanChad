@@ -61,7 +61,7 @@ export default function Checkpoint({
 
   useEffect(() => { // send to save manager
     addToSaveManager(formInput);
-  }, [formInput]);
+  }, [formInput, save]);
 
   // useEffect(() => {
   //   if (formInput.taks) {
@@ -85,9 +85,6 @@ export default function Checkpoint({
   useEffect(() => { // saveIndex after dragNdrop
     setFormInput((prevVal) => ({ ...prevVal, index }));
     handleFreshness();
-    if (checkP.localId === 'lspqaci4') {
-      console.log('index has changed');
-    }
   }, [index]);
 
   useEffect(() => { // minimize
