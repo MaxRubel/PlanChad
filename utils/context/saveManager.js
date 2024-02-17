@@ -11,34 +11,52 @@ export const SaveContextProvider = ({ children }) => {
 
   // console.log('save manager says:', saveInput);
 
-  const addToSaveManager = (value) => {
-    if (value.type === 'project') {
-      setSaveInput((prevVal) => ({ ...prevVal, project: { ...prevVal.project, ...value } }));
+  const addToSaveManager = (input, action) => {
+    if (input.type === 'project') {
+      setSaveInput((prevVal) => ({ ...prevVal, project: { ...prevVal.project, ...input } }));
     }
     // ----------checkpoints------------
-    if (value.type === 'checkpoint') {
-      const existingIndex = saveInput.checkpoints.findIndex((item) => item.localId === value.localId);
-      if (existingIndex === -1) { // create new item
-        const newArray = [...saveInput.checkpoints, value];
+    if (input.type === 'checkpoint') {
+      if (action === 'create') {
+        console.log('add new');
+        const newArray = [...saveInput.checkpoints, input];
         setSaveInput((prevVal) => ({ ...prevVal, checkpoints: newArray }));
-      } else { // item exists
+      }
+      // const existingIndex = saveInput.checkpoints.findIndex((item) => item.localId === value.localId);
+      // if (existingIndex === -1) { // create new item
+      //   console.log('add new');
+      //   const newArray = [...saveInput.checkpoints, value];
+      //   setSaveInput((prevVal) => ({ ...prevVal, checkpoints: newArray }));
+      if (action === 'update') { // item exists
+        const existingIndex = saveInput.checkpoints.findIndex((item) => item.localId === input.localId);
+        // console.log('saveing:', input.index);
         const copy = [...saveInput.checkpoints];
-        copy[existingIndex] = value; // paste
+        copy[existingIndex] = input; // paste
         setSaveInput((prevVal) => ({ ...prevVal, checkpoints: copy }));
       }
       // ------------tasks-------------
     }
-    if (value.type === 'task') {
-      console.log('task:', value);
+    if (input.type === 'task') {
+      console.log('task:', input);
     }
   };
 
-  const deleteFromSaveManager = (value) => {
-    const newArray = [...saveInput.checkpoints];
-    const index = newArray.findIndex((item) => item.localId === value.localId);
-    newArray.splice(index, 1);
-    setSaveInput((prevVal) => ({ ...prevVal, checkpoints: newArray }));
+  // --------delete-----------------
+  const deleteFromSaveManager = (input, action) => {
+    if (action === 'delete') {
+      const newArray = [...saveInput.checkpoints];
+      const index = saveInput.checkpoints.findIndex((item) => item.localId === input.localId);
+      console.log('index of item to delete is:', index);
+      // const index = newArray.findIndex((item) => item.localId === value.localId);
+      // console.log('deleting:', newArray[index].name);
+      newArray.splice(index, 1); // delete item
+      newArray.sort((a, b) => a.index - b.index); // sort
+      const updatedArray = newArray.map((item, i) => ({ ...item, index: i })); // update indexes
+      console.table(updatedArray);
+      setSaveInput((prevVal) => ({ ...prevVal, checkpoints: updatedArray })); // set new array
+    }
   };
+
   return (
     <saveContext.Provider value={{ addToSaveManager, deleteFromSaveManager, saveInput }}>
       {children}

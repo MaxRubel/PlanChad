@@ -24,6 +24,9 @@ export default function BigDaddyProject({ projectId }) {
 
   const saveAll = () => { // trigger save all
     setSave((prevVal) => prevVal + 1);
+    const copy = [...saveInput.checkpoints];
+    const ordered = copy.sort((a, b) => a.index - b.index);
+    setCheckpoints(ordered);
   };
 
   const saveSuccess = () => { // trigger save all animation
@@ -77,8 +80,8 @@ export default function BigDaddyProject({ projectId }) {
       });
     }
     if (!init) { // grab from client
-      console.log('grabbing checkpoints from client');
-      const sortedArr = saveInput.checkpoints.sort((a, b) => a.id - b.id);
+      console.log('grabbing checkpoints from save manager:', saveInput.checkpoints);
+      const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
       setCheckpoints(sortedArr);
     }
   }, [projectId, refresh]);
@@ -96,7 +99,7 @@ export default function BigDaddyProject({ projectId }) {
       startDate: '',
       deadline: '',
       description: '',
-      listIndex: '',
+      index: checkpoints.length,
       expanded: false,
       fresh: true,
       checkpointId: null,
@@ -104,11 +107,12 @@ export default function BigDaddyProject({ projectId }) {
       tasks: false,
       type: 'checkpoint',
     };
-    setCheckpoints((prevVal) => [...prevVal, emptyChckP]);
+    addToSaveManager(emptyChckP, 'create');
+    handleRefresh();
   };
 
   const handleDragStart = () => {
-    // saveAll();
+    saveAll();
   };
 
   const handleDragEnd = (result) => {
@@ -124,20 +128,12 @@ export default function BigDaddyProject({ projectId }) {
 
     // setCheckpoints(reorderedChecks);
     for (let i = 0; i < reorderedChecks.length; i++) {
-      reorderedChecks[i].listIndex = i;
+      reorderedChecks[i].index = i;
       console.log(reorderedChecks[i]);
-      addToSaveManager(reorderedChecks[i]);
+      addToSaveManager(reorderedChecks[i], 'update');
     }
-    // updatedChecks.forEach((item) => (
-    //   addToSaveManager(item)
-    // ));
-    // console.table(updatedChecks);
-    setCheckpoints(reorderedChecks);
-    // updatedChecks.forEach((object) => {
-    //   console.log(object);
-    //   addToSaveManager(object);
-    // });
-    // handleRefresh();
+    console.table(reorderedChecks);
+    saveAll();
   };
 
   // const handleDragEnd = (result) => {

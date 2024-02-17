@@ -38,7 +38,7 @@ export default function ProjectCard({
   useEffect(() => {
     getSingleProject(projectId).then((data) => {
       setFormInput(data);
-      addToSaveManager(data)
+      addToSaveManager(data, 'create')
     });
   }, [projectId]);
 
@@ -51,7 +51,7 @@ export default function ProjectCard({
   // }, [save]);
 
   useEffect(()=>{
-    addToSaveManager(formInput)
+    addToSaveManager(formInput, 'update')
   }, [formInput])
 
   const handleCollapse = () => {
