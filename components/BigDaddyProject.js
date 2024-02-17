@@ -20,7 +20,9 @@ export default function BigDaddyProject({ projectId }) {
   const [minColor, setMinColor] = useState(0);
   const [reOrdered, setReOrdered] = useState(0);
   const [init, setInit] = useState(true);
-  const { addToSaveManager, saveInput, clearSaveManager } = useSaveContext();
+  const {
+    addToSaveManager, saveInput, clearSaveManager, hasMemory,
+  } = useSaveContext();
 
   const saveAll = () => { // trigger save all
     setSave((prevVal) => prevVal + 1);
@@ -63,19 +65,32 @@ export default function BigDaddyProject({ projectId }) {
     setMin((prevVal) => prevVal + 1);
     setMinColor((prevVal) => prevVal + 1);
   };
-
-  useEffect(() => { // load in data on mount
-    if (init) { // grab from server
-      console.log('grabbing checkpoints from server');
-      getCheckpointsOfProject(projectId).then((data) => {
-        const sortedArr = data.sort((a, b) => a.index - b.index);
-        checkpoints.forEach((item) => addToSaveManager(item));
-        setCheckpoints(sortedArr);
+  const handleRefresh = () => {
+    setRefresh((prevVal) => prevVal + 1);
+  };
+  useEffect(() => { // initialization
+    console.log('has memory: ', hasMemory);
+    console.log('init: ', init);
+    if (init) {
+      if (hasMemory) {
+        console.log('initializing from save manager:');
         setInit((preVal) => !preVal);
-      });
+      } else {
+        console.log('grabbing checkpoints from server');
+        // handleRefresh();
+        setInit((preVal) => !preVal);
+        addToSaveManager('', '', '');
+      }
+      // getCheckpointsOfProject(projectId).then((data) => {
+      //   const sortedArr = data.sort((a, b) => a.index - b.index);
+      //   checkpoints.forEach((item) => addToSaveManager(item));
+      //   setCheckpoints(sortedArr);
+      //   setInit((preVal) => !preVal);
+      // });
+      // setInit((preVal) => !preVal);
     }
     if (!init) { // grab from client
-      console.log('grabbing checkpoints from save manager:', saveInput.checkpoints);
+      console.log('refreshing checkpoints from save manager:', saveInput.checkpoints);
       const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
       setCheckpoints(sortedArr);
     }
@@ -84,10 +99,6 @@ export default function BigDaddyProject({ projectId }) {
   useEffect(() => () => { // cleanup unmount
     clearSaveManager();
   }, []);
-
-  const handleRefresh = () => {
-    setRefresh((prevVal) => prevVal + 1);
-  };
 
   const addCheckpoint = () => {
     const emptyChckP = {
@@ -106,7 +117,7 @@ export default function BigDaddyProject({ projectId }) {
       tasks: false,
       type: 'checkpoint',
     };
-    addToSaveManager(emptyChckP, 'create');
+    addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
   };
 
@@ -125,8 +136,7 @@ export default function BigDaddyProject({ projectId }) {
 
     for (let i = 0; i < reorderedChecks.length; i++) { // add new array to save manager
       reorderedChecks[i].index = i;
-      console.log(reorderedChecks[i]);
-      addToSaveManager(reorderedChecks[i], 'update');
+      addToSaveManager(reorderedChecks[i], 'update', 'checkpoint');
     }
     saveAll();
   };
@@ -196,6 +206,7 @@ export default function BigDaddyProject({ projectId }) {
                         min={min}
                         index={index}
                         reOrdered={reOrdered}
+                        refresh={refresh}
                       />
                     ))}
                     {provided.placeholder}

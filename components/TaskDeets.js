@@ -7,19 +7,33 @@ import { useEffect, useState } from 'react';
 export default function TaskDeets({ formInput, min, handleChange }) {
   const [fresh, setFresh] = useState(true);
 
+  // useEffect(() => {
+  //   let timeout;
+  //   if (formInput.deetsExpanded && fresh) {
+  //     document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid';
+  //     setFresh((prevVal) => !prevVal);
+  //   }
+
+  //   if (!formInput.deetsExpanded && !fresh) {
+  //     timeout = setTimeout(() => {
+  //       document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none';
+  //     }, 266);
+  //   }
+  // }, [formInput.deetsExpanded]);
+
   useEffect(() => {
     let timeout;
-    if (fresh && formInput.taskId) {
-      document.getElementById(`taskDeets${formInput.taskId}`).style.display = 'none';
+    if (fresh && formInput.localId) { // onload
+      document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none';
       setFresh((prevVal) => !prevVal);
     }
-    if (!formInput.deetsExpanded && formInput.taskId && !fresh) {
+    if (!formInput.deetsExpanded && formInput.localId && !fresh) {
       timeout = setTimeout(() => {
-        document.getElementById(`taskDeets${formInput.taskId}`).style.display = 'none';
+        document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none';
       }, 266);
     }
     if (formInput.deetsExpanded) {
-      document.getElementById(`taskDeets${formInput.taskId}`).style.display = 'grid';
+      document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid';
     }
     return () => {
       clearTimeout(timeout);
@@ -27,7 +41,7 @@ export default function TaskDeets({ formInput, min, handleChange }) {
   }, [formInput.deetsExpanded, fresh]);
 
   return (
-    <div id={`taskDeets${formInput.taskId}`} className="taskDeets">
+    <div id={`taskDeets${formInput.localId}`} className="taskDeets" style={{ display: 'hidden' }}>
       <div id="margin" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         <div id="empty" />
         <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
