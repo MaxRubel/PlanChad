@@ -12,10 +12,12 @@ export default function Task({
   min,
   saveAll,
   handleRefresh,
+  indexT,
 }) {
   const [formInput, setFormInput] = useState({ localId: true, fresh: true, deetsExpanded: false });
   const [hasChanged, setHasChanged] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
+  const [isLoading, setIsloading] = useState(true);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -29,36 +31,10 @@ export default function Task({
     </svg>
   );
 
-  useEffect(() => { // minimze task
-    if (formInput.expanded || formInput.deetsExpanded) {
-      setFormInput((prevVal) => ({
-        ...prevVal, expanded: false, deetsExpanded: false,
-      }));
-      setHasChanged((prevVal) => true);
-    }
-    saveAll();
-  }, [min]);
-
   useEffect(() => { // load task details
-    setFormInput(task);
-    if (!formInput.deetsExpanded) {
-      console.log('true');
-    }
+    if (isLoading) setFormInput(task);
+    setIsloading(false);
   }, [task]);
-
-  // useEffect(() => { //
-  //   if (hasChanged) {
-  //     updateTask(formInput).then(() => {
-  //       saveSuccess();
-  //       setHasChanged((prevVal) => false);
-  //     });
-  //   }
-  //   return () => {
-  //     if (hasChanged) {
-  //       updateTask(formInput);
-  //     }
-  //   };
-  // }, [save]);
 
   const handleFreshness = () => {
     if (formInput.fresh) {
@@ -68,6 +44,16 @@ export default function Task({
       setHasChanged((prevVal) => !prevVal);
     }
   };
+
+  useEffect(() => { // minimze task
+    if (formInput.expanded || formInput.deetsExpanded) {
+      setFormInput((prevVal) => ({
+        ...prevVal, expanded: false, deetsExpanded: false,
+      }));
+      setHasChanged((prevVal) => true);
+    }
+    saveAll();
+  }, [min]);
 
   const handleCollapse = () => { // collapse main details
     handleFreshness();
@@ -79,9 +65,9 @@ export default function Task({
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
   };
 
-  // useEffect(() => {
-  //   addToSaveManager(formInput, 'update', 'task');
-  // }, [formInput]);
+  useEffect(() => {
+    addToSaveManager(formInput, 'update', 'task');
+  }, [formInput]);
 
   const handleChange = (e) => {
     handleFreshness();
@@ -95,20 +81,6 @@ export default function Task({
     saveAll();
     deleteFromSaveManager(formInput, 'delete', 'task');
     handleRefresh();
-    // if (formInput.fresh) {
-    //   deleteTask(task.taskId)
-    //     .then(() => {
-    //       refresh();
-    //     });
-    // }
-    // if (!formInput.fresh) {
-    //   if (window.confirm('Are you sure you would like to delete this task?')) {
-    //     dele
-    //       .then(() => {
-    //         refresh();
-    //       });
-    //   }
-    // }
   };
 
   return (
@@ -165,7 +137,7 @@ export default function Task({
                   border: 'none',
                   backgroundColor: 'transparent',
                 }}
-                placeholder="Enter a task name..."
+                placeholder={`Task ${indexT + 1}`}
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}

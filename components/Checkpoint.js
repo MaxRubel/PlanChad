@@ -34,7 +34,17 @@ export default function Checkpoint({
   });
   const [hasChanged, setHasChanged] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
+  const {
+    addToSaveManager,
+    deleteFromSaveManager,
+    saveInput,
+    serverRefresh,
+  } = useSaveContext();
+  const [init, setInit] = useState(true);
+  const isInitialRender2 = useRef(true);
+  const isInitialRender = useRef(true);
+  const [tasksLoaded, setTasksLoaded] = useState(false);
+
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
@@ -53,19 +63,52 @@ export default function Checkpoint({
     </svg>
   );
 
+  useEffect(() => { // first mount...
+    if (init) { // initializing...
+      // console.log('initializing...cp');
+      if (checkP.tasks) { // hydrating from server...
+        console.log('hydrating from server...cp');
+        console.log('has tasks');
+        getTasksOfCheckP(checkP.localId).then((data) => {
+          for (let i = 0; i < data.length; i++) {
+            addToSaveManager(data[i], 'create', 'task');
+          }
+          setInit((preVal) => !preVal);
+          handleRefresh();
+        });
+      }
+    }
+    if (!init) { // syncing with save manager...
+      // console.log('retreiving tasks from save manager');
+      const sortedArr = saveInput.tasks.sort((a, b) => a.index - b.index);
+      setTasks(sortedArr);
+    }
+  }, [refresh]);
+
+  useEffect(() => {
+    if (isInitialRender2.current) {
+      isInitialRender2.current = false;
+    } else {
+      getTasksOfCheckP(checkP.localId).then((data) => {
+        for (let i = 0; i < data.length; i++) {
+          addToSaveManager(data[i], 'create', 'task');
+          console.log(data);
+        }
+        handleRefresh();
+      });
+    }
+  }, [serverRefresh]);
+
   useEffect(() => {
     setFormInput(checkP);
-    // addToSaveManager(formInput, 'update');
   }, [checkP]);
 
   useEffect(() => { // send to save manager
-    if (!formInput.fresh) {
-      addToSaveManager(formInput, 'update', 'checkpoint');
-    }
+    addToSaveManager(formInput, 'update', 'checkpoint');
   }, [formInput, save]);
 
   useEffect(() => {
-    console.log('grabbing tasks from save manager');
+    // console.log('grabbing tasks from save manager');
     const filterTasks = saveInput.tasks.filter((item) => item.checkpointId === checkP.localId);
     setTasks((preVal) => filterTasks);
   }, [refresh]);
@@ -85,13 +128,16 @@ export default function Checkpoint({
   }, [index]);
 
   useEffect(() => { // minimize
-    if (formInput.expanded) {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+    } else {
+      console.log('minimize');
       handleFreshness();
       setFormInput((prevVal) => ({
         ...prevVal, expanded: false,
       }));
     }
-    saveAll();
+    // saveAll();
   }, [min]);
 
   const dance = () => {
@@ -140,6 +186,7 @@ export default function Checkpoint({
     };
     addToSaveManager(emptyTask, 'create', 'task');
     handleRefresh();
+    setFormInput((prevVal) => ({ ...prevVal, tasks: true }));
   };
 
   return (
@@ -300,9 +347,9 @@ export default function Checkpoint({
             {/* -----add-a-task------ */}
             <div className="marginR" />
           </div>
-          {tasks.map((task) => (
+          {tasks.map((task, indexT) => (
             <Task
-              key={task.taskId}
+              key={task.localId}
               task={task}
               minAll={minAll}
               save={save}
@@ -310,6 +357,7 @@ export default function Checkpoint({
               min={min}
               saveSuccess={saveSuccess}
               handleRefresh={handleRefresh}
+              indexT={indexT}
             />
           ))}
         </div>
