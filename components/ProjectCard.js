@@ -17,7 +17,7 @@ const initialState = {
   start_date: '',
   projectId: '',
   user_id: '',
-  expanded: true,
+  expanded: false,
   type: 'project',
 };
 
@@ -50,9 +50,9 @@ export default function ProjectCard({
   //   }
   // }, [save]);
 
-  // useEffect(() => {
-  //   addToSaveManager(formInput, 'update', 'checkpoint')
-  // }, [formInput])
+  useEffect(() => {
+    addToSaveManager(formInput, 'update', 'project')
+  }, [formInput])
 
   const handleCollapse = () => {
     setHasChanged((prevVal) => true);

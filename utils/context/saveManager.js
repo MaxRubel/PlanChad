@@ -3,6 +3,7 @@ import {
   createNewCheckpoint, deleteCheckpoint, getCheckpointsOfProject, updateCheckpoint,
 } from '../../api/checkpoint';
 import { createNewTask, updateTask } from '../../api/task';
+import { updateProject } from '../../api/project';
 
 const saveContext = createContext(null);
 
@@ -14,6 +15,8 @@ export const SaveContextProvider = ({ children }) => {
   const [saveInput, setSaveInput] = useState(initState);
   const [hasMemory, setHasMemory] = useState(false);
   const [checksToDelete, setChecksToDelete] = useState([]);
+  const [serverRefresh, setServerRefresh] = useState(0);
+  const [hasFetched, setHasFetched] = useState(false);
 
   const addToSaveManager = (input, action, type) => {
     console.log('save manager receiving, ', type, input);
@@ -118,13 +121,7 @@ export const SaveContextProvider = ({ children }) => {
         .then(({ name }) => { updateTask({ taskId: name }); })));
 
     console.log('create new tasks: ', postTasks.length);
-    if (postCheckPPromise.length > 0) { // create new checkpoints...
-      Promise.all(postCheckPPromise);
-    }
     console.log('create new checkpoints: ', postCheckpoints.length);
-    if (postTasksPromise.length > 0) { // create new tasks...
-      Promise.all(postTasksPromise);
-    }
 
     // -----update----------------
     const patchCheckpoints = checkpoints.filter((item) => item.checkpointId);
@@ -133,24 +130,33 @@ export const SaveContextProvider = ({ children }) => {
     const patchPromsie = patchTasks.map((item) => (updateTask(item)));
 
     console.log('update checkpoints, ', patchCheckpoints.length);
-    if (patchChecPPromise.length > 0) {
-      Promise.all(patchChecPPromise);
-    }
 
     // console.log('update tasks, ', patchCheckpoints.length);
     // ------delete server checkpoints----------
     console.log('deleting from server: ', checksToDelete.length, 'checkpoints');
-    if (checksToDelete.length > 0) {
-      const checksDeletePromise = checksToDelete.map((item) => (deleteCheckpoint(item.checkpointId)));
-      Promise.all(checksDeletePromise).then(() => {
-        setChecksToDelete((preVal) => ([]));
+
+    const checksDeletePromise = checksToDelete.map((item) => (deleteCheckpoint(item.checkpointId)));
+    updateProject(saveInput.project);
+    Promise.all(postCheckPPromise).then(() => {
+      Promise.all(postTasksPromise).then(() => {
+        Promise.all(patchChecPPromise).then(() => {
+          Promise.all(patchChecPPromise).then(() => {
+            Promise.all(patchChecPPromise).then(() => {
+              Promise.all(checksDeletePromise).then(() => {
+                setChecksToDelete((preVal) => ([]));
+                clearSaveManager();
+                setServerRefresh((preVal) => preVal + 1);
+              });
+            });
+          });
+        });
       });
-    }
+    });
   };
 
   return (
     <saveContext.Provider value={{
-      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer, fetchAll,
+      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer, fetchAll, serverRefresh, hasFetched,
     }}
     >
       {children}

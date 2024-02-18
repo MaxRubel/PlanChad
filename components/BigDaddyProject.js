@@ -1,17 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
-import { TextsmsTwoTone } from '@mui/icons-material';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { getCheckpointsOfProject } from '../api/checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import { updateProject } from '../api/project';
 
 export default function BigDaddyProject({ projectId }) {
   const [save, setSave] = useState(0);
@@ -21,8 +19,9 @@ export default function BigDaddyProject({ projectId }) {
   const [minColor, setMinColor] = useState(0);
   const [init, setInit] = useState(true);
   const {
-    addToSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer, fetchAll,
+    addToSaveManager, saveInput, hasMemory, sendToServer, serverRefresh,
   } = useSaveContext();
+  const isInitialRender = useRef(true);
 
   const saveAll = () => { // send all to save manager
     setSave((prevVal) => prevVal + 1);
@@ -35,6 +34,19 @@ export default function BigDaddyProject({ projectId }) {
     setRefresh((prevVal) => prevVal + 1);
   };
 
+  useEffect(() => {
+    if (isInitialRender.current) {
+      isInitialRender.current = false;
+    } else {
+      getCheckpointsOfProject(projectId).then((data) => {
+        for (let i = 0; i < data.length; i++) {
+          addToSaveManager(data[i], 'create', 'checkpoint');
+        }
+        handleRefresh();
+      });
+    }
+  }, [serverRefresh]);
+
   useEffect(() => { // first mount...
     if (init) { // initializing...
       console.log('initializing...');
@@ -45,7 +57,6 @@ export default function BigDaddyProject({ projectId }) {
       } else { // hydrating from server...
         console.log('hydrating from server...');
         getCheckpointsOfProject(projectId).then((data) => {
-          // sending checkpoints data to save manager...
           for (let i = 0; i < data.length; i++) {
             addToSaveManager(data[i], 'create', 'checkpoint');
           }
@@ -96,9 +107,10 @@ export default function BigDaddyProject({ projectId }) {
     setMinColor((prevVal) => prevVal + 1);
   };
 
-  useEffect(() => () => { // cleanup unmount
-    clearSaveManager();
-  }, []);
+  // useEffect(() => () => {
+  //   sendToServer();
+  //   clearSaveManager();
+  // }, []);
 
   const addCheckpoint = () => {
     const emptyChckP = {
@@ -115,7 +127,6 @@ export default function BigDaddyProject({ projectId }) {
       checkpointId: null,
       dragId: uniqid(),
       tasks: false,
-      type: 'checkpoint',
     };
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
@@ -141,6 +152,13 @@ export default function BigDaddyProject({ projectId }) {
     saveAll();
   };
 
+  const doTheBigSave = () => {
+    sendToServer();
+    // clearSaveManager();
+    // setInit(true);
+    // handleRefresh();
+  };
+
   return (
     <>
       <div className="bigDad">
@@ -151,7 +169,7 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => sendToServer()}>
+              onClick={doTheBigSave}>
               SAVE
             </button>
             <button
@@ -196,7 +214,7 @@ export default function BigDaddyProject({ projectId }) {
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     {checkpoints.map((checkP, index) => (
                       <Checkpoint
-                        key={checkP.checkpointId ? checkP.checkpointId : checkP.dragId}
+                        key={checkP.localId}
                         checkP={checkP}
                         handleRefresh={handleRefresh}
                         save={save}
