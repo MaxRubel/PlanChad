@@ -6,49 +6,79 @@ import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
+import { TextsmsTwoTone } from '@mui/icons-material';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { getCheckpointsOfProject } from '../api/checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
+import { updateProject } from '../api/project';
 
 export default function BigDaddyProject({ projectId }) {
   const [save, setSave] = useState(0);
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [min, setMin] = useState(0);
-  const [saveColor, setSaveColor] = useState(0);
   const [minColor, setMinColor] = useState(0);
-  const [reOrdered, setReOrdered] = useState(0);
   const [init, setInit] = useState(true);
   const {
-    addToSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer,
+    addToSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer, fetchAll,
   } = useSaveContext();
 
-  const saveAll = () => { // trigger save all
+  const saveAll = () => { // send all to save manager
     setSave((prevVal) => prevVal + 1);
     const copy = [...saveInput.checkpoints];
     const ordered = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(ordered);
   };
 
-  const saveSuccess = () => { // trigger save all animation
-    setSaveColor((prevVal) => prevVal + 1);
+  const handleRefresh = () => { // retreive from save manager
+    setRefresh((prevVal) => prevVal + 1);
   };
 
-  useEffect(() => { // save animation
-    let saveColorChange;
-    if (saveColor > 0) {
-      document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
-      saveColorChange = setTimeout(() => {
-        document.getElementById('saveButton').style.color = 'rgb(200, 200, 200)';
-      }, 1500);
+  useEffect(() => { // first mount...
+    if (init) { // initializing...
+      console.log('initializing...');
+      if (hasMemory) { // hydrating from memory...
+        console.log('hydrating from memory...');
+        setInit((preVal) => !preVal);
+        handleRefresh();
+      } else { // hydrating from server...
+        console.log('hydrating from server...');
+        getCheckpointsOfProject(projectId).then((data) => {
+          // sending checkpoints data to save manager...
+          for (let i = 0; i < data.length; i++) {
+            addToSaveManager(data[i], 'create', 'checkpoint');
+          }
+          setInit((preVal) => !preVal);
+          handleRefresh();
+        });
+      }
     }
-    return () => {
-      clearTimeout(saveColorChange);
-    };
-  }, [saveColor]);
+    if (!init) { // syncing with save manager...
+      console.log('retreiving checkpoints from save manager');
+      const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
+      setCheckpoints(sortedArr);
+    }
+  }, [refresh]);
 
-  useEffect(() => { // minimize animation
+  // const saveSuccess = () => { // trigger save all animation
+  //   setSaveColor((prevVal) => prevVal + 1);
+  // };
+
+  // useEffect(() => { // save animation
+  //   let saveColorChange;
+  //   if (saveColor > 0) {
+  //     document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
+  //     saveColorChange = setTimeout(() => {
+  //       document.getElementById('saveButton').style.color = 'rgb(200, 200, 200)';
+  //     }, 1500);
+  //   }
+  //   return () => {
+  //     clearTimeout(saveColorChange);
+  //   };
+  // }, [saveColor]);
+
+  useEffect(() => { // minimize button color animation
     let minColorChange;
     if (minColor > 0) {
       document.getElementById('minButton').style.color = 'rgb(16, 197, 234)';
@@ -65,36 +95,6 @@ export default function BigDaddyProject({ projectId }) {
     setMin((prevVal) => prevVal + 1);
     setMinColor((prevVal) => prevVal + 1);
   };
-  const handleRefresh = () => {
-    setRefresh((prevVal) => prevVal + 1);
-  };
-  useEffect(() => { // initialization
-    console.log('has memory: ', hasMemory);
-    console.log('init: ', init);
-    if (init) {
-      if (hasMemory) {
-        console.log('initializing from save manager:');
-        setInit((preVal) => !preVal);
-      } else {
-        console.log('grabbing checkpoints from server');
-        // handleRefresh();
-        setInit((preVal) => !preVal);
-        addToSaveManager('', '', '');
-      }
-      // getCheckpointsOfProject(projectId).then((data) => {
-      //   const sortedArr = data.sort((a, b) => a.index - b.index);
-      //   checkpoints.forEach((item) => addToSaveManager(item));
-      //   setCheckpoints(sortedArr);
-      //   setInit((preVal) => !preVal);
-      // });
-      // setInit((preVal) => !preVal);
-    }
-    if (!init) { // grab from client
-      console.log('refreshing checkpoints from save manager:', saveInput.checkpoints);
-      const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
-      setCheckpoints(sortedArr);
-    }
-  }, [projectId, refresh]);
 
   useEffect(() => () => { // cleanup unmount
     clearSaveManager();
@@ -166,7 +166,7 @@ export default function BigDaddyProject({ projectId }) {
           <ProjectCard
             projectId={projectId}
             save={save}
-            saveSuccess={saveSuccess}
+            // saveSuccess={saveSuccess}
             min={min}
             minAll={minAll} />
           <div
@@ -200,12 +200,11 @@ export default function BigDaddyProject({ projectId }) {
                         checkP={checkP}
                         handleRefresh={handleRefresh}
                         save={save}
-                        saveSuccess={saveSuccess}
+                        // saveSuccess={saveSuccess}
                         saveAll={saveAll}
                         minAll={minAll}
                         min={min}
                         index={index}
-                        reOrdered={reOrdered}
                         refresh={refresh}
                       />
                     ))}

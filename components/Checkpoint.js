@@ -58,11 +58,11 @@ export default function Checkpoint({
     // addToSaveManager(formInput, 'update');
   }, [checkP]);
 
-  useEffect(() => { // send to save manager
-    if (!formInput.fresh) {
-      addToSaveManager(formInput, 'update', 'checkpoint');
-    }
-  }, [formInput, save]);
+  // useEffect(() => { // send to save manager
+  //   if (!formInput.fresh) {
+  //     addToSaveManager(formInput, 'update', 'checkpoint');
+  //   }
+  // }, [formInput, save]);
 
   useEffect(() => {
     console.log('grabbing tasks from save manager');
