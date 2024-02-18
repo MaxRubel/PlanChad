@@ -65,16 +65,8 @@ export default function Checkpoint({
   }, [formInput, save]);
 
   useEffect(() => {
-    // if (formInput.tasks) {
-    //   console.log('pulling tasks');
-    //   getTasksOfCheckP(checkP.checkpointId)
-    //     .then((data) => {
-    //       setTasks(data);
-    //     });
-    // }
     console.log('grabbing tasks from save manager');
     const filterTasks = saveInput.tasks.filter((item) => item.checkpointId === checkP.localId);
-    console.log('update dom:', filterTasks);
     setTasks((preVal) => filterTasks);
   }, [refresh]);
 
@@ -99,6 +91,7 @@ export default function Checkpoint({
         ...prevVal, expanded: false,
       }));
     }
+    saveAll();
   }, [min]);
 
   const dance = () => {
@@ -107,10 +100,6 @@ export default function Checkpoint({
       { duration: 500, iterations: 1 },
     );
   };
-
-  // const handleLocalRefresh = () => {
-  //   setLocalRefresh((prevVal) => prevVal + 1);
-  // };
 
   const handleChange = (e) => {
     handleFreshness();
@@ -123,18 +112,12 @@ export default function Checkpoint({
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
-  const deleteAllTasks = () => {
-    const promiseArr = tasks.map((task) => (deleteTask(task.taskId)));
-    Promise.all(promiseArr);
-  };
-
   const handleDelete = () => {
     deleteFromSaveManager(formInput, 'delete', 'checkpoint');
     handleRefresh();
   };
 
   const addTask = () => {
-    console.log('adding tasks');
     saveAll();
     dance();
     handleFreshness();
@@ -327,7 +310,7 @@ export default function Checkpoint({
               min={min}
               saveSuccess={saveSuccess}
               handleRefresh={handleRefresh}
-              />
+            />
           ))}
         </div>
       )}

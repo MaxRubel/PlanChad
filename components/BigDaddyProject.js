@@ -64,6 +64,7 @@ export default function BigDaddyProject({ projectId }) {
   const minAll = () => { // trigger minAll and animation
     setMin((prevVal) => prevVal + 1);
     setMinColor((prevVal) => prevVal + 1);
+    saveAll();
   };
   const handleRefresh = () => {
     setRefresh((prevVal) => prevVal + 1);

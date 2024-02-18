@@ -36,6 +36,7 @@ export default function Task({
       }));
       setHasChanged((prevVal) => true);
     }
+    saveAll();
   }, [min]);
 
   useEffect(() => { // load task details
