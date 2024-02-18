@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { createNewCheckpoint, updateCheckpoint } from '../../api/checkpoint';
 
 const saveContext = createContext(null);
 
@@ -63,7 +64,6 @@ export const SaveContextProvider = ({ children }) => {
             i += 1;
           }
         }
-        console.log('deleted: ', x, ' items');
         const deleteIndex = checkPs.findIndex((item) => item.localId === input.localId);
         checkPs.splice(deleteIndex, 1);
         checkPs.sort((a, b) => a.index - b.index);
@@ -86,9 +86,21 @@ export const SaveContextProvider = ({ children }) => {
     setHasMemory(false);
   };
 
+  const sendToServer = () => {
+    console.log('seding to server...');
+    // --------post-new-checkpoints----
+    const checkpoints = [...saveInput.checkpoints];
+    const postCheckpoints = checkpoints.filter((item) => !item.checkpointId);
+    const postCheckPPromise = postCheckpoints.map((item) => (createNewCheckpoint(item)
+      .then(({ name }) => { updateCheckpoint({ checkpointId: name }); })));
+    const patchCheckpoints = checkpoints.filter((item) => item.checkpointId);
+    console.log('create new checkpoint array', postCheckpoints.length);
+    Promise.all(postCheckPPromise);
+  };
+
   return (
     <saveContext.Provider value={{
-      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager, hasMemory,
+      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer,
     }}
     >
       {children}

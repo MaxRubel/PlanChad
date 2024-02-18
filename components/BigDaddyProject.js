@@ -21,7 +21,7 @@ export default function BigDaddyProject({ projectId }) {
   const [reOrdered, setReOrdered] = useState(0);
   const [init, setInit] = useState(true);
   const {
-    addToSaveManager, saveInput, clearSaveManager, hasMemory,
+    addToSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer,
   } = useSaveContext();
 
   const saveAll = () => { // trigger save all
@@ -64,7 +64,6 @@ export default function BigDaddyProject({ projectId }) {
   const minAll = () => { // trigger minAll and animation
     setMin((prevVal) => prevVal + 1);
     setMinColor((prevVal) => prevVal + 1);
-    saveAll();
   };
   const handleRefresh = () => {
     setRefresh((prevVal) => prevVal + 1);
@@ -152,7 +151,7 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => saveAll()}>
+              onClick={() => sendToServer()}>
               SAVE
             </button>
             <button
