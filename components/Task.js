@@ -79,9 +79,9 @@ export default function Task({
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
   };
 
-  useEffect(() => {
-    addToSaveManager(formInput, 'update', 'task');
-  }, [formInput]);
+  // useEffect(() => {
+  //   addToSaveManager(formInput, 'update', 'task');
+  // }, [formInput]);
 
   const handleChange = (e) => {
     handleFreshness();

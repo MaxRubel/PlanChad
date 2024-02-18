@@ -26,7 +26,7 @@ export default function ProjectCard({
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [hasChanged, setHasChanged] = useState(false);
-  const [hasInit, setHasInit] = useState(false)
+  // const [hasInit, setHasInit] = useState(false)
   const { addToSaveManager } = useSaveContext();
 
   const downIcon = (
@@ -40,7 +40,7 @@ export default function ProjectCard({
       setFormInput(data);
       addToSaveManager(data, 'create', 'project')
     });
-  }, [projectId]);
+  }, []);
 
   // useEffect(() => {
   //   if (hasChanged) {
@@ -50,9 +50,9 @@ export default function ProjectCard({
   //   }
   // }, [save]);
 
-  useEffect(()=>{
-    addToSaveManager(formInput, 'update', 'checkpoint')
-  }, [formInput])
+  // useEffect(() => {
+  //   addToSaveManager(formInput, 'update', 'checkpoint')
+  // }, [formInput])
 
   const handleCollapse = () => {
     setHasChanged((prevVal) => true);
