@@ -19,7 +19,7 @@ export default function BigDaddyProject({ projectId }) {
   const [minColor, setMinColor] = useState(0);
   const [init, setInit] = useState(true);
   const {
-    addToSaveManager, saveInput, hasMemory, sendToServer, serverRefresh,
+    addToSaveManager, saveInput, hasMemory, sendToServer, serverRefresh, clearSaveManager,
   } = useSaveContext();
   const isInitialRender = useRef(true);
 
@@ -34,6 +34,31 @@ export default function BigDaddyProject({ projectId }) {
     setRefresh((prevVal) => prevVal + 1);
   };
 
+  useEffect(() => { // first mount...
+    if (init) { // initializing...
+      // console.log('initializing...');
+      if (hasMemory) { // hydrating from memory...
+        // console.log('hydrating from memory...');
+        setInit((preVal) => !preVal);
+        handleRefresh();
+      } else { // hydrating from server...
+        // console.log('hydrating from server...');
+        getCheckpointsOfProject(projectId).then((data) => {
+          for (let i = 0; i < data.length; i++) {
+            addToSaveManager(data[i], 'create', 'checkpoint');
+          }
+          setInit((preVal) => !preVal);
+          handleRefresh();
+        });
+      }
+    }
+    if (!init) { // syncing with save manager...
+      // console.log('retreiving checkpoints from save manager');
+      const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
+      setCheckpoints(sortedArr);
+    }
+  }, [refresh]);
+
   useEffect(() => {
     if (isInitialRender.current) {
       isInitialRender.current = false;
@@ -46,31 +71,6 @@ export default function BigDaddyProject({ projectId }) {
       });
     }
   }, [serverRefresh]);
-
-  useEffect(() => { // first mount...
-    if (init) { // initializing...
-      console.log('initializing...');
-      if (hasMemory) { // hydrating from memory...
-        console.log('hydrating from memory...');
-        setInit((preVal) => !preVal);
-        handleRefresh();
-      } else { // hydrating from server...
-        console.log('hydrating from server...');
-        getCheckpointsOfProject(projectId).then((data) => {
-          for (let i = 0; i < data.length; i++) {
-            addToSaveManager(data[i], 'create', 'checkpoint');
-          }
-          setInit((preVal) => !preVal);
-          handleRefresh();
-        });
-      }
-    }
-    if (!init) { // syncing with save manager...
-      console.log('retreiving checkpoints from save manager');
-      const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
-      setCheckpoints(sortedArr);
-    }
-  }, [refresh]);
 
   // const saveSuccess = () => { // trigger save all animation
   //   setSaveColor((prevVal) => prevVal + 1);
@@ -107,10 +107,11 @@ export default function BigDaddyProject({ projectId }) {
     setMinColor((prevVal) => prevVal + 1);
   };
 
-  // useEffect(() => () => {
-  //   sendToServer();
-  //   clearSaveManager();
-  // }, []);
+  useEffect(() => () => {
+    // sendToServer();
+    console.log('back home');
+    clearSaveManager();
+  }, []);
 
   const addCheckpoint = () => {
     const emptyChckP = {
@@ -152,13 +153,6 @@ export default function BigDaddyProject({ projectId }) {
     saveAll();
   };
 
-  const doTheBigSave = () => {
-    sendToServer();
-    // clearSaveManager();
-    // setInit(true);
-    // handleRefresh();
-  };
-
   return (
     <>
       <div className="bigDad">
@@ -169,7 +163,7 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={doTheBigSave}>
+              onClick={sendToServer}>
               SAVE
             </button>
             <button
@@ -177,7 +171,7 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => minAll()}>
+              onClick={minAll}>
               MINIMIZE All
             </button>
           </div>

@@ -4,22 +4,8 @@
 import { Collapse } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 
-export default function TaskDeets({ formInput, min, handleChange }) {
+export default function TaskDeets({ formInput, handleChange }) {
   const [fresh, setFresh] = useState(true);
-
-  // useEffect(() => {
-  //   let timeout;
-  //   if (formInput.deetsExpanded && fresh) {
-  //     document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid';
-  //     setFresh((prevVal) => !prevVal);
-  //   }
-
-  //   if (!formInput.deetsExpanded && !fresh) {
-  //     timeout = setTimeout(() => {
-  //       document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none';
-  //     }, 266);
-  //   }
-  // }, [formInput.deetsExpanded]);
 
   useEffect(() => {
     let timeout;
@@ -41,7 +27,7 @@ export default function TaskDeets({ formInput, min, handleChange }) {
   }, [formInput.deetsExpanded, fresh]);
 
   return (
-    <div id={`taskDeets${formInput.localId}`} className="taskDeets" style={{ display: 'hidden' }}>
+    <div id={`taskDeets${formInput.localId}`} className="taskDeets" style={{ display: 'none' }}>
       <div id="margin" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         <div id="empty" />
         <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
