@@ -20,10 +20,11 @@ export default function Checkpoint({
   handleRefresh,
   save,
   saveSuccess,
-  saveAll,
+  saveIndexes,
   minAll,
   min,
   index,
+  isLoading,
 }) {
   const [formInput, setFormInput] = useState({
     description: '',
@@ -34,16 +35,7 @@ export default function Checkpoint({
   });
   const [hasChanged, setHasChanged] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const {
-    addToSaveManager,
-    deleteFromSaveManager,
-    saveInput,
-    serverRefresh,
-  } = useSaveContext();
-  const [init, setInit] = useState(true);
-  const isInitialRender2 = useRef(true);
-  const isInitialRender = useRef(true);
-  const [tasksLoaded, setTasksLoaded] = useState(false);
+  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -63,55 +55,23 @@ export default function Checkpoint({
     </svg>
   );
 
-  useEffect(() => { // first mount...
-    if (init) { // initializing...
-      // console.log('initializing...cp');
-      if (checkP.tasks) { // hydrating from server...
-        console.log('hydrating from server...cp');
-        console.log('has tasks');
-        getTasksOfCheckP(checkP.localId).then((data) => {
-          for (let i = 0; i < data.length; i++) {
-            addToSaveManager(data[i], 'create', 'task');
-          }
-          setInit((preVal) => !preVal);
-          handleRefresh();
-        });
-      }
-    }
-    if (!init) { // syncing with save manager...
-      // console.log('retreiving tasks from save manager');
-      const sortedArr = saveInput.tasks.sort((a, b) => a.index - b.index);
-      setTasks(sortedArr);
-    }
-  }, [refresh]);
-
-  useEffect(() => {
-    if (isInitialRender2.current) {
-      isInitialRender2.current = false;
-    } else {
-      getTasksOfCheckP(checkP.localId).then((data) => {
-        for (let i = 0; i < data.length; i++) {
-          addToSaveManager(data[i], 'create', 'task');
-          console.log(data);
-        }
-        handleRefresh();
-      });
-    }
-  }, [serverRefresh]);
-
   useEffect(() => {
     setFormInput(checkP);
+    setTasks(checkP.tasks);
   }, [checkP]);
 
   useEffect(() => { // send to save manager
-    addToSaveManager(formInput, 'update', 'checkpoint');
-  }, [formInput, save]);
+    if (!isLoading) {
+      console.log('form input changed');
+      addToSaveManager(formInput, 'update', 'checkpoint');
+    }
+  }, [formInput]);
 
-  useEffect(() => {
-    // console.log('grabbing tasks from save manager');
-    const filterTasks = saveInput.tasks.filter((item) => item.checkpointId === checkP.localId);
-    setTasks((preVal) => filterTasks);
-  }, [refresh]);
+  // useEffect(() => {
+  //   // console.log('grabbing tasks from save manager');
+  //   const filterTasks = saveInput.tasks.filter((item) => item.checkpointId === checkP.localId);
+  //   setTasks((preVal) => filterTasks);
+  // }, [refresh]);
 
   const handleFreshness = () => {
     if (formInput.fresh) {
@@ -128,16 +88,11 @@ export default function Checkpoint({
   }, [index]);
 
   useEffect(() => { // minimize
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
-    } else {
-      console.log('minimize');
-      handleFreshness();
-      setFormInput((prevVal) => ({
-        ...prevVal, expanded: false,
-      }));
+    if (!isLoading) {
+      if (formInput.expanded) {
+        setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
+      }
     }
-    // saveAll();
   }, [min]);
 
   const dance = () => {
@@ -154,8 +109,11 @@ export default function Checkpoint({
   };
 
   const handleCollapse = () => {
-    handleFreshness();
-    setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
+    if (formInput.expanded) {
+      setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
+    } else {
+      setFormInput((prevVal) => ({ ...prevVal, expanded: true }));
+    }
   };
 
   const handleDelete = () => {
@@ -164,7 +122,7 @@ export default function Checkpoint({
   };
 
   const addTask = () => {
-    saveAll();
+    saveIndexes();
     dance();
     handleFreshness();
     const emptyTask = {
@@ -353,11 +311,12 @@ export default function Checkpoint({
               task={task}
               minAll={minAll}
               save={save}
-              saveAll={saveAll}
+              saveIndexes={saveIndexes}
               min={min}
               saveSuccess={saveSuccess}
               handleRefresh={handleRefresh}
               indexT={indexT}
+              isLoading={isLoading}
             />
           ))}
         </div>

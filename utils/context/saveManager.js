@@ -16,18 +16,25 @@ export const SaveContextProvider = ({ children }) => {
   const [tasksToDelete, setTasksToDelete] = useState([]);
   const [saveInput, setSaveInput] = useState(initState);
   const [hasMemory, setHasMemory] = useState(false);
-
   const [serverRefresh, setServerRefresh] = useState(0);
+  const [min, setMin] = useState(0);
 
+  const minAll = () => { // trigger minAll and animation
+    setMin((prevVal) => prevVal + 1);
+    const copy = [...saveInput.checkpoints];
+    const minimized = copy.map((checkpoint) => ({
+      ...checkpoint, expanded: false,
+    }));
+    setSaveInput((prevVal) => ({ ...prevVal, checkpoints: minimized }));
+  };
   const addToSaveManager = (input, action, type) => {
-    console.log('save manager receiving: ', type, input);
+    // console.log('save manager receiving: ', type, input);
     if (!hasMemory) {
       setHasMemory((preVal) => !preVal);
     }
     if (type === 'project') {
       setSaveInput((prevVal) => ({ ...prevVal, project: { ...prevVal.project, ...input } }));
     }
-
     // ----------checkpoints------------
     if (type === 'checkpoint') {
       if (action === 'create') { // create checkpoints
@@ -38,19 +45,19 @@ export const SaveContextProvider = ({ children }) => {
       }
       if (action === 'update') { // update checkpoints
         const existingIndex = saveInput.checkpoints.findIndex((item) => item.localId === input.localId);
+        console.log('index of item to change is: ', existingIndex);
+        console.log('new quality is: ', input.expanded);
         const copy = [...saveInput.checkpoints];
         copy[existingIndex] = input;
         setSaveInput((prevVal) => ({ ...prevVal, checkpoints: copy }));
       }
     }
+    if (type === 'checkpointsArr') { // whole array on fetch
+      setSaveInput((preVal) => ({ ...preVal, checkpoints: input }));
+    }
     // ------------tasks-------------
     if (type === 'task') {
       if (action === 'create') { // create tasks
-        for (let i = 0; i < saveInput.tasks.length; i++) {
-          if (saveInput.tasks[i].localId === input.localId) {
-            return;
-          }
-        }
         setSaveInput((prevVal) => ({
           ...prevVal,
           tasks: [...prevVal.tasks, input],
@@ -63,8 +70,10 @@ export const SaveContextProvider = ({ children }) => {
         setSaveInput((prevVal) => ({ ...prevVal, tasks: copy }));
       }
     }
+    if (type === 'tasksArr') {
+      setSaveInput((prevVal) => ({ ...prevVal, tasks: [...prevVal.tasks, ...input] }));
+    }
   };
-
   // --------delete-----------------
   const deleteFromSaveManager = (input, action, type) => {
     const checkPs = [...saveInput.checkpoints];
@@ -103,6 +112,8 @@ export const SaveContextProvider = ({ children }) => {
   const clearSaveManager = () => {
     setSaveInput((prevVal) => initState);
     setHasMemory(false);
+    setTasksToDelete([]);
+    setChecksToDelete([]);
   };
 
   const fetchAll = (projectId) => new Promise((resolve, reject) => {
@@ -112,7 +123,7 @@ export const SaveContextProvider = ({ children }) => {
   });
 
   const sendToServer = () => {
-    console.log('seding to server...');
+    console.log('sending to server...');
     // -----------------create---------
     const checkpoints = [...saveInput.checkpoints];
     const tasks = [...saveInput.tasks];
@@ -146,8 +157,6 @@ export const SaveContextProvider = ({ children }) => {
 
     updateProject(saveInput.project).then(() => {
       Promise.all([...postCheckPPromise, ...postTasksPromise, ...patchCheckPPromise, ...patchTaskPromise, ...patchTaskPromise, ...checksDeletePromise, ...taskDeletePromise]).then(() => {
-        setChecksToDelete((preVal) => ([]));
-        setTasksToDelete((prevVal) => ([]));
         clearSaveManager();
         setServerRefresh((preVal) => preVal + 1);
       });
@@ -156,7 +165,7 @@ export const SaveContextProvider = ({ children }) => {
 
   return (
     <saveContext.Provider value={{
-      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer, fetchAll, serverRefresh,
+      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager, hasMemory, sendToServer, fetchAll, serverRefresh, min, minAll,
     }}
     >
       {children}
