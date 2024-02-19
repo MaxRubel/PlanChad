@@ -10,14 +10,14 @@ import { useSaveContext } from '../utils/context/saveManager';
 export default function Task({
   task,
   min,
-  saveAll,
+  saveIndexes,
   handleRefresh,
   indexT,
+  isLoading,
 }) {
   const [formInput, setFormInput] = useState({ localId: true, fresh: true, deetsExpanded: false });
   const [hasChanged, setHasChanged] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
-  const [isLoading, setIsloading] = useState(true);
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -31,10 +31,15 @@ export default function Task({
     </svg>
   );
 
-  useEffect(() => { // load task details
-    if (isLoading) setFormInput(task);
-    setIsloading(false);
+  useEffect(() => {
+    setFormInput(task);
   }, [task]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      addToSaveManager(formInput, 'update', 'task');
+    }
+  }, [formInput]);
 
   const handleFreshness = () => {
     if (formInput.fresh) {
@@ -45,15 +50,15 @@ export default function Task({
     }
   };
 
-  useEffect(() => { // minimze task
-    if (formInput.expanded || formInput.deetsExpanded) {
-      setFormInput((prevVal) => ({
-        ...prevVal, expanded: false, deetsExpanded: false,
-      }));
-      setHasChanged((prevVal) => true);
-    }
-    saveAll();
-  }, [min]);
+  // useEffect(() => { // minimze task
+  //   if (formInput.expanded || formInput.deetsExpanded) {
+  //     setFormInput((prevVal) => ({
+  //       ...prevVal, expanded: false, deetsExpanded: false,
+  //     }));
+  //     setHasChanged((prevVal) => true);
+  //   }
+  //   saveIndexes();
+  // }, [min]);
 
   const handleCollapse = () => { // collapse main details
     handleFreshness();
@@ -65,10 +70,6 @@ export default function Task({
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
   };
 
-  useEffect(() => {
-    addToSaveManager(formInput, 'update', 'task');
-  }, [formInput]);
-
   const handleChange = (e) => {
     handleFreshness();
     const { name, value } = e.target;
@@ -78,7 +79,7 @@ export default function Task({
   };
 
   const handleDelete = () => {
-    saveAll();
+    saveIndexes();
     deleteFromSaveManager(formInput, 'delete', 'task');
     handleRefresh();
   };

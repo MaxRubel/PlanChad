@@ -10,20 +10,22 @@ import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { getCheckpointsOfProject } from '../api/checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
+import fetchAll from '../utils/fetchAll';
 
 export default function BigDaddyProject({ projectId }) {
-  const [save, setSave] = useState(0);
+  const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
+  const [save, setSave] = useState(0);
   const [refresh, setRefresh] = useState(0);
-  const [min, setMin] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [init, setInit] = useState(true);
+  const [isLoading, setIsloading] = useState(false);
   const {
     addToSaveManager, saveInput, hasMemory, sendToServer, serverRefresh, clearSaveManager,
+    min, minAll,
   } = useSaveContext();
-  const isInitialRender = useRef(true);
 
-  const saveAll = () => { // send all to save manager
+  const saveIndexes = () => { // send all to save manager
     setSave((prevVal) => prevVal + 1);
     const copy = [...saveInput.checkpoints];
     const ordered = copy.sort((a, b) => a.index - b.index);
@@ -34,43 +36,51 @@ export default function BigDaddyProject({ projectId }) {
     setRefresh((prevVal) => prevVal + 1);
   };
 
-  useEffect(() => { // first mount...
-    if (init) { // initializing...
-      // console.log('initializing...');
-      if (hasMemory) { // hydrating from memory...
-        // console.log('hydrating from memory...');
-        setInit((preVal) => !preVal);
-        handleRefresh();
-      } else { // hydrating from server...
-        // console.log('hydrating from server...');
-        getCheckpointsOfProject(projectId).then((data) => {
-          for (let i = 0; i < data.length; i++) {
-            addToSaveManager(data[i], 'create', 'checkpoint');
-          }
-          setInit((preVal) => !preVal);
-          handleRefresh();
-        });
-      }
-    }
-    if (!init) { // syncing with save manager...
-      // console.log('retreiving checkpoints from save manager');
-      const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
+  useEffect(() => {
+    if (!isLoading) {
+      const copy = [...saveInput.checkpoints];
+      const sortedArr = copy.sort((a, b) => a.index - b.index);
       setCheckpoints(sortedArr);
     }
   }, [refresh]);
 
-  useEffect(() => {
-    if (isInitialRender.current) {
-      isInitialRender.current = false;
-    } else {
-      getCheckpointsOfProject(projectId).then((data) => {
-        for (let i = 0; i < data.length; i++) {
-          addToSaveManager(data[i], 'create', 'checkpoint');
-        }
-        handleRefresh();
-      });
-    }
-  }, [serverRefresh]);
+  // useEffect(() => { // first mount...
+  //   if (init) { // initializing...
+  //     // console.log('initializing...');
+  //     if (hasMemory) { // hydrating from memory...
+  //       // console.log('hydrating from memory...');
+  //       setInit((preVal) => !preVal);
+  //       handleRefresh();
+  //     } else { // hydrating from server...
+  //       // console.log('hydrating from server...');
+  //       getCheckpointsOfProject(projectId).then((data) => {
+  //         for (let i = 0; i < data.length; i++) {
+  //           addToSaveManager(data[i], 'create', 'checkpoint');
+  //         }
+  //         setInit((preVal) => !preVal);
+  //         handleRefresh();
+  //       });
+  //     }
+  //   }
+  //   if (!init) { // syncing with save manager...
+  //     // console.log('retreiving checkpoints from save manager');
+  //     const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
+  //     setCheckpoints(sortedArr);
+  //   }
+  // }, [refresh]);
+
+  // useEffect(() => {
+  //   if (isInitialRender.current) {
+  //     isInitialRender.current = false;
+  //   } else {
+  //     getCheckpointsOfProject(projectId).then((data) => {
+  //       for (let i = 0; i < data.length; i++) {
+  //         addToSaveManager(data[i], 'create', 'checkpoint');
+  //       }
+  //       handleRefresh();
+  //     });
+  //   }
+  // }, [serverRefresh]);
 
   // const saveSuccess = () => { // trigger save all animation
   //   setSaveColor((prevVal) => prevVal + 1);
@@ -102,16 +112,24 @@ export default function BigDaddyProject({ projectId }) {
     };
   }, [minColor]);
 
-  const minAll = () => { // trigger minAll and animation
-    setMin((prevVal) => prevVal + 1);
-    setMinColor((prevVal) => prevVal + 1);
-  };
-
   useEffect(() => () => {
-    // sendToServer();
-    console.log('back home');
     clearSaveManager();
   }, []);
+
+  const tryFetch = (projId) => {
+    setIsloading(true);
+    fetchAll(projId).then((data) => {
+      setProject(data.project);
+      const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
+      setCheckpoints(sortedCheckpoints);
+      addToSaveManager(data.project, '', 'project');
+      addToSaveManager(data.checkpoints, 'create', 'checkpointsArr');
+      data.checkpoints.forEach((checkP) => {
+        addToSaveManager(checkP.tasks, 'create', 'tasksArr');
+      });
+      setIsloading(false);
+    });
+  };
 
   const addCheckpoint = () => {
     const emptyChckP = {
@@ -127,18 +145,21 @@ export default function BigDaddyProject({ projectId }) {
       fresh: true,
       checkpointId: null,
       dragId: uniqid(),
-      tasks: false,
+      tasks: [],
     };
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
   };
 
   const handleDragStart = () => {
-    saveAll();
+    // saveIndexes();
+    console.log('drag starting');
   };
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
+    console.log('source: ', source);
+    console.log('destination: ', destination);
     if (!destination) {
       return;
     }
@@ -150,7 +171,8 @@ export default function BigDaddyProject({ projectId }) {
       reorderedChecks[i].index = i;
       addToSaveManager(reorderedChecks[i], 'update', 'checkpoint');
     }
-    saveAll();
+    setCheckpoints(reorderedChecks);
+    // saveIndexes();
   };
 
   return (
@@ -163,7 +185,7 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={sendToServer}>
+              onClick={() => { sendToServer(); }}>
               SAVE
             </button>
             <button
@@ -174,13 +196,23 @@ export default function BigDaddyProject({ projectId }) {
               onClick={minAll}>
               MINIMIZE All
             </button>
+            <button
+              id="minButton"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { tryFetch(projectId); }}>
+              FETCH All
+            </button>
           </div>
           <ProjectCard
-            projectId={projectId}
+            // projectId={projectId}
             save={save}
             // saveSuccess={saveSuccess}
             min={min}
-            minAll={minAll} />
+            minAll={minAll}
+            project={project}
+            />
           <div
             id="add-checkpt-button"
             style={{
@@ -192,7 +224,7 @@ export default function BigDaddyProject({ projectId }) {
             }}>
             <Button
               variant="outlined"
-              onClick={addCheckpoint}
+              onClick={() => { addCheckpoint(); }}
               style={{
                 margin: '1% 0%',
                 color: 'rgb(200, 200, 200)',
@@ -213,11 +245,12 @@ export default function BigDaddyProject({ projectId }) {
                         handleRefresh={handleRefresh}
                         save={save}
                         // saveSuccess={saveSuccess}
-                        saveAll={saveAll}
+                        saveIndexes={saveIndexes}
                         minAll={minAll}
                         min={min}
                         index={index}
                         refresh={refresh}
+                        isLoading={isLoading}
                       />
                     ))}
                     {provided.placeholder}
