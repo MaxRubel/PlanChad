@@ -36,14 +36,27 @@ export default function Task({
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
-    <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
+    <svg
+      className={formInput.expanded ? 'icon-up' : 'icon-down'}
+      xmlns="http://www.w3.org/2000/svg"
+      height="16px"
+      viewBox="0 0 320 512">
+      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5
+      0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9
+      0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
     </svg>
   );
 
   const magGlass = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
-      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      className="bi bi-search"
+      viewBox="0 0 16 16">
+      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85
+      3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
     </svg>
   );
 
@@ -104,7 +117,13 @@ export default function Task({
         {/* -------line-side------------- */}
         <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div id="empty" />
-          <div id="line" style={{ borderLeft: '2px solid rgb(251, 157, 80, .5)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+          <div
+            id="line"
+            style={{
+              borderLeft: '2px solid rgb(251, 157, 80, .5)',
+              display: 'grid',
+              gridTemplateRows: '1fr 1fr',
+            }}>
             <div id="empty" style={{ borderBottom: '2px solid rgb(251, 157, 80, .5)' }} />
             <div />
           </div>

@@ -5,7 +5,6 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 import { useEffect, useState } from 'react';
 import { Collapse, Button } from 'react-bootstrap';
-import { getSingleProject, updateProject } from '../api/project';
 import { useSaveContext } from '../utils/context/saveManager';
 
 const initialState = {
@@ -19,46 +18,33 @@ const initialState = {
   type: 'project',
 };
 
-export default function ProjectCard({
-  project, save, saveSuccess, min,
-}) {
+export default function ProjectCard({ project, min }) {
   const [formInput, setFormInput] = useState(initialState);
-  const [hasChanged, setHasChanged] = useState(false);
-  // const [hasInit, setHasInit] = useState(false)
   const { addToSaveManager } = useSaveContext();
   const downIcon = (
-    <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
+    <svg
+      className={formInput.expanded ? 'icon-up' : 'icon-down'}
+      xmlns="http://www.w3.org/2000/svg"
+      height="16px"
+      viewBox="0 0 320 512">
+      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9
+      0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5
+      101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4
+      33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
     </svg>
   );
 
-  useEffect(()=>{
+  useEffect(() => {
     if (project?.projectId) {
       setFormInput(project)
     }
   }, [project])
-
-  // useEffect(() => {
-  //   getSingleProject(projectId).then((data) => {
-  //     setFormInput(data);
-  //     addToSaveManager(data, 'create', 'project')
-  //   });
-  // }, []);
-
-  // useEffect(() => {
-  //   if (hasChanged) {
-  //     updateProject(formInput);
-  //     setHasChanged((prevVal) => false);
-  //     saveSuccess();
-  //   }
-  // }, [save]);
 
   useEffect(() => {
     addToSaveManager(formInput, 'update', 'project')
   }, [formInput])
 
   const handleCollapse = () => {
-    setHasChanged((prevVal) => true);
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
@@ -69,12 +55,8 @@ export default function ProjectCard({
   }, [min]);
 
   const handleChange = (e) => {
-    if (!hasChanged) {
-      setHasChanged((prevVal) => !prevVal);
-    }
     const { name, value } = e.target;
-    setFormInput((prevVal) => (
-      { ...prevVal, [name]: value }));
+    setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
   };
 
   return (
@@ -84,7 +66,12 @@ export default function ProjectCard({
         <Button
           onClick={handleCollapse}
           style={{
-            backgroundColor: 'transparent', border: 'none', padding: '0px', paddingLeft: '10%', textAlign: 'left', color: 'black',
+            backgroundColor: 'transparent',
+            border: 'none',
+            padding: '0px',
+            paddingLeft: '10%',
+            textAlign: 'left',
+            color: 'black',
           }}>
           {downIcon}
         </Button>
@@ -94,7 +81,12 @@ export default function ProjectCard({
             name="name"
             value={formInput.name}
             style={{
-              textAlign: 'center', minWidth: '250px', fontSize: '20px', backgroundColor: 'transparent', border: 'none', fontWeight: '700',
+              textAlign: 'center',
+              minWidth: '250px',
+              fontSize: '20px',
+              backgroundColor: 'transparent',
+              border: 'none',
+              fontWeight: '700',
             }}
             onChange={handleChange} />
         </div>

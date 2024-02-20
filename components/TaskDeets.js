@@ -30,7 +30,13 @@ export default function TaskDeets({ formInput, handleChange }) {
     <div id={`taskDeets${formInput.localId}`} className="taskDeets" style={{ display: 'none' }}>
       <div id="margin" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         <div id="empty" />
-        <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+        <div
+          id="line"
+          style={{
+            borderLeft: '2px solid rgb(84, 84, 84)',
+            display: 'grid',
+            gridTemplateRows: '1fr 1fr',
+          }}>
           <div style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
         </div>
       </div>

@@ -8,6 +8,7 @@ import {
 import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
+import Router, { useRouter } from 'next/router';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -21,16 +22,14 @@ export default function BigDaddyProject({ projectId }) {
   const [minColor, setMinColor] = useState(0);
   const [isLoading, setIsloading] = useState(true);
   const {
-    addToSaveManager, saveInput, sendToServer, clearSaveManager,
-    min, minAll,
+    addToSaveManager,
+    saveInput,
+    sendToServer,
+    clearSaveManager,
+    min,
+    minAll,
   } = useSaveContext();
-
-  const saveIndexes = () => { // send all to save manager
-    setSave((prevVal) => prevVal + 1);
-    const copy = [...saveInput.checkpoints];
-    const ordered = copy.sort((a, b) => a.index - b.index);
-    setCheckpoints(ordered);
-  };
+  const router = useRouter();
 
   const handleRefresh = () => { // retreive from save manager
     setRefresh((prevVal) => prevVal + 1);
@@ -110,10 +109,6 @@ export default function BigDaddyProject({ projectId }) {
     handleRefresh();
   };
 
-  const handleDragStart = () => {
-    saveIndexes();
-  };
-
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
     if (!destination) {
@@ -140,7 +135,7 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { sendToServer(); }}>
+              onClick={sendToServer}>
               SAVE
             </button>
             <button
@@ -156,6 +151,14 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { router.push(`/collaborators/${projectId}`); }}>
+              MANAGE COLLABORATORS
+            </button>
+            <button
+              id="minButton"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { tryFetch(projectId); }}>
               RESTART
             </button>
@@ -165,7 +168,7 @@ export default function BigDaddyProject({ projectId }) {
             min={min}
             minAll={minAll}
             project={project}
-            />
+          />
           <div
             id="add-checkpt-button"
             style={{
@@ -187,7 +190,7 @@ export default function BigDaddyProject({ projectId }) {
             </Button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
+            <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="checkPDrop">
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -197,7 +200,7 @@ export default function BigDaddyProject({ projectId }) {
                         checkP={checkP}
                         handleRefresh={handleRefresh}
                         save={save}
-                        saveIndexes={saveIndexes}
+                        // saveIndexes={saveIndexes}
                         minAll={minAll}
                         min={min}
                         index={index}
