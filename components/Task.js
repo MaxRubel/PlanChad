@@ -7,15 +7,31 @@ import { trashIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
 
+const initialState = {
+  localId: true,
+  name: '',
+  startDate: '',
+  deadline: '',
+  description: '',
+  prep: '',
+  exec: '',
+  debrief: '',
+  index: '',
+  weight: '',
+  status: 'open',
+  expanded: false,
+  deetsExpanded: false,
+};
+
 export default function Task({
   task,
   min,
-  saveIndexes,
+  refreshCheckP,
   handleRefresh,
   indexT,
   isLoading,
 }) {
-  const [formInput, setFormInput] = useState({ localId: true, fresh: true, deetsExpanded: false });
+  const [formInput, setFormInput] = useState(initialState);
   const [hasChanged, setHasChanged] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
@@ -50,15 +66,14 @@ export default function Task({
     }
   };
 
-  // useEffect(() => { // minimze task
-  //   if (formInput.expanded || formInput.deetsExpanded) {
-  //     setFormInput((prevVal) => ({
-  //       ...prevVal, expanded: false, deetsExpanded: false,
-  //     }));
-  //     setHasChanged((prevVal) => true);
-  //   }
-  //   saveIndexes();
-  // }, [min]);
+  useEffect(() => { // minimze task
+    if (formInput.expanded || formInput.deetsExpanded) {
+      setFormInput((prevVal) => ({
+        ...prevVal, expanded: false, deetsExpanded: false,
+      }));
+      setHasChanged((prevVal) => true);
+    }
+  }, [min]);
 
   const handleCollapse = () => { // collapse main details
     handleFreshness();
@@ -79,9 +94,8 @@ export default function Task({
   };
 
   const handleDelete = () => {
-    saveIndexes();
     deleteFromSaveManager(formInput, 'delete', 'task');
-    handleRefresh();
+    refreshCheckP();
   };
 
   return (

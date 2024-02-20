@@ -15,8 +15,6 @@ const initialState = {
   client: '',
   description: '',
   start_date: '',
-  projectId: '',
-  user_id: '',
   expanded: false,
   type: 'project',
 };
@@ -99,7 +97,6 @@ export default function ProjectCard({
               textAlign: 'center', minWidth: '250px', fontSize: '20px', backgroundColor: 'transparent', border: 'none', fontWeight: '700',
             }}
             onChange={handleChange} />
-
         </div>
       </div>
       {/* --------------card-body------------------------ */}

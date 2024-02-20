@@ -1,27 +1,20 @@
-import { getCheckpointsOfProject } from '../api/checkpoint';
 import { getSingleProject } from '../api/project';
-import { getTasksOfCheckP } from '../api/task';
 
-const fetchAll = (projectId) => new Promise((resolve, reject) => {
-  getSingleProject(projectId).then((project) => {
-    getCheckpointsOfProject(projectId).then((checkpointsData) => {
-      const taskPromArray = checkpointsData.map((checkpoint) => getTasksOfCheckP(checkpoint.localId));
-      Promise.all(taskPromArray).then((tasksData) => {
-        const checkpoints = [];
-        checkpointsData.forEach((checkP) => {
-          const copy = { ...checkP };
-          const tasksOfCheckPoint = tasksData.find((innerArray) => innerArray.some((obj) => obj.checkpointId === checkP.localId));
-          if (tasksOfCheckPoint) {
-            copy.tasks = tasksOfCheckPoint;
-          } else {
-            copy.tasks = [];
-          }
-          checkpoints.push(copy);
-        });
-        resolve({ project, checkpoints });
-      }).catch(reject);
-    });
+const fetchAll2 = (projectId) => new Promise((resolve, reject) => {
+  getSingleProject(projectId).then((data) => {
+    const checkpoints = [];
+    const tasks = data.tasks ? JSON.parse(data.tasks) : [];
+    if (data.checkpoints) {
+      const checkpointsFormatted = JSON.parse(data.checkpoints);
+      checkpointsFormatted.forEach((checkP) => {
+        const copy = checkP;
+        const tasksOfCheckp = tasks.filter((task) => task.checkpointId === checkP.localId);
+        copy.tasks = tasksOfCheckp;
+        checkpoints.push(copy);
+      });
+    }
+    resolve({ project: data, checkpoints });
   });
 });
 
-export default fetchAll;
+export default fetchAll2;

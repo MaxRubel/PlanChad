@@ -16,7 +16,6 @@ import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Checkpoint({
   checkP,
-  refresh,
   handleRefresh,
   save,
   saveSuccess,
@@ -33,8 +32,9 @@ export default function Checkpoint({
     deadline: '',
     index: '',
   });
-  const [hasChanged, setHasChanged] = useState(false);
+
   const [tasks, setTasks] = useState([]);
+  const [checkPrefresh, setCheckPrefresh] = useState(0);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
@@ -58,34 +58,26 @@ export default function Checkpoint({
   useEffect(() => {
     setFormInput(checkP);
     setTasks(checkP.tasks);
+    const copy = [...saveInput.tasks];
+    const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
+    setTasks(theseTasks);
   }, [checkP]);
 
   useEffect(() => { // send to save manager
     if (!isLoading) {
-      console.log('form input changed');
       addToSaveManager(formInput, 'update', 'checkpoint');
     }
   }, [formInput]);
 
-  // useEffect(() => {
-  //   // console.log('grabbing tasks from save manager');
-  //   const filterTasks = saveInput.tasks.filter((item) => item.checkpointId === checkP.localId);
-  //   setTasks((preVal) => filterTasks);
-  // }, [refresh]);
-
-  const handleFreshness = () => {
-    if (formInput.fresh) {
-      setFormInput((prevVal) => ({ ...prevVal, fresh: false }));
-    }
-    if (!hasChanged) {
-      setHasChanged((prevVal) => !prevVal);
-    }
-  };
-
   useEffect(() => { // saveIndex after dragNdrop
     setFormInput((prevVal) => ({ ...prevVal, index }));
-    handleFreshness();
   }, [index]);
+
+  useEffect(() => { // refresh tasks from save manager
+    const copy = [...saveInput.tasks];
+    const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
+    setTasks(theseTasks);
+  }, [checkPrefresh]);
 
   useEffect(() => { // minimize
     if (!isLoading) {
@@ -102,8 +94,11 @@ export default function Checkpoint({
     );
   };
 
+  const refreshCheckP = () => {
+    setCheckPrefresh((prevVal) => prevVal + 1);
+  };
+
   const handleChange = (e) => {
-    handleFreshness();
     const { name, value } = e.target;
     setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
   };
@@ -122,9 +117,7 @@ export default function Checkpoint({
   };
 
   const addTask = () => {
-    saveIndexes();
     dance();
-    handleFreshness();
     const emptyTask = {
       checkpointId: checkP.localId,
       localId: uniqid(),
@@ -143,7 +136,7 @@ export default function Checkpoint({
       deetsExpanded: false,
     };
     addToSaveManager(emptyTask, 'create', 'task');
-    handleRefresh();
+    setCheckPrefresh((prevVal) => prevVal + 1);
     setFormInput((prevVal) => ({ ...prevVal, tasks: true }));
   };
 
@@ -317,6 +310,7 @@ export default function Checkpoint({
               handleRefresh={handleRefresh}
               indexT={indexT}
               isLoading={isLoading}
+              refreshCheckP={refreshCheckP}
             />
           ))}
         </div>

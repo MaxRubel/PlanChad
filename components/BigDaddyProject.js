@@ -1,16 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
-import { useState, useEffect, useRef } from 'react';
+import {
+  useState, useEffect, useRef, useLayoutEffect,
+} from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
-import { getCheckpointsOfProject } from '../api/checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import fetchAll from '../utils/fetchAll';
+import fetchAll2 from '../utils/fetchAll';
 
 export default function BigDaddyProject({ projectId }) {
   const [project, setProject] = useState({});
@@ -18,10 +19,9 @@ export default function BigDaddyProject({ projectId }) {
   const [save, setSave] = useState(0);
   const [refresh, setRefresh] = useState(0);
   const [minColor, setMinColor] = useState(0);
-  const [init, setInit] = useState(true);
-  const [isLoading, setIsloading] = useState(false);
+  const [isLoading, setIsloading] = useState(true);
   const {
-    addToSaveManager, saveInput, hasMemory, sendToServer, serverRefresh, clearSaveManager,
+    addToSaveManager, saveInput, sendToServer, clearSaveManager,
     min, minAll,
   } = useSaveContext();
 
@@ -36,68 +36,13 @@ export default function BigDaddyProject({ projectId }) {
     setRefresh((prevVal) => prevVal + 1);
   };
 
-  useEffect(() => {
+  useEffect(() => { // refresh checkpoint from save manager
     if (!isLoading) {
       const copy = [...saveInput.checkpoints];
       const sortedArr = copy.sort((a, b) => a.index - b.index);
       setCheckpoints(sortedArr);
     }
   }, [refresh]);
-
-  // useEffect(() => { // first mount...
-  //   if (init) { // initializing...
-  //     // console.log('initializing...');
-  //     if (hasMemory) { // hydrating from memory...
-  //       // console.log('hydrating from memory...');
-  //       setInit((preVal) => !preVal);
-  //       handleRefresh();
-  //     } else { // hydrating from server...
-  //       // console.log('hydrating from server...');
-  //       getCheckpointsOfProject(projectId).then((data) => {
-  //         for (let i = 0; i < data.length; i++) {
-  //           addToSaveManager(data[i], 'create', 'checkpoint');
-  //         }
-  //         setInit((preVal) => !preVal);
-  //         handleRefresh();
-  //       });
-  //     }
-  //   }
-  //   if (!init) { // syncing with save manager...
-  //     // console.log('retreiving checkpoints from save manager');
-  //     const sortedArr = saveInput.checkpoints.sort((a, b) => a.index - b.index);
-  //     setCheckpoints(sortedArr);
-  //   }
-  // }, [refresh]);
-
-  // useEffect(() => {
-  //   if (isInitialRender.current) {
-  //     isInitialRender.current = false;
-  //   } else {
-  //     getCheckpointsOfProject(projectId).then((data) => {
-  //       for (let i = 0; i < data.length; i++) {
-  //         addToSaveManager(data[i], 'create', 'checkpoint');
-  //       }
-  //       handleRefresh();
-  //     });
-  //   }
-  // }, [serverRefresh]);
-
-  // const saveSuccess = () => { // trigger save all animation
-  //   setSaveColor((prevVal) => prevVal + 1);
-  // };
-
-  // useEffect(() => { // save animation
-  //   let saveColorChange;
-  //   if (saveColor > 0) {
-  //     document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
-  //     saveColorChange = setTimeout(() => {
-  //       document.getElementById('saveButton').style.color = 'rgb(200, 200, 200)';
-  //     }, 1500);
-  //   }
-  //   return () => {
-  //     clearTimeout(saveColorChange);
-  //   };
-  // }, [saveColor]);
 
   useEffect(() => { // minimize button color animation
     let minColorChange;
@@ -112,21 +57,35 @@ export default function BigDaddyProject({ projectId }) {
     };
   }, [minColor]);
 
-  useEffect(() => () => {
+  useEffect(() => {
     clearSaveManager();
-  }, []);
-
-  const tryFetch = (projId) => {
     setIsloading(true);
-    fetchAll(projId).then((data) => {
+    fetchAll2(projectId).then((data) => {
       setProject(data.project);
       const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
-      setCheckpoints(sortedCheckpoints);
-      addToSaveManager(data.project, '', 'project');
-      addToSaveManager(data.checkpoints, 'create', 'checkpointsArr');
-      data.checkpoints.forEach((checkP) => {
+      data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
         addToSaveManager(checkP.tasks, 'create', 'tasksArr');
       });
+      addToSaveManager(data.project, '', 'project'); // add project data
+      addToSaveManager(data.checkpoints, 'create', 'checkpointsArr'); // add to save manager
+      setCheckpoints(sortedCheckpoints);
+      setIsloading(false);
+    });
+  }, []);
+
+  // (-------for testing purposes----)
+  const tryFetch = (projId) => {
+    setIsloading(true);
+    clearSaveManager();
+    fetchAll2(projId).then((data) => {
+      setProject(data.project);
+      const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
+      data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
+        addToSaveManager(checkP.tasks, 'create', 'tasksArr');
+      });
+      addToSaveManager(data.project, '', 'project'); // add project data
+      addToSaveManager(data.checkpoints, 'create', 'checkpointsArr'); // add to save manager
+      setCheckpoints(sortedCheckpoints);
       setIsloading(false);
     });
   };
@@ -145,21 +104,18 @@ export default function BigDaddyProject({ projectId }) {
       fresh: true,
       checkpointId: null,
       dragId: uniqid(),
-      tasks: [],
+      tasks: '[]',
     };
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
   };
 
   const handleDragStart = () => {
-    // saveIndexes();
-    console.log('drag starting');
+    saveIndexes();
   };
 
   const handleDragEnd = (result) => {
     const { destination, source, draggableId } = result;
-    console.log('source: ', source);
-    console.log('destination: ', destination);
     if (!destination) {
       return;
     }
@@ -172,7 +128,6 @@ export default function BigDaddyProject({ projectId }) {
       addToSaveManager(reorderedChecks[i], 'update', 'checkpoint');
     }
     setCheckpoints(reorderedChecks);
-    // saveIndexes();
   };
 
   return (
@@ -202,13 +157,11 @@ export default function BigDaddyProject({ projectId }) {
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { tryFetch(projectId); }}>
-              FETCH All
+              RESTART
             </button>
           </div>
           <ProjectCard
-            // projectId={projectId}
             save={save}
-            // saveSuccess={saveSuccess}
             min={min}
             minAll={minAll}
             project={project}
@@ -234,7 +187,7 @@ export default function BigDaddyProject({ projectId }) {
             </Button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
               <Droppable droppableId="checkPDrop">
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -244,7 +197,6 @@ export default function BigDaddyProject({ projectId }) {
                         checkP={checkP}
                         handleRefresh={handleRefresh}
                         save={save}
-                        // saveSuccess={saveSuccess}
                         saveIndexes={saveIndexes}
                         minAll={minAll}
                         min={min}
