@@ -58,7 +58,7 @@ module.exports = {
     'comma-dangle': ['warn'],
     'no-debugger': 1,
     'linebreak-style': 0,
-    'max-len': [1, 120, 2],
+    'max-len': [1, 200, 2],
     'no-plusplus': [
       2, { allowForLoopAfterthoughts: true },
     ],
