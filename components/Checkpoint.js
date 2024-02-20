@@ -3,14 +3,11 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 // import Checkbox from '@mui/material/Checkbox';
 // import { FormControlLabel, FormGroup } from '@mui/material';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Draggable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import { trashIcon } from '../public/icons';
-import {
-  createNewTask, deleteTask, getTasksOfCheckP, updateTask,
-} from '../api/task';
 import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
 
@@ -38,8 +35,15 @@ export default function Checkpoint({
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
-    <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
+    <svg
+      className={formInput.expanded ? 'icon-up' : 'icon-down'}
+      xmlns="http://www.w3.org/2000/svg"
+      height="16px"
+      viewBox="0 0 320 512">
+      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
+      9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5
+      256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4
+      24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
     </svg>
   );
   const plusIcon = (
@@ -153,7 +157,13 @@ export default function Checkpoint({
             {/* -------line-side------------- */}
             <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
               <div id="empty" />
-              <div id="line" style={{ borderLeft: '2px solid rgb(16, 197, 234, .6)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+              <div
+                id="line"
+                style={{
+                  borderLeft: '2px solid rgb(16, 197, 234, .6)',
+                  display: 'grid',
+                  gridTemplateRows: '1fr 1fr',
+                }}>
                 <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .6)' }} />
                 <div />
               </div>
@@ -275,7 +285,10 @@ export default function Checkpoint({
                     id="description-field"
                     className="fullCenter"
                     style={{
-                      borderTop: '1px solid rgb(180, 180, 180)', padding: '2% 10%', display: 'flex', flexDirection: 'column',
+                      borderTop: '1px solid rgb(180, 180, 180)',
+                      padding: '2% 10%',
+                      display: 'flex',
+                      flexDirection: 'column',
                     }}>
                     <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
                       <label htmlFor="description" className="form-label" style={{ textAlign: 'center' }}>

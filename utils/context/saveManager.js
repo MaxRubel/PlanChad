@@ -149,7 +149,8 @@ export const SaveContextProvider = ({ children }) => {
     // console.log('deleting: ', taskDeletePromise.length, 'tasks');
 
     // updateProject(saveInput.project).then(() => {
-    //   Promise.all([...postCheckPPromise, ...postTasksPromise, ...patchCheckPPromise, ...patchTaskPromise, ...patchTaskPromise, ...checksDeletePromise, ...taskDeletePromise]).then(() => {
+    //   Promise.all([...postCheckPPromise, ...postTasksPromise, ...patchCheckPPromise, ...patchTaskPromise,
+    // ...patchTaskPromise, ...checksDeletePromise, ...taskDeletePromise]).then(() => {
     //     clearSaveManager();
     //     setServerRefresh((preVal) => preVal + 1);
     //   });
@@ -171,7 +172,15 @@ export const SaveContextProvider = ({ children }) => {
 
   return (
     <saveContext.Provider value={{
-      addToSaveManager, deleteFromSaveManager, saveInput, clearSaveManager, sendToServer, fetchAll, serverRefresh, min, minAll,
+      addToSaveManager,
+      deleteFromSaveManager,
+      saveInput,
+      clearSaveManager,
+      sendToServer,
+      fetchAll,
+      serverRefresh,
+      min,
+      minAll,
     }}
     >
       {children}
