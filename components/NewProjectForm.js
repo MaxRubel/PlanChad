@@ -12,7 +12,7 @@ export default function NewProjectForm() {
   function handleChange(e) {
     const { name, value } = e.target;
     setFormInput((prevState) => ({
-      name: value,
+      [name]: value,
     }));
   }
 
@@ -27,12 +27,16 @@ export default function NewProjectForm() {
       budget: '',
       description: '',
       expanded: true,
+      checkpoints: null,
+      tasks: null,
     };
-    createNewProject(payload).then(({ name }) => {
-      updateProject({ projectId: name }).then(() => {
-        router.push(`/project/plan/${name}`);
+    console.log(payload);
+    createNewProject(payload)
+      .then(({ name }) => {
+        updateProject({ projectId: name }).then(() => {
+          router.push(`/project/plan/${name}`);
+        });
       });
-    });
   }
 
   return (
@@ -61,6 +65,7 @@ export default function NewProjectForm() {
             className="form-control"
             placeholder="Project Name"
             value={formInput.name}
+            name="name"
             onChange={handleChange}
             required />
         </div>

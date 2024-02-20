@@ -1,4 +1,4 @@
-const endpoint = 'https://planchad-6fcf7-default-rtdb.firebaseio.com';
+const endpoint = 'https://planchad-6fcf7-default-rtdb.firebaseio.com/';
 
 const getUserProjects = (userId) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/projects.json?orderBy="userId"&equalTo="${userId}"`, {

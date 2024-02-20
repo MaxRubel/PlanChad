@@ -6,23 +6,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Draggable } from '@hello-pangea/dnd';
+import uniqid from 'uniqid';
 import { trashIcon } from '../public/icons';
-import { deleteCheckpoint, updateCheckpoint } from '../api/checkpoint';
 import {
   createNewTask, deleteTask, getTasksOfCheckP, updateTask,
 } from '../api/task';
 import Task from './Task';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Checkpoint({
   checkP,
   handleRefresh,
   save,
   saveSuccess,
-  saveAll,
+  saveIndexes,
   minAll,
   min,
   index,
-  reOrdered,
+  isLoading,
 }) {
   const [formInput, setFormInput] = useState({
     description: '',
@@ -32,19 +33,15 @@ export default function Checkpoint({
     index: '',
   });
 
-  const [hasChanged, setHasChanged] = useState(false);
-  const [refresh, setRefresh] = useState(0);
   const [tasks, setTasks] = useState([]);
-  const [localRefresh, setLocalRefresh] = useState(0);
-  const [creatingTask, setCreatingTask] = useState(false);
-  const [fresh, setFresh] = useState(true);
+  const [checkPrefresh, setCheckPrefresh] = useState(0);
+  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
     </svg>
   );
-
   const plusIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -60,115 +57,70 @@ export default function Checkpoint({
 
   useEffect(() => {
     setFormInput(checkP);
+    setTasks(checkP.tasks);
+    const copy = [...saveInput.tasks];
+    const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
+    setTasks(theseTasks);
   }, [checkP]);
 
-  useEffect(() => {
-    getTasksOfCheckP(checkP.checkpointId)
-      .then((data) => {
-        setTasks(data);
-      });
-  }, [refresh, localRefresh]);
-
-  useEffect(() => {
-    if (hasChanged) {
-      updateCheckpoint(formInput).then(() => {
-        if (!creatingTask) {
-          saveSuccess();
-        }
-        setHasChanged((prevVal) => false);
-      });
+  useEffect(() => { // send to save manager
+    if (!isLoading) {
+      addToSaveManager(formInput, 'update', 'checkpoint');
     }
-    return () => {
-      if (hasChanged) {
-        updateCheckpoint(formInput);
-      }
-    };
-  }, [save]);
+  }, [formInput]);
 
-  const handleFreshness = () => {
-    if (fresh) {
-      setFresh((prevVal) => (!prevVal));
-    }
-    if (!hasChanged) {
-      setHasChanged((prevVal) => !prevVal);
-    }
-  };
-
-  useEffect(() => { // minimize
-    if (formInput.expanded) {
-      handleFreshness();
-      setFormInput((prevVal) => ({
-        ...prevVal, expanded: false,
-      }));
-    }
-  }, [min]);
-
-  useEffect(() => {
-    handleFreshness();
-  }, [reOrdered]);
-
-  useEffect(() => {
+  useEffect(() => { // saveIndex after dragNdrop
     setFormInput((prevVal) => ({ ...prevVal, index }));
   }, [index]);
 
+  useEffect(() => { // refresh tasks from save manager
+    const copy = [...saveInput.tasks];
+    const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
+    setTasks(theseTasks);
+  }, [checkPrefresh]);
+
+  useEffect(() => { // minimize
+    if (!isLoading) {
+      if (formInput.expanded) {
+        setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
+      }
+    }
+  }, [min]);
+
   const dance = () => {
-    document.getElementById(`addTask${checkP.checkpointId}`).animate(
+    document.getElementById(`addTask${checkP.localId}`).animate(
       [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
       { duration: 500, iterations: 1 },
     );
   };
 
-  const handleLocalRefresh = () => {
-    setLocalRefresh((prevVal) => prevVal + 1);
+  const refreshCheckP = () => {
+    setCheckPrefresh((prevVal) => prevVal + 1);
   };
 
   const handleChange = (e) => {
-    handleFreshness();
     const { name, value } = e.target;
     setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
   };
 
   const handleCollapse = () => {
-    handleFreshness();
-    setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
-  };
-
-  const deleteAllTasks = () => {
-    const promiseArr = tasks.map((task) => (deleteTask(task.taskId)));
-    Promise.all(promiseArr);
+    if (formInput.expanded) {
+      setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
+    } else {
+      setFormInput((prevVal) => ({ ...prevVal, expanded: true }));
+    }
   };
 
   const handleDelete = () => {
-    saveAll();
-    if (formInput.fresh) {
-      deleteCheckpoint(checkP.checkpointId)
-        .then(() => {
-          deleteAllTasks();
-        })
-        .then(() => {
-          handleRefresh();
-        });
-    }
-    if (!formInput.fresh) {
-      if (window.confirm('Are you sure you would like to delete this Checkpoint and all of its tasks?')) {
-        deleteCheckpoint(checkP.checkpointId)
-          .then(() => {
-            deleteAllTasks();
-          })
-          .then(() => {
-            handleRefresh();
-          });
-      }
-    }
+    deleteFromSaveManager(formInput, 'delete', 'checkpoint');
+    handleRefresh();
   };
 
   const addTask = () => {
-    setCreatingTask((prevVal) => true);
-    saveAll();
     dance();
-    handleFreshness();
-    const payload = {
-      checkpointId: checkP.checkpointId,
+    const emptyTask = {
+      checkpointId: checkP.localId,
+      localId: uniqid(),
       name: '',
       startDate: '',
       deadline: '',
@@ -176,25 +128,20 @@ export default function Checkpoint({
       prep: '',
       exec: '',
       debrief: '',
-      list_index: '',
+      index: '',
       weight: '',
       status: 'open',
       fresh: true,
       expanded: false,
       deetsExpanded: false,
     };
-    createNewTask(payload)
-      .then(({ name }) => {
-        updateTask({ taskId: name })
-          .then(() => {
-            setCreatingTask((prevVal) => false);
-            setRefresh((prevVal) => prevVal + 1);
-          });
-      });
+    addToSaveManager(emptyTask, 'create', 'task');
+    setCheckPrefresh((prevVal) => prevVal + 1);
+    setFormInput((prevVal) => ({ ...prevVal, tasks: true }));
   };
 
   return (
-    <Draggable draggableId={checkP.checkpointId} index={index}>
+    <Draggable draggableId={checkP.checkpointId ? checkP.checkpointId : checkP.localId} index={index}>
       {(provided) => (
         <div
           id="projectRow"
@@ -206,8 +153,8 @@ export default function Checkpoint({
             {/* -------line-side------------- */}
             <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
               <div id="empty" />
-              <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
-                <div id="empty" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+              <div id="line" style={{ borderLeft: '2px solid rgb(16, 197, 234, .6)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+                <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .6)' }} />
                 <div />
               </div>
             </div>
@@ -230,7 +177,7 @@ export default function Checkpoint({
                     {downIcon}
                   </ButtonBoot>
                   <ButtonBoot
-                    id={`addTask${checkP.checkpointId}`}
+                    id={`addTask${checkP.localId}`}
                     onClick={addTask}
                     style={{
                       backgroundColor: 'transparent',
@@ -251,7 +198,7 @@ export default function Checkpoint({
                       border: 'none',
                       backgroundColor: 'transparent',
                     }}
-                    placeholder="Enter a checkpoint name..."
+                    placeholder={`Checkpoint ${index}`}
                     value={formInput.name}
                     name="name"
                     onChange={handleChange} />
@@ -270,7 +217,7 @@ export default function Checkpoint({
                     style={{
                       paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
                     }}
-            >{trashIcon}
+                  >{trashIcon}
                   </button>
                 </div>
               </div>
@@ -351,16 +298,20 @@ export default function Checkpoint({
             {/* -----add-a-task------ */}
             <div className="marginR" />
           </div>
-          {tasks.map((task) => (
+          {tasks.map((task, indexT) => (
             <Task
-              key={task.taskId}
-              refresh={handleLocalRefresh}
+              key={task.localId}
               task={task}
               minAll={minAll}
               save={save}
-              saveAll={saveAll}
+              saveIndexes={saveIndexes}
               min={min}
-              saveSuccess={saveSuccess} />
+              saveSuccess={saveSuccess}
+              handleRefresh={handleRefresh}
+              indexT={indexT}
+              isLoading={isLoading}
+              refreshCheckP={refreshCheckP}
+            />
           ))}
         </div>
       )}

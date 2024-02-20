@@ -4,19 +4,36 @@
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { trashIcon } from '../public/icons';
-import { deleteTask, updateTask } from '../api/task';
 import TaskDeets from './TaskDeets';
+import { useSaveContext } from '../utils/context/saveManager';
+
+const initialState = {
+  localId: true,
+  name: '',
+  startDate: '',
+  deadline: '',
+  description: '',
+  prep: '',
+  exec: '',
+  debrief: '',
+  index: '',
+  weight: '',
+  status: 'open',
+  expanded: false,
+  deetsExpanded: false,
+};
 
 export default function Task({
-  refresh,
   task,
   min,
-  save,
-  saveAll,
-  saveSuccess,
+  refreshCheckP,
+  handleRefresh,
+  indexT,
+  isLoading,
 }) {
-  const [formInput, setFormInput] = useState({});
+  const [formInput, setFormInput] = useState(initialState);
   const [hasChanged, setHasChanged] = useState(false);
+  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
     <svg className={formInput.expanded ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
@@ -31,31 +48,14 @@ export default function Task({
   );
 
   useEffect(() => {
-    if (formInput.expanded || formInput.deetsExpanded) {
-      setFormInput((prevVal) => ({
-        ...prevVal, expanded: false, deetsExpanded: false,
-      }));
-      setHasChanged((prevVal) => true);
-    }
-  }, [min]);
-
-  useEffect(() => {
     setFormInput(task);
   }, [task]);
 
   useEffect(() => {
-    if (hasChanged) {
-      updateTask(formInput).then(() => {
-        saveSuccess();
-        setHasChanged((prevVal) => false);
-      });
+    if (!isLoading) {
+      addToSaveManager(formInput, 'update', 'task');
     }
-    return () => {
-      if (hasChanged) {
-        updateTask(formInput);
-      }
-    };
-  }, [save]);
+  }, [formInput]);
 
   const handleFreshness = () => {
     if (formInput.fresh) {
@@ -66,12 +66,21 @@ export default function Task({
     }
   };
 
-  const handleCollapse = () => {
+  useEffect(() => { // minimze task
+    if (formInput.expanded || formInput.deetsExpanded) {
+      setFormInput((prevVal) => ({
+        ...prevVal, expanded: false, deetsExpanded: false,
+      }));
+      setHasChanged((prevVal) => true);
+    }
+  }, [min]);
+
+  const handleCollapse = () => { // collapse main details
     handleFreshness();
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
-  const handleCollapse2 = () => {
+  const handleCollapse2 = () => { // collapse extra details
     handleFreshness();
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
   };
@@ -85,21 +94,8 @@ export default function Task({
   };
 
   const handleDelete = () => {
-    saveAll();
-    if (formInput.fresh) {
-      deleteTask(task.taskId)
-        .then(() => {
-          refresh();
-        });
-    }
-    if (!formInput.fresh) {
-      if (window.confirm('Are you sure you would like to delete this task?')) {
-        deleteTask(task.taskId)
-          .then(() => {
-            refresh();
-          });
-      }
-    }
+    deleteFromSaveManager(formInput, 'delete', 'task');
+    refreshCheckP();
   };
 
   return (
@@ -108,8 +104,8 @@ export default function Task({
         {/* -------line-side------------- */}
         <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div id="empty" />
-          <div id="line" style={{ borderLeft: '2px solid rgb(84, 84, 84)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
-            <div id="empty" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+          <div id="line" style={{ borderLeft: '2px solid rgb(251, 157, 80, .5)', display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+            <div id="empty" style={{ borderBottom: '2px solid rgb(251, 157, 80, .5)' }} />
             <div />
           </div>
         </div>
@@ -156,7 +152,7 @@ export default function Task({
                   border: 'none',
                   backgroundColor: 'transparent',
                 }}
-                placeholder="Enter a task name..."
+                placeholder={`Task ${indexT + 1}`}
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}
