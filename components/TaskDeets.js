@@ -3,9 +3,12 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 import { Collapse } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import { peopleIcon, rightArrowSmall } from '../public/icons';
+import TaskCollabs from './TaskCollabs';
 
 export default function TaskDeets({ formInput, handleChange }) {
   const [fresh, setFresh] = useState(true);
+  const [collabsExpand, setCollabsExpand] = useState(false);
 
   useEffect(() => {
     let timeout;
@@ -26,9 +29,13 @@ export default function TaskDeets({ formInput, handleChange }) {
     };
   }, [formInput.deetsExpanded, fresh]);
 
+  const handleExpand = () => {
+    setCollabsExpand((preVal) => !preVal);
+  };
+
   return (
-    <div id={`taskDeets${formInput.localId}`} className="taskDeets" style={{ display: 'none' }}>
-      <div id="margin" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+    <div id={`taskDeets${formInput.localId}`} className={collabsExpand ? 'taskDeetsExpand' : 'taskDeets'} style={{ display: 'none' }}>
+      <div id="margin L" style={{ display: collabsExpand ? 'none' : 'grid', gridTemplateColumns: '1fr 1fr' }}>
         <div id="empty" />
         <div
           id="line"
@@ -40,7 +47,7 @@ export default function TaskDeets({ formInput, handleChange }) {
           <div style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
         </div>
       </div>
-      <div id="margin 2" style={{ display: 'grid', gridTemplateRows: '1fr 1fr' }}>
+      <div id="margin L2" style={{ display: collabsExpand ? 'none' : 'grid', gridTemplateRows: '1fr 1fr' }}>
         <div id="line" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
         <div id="empty" />
       </div>
@@ -48,7 +55,17 @@ export default function TaskDeets({ formInput, handleChange }) {
         {/* -------card-body------------------------ */}
         <Collapse in={formInput.deetsExpanded}>
           <div id="whole-card">
-            <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
+            <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '1% 0%' }}>
+              <div id="smallHeader" style={{ textAlign: 'right' }}>
+                <button
+                  type="button"
+                  className="clearButton"
+                  style={{ color: 'black' }}
+                  onClick={handleExpand}
+                  >
+                  {peopleIcon} {rightArrowSmall}
+                </button>
+              </div>
               <div
                 id="row1"
                 className="cardRow2">
@@ -116,7 +133,9 @@ export default function TaskDeets({ formInput, handleChange }) {
           </div>
         </Collapse>
       </div>
-      <div id="margin 3" />
+      <div id="margin 3">
+        <TaskCollabs collabsExpand={collabsExpand} />
+      </div>
     </div>
   );
 }
