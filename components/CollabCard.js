@@ -88,6 +88,12 @@ export default function CollabCard({
 
   const handleDelete = () => {
     deleteCollab(collab.collabId).then(() => {
+      getProjCollabsOfCollab(collab.collabId).then((data) => {
+        const delArray = data.map((item) => (deleteProjCollab(item.projCollabId)));
+        Promise.all(delArray).then(() => {
+          refreshProjCollabs();
+        });
+      });
       refreshAllColabs();
     });
   };
