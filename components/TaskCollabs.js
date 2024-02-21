@@ -5,7 +5,7 @@ export default function TaskCollabs({ collabsExpand }) {
   return (
     <Collapse in={collabsExpand} dimension="width">
       <div id="example-collapse-text">
-        <Card body style={{ width: '400px' }}>
+        <Card body>
           Anim pariatur cliche reprehenderit, enim eiusmod high life
           accusamus terry richardson ad squid. Nihil anim keffiyeh
           helvetica, craft beer labore wes anderson cred nesciunt sapiente

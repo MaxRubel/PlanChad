@@ -147,7 +147,6 @@ body {
 .task {
   display: grid;
   grid-template-columns: 84px 8% 67% 100px;
-  /* First column is 100px, second column is 200px, third column takes the remaining space */
   // gap: 1%;
   min-width: 500px;
 }
@@ -156,18 +155,14 @@ body {
   display: grid;
   grid-template-columns: 84px 16% 59% 100px;
   min-width: 500px;
-  transition: all ease .5s;
+  // transition: grid-template-columns 1s ease;
 }
 
-.taskDeetsExpand{
-  display: flex;
-  flex-direction: column;
-  grid-template-columns: 1fr 1fr;
-  // flex-direction: column;
-  // justify-content: center;
-  align-items: center;
-  transition: all ease .5s;
-  margin: 0px 84px
+.taskDeetsExpand {
+  display: grid;
+  grid-template-columns: 84px 1fr 1fr 246px; 
+  // transition: grid-template-columns 1s ease;
+  min-width: 500px;
 }
 
 #marginL {
