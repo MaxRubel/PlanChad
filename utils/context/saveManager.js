@@ -15,6 +15,7 @@ export const SaveContextProvider = ({ children }) => {
   const [saveInput, setSaveInput] = useState(initState);
   const [serverRefresh, setServerRefresh] = useState(0);
   const [min, setMin] = useState(0);
+  const [projCollabs, setProjCollabs] = useState([]);
 
   const minAll = () => { // trigger minAll and animation
     setMin((prevVal) => prevVal + 1);
@@ -181,6 +182,8 @@ export const SaveContextProvider = ({ children }) => {
       serverRefresh,
       min,
       minAll,
+      projCollabs,
+      setProjCollabs,
     }}
     >
       {children}

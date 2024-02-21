@@ -13,6 +13,11 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    'object-curly-newline': 'warn',
+    'react/jsx-boolean-value': 'warn',
+    'react/jsx-equals-spacing': 'warn',
+    'jsx-a11y/control-has-associated-label': 'warn',
+    'space-infix-ops': 'warn',
     'react/jsx-max-props-per-line': 'warn',
     'react/jsx-tag-spacing': 'warn',
     'react/no-unescaped-entities': 'warn',

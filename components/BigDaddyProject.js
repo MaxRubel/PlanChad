@@ -31,6 +31,13 @@ export default function BigDaddyProject({ projectId }) {
   } = useSaveContext();
   const router = useRouter();
 
+  const saveIndexes = () => { // send all to save manager
+    setSave((prevVal) => prevVal + 1);
+    const copy = [...saveInput.checkpoints];
+    const ordered = copy.sort((a, b) => a.index - b.index);
+    setCheckpoints(ordered);
+  };
+
   const handleRefresh = () => { // retreive from save manager
     setRefresh((prevVal) => prevVal + 1);
   };
@@ -107,6 +114,11 @@ export default function BigDaddyProject({ projectId }) {
     };
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
+    saveIndexes();
+  };
+
+  const handleDragStart = () => {
+    saveIndexes();
   };
 
   const handleDragEnd = (result) => {
@@ -190,7 +202,7 @@ export default function BigDaddyProject({ projectId }) {
             </Button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragEnd={handleDragEnd}>
+            <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
               <Droppable droppableId="checkPDrop">
                 {(provided) => (
                   <div ref={provided.innerRef} {...provided.droppableProps}>

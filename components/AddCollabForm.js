@@ -1,7 +1,10 @@
+/* eslint-disable react/prop-types */
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { plusIcon } from '../public/icons';
+import { createNewCollab, updateCollab } from '../api/collabs';
+import { useAuth } from '../utils/context/authContext';
 
 const initialState = {
   name: '',
@@ -10,13 +13,50 @@ const initialState = {
   notes: '',
 };
 
-export default function AddCollabForm() {
+export default function AddCollabForm({ refreshAllColabs }) {
   const [expanded, setExpanded] = useState(false);
-  const [formInput, setForminput] = useState({});
-  const [checked, setChecked] = useState(false);
+  const [formInput, setForminput] = useState(initialState);
+  const [addToProject, setAddtoProj] = useState(false);
+  const [role, setRole] = useState('');
+  const { user } = useAuth();
+
+  const downIcon = (
+    <svg
+      className={formInput.expanded ? 'icon-up' : 'icon-down'}
+      xmlns="http://www.w3.org/2000/svg"
+      height="16px"
+      viewBox="0 0 320 512"
+    >
+      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
+      9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5
+      256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4
+      24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
+      />
+    </svg>
+  );
 
   const handleClick = () => {
     setExpanded((prevVal) => true);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'role') {
+      setRole((prevVal) => value);
+    } else {
+      setForminput((prevVal) => ({ ...prevVal, [name]: value }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createNewCollab({ ...formInput, userId: user.uid }).then(({ name }) => {
+      updateCollab({ collabId: name });
+      // setExpanded((prevVal) => false);
+      setAddtoProj((prevVal) => false);
+      setForminput((prevVal) => initialState);
+      refreshAllColabs();
+    });
   };
 
   return (
@@ -44,7 +84,7 @@ export default function AddCollabForm() {
         </div>
         {/* --------------card-body------------------------ */}
         <Collapse in={expanded}>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div id="whole-card">
               <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
                 <div
@@ -60,8 +100,8 @@ export default function AddCollabForm() {
                       <input
                         className="form-control"
                         type="text"
-                        // value={formInput.deadline}
-                        // onChange={handleChange}
+                        value={formInput.name}
+                        onChange={handleChange}
                         name="name"
                         id="name"
                         style={{ backgroundColor: 'rgb(225, 225, 225)', border: '1px solid lightgrey' }}
@@ -82,8 +122,8 @@ export default function AddCollabForm() {
                       <input
                         className="form-control"
                         type="phone"
-                        // value={formInput.deadline}
-                        // onChange={handleChange}
+                        value={formInput.phone}
+                        onChange={handleChange}
                         name="phone"
                         id="phone"
                         style={{ backgroundColor: 'rgb(225, 225, 225)', border: '1px solid lightgrey' }}
@@ -104,8 +144,8 @@ export default function AddCollabForm() {
                       <input
                         className="form-control"
                         type="email"
-                        // value={formInput.deadline}
-                        // onChange={handleChange}
+                        value={formInput.email}
+                        onChange={handleChange}
                         name="email"
                         id="email"
                         style={{ backgroundColor: 'rgb(225, 225, 225)', border: '1px solid lightgrey' }}
@@ -126,8 +166,8 @@ export default function AddCollabForm() {
                       <textarea
                         className="form-control"
                         type="text"
-                        // value={formInput.deadline}
-                        // onChange={handleChange}
+                        value={formInput.notes}
+                        onChange={handleChange}
                         name="notes"
                         id="notes"
                         style={{ backgroundColor: 'rgb(225, 225, 225)', border: '1px solid lightgrey' }}
@@ -139,8 +179,8 @@ export default function AddCollabForm() {
                   <FormControlLabel
                     control={(
                       <Checkbox
-                        checked={checked}
-                        onChange={() => { setChecked((prevVal) => !prevVal); }}
+                        checked={addToProject}
+                        onChange={() => { setAddtoProj((prevVal) => !prevVal); }}
                       />
                     )}
                     label="Add to Project?"
@@ -148,7 +188,7 @@ export default function AddCollabForm() {
                 </div>
               </div>
               {/* ------role-field------------- */}
-              <Collapse in={checked}>
+              <Collapse in={addToProject}>
                 <div>
                   <div
                     id="description-field"
@@ -170,8 +210,8 @@ export default function AddCollabForm() {
                       placeholder="What they doin..."
                       id="role"
                       rows="3"
-                      // value={formInput.description}
-                      // onChange={handleChange}
+                      value={role}
+                      onChange={handleChange}
                       name="role"
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }}
                     />
@@ -183,7 +223,7 @@ export default function AddCollabForm() {
             <div id="button-row" className="fullCenter">
               <Button
                 variant="outlined"
-                // onClick={() => { addCheckpoint(); }}
+                type="submit"
                 style={{
                   margin: '1% 0%',
                   color: 'black',
