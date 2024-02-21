@@ -9,6 +9,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider> {/* gives children components access to user and auth methods */}
       <SaveContextProvider>
+
         <ViewDirectorBasedOnUserAuthStatus
         // if status is pending === loading
         // if status is logged in === view app
@@ -16,6 +17,7 @@ function MyApp({ Component, pageProps }) {
           component={Component}
           pageProps={pageProps}
         />
+
       </SaveContextProvider>
     </AuthProvider>
   );

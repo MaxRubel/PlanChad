@@ -1,12 +1,24 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import AddCollabForm from '../../components/AddCollabForm';
 import ViewAllCollabs from '../../components/ViewAllCollabs';
-import ViewCollabsOfProject from '../../components/ViewCollabsOfProj';
 import { rightArrow } from '../../public/icons';
+import ViewProjCollabs from '../../components/ViewProjCollabs';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
   const { projectId } = router.query;
+  const [refreshAllCs, setRefreshAllCs] = useState(0);
+  const [refreshProjCs, setRefreshProjCs] = useState(0);
+
+  const refreshAllColabs = () => {
+    setRefreshAllCs((prevVal) => prevVal + 1);
+  };
+
+  const refreshProjCollabs = () => {
+    setRefreshProjCs((prevVal) => prevVal + 1);
+  };
+
   return (
     <>
       <div id="project-top-bar" style={{ marginBottom: '3%' }}>
@@ -19,19 +31,34 @@ export default function ManageCollaboratorsPage() {
         >
           BACK TO PROJECT
         </button>
-
       </div>
-      <div className="homePage" style={{ paddingTop: '3%' }}>
-        <AddCollabForm />
+      <div className="homePage" style={{ minWidth: '960px', paddingTop: '3%' }}>
+        <AddCollabForm refreshAllColabs={refreshAllColabs} />
         <div
           id="row2"
           style={{
-            display: 'flex', flexDirection: 'row', gap: '3%', margin: '3% 0%', color: 'rgb(180, 180, 180, .4)',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '3%',
+            margin: '3% 0%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'rgb(180, 180, 180, .4)',
           }}
         >
-          <ViewAllCollabs />
+          <ViewAllCollabs
+            refreshAllColabs={refreshAllColabs}
+            refreshProjCollabs={refreshProjCollabs}
+            refreshAllCs={refreshAllCs}
+            projectId={projectId}
+          />
           <div className="verticalCenter">{rightArrow}</div>
-          <ViewCollabsOfProject />
+          <ViewProjCollabs
+            projectId={projectId}
+            refreshProjCollabs={refreshProjCollabs}
+            refreshProjCs={refreshProjCs}
+          />
         </div>
       </div>
     </>

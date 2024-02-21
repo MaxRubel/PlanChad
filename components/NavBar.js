@@ -24,9 +24,9 @@ export default function NavBar() {
             <Link passHref href="/project/new">
               <Nav.Link>Create New Project</Nav.Link>
             </Link>
-            <Link passHref href="/404">
+            {/* <Link passHref href="/404">
               <Nav.Link>Collaborators</Nav.Link>
-            </Link>
+            </Link> */}
             <button
               type="button"
               className="clearButton"
