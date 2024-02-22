@@ -3,7 +3,7 @@ import { getCollabsOfProject } from '../api/projCollab';
 import { getSingleProject } from '../api/project';
 import { getTaskCollabsOfProject } from '../api/taskCollab';
 
-const fetchAll2 = (projectId) => new Promise((resolve, reject) => {
+const fetchProjectDetails = (projectId) => new Promise((resolve, reject) => {
   getSingleProject(projectId).then((data) => {
     const checkpoints = [];
     const tasks = data.tasks ? JSON.parse(data.tasks) : [];
@@ -31,4 +31,4 @@ const fetchProjectCollabs = (projectId) => new Promise((resolve, reject) => {
   }).catch(reject);
 });
 
-export { fetchAll2, fetchProjectCollabs };
+export { fetchProjectDetails, fetchProjectCollabs };

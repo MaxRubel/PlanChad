@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import { fetchAll2, fetchProjectCollabs } from '../utils/fetchAll';
+import { fetchProjectDetails, fetchProjectCollabs } from '../utils/fetchAll';
 import AddAsigneeModal from './AddAsigneeModal';
 import { useCollabContext } from '../utils/context/collabContext';
 
@@ -70,7 +70,7 @@ export default function BigDaddyProject({ projectId }) {
   useEffect(() => {
     clearSaveManager();
     setIsloading(true);
-    fetchAll2(projectId).then((data) => {
+    fetchProjectDetails(projectId).then((data) => {
       setProject(data.project);
       const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
       data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
@@ -87,7 +87,7 @@ export default function BigDaddyProject({ projectId }) {
   const tryFetch = (projId) => {
     // setIsloading(true);
     // clearSaveManager();
-    // fetchAll2(projId).then((data) => {
+    // fetchProjectDetails(projId).then((data) => {
     //   setProject(data.project);
     //   const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
     //   data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
