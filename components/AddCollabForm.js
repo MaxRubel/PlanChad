@@ -5,6 +5,7 @@ import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { plusIcon } from '../public/icons';
 import { createNewCollab, updateCollab } from '../api/collabs';
 import { useAuth } from '../utils/context/authContext';
+import { useSaveContext } from '../utils/context/saveManager';
 
 const initialState = {
   name: '',
@@ -19,6 +20,7 @@ export default function AddCollabForm({ refreshAllColabs }) {
   const [addToProject, setAddtoProj] = useState(false);
   const [role, setRole] = useState('');
   const { user } = useAuth();
+  const { openAssigneesModal } = useSaveContext();
 
   const downIcon = (
     <svg
@@ -52,7 +54,6 @@ export default function AddCollabForm({ refreshAllColabs }) {
     e.preventDefault();
     createNewCollab({ ...formInput, userId: user.uid }).then(({ name }) => {
       updateCollab({ collabId: name });
-      // setExpanded((prevVal) => false);
       setAddtoProj((prevVal) => false);
       setForminput((prevVal) => initialState);
       refreshAllColabs();

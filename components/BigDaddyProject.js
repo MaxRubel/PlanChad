@@ -9,10 +9,12 @@ import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import Router, { useRouter } from 'next/router';
+import { Modal } from 'react-bootstrap';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
 import fetchAll2 from '../utils/fetchAll';
+import AddAsigneeModal from './AddAsigneeModal';
 
 export default function BigDaddyProject({ projectId }) {
   const [project, setProject] = useState({});
@@ -21,6 +23,7 @@ export default function BigDaddyProject({ projectId }) {
   const [refresh, setRefresh] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [isLoading, setIsloading] = useState(true);
+  const [show, setShow] = useState(false);
   const {
     addToSaveManager,
     saveInput,
@@ -94,6 +97,7 @@ export default function BigDaddyProject({ projectId }) {
       setCheckpoints(sortedCheckpoints);
       setIsloading(false);
     });
+    // openAssigneesModal();
   };
 
   const addCheckpoint = () => {
@@ -139,6 +143,7 @@ export default function BigDaddyProject({ projectId }) {
 
   return (
     <>
+      <AddAsigneeModal />
       <div className="bigDad">
         <div id="project-container">
           <div id="project-top-bar" style={{ marginBottom: '3%' }}>
@@ -212,12 +217,12 @@ export default function BigDaddyProject({ projectId }) {
                         checkP={checkP}
                         handleRefresh={handleRefresh}
                         save={save}
-                        // saveIndexes={saveIndexes}
                         minAll={minAll}
                         min={min}
                         index={index}
                         refresh={refresh}
                         isLoading={isLoading}
+
                       />
                     ))}
                     {provided.placeholder}

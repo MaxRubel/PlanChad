@@ -13,6 +13,7 @@ export default function CollabCard({
   projectId,
   ofProj,
   refreshProjCollabs,
+  addToTask,
 }) {
   const [expanded, setExpanded] = useState(false);
   const { projCollabs, setProjCollabs } = useSaveContext();

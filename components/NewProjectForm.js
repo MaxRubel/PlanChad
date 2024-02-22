@@ -30,7 +30,6 @@ export default function NewProjectForm() {
       checkpoints: null,
       tasks: null,
     };
-    console.log(payload);
     createNewProject(payload)
       .then(({ name }) => {
         updateProject({ projectId: name }).then(() => {

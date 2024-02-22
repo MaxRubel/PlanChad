@@ -8,11 +8,10 @@ import { useSaveContext } from '../utils/context/saveManager';
 // eslint-disable-next-line react/prop-types
 export default function ViewProjCollabs({ projectId, refreshProjCollabs, refreshProjCs }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
-  const { projCollabs, setProjCollabs, saveInput } = useSaveContext();
+  const { setProjCollabs, saveInput } = useSaveContext();
 
   useEffect(() => {
     getCollabsOfProject(projectId).then((data) => {
-      console.log(data);
       const collabIds = [];
       for (let i = 0; i < data.length; i++) {
         collabIds.push(data[i].collabId);
