@@ -6,17 +6,22 @@ import {
   createNewProjCollab, deleteProjCollab, getProjCollabsOfCollab, updateProjCollab,
 } from '../api/projCollab';
 import { useSaveContext } from '../utils/context/saveManager';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function CollabCard({
   collab,
-  refreshAllColabs,
   projectId,
   ofProj,
   refreshProjCollabs,
-  addToTask,
 }) {
   const [expanded, setExpanded] = useState(false);
-  const { projCollabs, setProjCollabs } = useSaveContext();
+  const {
+    addToCollabManager,
+    projCollabs,
+    deleteFromCollabManager,
+    projCollabJoins,
+    setUpdateCollab,
+  } = useCollabContext();
 
   const downIcon = (
     <svg
@@ -87,24 +92,24 @@ export default function CollabCard({
     setExpanded((prevVal) => !prevVal);
   };
 
+  const handleUpdate = () => {
+    setUpdateCollab(collab);
+  };
+
   const handleDelete = () => {
     deleteCollab(collab.collabId).then(() => {
-      getProjCollabsOfCollab(collab.collabId).then((data) => {
-        const delArray = data.map((item) => (deleteProjCollab(item.projCollabId)));
-        Promise.all(delArray).then(() => {
-          refreshProjCollabs();
-        });
+      const deleteArray = projCollabJoins.map((item) => (deleteProjCollab(item.projCollabId)));
+      Promise.all(deleteArray).then(() => {
+        deleteFromCollabManager(collab.collabId, 'allCollabs');
       });
-      refreshAllColabs();
     });
   };
 
   const handleRemove = () => {
-    getProjCollabsOfCollab(collab.collabId).then((data) => {
-      const removeItem = data.filter((projCollab) => projCollab.projectId === projectId);
-      deleteProjCollab(removeItem[0].projCollabId).then(() => {
-        refreshProjCollabs();
-      });
+    const copy = [...projCollabJoins];
+    const delItem = copy.find((item) => item.collabId === collab.collabId);
+    deleteProjCollab(delItem.projCollabId).then(() => {
+      deleteFromCollabManager(collab.collabId, 'projCollab');
     });
   };
 
@@ -114,15 +119,17 @@ export default function CollabCard({
       collabId: collab.collabId,
     };
     let isAlreadyIn = false;
-    for (let i = 0; i < projCollabs.length; i++) {
-      if (payload.collabId === projCollabs[i].collabId) {
+    const copy = [...projCollabs];
+    for (let i = 0; i < copy.length; i++) {
+      if (payload.collabId === copy[i].collabId) {
         isAlreadyIn = true;
       }
     }
     if (!isAlreadyIn) {
       createNewProjCollab(payload).then(({ name }) => { // JOIN TABLE
-        updateProjCollab({ projCollabId: name });
-        refreshProjCollabs();
+        const payload2 = { projCollabId: name };
+        updateProjCollab(payload2);
+        addToCollabManager({ ...payload, ...payload2 }, 'projCollabs', 'create');
       });
     }
   };
@@ -158,7 +165,13 @@ export default function CollabCard({
             >
               {deleteIcon}
             </button>
-            <button type="button" className="clearButton" style={{ color: 'black' }}>
+            <button
+              id="update-collab"
+              type="button"
+              className="clearButton"
+              style={{ color: 'black' }}
+              onClick={handleUpdate}
+            >
               {editIcon}
             </button>
             <button

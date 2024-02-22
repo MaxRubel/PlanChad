@@ -1,11 +1,11 @@
 /* eslint-disable react/prop-types */
 import { Collapse } from 'react-bootstrap';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { plusIcon } from '../public/icons';
 import { createNewCollab, updateCollab } from '../api/collabs';
 import { useAuth } from '../utils/context/authContext';
-import { useSaveContext } from '../utils/context/saveManager';
+import { useCollabContext } from '../utils/context/collabContext';
 
 const initialState = {
   name: '',
@@ -14,13 +14,13 @@ const initialState = {
   notes: '',
 };
 
-export default function AddCollabForm({ refreshAllColabs }) {
+export default function AddCollabForm() {
   const [expanded, setExpanded] = useState(false);
   const [formInput, setForminput] = useState(initialState);
   const [addToProject, setAddtoProj] = useState(false);
   const [role, setRole] = useState('');
   const { user } = useAuth();
-  const { openAssigneesModal } = useSaveContext();
+  const { addToCollabManager, updateCollaborator, setUpdateCollab } = useCollabContext();
 
   const downIcon = (
     <svg
@@ -37,6 +37,15 @@ export default function AddCollabForm({ refreshAllColabs }) {
     </svg>
   );
 
+  useEffect(() => {
+    if (updateCollaborator) {
+      setForminput(updateCollaborator);
+      if (!expanded) {
+        setExpanded((prevVal) => !prevVal);
+      }
+    }
+  }, [updateCollaborator]);
+
   const handleClick = () => {
     setExpanded((prevVal) => true);
   };
@@ -52,12 +61,27 @@ export default function AddCollabForm({ refreshAllColabs }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    createNewCollab({ ...formInput, userId: user.uid }).then(({ name }) => {
-      updateCollab({ collabId: name });
-      setAddtoProj((prevVal) => false);
-      setForminput((prevVal) => initialState);
-      refreshAllColabs();
-    });
+    if (updateCollaborator) { // update collaborator
+      const payload = { ...formInput, collabId: updateCollaborator.collabId };
+      updateCollab(payload);
+      setUpdateCollab(null);
+      setForminput(initialState);
+      addToCollabManager(payload, 'allCollabs', 'update');
+    } else { // create collaborator
+      const payload = { ...formInput, userId: user.uid };
+      createNewCollab(payload).then(({ name }) => {
+        updateCollab({ collabId: name });
+        setAddtoProj((prevVal) => false);
+        setForminput((prevVal) => initialState);
+        addToCollabManager({ ...payload, collabId: name }, 'allCollabs', 'create');
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    setExpanded((preVal) => !preVal);
+    setForminput(initialState);
+    setUpdateCollab(null);
   };
 
   return (
@@ -80,7 +104,7 @@ export default function AddCollabForm({ refreshAllColabs }) {
             }}
             onClick={handleClick}
           >
-            {plusIcon} Add a Collaborator
+            {updateCollaborator ? (<>{plusIcon} Edit Collaborator</>) : (<>{plusIcon} Add a Collaborator</>)}
           </button>
         </div>
         {/* --------------card-body------------------------ */}
@@ -226,12 +250,25 @@ export default function AddCollabForm({ refreshAllColabs }) {
                 variant="outlined"
                 type="submit"
                 style={{
-                  margin: '1% 0%',
+                  margin: '2% 1%',
                   color: 'black',
                   border: '1px solid rgb(100, 100, 100)',
                 }}
               >
                 Submit
+              </Button>
+              <Button
+                variant="outlined"
+                type="button"
+                style={{
+                  margin: '2% 1%',
+                  color: 'black',
+                  border: '1px solid rgb(100, 100, 100)',
+                }}
+                onClick={handleCancel}
+              >
+
+                Cancel
               </Button>
             </div>
           </form>

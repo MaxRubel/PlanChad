@@ -8,13 +8,12 @@ import { createTaskCollab, updateTaskCollab } from '../api/taskCollab';
 export default function CollabCardForTask({
   taskId,
   collab,
-  refreshAllColabs,
-  projectId,
-  refreshProjCollabs,
 }) {
   const [expanded, setExpanded] = useState(false);
   const {
-    projCollabs, setProjCollabs, setTaskCollabs, taskCollabs,
+    setTaskCollabs,
+    taskCollabs,
+    saveInput,
   } = useSaveContext();
 
   const downIcon = (
@@ -36,9 +35,10 @@ export default function CollabCardForTask({
     const payload = {
       collabId: collab.collabId,
       taskId,
+      projectId: saveInput.project.projectId,
     };
     const isAlreadyInTask = taskCollabs.filter((taskCollab) => taskCollab.collabId === collab.collabId
-     && taskCollab.taskId === taskId);
+      && taskCollab.taskId === taskId);
     if (isAlreadyInTask.length === 0) {
       createTaskCollab(payload).then(({ name }) => {
         const payload2 = { taskCollabId: name };

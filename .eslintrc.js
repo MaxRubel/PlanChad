@@ -13,6 +13,8 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    'react-hooks/exhaustive-deps': 'off',
+    'arrow-parens': 'warn',
     'key-spacing': 'warn',
     'object-curly-newline': 'warn',
     'react/jsx-boolean-value': 'warn',

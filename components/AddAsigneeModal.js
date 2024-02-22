@@ -3,37 +3,24 @@
 import { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Button } from '@mui/material';
-import CollabCard from './CollabCard';
 import { useSaveContext } from '../utils/context/saveManager';
-import { getCollabsOfProject } from '../api/projCollab';
-import { getSingleCollab } from '../api/collabs';
 import CollabCardForTask from './CollabCardForTask';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function AddAsigneeModal() {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
   const {
-    setProjCollabs,
     saveInput,
     asigneesIsOpen,
     closeAsigneesModal,
     taskId,
   } = useSaveContext();
 
+  const { projCollabs } = useCollabContext();
+
   useEffect(() => {
-    if (asigneesIsOpen) {
-      getCollabsOfProject(saveInput.project.projectId).then((data) => {
-        const collabIds = [];
-        for (let i = 0; i < data.length; i++) {
-          collabIds.push(data[i].collabId);
-        }
-        const promArray = collabIds.map((collabId) => (getSingleCollab(collabId)));
-        Promise.all(promArray).then((collabsData) => {
-          setCollabsOfProj(collabsData);
-          setProjCollabs(collabsData);
-        });
-      });
-    }
-  }, [asigneesIsOpen]);
+    setCollabsOfProj(projCollabs);
+  }, [projCollabs]);
 
   return (
     <>
@@ -57,7 +44,7 @@ export default function AddAsigneeModal() {
             <div className="card-body">
               <div className="card">
                 <div className="card-body">
-                  {collabsOfProj.map((collab) => (
+                  {collabsOfProj?.map((collab) => (
                     <CollabCardForTask
                       key={collab.collabId}
                       collab={collab}
