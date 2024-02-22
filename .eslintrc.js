@@ -13,6 +13,7 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    'arrow-parens': 'warn',
     'key-spacing': 'warn',
     'object-curly-newline': 'warn',
     'react/jsx-boolean-value': 'warn',

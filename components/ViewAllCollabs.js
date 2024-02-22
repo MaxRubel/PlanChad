@@ -3,18 +3,25 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../utils/context/authContext';
 import { getCollabsOfUser } from '../api/collabs';
 import CollabCard from './CollabCard';
+import { useSaveContext } from '../utils/context/saveManager';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function ViewAllCollabs({
   refreshAllCs, refreshProjCollabs, refreshAllColabs, projectId,
 }) {
   const [collabs, setCollabs] = useState([]);
   const { user } = useAuth();
+  const { allCollabs } = useCollabContext();
 
   useEffect(() => {
     getCollabsOfUser(user.uid).then((data) => {
       setCollabs(data);
     });
   }, [refreshAllCs, user.uid]);
+
+  useEffect(() => {
+    setCollabs(allCollabs);
+  }, [allCollabs]);
 
   return (
     <div className="card text-bg-info mb-3" style={{ width: '47%' }}>

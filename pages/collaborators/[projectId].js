@@ -1,15 +1,27 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AddCollabForm from '../../components/AddCollabForm';
 import ViewAllCollabs from '../../components/ViewAllCollabs';
 import { rightArrow } from '../../public/icons';
 import ViewProjCollabs from '../../components/ViewProjCollabs';
+import { fetchProjectCollabs } from '../../utils/fetchAll';
+import { useCollabContext } from '../../utils/context/collabContext';
+import { getCollabsOfUser } from '../../api/collabs';
+import { useAuth } from '../../utils/context/authContext';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
   const { projectId } = router.query;
   const [refreshAllCs, setRefreshAllCs] = useState(0);
   const [refreshProjCs, setRefreshProjCs] = useState(0);
+  const {
+    addToCollabManager,
+    clearCollabManager,
+    allCollabs,
+    loaded,
+    projCollabs,
+  } = useCollabContext();
+  const { user } = useAuth();
 
   const refreshAllColabs = () => {
     setRefreshAllCs((prevVal) => prevVal + 1);
@@ -18,6 +30,20 @@ export default function ManageCollaboratorsPage() {
   const refreshProjCollabs = () => {
     setRefreshProjCs((prevVal) => prevVal + 1);
   };
+  console.log(projCollabs);
+  useEffect(() => { // load in all users
+    clearCollabManager();
+    if (!loaded) {
+      fetchProjectCollabs(projectId).then((data) => {
+        addToCollabManager(data.projCollabJoins, 'projCollabJoins', 'loadin');
+        addToCollabManager(data.projCollabs, 'projCollabs', 'loadin');
+        addToCollabManager(data.taskCollabs, 'taskCollabs', 'create');
+        getCollabsOfUser(user.uid).then((userCollabs) => {
+          addToCollabManager(userCollabs, 'allCollabs', 'loadin');
+        });
+      });
+    }
+  }, [projectId]);
 
   return (
     <>

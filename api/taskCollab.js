@@ -1,5 +1,41 @@
 const endpoint = 'https://planchad-6fcf7-default-rtdb.firebaseio.com';
 
+const getCollabsOfTask = (projectId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/taskCollabs.json?orderBy="projectId"&equalTo="${projectId}"`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
+const getTaskCollabsOfProject = (projectId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/taskCollabs.json?orderBy="projectId"&equalTo="${projectId}"`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
 const createTaskCollab = (payload) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/taskCollabs.json`, {
     method: 'POST',
@@ -26,4 +62,9 @@ const updateTaskCollab = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-export { createTaskCollab, updateTaskCollab };
+export {
+  createTaskCollab,
+  updateTaskCollab,
+  getCollabsOfTask,
+  getTaskCollabsOfProject,
+};

@@ -1,20 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
-import {
-  useState, useEffect, useRef, useLayoutEffect,
-} from 'react';
+import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
-import Router, { useRouter } from 'next/router';
-import { Modal } from 'react-bootstrap';
+import { useRouter } from 'next/router';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import fetchAll2 from '../utils/fetchAll';
+import { fetchAll2, fetchProjectCollabs } from '../utils/fetchAll';
 import AddAsigneeModal from './AddAsigneeModal';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function BigDaddyProject({ projectId }) {
   const [project, setProject] = useState({});
@@ -23,7 +21,7 @@ export default function BigDaddyProject({ projectId }) {
   const [refresh, setRefresh] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [isLoading, setIsloading] = useState(true);
-  const [show, setShow] = useState(false);
+
   const {
     addToSaveManager,
     saveInput,
@@ -32,6 +30,9 @@ export default function BigDaddyProject({ projectId }) {
     min,
     minAll,
   } = useSaveContext();
+  const { loaded } = useCollabContext();
+
+  const { addToCollabManager, clearCollabManager } = useCollabContext();
   const router = useRouter();
 
   const saveIndexes = () => { // send all to save manager
@@ -84,20 +85,27 @@ export default function BigDaddyProject({ projectId }) {
 
   // (-------for testing purposes----)
   const tryFetch = (projId) => {
-    setIsloading(true);
-    clearSaveManager();
-    fetchAll2(projId).then((data) => {
-      setProject(data.project);
-      const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
-      data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
-        addToSaveManager(checkP.tasks, 'create', 'tasksArr');
+    // setIsloading(true);
+    // clearSaveManager();
+    // fetchAll2(projId).then((data) => {
+    //   setProject(data.project);
+    //   const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
+    //   data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
+    //     addToSaveManager(checkP.tasks, 'create', 'tasksArr');
+    //   });
+    //   addToSaveManager(data.project, '', 'project'); // add project data
+    //   addToSaveManager(data.checkpoints, 'create', 'checkpointsArr'); // add to save manager
+    //   setCheckpoints(sortedCheckpoints);
+    //   setIsloading(false);
+    // });
+    console.log(loaded);
+    if (!loaded) {
+      fetchProjectCollabs(projId).then((data) => {
+        clearCollabManager();
+        addToCollabManager(data.projCollabs, 'projCollabs', 'loadin');
+        addToCollabManager(data.taskCollabs, 'taskCollabs', 'loadin');
       });
-      addToSaveManager(data.project, '', 'project'); // add project data
-      addToSaveManager(data.checkpoints, 'create', 'checkpointsArr'); // add to save manager
-      setCheckpoints(sortedCheckpoints);
-      setIsloading(false);
-    });
-    // openAssigneesModal();
+    }
   };
 
   const addCheckpoint = () => {

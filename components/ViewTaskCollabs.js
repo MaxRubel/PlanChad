@@ -14,24 +14,28 @@ export default function ViewTaskCollabs({
 }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
   const {
-    projCollabs, setProjCollabs, saveInput, sendTaskIdtoSaveManager,
+    projCollabs,
+    setProjCollabs,
+    saveInput,
+    sendTaskIdtoSaveManager,
   } = useSaveContext();
   const [addAsigneeM, setAddAsigneeM] = useState(false);
+  const [collabsOfTask, setCOllabsOfTaks] = useState([]);
   const { openAssigneesModal } = useSaveContext();
 
-  useEffect(() => {
-    getCollabsOfProject(projectId).then((data) => {
-      const collabIds = [];
-      for (let i = 0; i < data.length; i++) {
-        collabIds.push(data[i].collabId);
-      }
-      const promArray = collabIds.map((collabId) => (getSingleCollab(collabId)));
-      Promise.all(promArray).then((collabsData) => {
-        setCollabsOfProj(collabsData);
-        setProjCollabs(collabsData);
-      });
-    });
-  }, [refreshProjCs, projectId]);
+  // useEffect(() => {
+  //   getCollabsOfTask(projectId).then((data) => {
+  //     const collabIds = [];
+  //     for (let i = 0; i < data.length; i++) {
+  //       collabIds.push(data[i].collabId);
+  //     }
+  //     const promArray = collabIds.map((collabId) => (getSingleCollab(collabId)));
+  //     Promise.all(promArray).then((collabsData) => {
+  //       setCollabsOfProj(collabsData);
+  //       setProjCollabs(collabsData);
+  //     });
+  //   });
+  // }, [refreshProjCs, projectId]);
   const addAsignee = () => {
     openAssigneesModal(taskId);
   };
@@ -53,7 +57,7 @@ export default function ViewTaskCollabs({
           <div className="card-body">
             <div className="card">
               <div className="card-body">
-                {collabsOfProj.map((collab) => (
+                {collabsOfTask.map((collab) => (
                   <CollabCard
                     key={collab.collabId}
                     collab={collab}
