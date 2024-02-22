@@ -12,7 +12,6 @@ import CollabCardForTask from './CollabCardForTask';
 export default function AddAsigneeModal() {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
   const {
-    setTaskCollabs,
     setProjCollabs,
     saveInput,
     asigneesIsOpen,
