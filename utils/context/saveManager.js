@@ -16,6 +16,19 @@ export const SaveContextProvider = ({ children }) => {
   const [serverRefresh, setServerRefresh] = useState(0);
   const [min, setMin] = useState(0);
   const [projCollabs, setProjCollabs] = useState([]);
+  const [taskCollabs, setTaskCollabs] = useState([]);
+  const [asigneesIsOpen, setAssigneesIsOpen] = useState(false);
+  const [taskId, setTaskId] = useState(null);
+
+  // ---------for-modal-----------
+  const openAssigneesModal = (taskIdRecent) => {
+    setAssigneesIsOpen(true);
+    setTaskId((preVal) => taskIdRecent);
+  };
+
+  const closeAsigneesModal = () => {
+    setAssigneesIsOpen(false);
+  };
 
   const minAll = () => { // trigger minAll and animation
     setMin((prevVal) => prevVal + 1);
@@ -77,17 +90,6 @@ export const SaveContextProvider = ({ children }) => {
     const checkPs = [...saveInput.checkpoints];
     const tasks = [...saveInput.tasks];
     if (type === 'checkpoint' && action === 'delete') {
-      // if (input.checkpointId) {
-      //   setChecksToDelete((prevVal) => [...prevVal, input]);
-      // }
-
-      // const tasksOfCheckp = saveInput.tasks.filter((task) => task.checkpointId === input.localId);
-      // tasksOfCheckp.forEach((task) => {
-      //   if (task.taskId) {
-      //     setTasksToDelete((prevVal) => [...prevVal, task]);
-      //   }
-      // });
-
       const updatedTasks = saveInput.tasks.filter((task) => task.checkpointId !== input.localId);
       const updatedCheckpoints = saveInput.checkpoints.filter((checkpoint) => checkpoint.localId !== input.localId);
 
@@ -118,45 +120,6 @@ export const SaveContextProvider = ({ children }) => {
 
   const sendToServer = (payloadFromChild) => {
     console.log('sending to server...');
-    // // -----------------create---------
-    // const checkpoints = [...saveInput.checkpoints];
-    // const tasks = [...saveInput.tasks];
-
-    // const postCheckpoints = checkpoints.filter((item) => !item.checkpointId);
-    // const postTasks = tasks.filter((item) => !item.taskId);
-
-    // const postCheckPPromise = postCheckpoints.map((item) => (
-    //   createNewCheckpoint(item)
-    //     .then(({ name }) => { updateCheckpoint({ checkpointId: name }); })));
-    // const postTasksPromise = postTasks.map((item) => (
-    //   createNewTask(item)
-    //     .then(({ name }) => { updateTask({ taskId: name }); })));
-
-    // // -----------update----------------
-    // const patchCheckpoints = checkpoints.filter((item) => item.checkpointId);
-    // const patchCheckPPromise = patchCheckpoints.map((item) => (updateCheckpoint(item)));
-    // const patchTasks = tasks.filter((item) => (item.taskId));
-    // const patchTaskPromise = patchTasks.map((item) => (updateTask(item)));
-
-    // // ----------------delete-----------
-    // const checksDeletePromise = checksToDelete.map((item) => (deleteCheckpoint(item.checkpointId)));
-    // const taskDeletePromise = tasksToDelete.map((item) => (deleteTask(item.taskId)));
-
-    // console.log('creating: ', postCheckpoints.length, 'checkpoints');
-    // console.log('creating: ', postTasks.length, 'tasks');
-    // console.log('updating, ', patchCheckpoints.length, 'checkpoints');
-    // console.log('updating, ', patchTasks.length, 'tasks');
-    // console.log('deleting: ', checksToDelete.length, 'checkpoints');
-    // console.log('deleting: ', taskDeletePromise.length, 'tasks');
-
-    // updateProject(saveInput.project).then(() => {
-    //   Promise.all([...postCheckPPromise, ...postTasksPromise, ...patchCheckPPromise, ...patchTaskPromise,
-    // ...patchTaskPromise, ...checksDeletePromise, ...taskDeletePromise]).then(() => {
-    //     clearSaveManager();
-    //     setServerRefresh((preVal) => preVal + 1);
-    //   });
-    // });
-
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
     const tasksFormatted = tasks.length > 0 ? JSON.stringify(tasks) : null;
@@ -184,6 +147,12 @@ export const SaveContextProvider = ({ children }) => {
       minAll,
       projCollabs,
       setProjCollabs,
+      openAssigneesModal,
+      closeAsigneesModal,
+      asigneesIsOpen,
+      taskId,
+      setTaskCollabs,
+      taskCollabs,
     }}
     >
       {children}

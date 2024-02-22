@@ -155,19 +155,19 @@ body {
   display: grid;
   grid-template-columns: 84px 16% 59% 100px;
   min-width: 500px;
-  // transition: grid-template-columns 1s ease;
+  // transition: all 1s ease;
 }
 
 .taskDeetsExpand {
   display: grid;
-  grid-template-columns: 84px 1fr 1fr 246px; 
-  // transition: grid-template-columns 1s ease;
+  grid-template-columns: 84px 1fr 1fr 100px; 
+gap: 6px;
   min-width: 500px;
 }
 
 #marginL {
-  background-color: rgba(255, 121, 221, 0.448);
-  transition: all ease 1s;
+  // background-color: rgba(255, 121, 221, 0.448);
+  // transition: all ease 1s;
 }
 
 .card {
@@ -199,4 +199,8 @@ body {
 .grid3{
   display: grid; 
   grid-template-columns: 1fr 1fr 2fr;
+}
+
+#marginL2{
+//  transition: all ease 1s;
 }

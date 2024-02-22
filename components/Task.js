@@ -27,7 +27,6 @@ export default function Task({
   task,
   min,
   refreshCheckP,
-  handleRefresh,
   indexT,
   isLoading,
 }) {
@@ -280,7 +279,9 @@ export default function Task({
       </div>
       <TaskDeets
         formInput={formInput}
-        handleChange={handleChange} />
+        handleChange={handleChange}
+        taskId={task.localId}
+        />
 
     </>
   );

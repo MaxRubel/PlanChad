@@ -3,11 +3,10 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 import { Collapse } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { wrapGrid } from 'animate-css-grid';
 import { peopleIcon, rightArrowSmall } from '../public/icons';
-import TaskCollabs from './TaskCollabs';
+import ViewTaskCollabs from './ViewTaskCollabs';
 
-export default function TaskDeets({ formInput, handleChange }) {
+export default function TaskDeets({ formInput, handleChange, taskId }) {
   const [fresh, setFresh] = useState(true);
   const [collabsExpand, setCollabsExpand] = useState(false);
   const grid = document.getElementById(`taskDeets${formInput.localId}`);
@@ -37,7 +36,7 @@ export default function TaskDeets({ formInput, handleChange }) {
   return (
     <>
       <div id={`taskDeets${formInput.localId}`} className={collabsExpand ? 'taskDeetsExpand' : 'taskDeets'}>
-        <div id="margin L" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div id="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div id="empty" />
           <div
             id="line"
@@ -49,11 +48,10 @@ export default function TaskDeets({ formInput, handleChange }) {
             <div style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
           </div>
         </div>
-        <div id="margin L2" style={{ display: collabsExpand ? 'none' : 'grid', gridTemplateRows: '1fr 1fr' }}>
+        <div id="marginL2" style={{ display: collabsExpand ? 'none' : 'grid', gridTemplateRows: '1fr 1fr' }}>
           <div id="line" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
           <div id="empty" />
         </div>
-
         <div id="taskDeetsInfo" className="card" style={{ margin: '3px 0px' }}>
           {/* -------card-body------------------------ */}
           <Collapse in={formInput.deetsExpanded}>
@@ -137,9 +135,9 @@ export default function TaskDeets({ formInput, handleChange }) {
           </Collapse>
         </div>
         <div id="taskCollabs">
-          <TaskCollabs collabsExpand={collabsExpand} />
+          <ViewTaskCollabs taskId={taskId} collabsExpand={collabsExpand} />
         </div>
-        <div id="margin 3" />
+        {/* <div id="margin3" /> */}
       </div>
 
     </>
