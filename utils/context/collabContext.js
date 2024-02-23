@@ -1,8 +1,12 @@
 import React, {
   createContext, useState, useContext, useEffect,
 } from 'react';
+import { getCollapseUtilityClass } from '@mui/material';
 import { fetchProjectCollabs } from '../fetchAll';
-import { useSaveContext } from './saveManager';
+// import { useSaveContext } from './saveManager';
+import { useAuth } from './authContext';
+import { getCollabsOfUser } from '../../api/collabs';
+import { getProjCollabsOfUser } from '../../api/projCollab';
 
 const CollabContext = createContext();
 
@@ -16,31 +20,36 @@ const CollabContextProvider = ({ children }) => {
   const [projCollabJoins, setProjCollabJoins] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [updateCollaborator, setUpdateCollaborator] = useState(null);
-  // const [refreshAllCollabs, setRefreshAllCollabs] = useState(0);
-  // const { saveInput } = useSaveContext();
+  const { user } = useAuth();
 
-  // useEffect(() => {
-  //   if (allCollabs.length === 0) {
-  //     fetchProjectCollabs(saveInput.project.projectId).then((data) => {
-  //     });
-  //   }
-  // }, [saveInput.project.projectId]);
+  const clearCollabManager = () => {
+    setAllCollabs((preVal) => []);
+    setProjCollabs((preVal) => []);
+    setProjCollabJoins((preVal) => []);
+  };
+
+  useEffect(() => { // get all of the user's collabs on initial app load
+    if (user && !loaded) {
+      getCollabsOfUser(user.uid).then((userCollabs) => {
+        getProjCollabsOfUser(user.uid).then((userProjCollabJoins) => {
+          console.log('Grabbing user data...');
+          console.log('All Collaborators: ', userCollabs);
+          console.log('All Proj/Collab Joins: ', userProjCollabJoins);
+          setProjCollabJoins((preVal) => userProjCollabJoins);
+        });
+        setAllCollabs((preVal) => userCollabs);
+        setLoaded((preVal) => !preVal);
+      });
+    }
+  }, [user]);
 
   const setUpdateCollab = (collabObj) => {
     setUpdateCollaborator(collabObj);
   };
 
-  const clearCollabManager = () => {
-    setProjCollabs([]);
-  };
-
   const addToCollabManager = (input, type, action) => {
     // --------all-collaborators--------------------------
     if (type === 'allCollabs') {
-      if (action === 'loadin') {
-        setAllCollabs(input);
-        setLoaded((preVal) => true);
-      }
       if (action === 'create') {
         setAllCollabs((preVal) => ([...preVal, input]));
       }
@@ -57,10 +66,6 @@ const CollabContextProvider = ({ children }) => {
     }
     // --------project-collaborators----------------------
     if (type === 'projCollabs') {
-      if (action === 'loadin') {
-        setProjCollabs((preVal) => input);
-        setLoaded((preVal) => true);
-      }
       if (action === 'create') {
         const copy = [...allCollabs];
         const index = copy.findIndex((item) => item.collabId === input.collabId);
@@ -69,8 +74,10 @@ const CollabContextProvider = ({ children }) => {
       }
     }
     if (type === 'projCollabJoins') {
-      if (action === 'loadin') {
-        setProjCollabJoins((preVal) => input);
+      if (action === 'create') {
+        const copy = [...projCollabJoins];
+        copy.push(input);
+        setProjCollabJoins((preVal) => copy);
       }
     }
     if (type === 'taskCollabs') {
@@ -86,23 +93,12 @@ const CollabContextProvider = ({ children }) => {
       const index = copy.findIndex((item) => item.collabId === id);
       copy.splice(index, 1);
       setAllCollabs((preVal) => (copy));
-      // const indexArr = [];
-      // const copy2 = [...taskCollabs];
-      // for (let i = 0; i < copy2.length; i++) { // remove from taskCollabs
-      //   if (copy[i].collabId === id) {
-      //     indexArr.push(i);
-      //   }
-      // }
     }
-    if (type === 'projCollab') {
-      const copy = [...projCollabs];
-      const joinCopy = [...projCollabJoins];
-      const index = copy.findIndex((item) => item.collabId === id);
-      const joinInex = joinCopy.findIndex((item) => item.collabId === id);
-      copy.splice(index, 1);
-      joinCopy.splice(joinInex, 1);
-      setProjCollabs((preVal) => (copy));
-      setProjCollabJoins((preVal) => (joinCopy));
+    if (type === 'projCollabJoin') {
+      const copy = [...projCollabJoins];
+      const deleteIndex = copy.findIndex((item) => item.projCollabId === id);
+      copy.splice(deleteIndex, 1);
+      setProjCollabJoins((preVal) => (copy));
     }
   };
 

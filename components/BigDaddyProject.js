@@ -29,6 +29,8 @@ export default function BigDaddyProject({ projectId }) {
     clearSaveManager,
     min,
     minAll,
+    loadProject,
+    projectsLoaded,
   } = useSaveContext();
   const { loaded } = useCollabContext();
 
@@ -47,11 +49,10 @@ export default function BigDaddyProject({ projectId }) {
   };
 
   useEffect(() => { // refresh checkpoint from save manager
-    if (!isLoading) {
-      const copy = [...saveInput.checkpoints];
-      const sortedArr = copy.sort((a, b) => a.index - b.index);
-      setCheckpoints(sortedArr);
-    }
+    console.log('refreshing...');
+    const copy = [...saveInput.checkpoints];
+    const sortedArr = copy.sort((a, b) => a.index - b.index);
+    setCheckpoints(sortedArr);
   }, [refresh]);
 
   useEffect(() => { // minimize button color animation
@@ -67,45 +68,22 @@ export default function BigDaddyProject({ projectId }) {
     };
   }, [minColor]);
 
-  useEffect(() => {
-    clearSaveManager();
-    setIsloading(true);
-    fetchProjectDetails(projectId).then((data) => {
-      setProject(data.project);
-      const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
-      data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
-        addToSaveManager(checkP.tasks, 'create', 'tasksArr');
-      });
-      addToSaveManager(data.project, '', 'project'); // add project data
-      addToSaveManager(data.checkpoints, 'create', 'checkpointsArr'); // add to save manager
-      setCheckpoints(sortedCheckpoints);
-      setIsloading(false);
-    });
-  }, []);
+  useEffect(() => { // on Mount
+    console.log('Setting up project from local memory...');
+    if (projectId && projectsLoaded) {
+      const projectDetails = loadProject(projectId);
+      console.log(projectDetails);
+      setProject((preVal) => projectDetails.project);
+      setCheckpoints((preVal) => projectDetails.checkpoints);
+    }
+  }, [projectId, projectsLoaded]);
 
   // (-------for testing purposes----)
   const tryFetch = (projId) => {
-    // setIsloading(true);
-    // clearSaveManager();
-    // fetchProjectDetails(projId).then((data) => {
-    //   setProject(data.project);
-    //   const sortedCheckpoints = data.checkpoints.sort((a, b) => a.index - b.index);
-    //   data.checkpoints.forEach((checkP) => { // add all the tasks to save manager
-    //     addToSaveManager(checkP.tasks, 'create', 'tasksArr');
-    //   });
-    //   addToSaveManager(data.project, '', 'project'); // add project data
-    //   addToSaveManager(data.checkpoints, 'create', 'checkpointsArr'); // add to save manager
-    //   setCheckpoints(sortedCheckpoints);
-    //   setIsloading(false);
-    // });
-    console.log(loaded);
-    if (!loaded) {
-      fetchProjectCollabs(projId).then((data) => {
-        clearCollabManager();
-        addToCollabManager(data.projCollabs, 'projCollabs', 'loadin');
-        addToCollabManager(data.taskCollabs, 'taskCollabs', 'loadin');
-      });
-    }
+    console.log('Setting up project from local memory...');
+    const projectDetails = loadProject(projId);
+    setProject((preVal) => projectDetails.project);
+    setCheckpoints((preVal) => projectDetails.checkpoints);
   };
 
   const addCheckpoint = () => {
@@ -122,7 +100,6 @@ export default function BigDaddyProject({ projectId }) {
       fresh: true,
       checkpointId: null,
       dragId: uniqid(),
-      tasks: '[]',
     };
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();

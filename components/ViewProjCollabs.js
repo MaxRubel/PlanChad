@@ -9,26 +9,31 @@ import { useCollabContext } from '../utils/context/collabContext';
 // eslint-disable-next-line react/prop-types
 export default function ViewProjCollabs({ projectId, refreshProjCollabs, refreshProjCs }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
-  const { setProjCollabs, saveInput } = useSaveContext();
-  const { refreshAllCollabs, projCollabs } = useCollabContext();
-
-  // useEffect(() => {
-  //   getCollabsOfProject(projectId).then((data) => {
-  //     const collabIds = [];
-  //     for (let i = 0; i < data.length; i++) {
-  //       collabIds.push(data[i].collabId);
-  //     }
-  //     const promArray = collabIds.map((collabId) => (getSingleCollab(collabId)));
-  //     Promise.all(promArray).then((collabsData) => {
-  //       setCollabsOfProj(collabsData);
-  //       // setProjCollabs(collabsData);
-  //     });
-  //   });
-  // }, [refreshProjCs, projectId]);
+  const { saveInput } = useSaveContext();
+  const {
+    refreshAllCollabs, allCollabs, projCollabs, projCollabJoins,
+  } = useCollabContext();
 
   useEffect(() => {
-    setCollabsOfProj(projCollabs);
-  }, [projCollabs]);
+    // const thisProjCollabJoins = [];
+    const thisProjCollabs = [];
+    const copy = [...projCollabJoins];
+    // for (let i = 0; i < projCollabJoins.length; i++) {
+    //   if (projCollabJoins[i].projectId === projectId) {
+    //     thisProjCollabJoins.push(projCollabJoins[i]);
+    //   }
+    // }
+    const thisProjCollabJoins = copy.filter((item) => item.projectId === projectId);
+    console.log(thisProjCollabJoins);
+    const collabIds = thisProjCollabJoins.map((item) => item.collabId);
+    console.log(collabIds);
+    for (let i = 0; i < allCollabs.length; i++) {
+      if (collabIds.includes(allCollabs[i].collabId)) {
+        thisProjCollabs.push(allCollabs[i]);
+      }
+    }
+    setCollabsOfProj((preVal) => thisProjCollabs);
+  }, [projCollabJoins]);
 
   return (
     <div className="card text-bg-info mb-3" style={{ width: '47%' }}>

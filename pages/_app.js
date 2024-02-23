@@ -9,18 +9,17 @@ import { CollabContextProvider } from '../utils/context/collabContext';
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <SaveContextProvider>
-        <CollabContextProvider>
+      <CollabContextProvider>
+        <SaveContextProvider>
           <ViewDirectorBasedOnUserAuthStatus
-            // if status is pending === loading
-            // if status is logged in === view app
-            // if status is logged out === sign in page
+        // if status is pending === loading
+        // if status is logged in === view app
+        // if status is logged out === sign in page
             component={Component}
             pageProps={pageProps}
           />
-        </CollabContextProvider>
-      </SaveContextProvider>
-
+        </SaveContextProvider>
+      </CollabContextProvider>
     </AuthProvider>
   );
 }

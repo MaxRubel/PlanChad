@@ -14,13 +14,6 @@ export default function ManageCollaboratorsPage() {
   const { projectId } = router.query;
   const [refreshAllCs, setRefreshAllCs] = useState(0);
   const [refreshProjCs, setRefreshProjCs] = useState(0);
-  const {
-    addToCollabManager,
-    clearCollabManager,
-    allCollabs,
-    loaded,
-    projCollabs,
-  } = useCollabContext();
   const { user } = useAuth();
 
   const refreshAllColabs = () => {
@@ -30,20 +23,6 @@ export default function ManageCollaboratorsPage() {
   const refreshProjCollabs = () => {
     setRefreshProjCs((prevVal) => prevVal + 1);
   };
-  console.log(projCollabs);
-  useEffect(() => { // load in all users
-    clearCollabManager();
-    if (!loaded) {
-      fetchProjectCollabs(projectId).then((data) => {
-        addToCollabManager(data.projCollabJoins, 'projCollabJoins', 'loadin');
-        addToCollabManager(data.projCollabs, 'projCollabs', 'loadin');
-        addToCollabManager(data.taskCollabs, 'taskCollabs', 'create');
-        getCollabsOfUser(user.uid).then((userCollabs) => {
-          addToCollabManager(userCollabs, 'allCollabs', 'loadin');
-        });
-      });
-    }
-  }, [projectId]);
 
   return (
     <>

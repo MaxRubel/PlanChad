@@ -1,9 +1,14 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, {
+  createContext, useContext, useEffect, useState,
+} from 'react';
 import {
   createNewCheckpoint, deleteCheckpoint, getCheckpointsOfProject, updateCheckpoint,
 } from '../../api/checkpoint';
 import { createNewTask, deleteTask, updateTask } from '../../api/task';
-import { updateProject } from '../../api/project';
+import { getUserProjects, updateProject } from '../../api/project';
+import { useAuth } from './authContext';
+import { getProjCollabsOfUser } from '../../api/projCollab';
+// import { useCollabContext } from './collabContext';
 
 const saveContext = createContext(null);
 
@@ -15,10 +20,49 @@ export const SaveContextProvider = ({ children }) => {
   const [saveInput, setSaveInput] = useState(initState);
   const [serverRefresh, setServerRefresh] = useState(0);
   const [min, setMin] = useState(0);
-  const [projCollabs, setProjCollabs] = useState([]);
-  const [taskCollabs, setTaskCollabs] = useState([]);
+  // const [projCollabs, setProjCollabs] = useState([]);
+  // const [taskCollabs, setTaskCollabs] = useState([]);
   const [asigneesIsOpen, setAssigneesIsOpen] = useState(false);
   const [taskId, setTaskId] = useState(null);
+  const [allProjects, setAllProjects] = useState([]);
+  const [projectsLoaded, setProjectLoaded] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user && !projectsLoaded) { // load in all user project data when page first loads
+      getUserProjects(user.uid)
+        .then((data) => {
+          console.log('All Projects: ', data);
+          setAllProjects(data);
+          setProjectLoaded((preVal) => true);
+        });
+    }
+  }, [user]);
+
+  const clearSaveManager = () => {
+    setSaveInput((prevVal) => initState);
+  };
+
+  const loadProject = (projectId) => {
+    clearSaveManager();
+    const copy = [...allProjects];
+    const project = copy.find((item) => item.projectId === projectId);
+    console.log('project found: ', project);
+    let checkpoints = [];
+    let tasks = [];
+    if (project.checkpoints) {
+      const checkpointsForm = JSON.parse(project.checkpoints);
+      checkpoints = checkpointsForm.sort((a, b) => a.index - b.index);
+      console.log(checkpoints);
+    }
+    if (project.tasks) {
+      tasks = JSON.parse(project.tasks);
+    }
+    const obj = { project, checkpoints, tasks };
+    console.log('the project you requested looks like: ', obj);
+    setSaveInput((preVal) => obj);
+    return obj;
+  };
 
   // ---------for-modal-----------
   const openAssigneesModal = (taskIdRecent) => {
@@ -45,7 +89,15 @@ export const SaveContextProvider = ({ children }) => {
 
   const addToSaveManager = (input, action, type) => {
     if (type === 'project') {
-      setSaveInput((prevVal) => ({ ...prevVal, project: { ...prevVal.project, ...input } }));
+      if (action === 'create') {
+        const copy = [...allProjects];
+        copy.push(input);
+        console.log(copy);
+        setAllProjects((preVal) => copy);
+      }
+      if (action === 'update') {
+        setSaveInput((prevVal) => ({ ...prevVal, project: { ...prevVal.project, ...input } }));
+      }
     }
     // ----------checkpoints------------
     if (type === 'checkpoint') {
@@ -108,17 +160,13 @@ export const SaveContextProvider = ({ children }) => {
     }
   };
 
-  const clearSaveManager = () => {
-    setSaveInput((prevVal) => initState);
-  };
-
   const fetchAll = (projectId) => new Promise((resolve, reject) => {
     getCheckpointsOfProject(projectId)
       .then((data) => (resolve(data)))
       .catch(reject);
   });
 
-  const sendToServer = (payloadFromChild) => {
+  const sendToServer = () => {
     console.log('sending to server...');
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
@@ -131,7 +179,12 @@ export const SaveContextProvider = ({ children }) => {
       checkpoints: checkpointsFormatted,
       tasks: tasksFormatted,
     };
+
     updateProject(payload);
+    const copy = [...allProjects];
+    const index = copy.findIndex((item) => item.projectId === payload.projectId);
+    copy[index] = payload;
+    setAllProjects((preVal) => copy);
   };
 
   return (
@@ -145,14 +198,17 @@ export const SaveContextProvider = ({ children }) => {
       serverRefresh,
       min,
       minAll,
-      projCollabs,
-      setProjCollabs,
+      // projCollabs,
+      // setProjCollabs,
       openAssigneesModal,
       closeAsigneesModal,
       asigneesIsOpen,
       taskId,
-      setTaskCollabs,
-      taskCollabs,
+      // setTaskCollabs,
+      // taskCollabs,
+      allProjects,
+      projectsLoaded,
+      loadProject,
     }}
     >
       {children}
