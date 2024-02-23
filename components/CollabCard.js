@@ -7,6 +7,7 @@ import {
 } from '../api/projCollab';
 import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
+import { useAuth } from '../utils/context/authContext';
 
 export default function CollabCard({
   collab,
@@ -23,6 +24,7 @@ export default function CollabCard({
     setUpdateCollab,
   } = useCollabContext();
 
+  const { user } = useAuth();
   const downIcon = (
     <svg
       className={expanded ? 'icon-up' : 'icon-down'}
@@ -107,9 +109,13 @@ export default function CollabCard({
 
   const handleRemove = () => {
     const copy = [...projCollabJoins];
-    const delItem = copy.find((item) => item.collabId === collab.collabId);
+    const thisProjJoin = copy.filter((item) => item.projectId === projectId);
+    console.log('this project id: ', projectId);
+    console.log('this project joins: ', thisProjJoin);
+    const delItem = thisProjJoin.find((item) => item.collabId === collab.collabId);
+    console.log('this item to delete: ', delItem);
     deleteProjCollab(delItem.projCollabId).then(() => {
-      deleteFromCollabManager(collab.collabId, 'projCollab');
+      deleteFromCollabManager(delItem.projCollabId, 'projCollabJoin');
     });
   };
 
@@ -117,19 +123,24 @@ export default function CollabCard({
     const payload = {
       projectId,
       collabId: collab.collabId,
+      userId: user.uid,
     };
     let isAlreadyIn = false;
-    const copy = [...projCollabs];
-    for (let i = 0; i < copy.length; i++) {
-      if (payload.collabId === copy[i].collabId) {
+    const copy = [...projCollabJoins];
+    const thisProjCopy = copy.filter((item) => item.projectId === projectId);
+    for (let i = 0; i < thisProjCopy.length; i++) {
+      if (payload.collabId === thisProjCopy[i].collabId) {
         isAlreadyIn = true;
       }
+    }
+    if (isAlreadyIn) {
+      console.log('already added this collaborator to this project');
     }
     if (!isAlreadyIn) {
       createNewProjCollab(payload).then(({ name }) => { // JOIN TABLE
         const payload2 = { projCollabId: name };
         updateProjCollab(payload2);
-        addToCollabManager({ ...payload, ...payload2 }, 'projCollabs', 'create');
+        addToCollabManager({ ...payload, ...payload2 }, 'projCollabJoins', 'create');
       });
     }
   };

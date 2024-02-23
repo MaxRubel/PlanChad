@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../utils/context/authContext';
 import { createNewProject, updateProject } from '../api/project';
+import { useSaveContext } from '../utils/context/saveManager';
 
 /* eslint-disable react/jsx-closing-bracket-location */
 export default function NewProjectForm() {
   const [formInput, setFormInput] = useState({ name: '' });
   const { user } = useAuth();
+  const { addToSaveManager } = useSaveContext();
   const router = useRouter();
 
   function handleChange(e) {
@@ -30,9 +32,12 @@ export default function NewProjectForm() {
       checkpoints: null,
       tasks: null,
     };
+
     createNewProject(payload)
       .then(({ name }) => {
-        updateProject({ projectId: name }).then(() => {
+        const payload2 = { projectId: name };
+        updateProject(payload2).then(() => {
+          addToSaveManager({ ...payload, ...payload2 }, 'create', 'project');
           router.push(`/project/plan/${name}`);
         });
       });

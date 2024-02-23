@@ -64,9 +64,7 @@ export default function Task({
   }, [task]);
 
   useEffect(() => {
-    if (!isLoading) {
-      addToSaveManager(formInput, 'update', 'task');
-    }
+    addToSaveManager(formInput, 'update', 'task');
   }, [formInput]);
 
   const handleFreshness = () => {

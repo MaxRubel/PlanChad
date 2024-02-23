@@ -59,18 +59,15 @@ export default function Checkpoint({
     </svg>
   );
 
-  useEffect(() => {
+  useEffect(() => { // grab and sort the tasks from save manager
     setFormInput(checkP);
-    setTasks(checkP.tasks);
     const copy = [...saveInput.tasks];
     const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
     setTasks(theseTasks);
   }, [checkP]);
 
   useEffect(() => { // send to save manager
-    if (!isLoading) {
-      addToSaveManager(formInput, 'update', 'checkpoint');
-    }
+    addToSaveManager(formInput, 'update', 'checkpoint');
   }, [formInput]);
 
   useEffect(() => { // saveIndex after dragNdrop

@@ -4,16 +4,16 @@ import Link from 'next/link';
 import { Nav } from 'react-bootstrap';
 import { getUserProjects } from '../api/project';
 import { useAuth } from '../utils/context/authContext';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function ProjectsTable() {
   const [projectsArray, setProjectsArray] = useState([]);
   const { user } = useAuth();
+  const { allProjects, loaded } = useSaveContext();
 
   useEffect(() => {
-    getUserProjects(user.uid).then((data) => {
-      setProjectsArray(data);
-    });
-  }, [user.uid]);
+    setProjectsArray((preVal) => allProjects);
+  }, [user, allProjects]);
 
   return (
     <table id="projects-table" style={{ marginTop: '4%' }}>
