@@ -5,37 +5,26 @@ import { Collapse } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { peopleIcon, rightArrowSmall } from '../public/icons';
 import ViewTaskCollabs from './ViewTaskCollabs';
+import ViewTaskCollabsInProj from './ViewTaskCollabsInProj';
 
-export default function TaskDeets({ formInput, handleChange, taskId }) {
+export default function TaskDeets({
+  formInput, handleChange, taskId, saveCollabsExpand,
+}) {
   const [fresh, setFresh] = useState(true);
   const [collabsExpand, setCollabsExpand] = useState(false);
   const grid = document.getElementById(`taskDeets${formInput.localId}`);
+
   useEffect(() => {
-    let timeout;
-    if (fresh && formInput.localId) { // onload
-      document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none';
-      setFresh((prevVal) => !prevVal);
-    }
-    if (!formInput.deetsExpanded && formInput.localId && !fresh) {
-      timeout = setTimeout(() => {
-        document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none';
-      }, 266);
-    }
-    if (formInput.deetsExpanded) {
-      document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid';
-    }
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [formInput.deetsExpanded, fresh]);
+    setCollabsExpand((preVal) => formInput.collabsExpanded);
+  }, [formInput]);
 
   const handleExpand = () => {
-    setCollabsExpand((preVal) => !preVal);
+    saveCollabsExpand(!collabsExpand);
   };
 
   return (
     <>
-      <div id={`taskDeets${formInput.localId}`} className={collabsExpand ? 'taskDeetsExpand' : 'taskDeets'}>
+      <div id={`taskDeets${formInput.localId}`} style={{ display: 'none' }} className={collabsExpand ? 'taskDeetsExpand' : 'taskDeets'}>
         <div id="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <div id="empty" />
           <div
@@ -54,7 +43,11 @@ export default function TaskDeets({ formInput, handleChange, taskId }) {
         </div>
         <div id="taskDeetsInfo" className="card" style={{ margin: '3px 0px' }}>
           {/* -------card-body------------------------ */}
-          <Collapse in={formInput.deetsExpanded}>
+          <Collapse
+            in={formInput.deetsExpanded}
+            onExited={() => { document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none'; }}
+            onEnter={() => { document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid'; }}
+          >
             <div id="whole-card">
               <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '1% 0%' }}>
                 <div id="smallHeader" style={{ textAlign: 'right' }}>
@@ -134,10 +127,9 @@ export default function TaskDeets({ formInput, handleChange, taskId }) {
             </div>
           </Collapse>
         </div>
-        {/* <div id="taskCollabs">
-          <ViewTaskCollabs taskId={taskId} collabsExpand={collabsExpand} />
-        </div> */}
-        {/* <div id="margin3" /> */}
+        <div id="taskCollabs">
+          <ViewTaskCollabsInProj taskId={taskId} collabsExpand={collabsExpand} saveCollabsExpand={saveCollabsExpand} />
+        </div>
       </div>
 
     </>

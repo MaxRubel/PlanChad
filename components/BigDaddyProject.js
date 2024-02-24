@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import { fetchProjectDetails, fetchProjectCollabs } from '../utils/fetchAll';
+
 import AddAsigneeModal from './AddAsigneeModal';
 import { useCollabContext } from '../utils/context/collabContext';
 
@@ -31,11 +31,34 @@ export default function BigDaddyProject({ projectId }) {
     loadProject,
     projectsLoaded,
     singleProjectRunning,
+    isSaving,
   } = useSaveContext();
-  const { loaded } = useCollabContext();
 
-  const { addToCollabManager, clearCollabManager } = useCollabContext();
+  const { addToCollabManager, clearCollabManager, loaded } = useCollabContext();
   const router = useRouter();
+
+  useEffect(() => { // refresh checkpoint from save manager
+    console.log('refreshing...');
+    const copy = [...saveInput.checkpoints];
+    const sortedArr = copy.sort((a, b) => a.index - b.index);
+    setCheckpoints(sortedArr);
+  }, [refresh]);
+
+  useEffect(() => { // on Mount
+    if (projectId && projectsLoaded) {
+      if (!singleProjectRunning) {
+        console.log('creating a new project from save manager');
+        const projectDetails = loadProject(projectId);
+        setProject((preVal) => projectDetails.project);
+        setCheckpoints((preVal) => projectDetails.checkpoints);
+        console.log('project details on project page: ', projectDetails);
+      } else {
+        console.log('loading this project from save manager...');
+        setProject((preVal) => saveInput.project);
+        setCheckpoints((preVal) => saveInput.checkpoints);
+      }
+    }
+  }, [projectId, projectsLoaded]);
 
   const saveIndexes = () => { // send all to save manager
     setSave((prevVal) => prevVal + 1);
@@ -47,13 +70,6 @@ export default function BigDaddyProject({ projectId }) {
   const handleRefresh = () => { // retreive from save manager
     setRefresh((prevVal) => prevVal + 1);
   };
-
-  useEffect(() => { // refresh checkpoint from save manager
-    console.log('refreshing...');
-    const copy = [...saveInput.checkpoints];
-    const sortedArr = copy.sort((a, b) => a.index - b.index);
-    setCheckpoints(sortedArr);
-  }, [refresh]);
 
   useEffect(() => { // minimize button color animation
     let minColorChange;
@@ -68,18 +84,20 @@ export default function BigDaddyProject({ projectId }) {
     };
   }, [minColor]);
 
-  useEffect(() => { // on Mount
-    if (projectId && projectsLoaded) {
-      if (!singleProjectRunning) {
-        const projectDetails = loadProject(projectId);
-        setProject((preVal) => projectDetails.project);
-        setCheckpoints((preVal) => projectDetails.checkpoints);
-      } else {
-        setProject((preVal) => saveInput.project);
-        setCheckpoints((preVal) => saveInput.checkpoints);
-      }
+  useEffect(() => { // minimize button color animation
+    let saveColorChange;
+    if (isSaving) {
+      console.log('color change');
+      const saveButton = document.getElementById('saveButton');
+      saveButton.style.color = 'rgb(16, 197, 234)';
+      saveColorChange = setTimeout(() => {
+        saveButton.style.color = 'rgb(200, 200, 200)';
+      }, 1000);
     }
-  }, [projectId, projectsLoaded]);
+    // return () => {
+    //   clearTimeout(saveColorChange);
+    // };
+  }, [isSaving]);
 
   const addCheckpoint = () => {
     const emptyChckP = {

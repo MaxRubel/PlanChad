@@ -155,19 +155,15 @@ body {
   display: grid;
   grid-template-columns: 84px 16% 59% 100px;
   min-width: 500px;
-  // transition: all 1s ease;
+  transition: all ease .2s;
 }
 
 .taskDeetsExpand {
   display: grid;
   grid-template-columns: 84px 1fr 1fr 100px; 
-gap: 6px;
+  gap: 6px;
   min-width: 500px;
-}
-
-#marginL {
-  // background-color: rgba(255, 121, 221, 0.448);
-  // transition: all ease 1s;
+  transition: all ease .2s;
 }
 
 .card {

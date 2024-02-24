@@ -17,6 +17,7 @@ export const useSaveContext = () => useContext(saveContext);
 // eslint-disable-next-line react/prop-types
 export const SaveContextProvider = ({ children }) => {
   const initState = { project: {}, checkpoints: [], tasks: [] };
+
   const [saveInput, setSaveInput] = useState(initState);
   const [serverRefresh, setServerRefresh] = useState(0);
   const [min, setMin] = useState(0);
@@ -27,6 +28,7 @@ export const SaveContextProvider = ({ children }) => {
   const [projectsLoaded, setProjectLoaded] = useState(false);
   const { user } = useAuth();
   const [singleProjectRunning, setSingleProjectRunning] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (user && !projectsLoaded) { // load in all user project data when page first loads
@@ -34,8 +36,9 @@ export const SaveContextProvider = ({ children }) => {
         .then((data) => {
           setAllProjects(data);
           setProjectLoaded((preVal) => true);
+          const copy = [...data];
           const allTasksArr = [];
-          for (let i = 0; i < data.length; i++) {
+          for (let i = 0; i < copy.length; i++) {
             if (data[i].tasks) {
               const theseTasks = JSON.parse(data[i].tasks);
               for (let x = 0; x < theseTasks.length; x++) {
@@ -59,19 +62,18 @@ export const SaveContextProvider = ({ children }) => {
     const project = copy.find((item) => item.projectId === projectId);
 
     let checkpoints = [];
+    let tasks = [];
     if (project.checkpoints) {
       const checkpointsForm = JSON.parse(project.checkpoints);
       checkpoints = checkpointsForm.sort((a, b) => a.index - b.index);
-      // console.log(checkpoints);
+      console.log('checkpoints: ', checkpoints);
     }
-    // let tasks = [];
-    // if (project.tasks) {
-    //   tasks = JSON.parse(project.tasks);
-    // }
-    const tasks = allTasks.filter((item) => item.projectId === projectId);
-    console.log('filtered tasks:', tasks);
+    if (project.tasks) {
+      const tasksForm = JSON.parse(project.tasks);
+      tasks = tasksForm;
+    }
     const obj = { project, checkpoints, tasks };
-    // console.log('the project you requested looks like: ', obj);
+
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;
@@ -190,6 +192,7 @@ export const SaveContextProvider = ({ children }) => {
 
   const sendToServer = () => {
     console.log('sending to server...');
+    setIsSaving((preVal) => true);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
     const tasksFormatted = tasks.length > 0 ? JSON.stringify(tasks) : null;
@@ -202,7 +205,7 @@ export const SaveContextProvider = ({ children }) => {
       tasks: tasksFormatted,
     };
 
-    updateProject(payload);
+    updateProject(payload).then(() => { setIsSaving((preVal) => false); });
     const copy = [...allProjects];
     const index = copy.findIndex((item) => item.projectId === payload.projectId);
     copy[index] = payload;
@@ -229,6 +232,7 @@ export const SaveContextProvider = ({ children }) => {
       projectsLoaded,
       loadProject,
       singleProjectRunning,
+      isSaving,
     }}
     >
       {children}

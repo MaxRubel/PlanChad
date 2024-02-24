@@ -21,6 +21,7 @@ const initialState = {
   status: 'open',
   expanded: false,
   deetsExpanded: false,
+  collabsExpanded: false,
 };
 
 export default function Task({
@@ -97,10 +98,16 @@ export default function Task({
 
   const handleChange = (e) => {
     handleFreshness();
-    const { name, value } = e.target;
+    const { name, value, checked } = e.target;
     setFormInput((prevVal) => ({
-      ...prevVal, [name]: value,
+      ...prevVal,
+      [name]: value,
+      status: checked ? 'closed' : 'open',
     }));
+  };
+
+  const saveCollabsExpand = (value) => {
+    setFormInput((preVal) => ({ ...preVal, collabsExpanded: value }));
   };
 
   const handleDelete = () => {
@@ -112,7 +119,12 @@ export default function Task({
     <>
       <div className="task">
         {/* -------line-side------------- */}
-        <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div
+          className="marginL"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+          }}>
           <div id="empty" />
           <div
             id="line"
@@ -159,21 +171,44 @@ export default function Task({
                 }}>
                 {magGlass}
               </ButtonBoot>
+              <div style={{ wdith: '50px', paddingLeft: '11%' }}>
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  name="closed"
+                  checked={formInput.status === 'closed'}
+                  id="closedTask"
+                  onChange={handleChange}
+                  style={{
+                    border: '1px solid grey',
+                    color: 'black',
+                    textDecoration: 'line-through',
+                  }}
+                  />
+              </div>
             </div>
-            <div className="verticalCenter">
-              <input
-                className="form-control"
-                style={{
-                  textAlign: 'center',
-                  border: 'none',
-                  backgroundColor: 'transparent',
-                }}
-                placeholder={`Task ${indexT + 1}`}
-                value={formInput.name}
-                name="name"
-                onChange={handleChange}
+            {formInput.status === 'closed' ? (
+              <div className="fullCenter" style={{ textAlign: 'center', textDecoration: 'line-through' }}>
+                {formInput.name}
+              </div>
+            ) : (
+              <div className="fullCenter" style={{ textAlign: 'center' }}>
+                <input
+                  className="form-control"
+                  style={{
+                    textAlign: 'center',
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    width: '75%',
+                  }}
+                  placeholder={`Task ${indexT + 1}`}
+                  value={formInput.name}
+                  name="name"
+                  onChange={handleChange}
               />
-            </div>
+              </div>
+            )}
+
             <div
               className="verticalCenter"
               style={{
@@ -257,7 +292,7 @@ export default function Task({
                 </div>
                 <textarea
                   className="form-control"
-                  placeholder="A description of your checkpoint..."
+                  placeholder="A description of your task..."
                   id="description"
                   rows="3"
                   value={formInput.description}
@@ -279,6 +314,7 @@ export default function Task({
         formInput={formInput}
         handleChange={handleChange}
         taskId={task.localId}
+        saveCollabsExpand={saveCollabsExpand}
         />
 
     </>

@@ -13,6 +13,9 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    'jsx-a11y/label-has-associated-control': 'warn',
+    'jsx-a11y/label-has-for': 'warn',
+    'react/no-unknown-property': 'warn',
     'operator-linebreak': 'warn',
     'space-in-parens': 'warn',
     'react-hooks/exhaustive-deps': 'off',
