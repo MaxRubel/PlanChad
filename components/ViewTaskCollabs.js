@@ -7,10 +7,11 @@ import CollabCard from './CollabCard';
 import { getSingleCollab } from '../api/collabs';
 import { useSaveContext } from '../utils/context/saveManager';
 import { plusIcon } from '../public/icons';
+import CollabCardForTask from './CollabCardForTask';
 
 // eslint-disable-next-line react/prop-types
 export default function ViewTaskCollabs({
-  projectId, refreshProjCollabs, refreshProjCs, collabsExpand, taskId,
+  projectId, refreshProjCollabs, refreshProjCs, collabsExpand, taskId, onManageCollabsPage,
 }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
   const {
@@ -42,35 +43,37 @@ export default function ViewTaskCollabs({
 
   return (
     <>
-      <Collapse in={collabsExpand} dimension="width">
-        <div className="card text-bg-info mb-3" style={{ marginTop: '3px' }}>
-          <div className="card-header" style={{ fontSize: '16px', textAlign: 'center' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
-              <div style={{ textAlign: 'left' }}>
-                <button type="button" className="clearButton" style={{ color: 'black' }} onClick={addAsignee}>
-                  {plusIcon}
-                </button>
-              </div>
-              Asignees:
-            </div>
+      {/* <Collapse in={collabsExpand} dimension="width"> */}
+      <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
+        <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
+          <div> Assigned to Task:</div>
+          <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
+            <label htmlFor="tasks">Choose a car:</label>
+            <select name="tasks" id="tasks">
+              <option value="volvo">Volvo</option>
+              <option value="saab">Saab</option>
+              <option value="mercedes">Mercedes</option>
+              <option value="audi">Audi</option>
+            </select>
           </div>
-          <div className="card-body">
-            <div className="card">
-              <div className="card-body">
-                {collabsOfTask.map((collab) => (
-                  <CollabCard
-                    key={collab.collabId}
-                    collab={collab}
-                    ofProj
-                    refreshProjCollabs={refreshProjCollabs}
-                    projectId={projectId}
-                  />
-                ))}
-              </div>
+        </div>
+        <div className="card-body">
+          <div className="card">
+            <div className="card-body">
+              {collabsOfProj.map((collab) => (
+                <CollabCardForTask
+                  key={collab.collabId}
+                  collab={collab}
+                  ofProj
+                  refreshProjCollabs={refreshProjCollabs}
+                  projectId={projectId}
+                />
+              ))}
             </div>
           </div>
         </div>
-      </Collapse>
+      </div>
+      {/* </Collapse> */}
     </>
   );
 }

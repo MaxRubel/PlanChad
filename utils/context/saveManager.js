@@ -32,7 +32,7 @@ export const SaveContextProvider = ({ children }) => {
     if (user && !projectsLoaded) { // load in all user project data when page first loads
       getUserProjects(user.uid)
         .then((data) => {
-          console.log('All Projects: ', data);
+          // console.log('All Projects: ', data);
           setAllProjects(data);
           setProjectLoaded((preVal) => true);
         });

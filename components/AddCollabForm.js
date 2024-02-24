@@ -85,7 +85,7 @@ export default function AddCollabForm() {
   };
 
   return (
-    <div id="addCollabPlacement">
+    <div id="addCollabPlacement" className="fullCenter">
       <div className="card" style={{ margin: '3px 0px', width: '400px' }}>
         <div
           className="card-header 2"
