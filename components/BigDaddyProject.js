@@ -47,13 +47,10 @@ export default function BigDaddyProject({ projectId }) {
   useEffect(() => { // on Mount
     if (projectId && projectsLoaded) {
       if (!singleProjectRunning) {
-        console.log('creating a new project from save manager');
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
         setCheckpoints((preVal) => projectDetails.checkpoints);
-        console.log('project details on project page: ', projectDetails);
       } else {
-        console.log('loading this project from save manager...');
         setProject((preVal) => saveInput.project);
         setCheckpoints((preVal) => saveInput.checkpoints);
       }
@@ -185,8 +182,10 @@ export default function BigDaddyProject({ projectId }) {
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Button
-              variant="outlined"
+
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
               onClick={() => { addCheckpoint(); }}
               style={{
                 margin: '1% 0%',
@@ -194,7 +193,7 @@ export default function BigDaddyProject({ projectId }) {
                 border: '1px solid rgb(100, 100, 100)',
               }}>
               Add A Checkpoint
-            </Button>
+            </button>
           </div>
           <div id="dnd-container">
             <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>

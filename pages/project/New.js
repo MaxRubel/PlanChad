@@ -4,13 +4,14 @@ import { useSaveContext } from '../../utils/context/saveManager';
 
 export default function CreateNewProject() {
   const { clearSaveManager, singleProjectRunning, sendToServer } = useSaveContext();
-  clearSaveManager();
+
   useEffect(() => {
     if (singleProjectRunning) {
       sendToServer();
     }
     clearSaveManager();
   }, []);
+
   return (
     <div className="homePage">
       <NewProjectForm />

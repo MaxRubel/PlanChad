@@ -1,12 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { Collapse } from 'react-bootstrap';
-import { getCollabsOfProject } from '../api/projCollab';
-import CollabCard from './CollabCard';
-import { getSingleCollab } from '../api/collabs';
 import { useSaveContext } from '../utils/context/saveManager';
-import { plusIcon } from '../public/icons';
 import CollabCardForTask from './CollabCardForTask';
 import { useCollabContext } from '../utils/context/collabContext';
 
@@ -36,14 +31,12 @@ export default function ViewTaskCollabs({
       theseCollabs.push(collab);
     }
     setCollabsOfTask((preVal) => theseCollabs);
-    console.log(theseCollabs);
   }, [taskCollabJoins, taskId]);
 
   useEffect(() => {
     const val = document.getElementById('tasks').value;
     setTaskToAssignChild(val);
     setTaskId(((preVal) => val));
-    console.log('value:', val);
   }, [tasks]);
 
   const handleChange = (e) => {
@@ -53,12 +46,9 @@ export default function ViewTaskCollabs({
   };
 
   useEffect(() => {
-    // console.log('from assigned to task viewer: ', projectToAssign);
     if (projectToAssign === projectId) {
-      console.log('you are working on this project currently');
       setTasks((preVal) => saveInput.tasks);
     } else {
-      console.log(allTasks);
       const thisProjectsTasks = allTasks.filter((item) => item.projectId === projectToAssign);
       setTasks((preVal) => thisProjectsTasks);
     }
@@ -66,14 +56,13 @@ export default function ViewTaskCollabs({
 
   return (
     <>
-      {/* <Collapse in={collabsExpand} dimension="width"> */}
       <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
         <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
           <div> Assigned to Task:</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
             <select name="tasks" id="tasks" className="form-control" onChange={handleChange}>
-              {tasks.map((task) => (
-                <option key={task.localId} value={task.localId}>{task.name}</option>
+              {tasks.map((task, index) => (
+                <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}` }</option>
               ))}
             </select>
           </div>
@@ -99,7 +88,6 @@ export default function ViewTaskCollabs({
           </div>
         </div>
       </div>
-      {/* </Collapse> */}
     </>
   );
 }

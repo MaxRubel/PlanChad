@@ -66,14 +66,13 @@ export const SaveContextProvider = ({ children }) => {
     if (project.checkpoints) {
       const checkpointsForm = JSON.parse(project.checkpoints);
       checkpoints = checkpointsForm.sort((a, b) => a.index - b.index);
-      console.log('checkpoints: ', checkpoints);
     }
     if (project.tasks) {
       const tasksForm = JSON.parse(project.tasks);
       tasks = tasksForm;
     }
-    const obj = { project, checkpoints, tasks };
 
+    const obj = { project, checkpoints, tasks };
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;

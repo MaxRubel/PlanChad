@@ -1,4 +1,6 @@
-const endpoint = 'https://planchad-6fcf7-default-rtdb.firebaseio.com';
+import { clientCredentials } from '../utils/client';
+
+const endpoint = clientCredentials.databaseURL;
 
 const getCollabsOfTask = (projectId) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/taskCollabs.json?orderBy="projectId"&equalTo="${projectId}"`, {

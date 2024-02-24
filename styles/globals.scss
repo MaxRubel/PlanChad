@@ -11,7 +11,8 @@
 }
 
 body {
-  background-color: rgb(34, 37, 41);
+  // background-color: rgb(34, 37, 41);
+  background-color: black;
   height: 100vh;
   width: 100vw;
   transition: all var(--background1) ease;
@@ -77,6 +78,14 @@ body {
   grid-template-columns: 1fr 1fr;
   margin: .5% 0%,
 }
+
+.btn.btn-outline-secondary{
+ transition: all ease 1s;
+}
+
+.btn.btn-outline-secondary:hover{
+  background-color: rgb(56, 56, 56);
+ }
 
 .fullCenter {
   display: flex;
@@ -195,8 +204,4 @@ body {
 .grid3{
   display: grid; 
   grid-template-columns: 1fr 1fr 2fr;
-}
-
-#marginL2{
-//  transition: all ease 1s;
 }

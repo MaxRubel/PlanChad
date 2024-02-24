@@ -62,7 +62,9 @@ export default function ProjectCard({ project, min }) {
   return (
     // -----------------card--header----------------
     <div className="card text-bg-info mb-3">
-      <div className="card-header" style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+      <div
+        className="card-header"
+        style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
         <Button
           onClick={handleCollapse}
           style={{
@@ -88,7 +90,9 @@ export default function ProjectCard({ project, min }) {
               border: 'none',
               fontWeight: '700',
             }}
-            onChange={handleChange} />
+            onChange={handleChange}
+            autoComplete="off"
+            />
         </div>
       </div>
       {/* --------------card-body------------------------ */}

@@ -1,4 +1,6 @@
-const endpoint = 'https://planchad-6fcf7-default-rtdb.firebaseio.com';
+import { clientCredentials } from '../utils/client';
+
+const endpoint = clientCredentials.databaseURL;
 
 const createNewCheckpoint = (payload) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/checkpoints.json`, {

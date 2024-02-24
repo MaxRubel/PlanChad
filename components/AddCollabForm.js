@@ -130,6 +130,7 @@ export default function AddCollabForm() {
                         name="name"
                         id="name"
                         style={{ backgroundColor: 'rgb(225, 225, 225)', border: '1px solid lightgrey' }}
+                        autoComplete="off"
                       />
                     </div>
                   </div>

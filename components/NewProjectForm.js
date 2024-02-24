@@ -71,6 +71,7 @@ export default function NewProjectForm() {
             value={formInput.name}
             name="name"
             onChange={handleChange}
+            autoComplete="off"
             required />
         </div>
         <div style={{ textAlign: 'center', padding: '3% 0%', paddingTop: '1%' }}>
