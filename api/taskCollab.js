@@ -62,9 +62,41 @@ const updateTaskCollab = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+const getTaskCollabsOfUser = (userId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/taskCollabs.json?orderBy="userId"&equalTo="${userId}"`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
+const deleteTaskCollab = (taskCollab) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/taskCollabs/${taskCollab}.json`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => resolve(data))
+    .catch(reject);
+});
+
 export {
   createTaskCollab,
   updateTaskCollab,
   getCollabsOfTask,
   getTaskCollabsOfProject,
+  getTaskCollabsOfUser,
+  deleteTaskCollab,
 };

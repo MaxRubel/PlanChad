@@ -13,6 +13,8 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    'operator-linebreak': 'warn',
+    'space-in-parens': 'warn',
     'react-hooks/exhaustive-deps': 'off',
     'arrow-parens': 'warn',
     'key-spacing': 'warn',

@@ -20,47 +20,60 @@ export const SaveContextProvider = ({ children }) => {
   const [saveInput, setSaveInput] = useState(initState);
   const [serverRefresh, setServerRefresh] = useState(0);
   const [min, setMin] = useState(0);
-  // const [projCollabs, setProjCollabs] = useState([]);
-  // const [taskCollabs, setTaskCollabs] = useState([]);
   const [asigneesIsOpen, setAssigneesIsOpen] = useState(false);
   const [taskId, setTaskId] = useState(null);
   const [allProjects, setAllProjects] = useState([]);
+  const [allTasks, setAllTasks] = useState([]);
   const [projectsLoaded, setProjectLoaded] = useState(false);
   const { user } = useAuth();
+  const [singleProjectRunning, setSingleProjectRunning] = useState(false);
 
   useEffect(() => {
     if (user && !projectsLoaded) { // load in all user project data when page first loads
       getUserProjects(user.uid)
         .then((data) => {
-          // console.log('All Projects: ', data);
           setAllProjects(data);
           setProjectLoaded((preVal) => true);
+          const allTasksArr = [];
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].tasks) {
+              const theseTasks = JSON.parse(data[i].tasks);
+              for (let x = 0; x < theseTasks.length; x++) {
+                allTasksArr.push(theseTasks[x]);
+              }
+            }
+          }
+          setAllTasks((preVal) => allTasksArr);
         });
     }
   }, [user]);
 
   const clearSaveManager = () => {
     setSaveInput((prevVal) => initState);
+    setSingleProjectRunning((preVal) => false);
   };
 
   const loadProject = (projectId) => {
     clearSaveManager();
     const copy = [...allProjects];
     const project = copy.find((item) => item.projectId === projectId);
-    console.log('project found: ', project);
+
     let checkpoints = [];
-    let tasks = [];
     if (project.checkpoints) {
       const checkpointsForm = JSON.parse(project.checkpoints);
       checkpoints = checkpointsForm.sort((a, b) => a.index - b.index);
-      console.log(checkpoints);
+      // console.log(checkpoints);
     }
-    if (project.tasks) {
-      tasks = JSON.parse(project.tasks);
-    }
+    // let tasks = [];
+    // if (project.tasks) {
+    //   tasks = JSON.parse(project.tasks);
+    // }
+    const tasks = allTasks.filter((item) => item.projectId === projectId);
+    console.log('filtered tasks:', tasks);
     const obj = { project, checkpoints, tasks };
-    console.log('the project you requested looks like: ', obj);
+    // console.log('the project you requested looks like: ', obj);
     setSaveInput((preVal) => obj);
+    setSingleProjectRunning((preVal) => true);
     return obj;
   };
 
@@ -121,16 +134,22 @@ export const SaveContextProvider = ({ children }) => {
     // ------------tasks-------------
     if (type === 'task') {
       if (action === 'create') { // create tasks
+        console.log('creating task');
         setSaveInput((prevVal) => ({
           ...prevVal,
           tasks: [...prevVal.tasks, input],
         }));
+        setAllTasks((preVal) => ([...preVal, input]));
       }
       if (action === 'update') { // update tasks
         const copy = [...saveInput.tasks];
         const index = copy.findIndex((item) => item.localId === input.localId);
         copy[index] = input;
         setSaveInput((prevVal) => ({ ...prevVal, tasks: copy }));
+        const tasksCopy = [...allTasks];
+        const tasksIndex = tasksCopy.findIndex((item) => (item.localId === input.localId));
+        tasksCopy[index] = input;
+        setAllTasks((preVal) => tasksCopy);
       }
     }
     if (type === 'tasksArr') {
@@ -144,19 +163,22 @@ export const SaveContextProvider = ({ children }) => {
     if (type === 'checkpoint' && action === 'delete') {
       const updatedTasks = saveInput.tasks.filter((task) => task.checkpointId !== input.localId);
       const updatedCheckpoints = saveInput.checkpoints.filter((checkpoint) => checkpoint.localId !== input.localId);
-
       setSaveInput((prevVal) => ({
         ...prevVal,
         tasks: updatedTasks,
         checkpoints: updatedCheckpoints.sort((a, b) => a.index - b.index),
       }));
     }
-    if (type === 'task') { // delete tasks
+    if (type === 'task') {
       const copy = [...saveInput.tasks];
+      const allTasksCopy = [...allTasks];
       const deleteIndex = saveInput.tasks.findIndex((item) => item.localId === input.localId);
+      const deleteAllIndex = allTasksCopy.findIndex((item) => item.localId === input.localId);
+      allTasksCopy.splice(deleteAllIndex, 1);
       copy.splice(deleteIndex, 1);
       const updatedArray = copy.map((item, i) => ({ ...item, index: i }));
       setSaveInput((prevVal) => ({ ...prevVal, tasks: updatedArray }));
+      setAllTasks((preVal) => allTasksCopy);
     }
   };
 
@@ -198,17 +220,15 @@ export const SaveContextProvider = ({ children }) => {
       serverRefresh,
       min,
       minAll,
-      // projCollabs,
-      // setProjCollabs,
+      allTasks,
       openAssigneesModal,
       closeAsigneesModal,
       asigneesIsOpen,
       taskId,
-      // setTaskCollabs,
-      // taskCollabs,
       allProjects,
       projectsLoaded,
       loadProject,
+      singleProjectRunning,
     }}
     >
       {children}

@@ -26,11 +26,11 @@ export default function BigDaddyProject({ projectId }) {
     addToSaveManager,
     saveInput,
     sendToServer,
-    clearSaveManager,
     min,
     minAll,
     loadProject,
     projectsLoaded,
+    singleProjectRunning,
   } = useSaveContext();
   const { loaded } = useCollabContext();
 
@@ -69,22 +69,17 @@ export default function BigDaddyProject({ projectId }) {
   }, [minColor]);
 
   useEffect(() => { // on Mount
-    console.log('Setting up project from local memory...');
     if (projectId && projectsLoaded) {
-      const projectDetails = loadProject(projectId);
-      console.log(projectDetails);
-      setProject((preVal) => projectDetails.project);
-      setCheckpoints((preVal) => projectDetails.checkpoints);
+      if (!singleProjectRunning) {
+        const projectDetails = loadProject(projectId);
+        setProject((preVal) => projectDetails.project);
+        setCheckpoints((preVal) => projectDetails.checkpoints);
+      } else {
+        setProject((preVal) => saveInput.project);
+        setCheckpoints((preVal) => saveInput.checkpoints);
+      }
     }
   }, [projectId, projectsLoaded]);
-
-  // (-------for testing purposes----)
-  const tryFetch = (projId) => {
-    console.log('Setting up project from local memory...');
-    const projectDetails = loadProject(projId);
-    setProject((preVal) => projectDetails.project);
-    setCheckpoints((preVal) => projectDetails.checkpoints);
-  };
 
   const addCheckpoint = () => {
     const emptyChckP = {
@@ -156,14 +151,6 @@ export default function BigDaddyProject({ projectId }) {
               onClick={() => { router.push(`/collaborators/${projectId}`); }}>
               MANAGE COLLABORATORS
             </button>
-            <button
-              id="minButton"
-              type="button"
-              className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { tryFetch(projectId); }}>
-              RESTART
-            </button>
           </div>
           <ProjectCard
             save={save}
@@ -207,7 +194,6 @@ export default function BigDaddyProject({ projectId }) {
                         index={index}
                         refresh={refresh}
                         isLoading={isLoading}
-
                       />
                     ))}
                     {provided.placeholder}

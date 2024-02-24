@@ -2,8 +2,9 @@
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
 import { useSaveContext } from '../utils/context/saveManager';
-import { plusIcon } from '../public/icons';
-import { createTaskCollab, updateTaskCollab } from '../api/taskCollab';
+import { plusIcon, removeIcon } from '../public/icons';
+import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function CollabCardForTask({
   taskId,
@@ -15,6 +16,8 @@ export default function CollabCardForTask({
     taskCollabs,
     saveInput,
   } = useSaveContext();
+
+  const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
   const downIcon = (
     <svg
@@ -31,22 +34,12 @@ export default function CollabCardForTask({
     </svg>
   );
 
-  const addToTask = () => {
-    const payload = {
-      collabId: collab.collabId,
-      taskId,
-      projectId: saveInput.project.projectId,
-    };
-    const isAlreadyInTask = taskCollabs.filter((taskCollab) => taskCollab.collabId === collab.collabId
-      && taskCollab.taskId === taskId);
-    if (isAlreadyInTask.length === 0) {
-      createTaskCollab(payload).then(({ name }) => {
-        const payload2 = { taskCollabId: name };
-        updateTaskCollab(payload2).then(() => {
-          setTaskCollabs((preVal) => ([...preVal, { ...payload, ...payload2 }]));
-        });
-      });
-    }
+  const removeFromTask = () => {
+    const itemToRemove = taskCollabJoins.find((item) => item.collabId === collab.collabId
+    && item.taskId === taskId);
+    deleteTaskCollab(itemToRemove.taskCollabId).then(() => {
+      deleteFromCollabManager(itemToRemove.taskCollabId, 'taskCollabJoin');
+    });
   };
 
   const handleCollapse = () => {
@@ -63,37 +56,16 @@ export default function CollabCardForTask({
           </button>
           {collab.name}
         </div>
-
         <div id="col2" style={{ textAlign: 'right' }}>
           <button
             type="button"
             className="clearButton"
             style={{ color: 'black' }}
-            onClick={addToTask}
+            onClick={removeFromTask}
           >
-            {plusIcon}
+            {removeIcon}
           </button>
         </div>
-
-        <Collapse in={expanded}>
-          <div>
-            <div className="grid3">
-              <div />
-              <div>Phone:</div>
-              {collab.phone}
-            </div>
-            <div className="grid3">
-              <div />
-              <div>Email:</div>
-              {collab.email}
-            </div>
-            <div className="grid3">
-              <div />
-              <div>Notes:</div>
-              {collab.notes}
-            </div>
-          </div>
-        </Collapse>
       </div>
     </div>
   );
