@@ -121,6 +121,7 @@ export default function Checkpoint({
     dance();
     const emptyTask = {
       checkpointId: checkP.localId,
+      projectId: checkP.projectId,
       localId: uniqid(),
       name: '',
       startDate: '',
@@ -138,7 +139,6 @@ export default function Checkpoint({
     };
     addToSaveManager(emptyTask, 'create', 'task');
     setCheckPrefresh((prevVal) => prevVal + 1);
-    setFormInput((prevVal) => ({ ...prevVal, tasks: true }));
   };
 
   return (

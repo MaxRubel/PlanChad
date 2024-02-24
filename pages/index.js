@@ -6,6 +6,7 @@ import { useCollabContext } from '../utils/context/collabContext';
 import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Home() {
+  const { clearSaveManager } = useSaveContext();
   document.documentElement.style.setProperty('--background1', `
   linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(46, 45, 253, 1) 100%)
 `);

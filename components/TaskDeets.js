@@ -134,9 +134,9 @@ export default function TaskDeets({ formInput, handleChange, taskId }) {
             </div>
           </Collapse>
         </div>
-        <div id="taskCollabs">
+        {/* <div id="taskCollabs">
           <ViewTaskCollabs taskId={taskId} collabsExpand={collabsExpand} />
-        </div>
+        </div> */}
         {/* <div id="margin3" /> */}
       </div>
 

@@ -8,20 +8,22 @@ import {
 import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
+import { createTaskCollab, updateTaskCollab } from '../api/taskCollab';
+import { removeIcon } from '../public/icons';
 
 export default function CollabCardforProject({
   collab,
   projectId,
   ofProj,
   refreshProjCollabs,
+  taskToAssign,
 }) {
   const [expanded, setExpanded] = useState(false);
   const {
-    addToCollabManager,
-    projCollabs,
     deleteFromCollabManager,
     projCollabJoins,
-    setUpdateCollab,
+    taskCollabJoins,
+    addToCollabManager,
   } = useCollabContext();
   const { user } = useAuth();
   const downIcon = (
@@ -80,21 +82,32 @@ export default function CollabCardforProject({
     </svg>
   );
 
-  const removeIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x-square" viewBox="0 0 16 16">
-      <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1
-      .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"
-      />
-    </svg>
-  );
-
   const handleCollapse = () => {
     setExpanded((prevVal) => !prevVal);
   };
 
   const assignToTask = () => {
-    console.log('assign to task');
+    let isInTask = false;
+    const theseJoins = taskCollabJoins.filter((item) => item.taskId === taskToAssign);
+    for (let i = 0; i < theseJoins.length; i++) {
+      if (theseJoins[i].collabId === collab.collabId) {
+        isInTask = true;
+      }
+    }
+    if (!isInTask) {
+      const payload = {
+        projectId,
+        collabId: collab.collabId,
+        taskId: taskToAssign,
+        userId: user.uid,
+      };
+      createTaskCollab(payload).then(({ name }) => {
+        const payload2 = { taskCollabId: name };
+        updateTaskCollab(payload2).then(() => {
+          addToCollabManager({ ...payload, ...payload2 }, 'taskCollabJoins', 'create');
+        });
+      });
+    }
   };
 
   const handleDelete = () => {
@@ -118,31 +131,31 @@ export default function CollabCardforProject({
     });
   };
 
-  const handleAddToProj = () => {
-    const payload = {
-      projectId,
-      collabId: collab.collabId,
-      userId: user.uid,
-    };
-    let isAlreadyIn = false;
-    const copy = [...projCollabJoins];
-    const thisProjCopy = copy.filter((item) => item.projectId === projectId);
-    for (let i = 0; i < thisProjCopy.length; i++) {
-      if (payload.collabId === thisProjCopy[i].collabId) {
-        isAlreadyIn = true;
-      }
-    }
-    if (isAlreadyIn) {
-      console.log('already added this collaborator to this project');
-    }
-    if (!isAlreadyIn) {
-      createNewProjCollab(payload).then(({ name }) => { // JOIN TABLE
-        const payload2 = { projCollabId: name };
-        updateProjCollab(payload2);
-        addToCollabManager({ ...payload, ...payload2 }, 'projCollabJoins', 'create');
-      });
-    }
-  };
+  //   const handleAddToProj = () => {
+  //     const payload = {
+  //       projectId,
+  //       collabId: collab.collabId,
+  //       userId: user.uid,
+  //     };
+  //     let isAlreadyIn = false;
+  //     const copy = [...projCollabJoins];
+  //     const thisProjCopy = copy.filter((item) => item.projectId === projectId);
+  //     for (let i = 0; i < thisProjCopy.length; i++) {
+  //       if (payload.collabId === thisProjCopy[i].collabId) {
+  //         isAlreadyIn = true;
+  //       }
+  //     }
+  //     if (isAlreadyIn) {
+  //       console.log('already added this collaborator to this project');
+  //     }
+  //     if (!isAlreadyIn) {
+  //       createNewProjCollab(payload).then(({ name }) => { // JOIN TABLE
+  //         const payload2 = { projCollabId: name };
+  //         updateProjCollab(payload2);
+  //         addToCollabManager({ ...payload, ...payload2 }, 'projCollabJoins', 'create');
+  //       });
+  //     }
+  //   };
 
   return (
     <div className="card" style={{ margin: '1% 0%' }}>
@@ -154,7 +167,6 @@ export default function CollabCardforProject({
           </button>
           {collab.name}
         </div>
-
         <div style={{ textAlign: 'right' }}>
           <button
             type="button"
@@ -173,7 +185,6 @@ export default function CollabCardforProject({
             {rightArrow}
           </button>
         </div>
-
         <Collapse in={expanded}>
           <div>
             <div className="grid3">

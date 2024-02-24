@@ -17,6 +17,7 @@ export default function ManageCollaboratorsPage() {
   const [refreshProjCs, setRefreshProjCs] = useState(0);
   const { user } = useAuth();
   const [projectToAssign, setProjectToAssign] = useState('');
+  const [taskToAssign, setTaskToAssign] = useState('');
 
   const refreshAllColabs = () => {
     setRefreshAllCs((prevVal) => prevVal + 1);
@@ -28,7 +29,10 @@ export default function ManageCollaboratorsPage() {
 
   const setProjectToAssignChild = (value) => {
     setProjectToAssign((preVal) => value);
-    console.log(value);
+  };
+
+  const setTaskToAssignChild = (value) => {
+    setTaskToAssign((preVal) => value);
   };
 
   return (
@@ -77,11 +81,14 @@ export default function ManageCollaboratorsPage() {
           refreshProjCollabs={refreshProjCollabs}
           refreshProjCs={refreshProjCs}
           setProjectToAssignChild={setProjectToAssignChild}
+          taskToAssign={taskToAssign}
         />
         <ViewTaskCollabs
           projectId={projectId}
           refreshProjCollabs={refreshProjCollabs}
           refreshProjCs={refreshProjCs}
+          projectToAssign={projectToAssign}
+          setTaskToAssignChild={setTaskToAssignChild}
         />
       </div>
 

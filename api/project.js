@@ -57,5 +57,8 @@ const updateProject = (payload) => new Promise((resolve, reject) => {
 });
 
 export {
-  createNewProject, updateProject, getUserProjects, getSingleProject,
+  createNewProject,
+  updateProject,
+  getUserProjects,
+  getSingleProject,
 };
