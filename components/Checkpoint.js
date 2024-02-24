@@ -136,6 +136,7 @@ export default function Checkpoint({
       fresh: true,
       expanded: false,
       deetsExpanded: false,
+      collabsExpanded: false,
     };
     addToSaveManager(emptyTask, 'create', 'task');
     setCheckPrefresh((prevVal) => prevVal + 1);
