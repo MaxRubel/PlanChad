@@ -96,6 +96,13 @@ const plusIcon = (
     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
   </svg>
 );
+
+const downArrow = (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-down-left" viewBox="0 0 16 16">
+    <path fillRule="evenodd" d="M2 13.5a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 0-1H3.707L13.854 2.854a.5.5 0 0 0-.708-.708L3 12.293V7.5a.5.5 0 0 0-1 0z" />
+  </svg>
+);
+
 export {
-  collapseIcon, trashIcon, plusIcon, rightArrow, peopleIcon, rightArrowSmall,
+  collapseIcon, trashIcon, plusIcon, rightArrow, peopleIcon, rightArrowSmall, downArrow,
 };

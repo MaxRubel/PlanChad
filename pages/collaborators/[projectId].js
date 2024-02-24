@@ -8,6 +8,7 @@ import { fetchProjectCollabs } from '../../utils/fetchAll';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { getCollabsOfUser } from '../../api/collabs';
 import { useAuth } from '../../utils/context/authContext';
+import ViewTaskCollabs from '../../components/ViewTaskCollabs';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function ManageCollaboratorsPage() {
   const [refreshAllCs, setRefreshAllCs] = useState(0);
   const [refreshProjCs, setRefreshProjCs] = useState(0);
   const { user } = useAuth();
+  const [projectToAssign, setProjectToAssign] = useState('');
 
   const refreshAllColabs = () => {
     setRefreshAllCs((prevVal) => prevVal + 1);
@@ -22,6 +24,11 @@ export default function ManageCollaboratorsPage() {
 
   const refreshProjCollabs = () => {
     setRefreshProjCs((prevVal) => prevVal + 1);
+  };
+
+  const setProjectToAssignChild = (value) => {
+    setProjectToAssign((preVal) => value);
+    console.log(value);
   };
 
   return (
@@ -37,35 +44,47 @@ export default function ManageCollaboratorsPage() {
           BACK TO PROJECT
         </button>
       </div>
-      <div className="homePage" style={{ minWidth: '960px', paddingTop: '3%' }}>
-        <AddCollabForm refreshAllColabs={refreshAllColabs} />
-        <div
-          id="row2"
-          style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '3%',
-            margin: '3% 0%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'rgb(180, 180, 180, .4)',
-          }}
-        >
-          <ViewAllCollabs
-            refreshAllColabs={refreshAllColabs}
-            refreshProjCollabs={refreshProjCollabs}
-            refreshAllCs={refreshAllCs}
-            projectId={projectId}
-          />
-          <div className="verticalCenter">{rightArrow}</div>
-          <ViewProjCollabs
-            projectId={projectId}
-            refreshProjCollabs={refreshProjCollabs}
-            refreshProjCs={refreshProjCs}
-          />
-        </div>
+
+      <AddCollabForm refreshAllColabs={refreshAllColabs} />
+      <div
+        id="row1"
+        style={{
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '3%',
+          margin: '3% 0%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'rgb(180, 180, 180, .4)',
+        }}
+      >
+        <ViewAllCollabs
+          refreshAllColabs={refreshAllColabs}
+          refreshProjCollabs={refreshProjCollabs}
+          refreshAllCs={refreshAllCs}
+          projectId={projectId}
+          projectToAssign={projectToAssign}
+        />
+        {/* <div className="verticalCenter">{rightArrow}</div> */}
       </div>
+      <div
+        id="twoTableRow"
+        style={{ display: 'flex', justifyContent: 'center', gap: '3%' }}
+      >
+        <ViewProjCollabs
+          projectId={projectId}
+          refreshProjCollabs={refreshProjCollabs}
+          refreshProjCs={refreshProjCs}
+          setProjectToAssignChild={setProjectToAssignChild}
+        />
+        <ViewTaskCollabs
+          projectId={projectId}
+          refreshProjCollabs={refreshProjCollabs}
+          refreshProjCs={refreshProjCs}
+        />
+      </div>
+
     </>
   );
 }

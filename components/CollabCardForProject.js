@@ -8,13 +8,12 @@ import {
 import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
-import { downArrow } from '../public/icons';
 
-export default function CollabCard({
+export default function CollabCardforProject({
   collab,
   projectId,
   ofProj,
-  projectToAssign,
+  refreshProjCollabs,
 }) {
   const [expanded, setExpanded] = useState(false);
   const {
@@ -24,7 +23,6 @@ export default function CollabCard({
     projCollabJoins,
     setUpdateCollab,
   } = useCollabContext();
-
   const { user } = useAuth();
   const downIcon = (
     <svg
@@ -95,8 +93,8 @@ export default function CollabCard({
     setExpanded((prevVal) => !prevVal);
   };
 
-  const handleUpdate = () => {
-    setUpdateCollab(collab);
+  const assignToTask = () => {
+    console.log('assign to task');
   };
 
   const handleDelete = () => {
@@ -110,8 +108,8 @@ export default function CollabCard({
 
   const handleRemove = () => {
     const copy = [...projCollabJoins];
-    const thisProjJoin = copy.filter((item) => item.projectId === projectToAssign);
-    console.log('this project id: ', projectToAssign);
+    const thisProjJoin = copy.filter((item) => item.projectId === projectId);
+    console.log('this project id: ', projectId);
     console.log('this project joins: ', thisProjJoin);
     const delItem = thisProjJoin.find((item) => item.collabId === collab.collabId);
     console.log('this item to delete: ', delItem);
@@ -120,15 +118,15 @@ export default function CollabCard({
     });
   };
 
-  const handleAssignToProj = () => {
+  const handleAddToProj = () => {
     const payload = {
-      projectId: projectToAssign,
+      projectId,
       collabId: collab.collabId,
       userId: user.uid,
     };
     let isAlreadyIn = false;
     const copy = [...projCollabJoins];
-    const thisProjCopy = copy.filter((item) => item.projectId === projectToAssign);
+    const thisProjCopy = copy.filter((item) => item.projectId === projectId);
     for (let i = 0; i < thisProjCopy.length; i++) {
       if (payload.collabId === thisProjCopy[i].collabId) {
         isAlreadyIn = true;
@@ -156,47 +154,25 @@ export default function CollabCard({
           </button>
           {collab.name}
         </div>
-        {ofProj ? (
-          <div style={{ textAlign: 'right' }}>
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={handleRemove}
-            >
-              {removeIcon}
-            </button>
-          </div>
-        ) : (
 
-          <div id="col2" style={{ textAlign: 'right' }}>
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={handleAssignToProj}
-            >
-              {downArrow}
-            </button>
-            <button
-              id="update-collab"
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={handleUpdate}
-            >
-              {editIcon}
-            </button>
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={handleDelete}
-            >
-              {deleteIcon}
-            </button>
-          </div>
-        )}
+        <div style={{ textAlign: 'right' }}>
+          <button
+            type="button"
+            className="clearButton"
+            style={{ color: 'black' }}
+            onClick={handleRemove}
+          >
+            {removeIcon}
+          </button>
+          <button
+            type="button"
+            className="clearButton"
+            style={{ color: 'black' }}
+            onClick={assignToTask}
+          >
+            {rightArrow}
+          </button>
+        </div>
 
         <Collapse in={expanded}>
           <div>

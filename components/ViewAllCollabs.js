@@ -7,7 +7,7 @@ import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
 
 export default function ViewAllCollabs({
-  refreshAllCs, refreshProjCollabs, refreshAllColabs, projectId,
+  refreshAllCs, refreshProjCollabs, refreshAllColabs, projectId, projectToAssign,
 }) {
   const [collabs, setCollabs] = useState([]);
   const { user } = useAuth();
@@ -41,6 +41,7 @@ export default function ViewAllCollabs({
                   refreshProjCollabs={refreshProjCollabs}
                   refreshAllColabs={refreshAllColabs}
                   collab={collab}
+                  projectToAssign={projectToAssign}
                 />
               ))
             )}
