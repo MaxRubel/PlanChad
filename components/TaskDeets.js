@@ -68,11 +68,11 @@ export default function TaskDeets({
                 >
                     <div style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
-                    }}><label htmlFor="prep">Prep:</label>
+                    }}><label htmlFor={`prep${taskId}`}>Prep:</label>
                     </div>
                     <div style={{ marginLeft: '4%' }}>
                       <textarea
-                        id="prep"
+                        id={`prep${taskId}`}
                         className="form-control"
                         name="prep"
                         onChange={handleChange}
@@ -89,11 +89,11 @@ export default function TaskDeets({
                 >
                     <div style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
-                    }}><label htmlFor="exec">Execution:</label>
+                    }}><label htmlFor={`exec${taskId}`}>Execution:</label>
                     </div>
                     <div style={{ marginLeft: '4%' }}>
                       <textarea
-                        id="exec"
+                        id={`exec${taskId}`}
                         className="form-control"
                         onChange={handleChange}
                         value={formInput.exec}
@@ -110,11 +110,11 @@ export default function TaskDeets({
                     <div style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingRight: '10%',
                     }}>
-                      <label htmlFor="debrief">Debrief:</label>
+                      <label htmlFor={`debrief${taskId}`}>Debrief:</label>
                     </div>
                     <div style={{ marginLeft: '4%' }}>
                       <textarea
-                        id="debrief"
+                        id={`debrief${taskId}`}
                         className="form-control"
                         name="debrief"
                         onChange={handleChange}

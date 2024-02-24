@@ -209,7 +209,9 @@ export default function Checkpoint({
                     placeholder={`Checkpoint ${index}`}
                     value={formInput.name}
                     name="name"
-                    onChange={handleChange} />
+                    onChange={handleChange}
+                    autoComplete="off"
+                    />
                 </div>
                 <div
                   className="verticalCenter"
@@ -238,7 +240,7 @@ export default function Checkpoint({
                       className="cardRow">
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
                         <div className="verticalCenter">
-                          <label htmlFor="deadline">Deadline:</label>
+                          <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
                         </div>
                         <div />
                       </div>
@@ -251,7 +253,7 @@ export default function Checkpoint({
                           value={formInput.deadline}
                           onChange={handleChange}
                           name="deadline"
-                          id="deadline"
+                          id={`deadline${checkP.localId}`}
                           style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
                       </div>
                     </div>
@@ -260,7 +262,7 @@ export default function Checkpoint({
                       className="cardRow">
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
                         <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
-                          <label htmlFor="budget">Start Date:</label>
+                          <label htmlFor={`budget${checkP.localId}`}>Start Date:</label>
                         </div>
                         <div />
                       </div>
@@ -268,7 +270,7 @@ export default function Checkpoint({
                         className="fullCenter"
                         style={{ paddingRight: '20%' }}>
                         <input
-                          id="budget"
+                          id={`budget${checkP.localId}`}
                           className="form-control"
                           type="date"
                           value={formInput.startDate}
@@ -289,14 +291,14 @@ export default function Checkpoint({
                       flexDirection: 'column',
                     }}>
                     <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
-                      <label htmlFor="description" className="form-label" style={{ textAlign: 'center' }}>
+                      <label htmlFor={`description${checkP.localId}`} className="form-label" style={{ textAlign: 'center' }}>
                         Description:
                       </label>
                     </div>
                     <textarea
                       className="form-control"
                       placeholder="A description of your checkpoint..."
-                      id="description"
+                      id={`description${checkP.localId}`}
                       rows="3"
                       value={formInput.description}
                       onChange={handleChange}

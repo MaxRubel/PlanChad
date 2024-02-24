@@ -9,7 +9,7 @@ import { signOut } from '../utils/auth';
 
 export default function NavBar() {
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+    <Navbar collapseOnSelect expand="lg" bg="black" variant="dark">
       <Container>
         <Link passHref href="/">
           <Navbar.Brand>planChad</Navbar.Brand>

@@ -3,7 +3,8 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
-import { trashIcon } from '../public/icons';
+import uniqid from 'uniqid';
+import { trashIcon, editIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
 
@@ -138,12 +139,12 @@ export default function Task({
           </div>
         </div>
         <div id="line" style={{ display: 'grid', gridTemplateRows: '1fr 1fr' }}>
-          <div id="top-div" style={{ borderBottom: '2px solid rgb(84, 84, 84)' }} />
+          <div id="top-div" style={{ borderBottom: '2px solid rgb(251, 157, 80, .5)' }} />
           <div id="bottom-div" />
         </div>
         {/* -----------card---------------------- */}
         <div className="card" style={{ margin: '3px 0px' }}>
-          <div className="card-header 2">
+          <div className="card-header 2" style={{ height: '52.89px' }}>
             <div className="verticalCenter">
               <ButtonBoot
                 onClick={handleCollapse}
@@ -164,20 +165,20 @@ export default function Task({
                   backgroundColor: 'transparent',
                   border: 'none',
                   padding: '0px',
-                  paddingLeft: '10%',
+                  paddingLeft: '5%',
                   textAlign: 'left',
                   color: 'black',
                   width: '50px',
                 }}>
-                {magGlass}
+                {editIcon}
               </ButtonBoot>
-              <div style={{ wdith: '50px', paddingLeft: '11%' }}>
+              <div style={{ wdith: '50px', paddingLeft: '5%' }}>
                 <input
                   className="form-check-input"
                   type="checkbox"
                   name="closed"
                   checked={formInput.status === 'closed'}
-                  id="closedTask"
+                  id={`closed-task${uniqid()}`}
                   onChange={handleChange}
                   style={{
                     border: '1px solid grey',
@@ -205,6 +206,7 @@ export default function Task({
                   value={formInput.name}
                   name="name"
                   onChange={handleChange}
+                  autoComplete="off"
               />
               </div>
             )}
@@ -286,14 +288,14 @@ export default function Task({
                   flexDirection: 'column',
                 }}>
                 <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
-                  <label htmlFor="description" className="form-label" style={{ textAlign: 'center' }}>
+                  <label htmlFor={`description${task.localId}`} className="form-label" style={{ textAlign: 'center' }}>
                     Description:
                   </label>
                 </div>
                 <textarea
                   className="form-control"
                   placeholder="A description of your task..."
-                  id="description"
+                  id={`description${task.localId}`}
                   rows="3"
                   value={formInput.description}
                   onChange={handleChange}
