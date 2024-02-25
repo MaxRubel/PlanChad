@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable semi */
 /* eslint-disable arrow-spacing */
 /* eslint-disable react-hooks/exhaustive-deps */

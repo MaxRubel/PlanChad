@@ -13,7 +13,6 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
-    'no-plusplus': 'warn',
     'jsx-a11y/label-has-associated-control': 'warn',
     'jsx-a11y/label-has-for': 'warn',
     'react/no-unknown-property': 'warn',
@@ -73,5 +72,8 @@ module.exports = {
     'no-debugger': 1,
     'linebreak-style': 0,
     'max-len': [1, 200, 2],
+    'no-plusplus': [
+      2, { allowForLoopAfterthoughts: true },
+    ],
   },
 };
