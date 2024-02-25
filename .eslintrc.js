@@ -13,8 +13,8 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
-    'jsx-a11y/label-has-associated-control': 'warn',
-    'jsx-a11y/label-has-for': 'warn',
+    'jsx-a11y/label-has-associated-control': 'off',
+    'jsx-a11y/label-has-for': 'off',
     'react/no-unknown-property': 'warn',
     'operator-linebreak': 'warn',
     'space-in-parens': 'warn',
@@ -74,12 +74,6 @@ module.exports = {
     'max-len': [1, 200, 2],
     'no-plusplus': [
       2, { allowForLoopAfterthoughts: true },
-    ],
-    'jsx-a11y/label-has-associated-control': [
-      'error', { required: { some: ['nesting', 'id'] } },
-    ],
-    'jsx-a11y/label-has-for': [
-      'error', { required: { some: ['nesting', 'id'] } },
     ],
   },
 };

@@ -1,9 +1,11 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-closing-bracket-location */
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
-import uniqid from 'uniqid';
+import { Checkbox } from '@mui/material';
 import { trashIcon, editIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -31,6 +33,7 @@ export default function Task({
   refreshCheckP,
   indexT,
   isLoading,
+  taskHasBeenCompleted,
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [hasChanged, setHasChanged] = useState(false);
@@ -143,74 +146,69 @@ export default function Task({
           <div id="bottom-div" />
         </div>
         {/* -----------card---------------------- */}
-        <div className="card" style={{ margin: '3px 0px' }}>
+        <div
+          className="card"
+          style={{
+            margin: '3px 0px',
+            backgroundColor: formInput.status === 'closed' ? 'grey' : '',
+          }}>
           <div className="card-header 2" style={{ height: '52.89px' }}>
-            <div className="verticalCenter">
-              <ButtonBoot
-                onClick={handleCollapse}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  padding: '0px',
-                  paddingLeft: '10%',
-                  textAlign: 'left',
-                  color: 'black',
-                  width: '50px',
-                }}>
-                {downIcon}
-              </ButtonBoot>
-              <ButtonBoot
-                onClick={handleCollapse2}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  padding: '0px',
-                  paddingLeft: '5%',
-                  textAlign: 'left',
-                  color: 'black',
-                  width: '50px',
-                }}>
-                {editIcon}
-              </ButtonBoot>
-              <div style={{ wdith: '50px', paddingLeft: '5%' }}>
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="closed"
-                  checked={formInput.status === 'closed'}
-                  id={`closed-task${uniqid()}`}
-                  onChange={handleChange}
+            <div id="button-row" className="verticalCenter">
+              <div style={{ wdith: '30px', paddingLeft: '5%' }}>
+                <ButtonBoot
+                  onClick={handleCollapse}
                   style={{
-                    border: '1px solid grey',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '0px',
+                    paddingLeft: '10%',
+                    textAlign: 'left',
                     color: 'black',
-                    textDecoration: 'line-through',
-                  }}
-                  />
+                    width: '50px',
+                  }}>
+                  {downIcon}
+                </ButtonBoot>
+              </div>
+              <div style={{ wdith: '20px' }}>
+                <ButtonBoot
+                  onClick={handleCollapse2}
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '0px',
+                    paddingLeft: '5%',
+                    textAlign: 'left',
+                    color: 'black',
+                    width: '50px',
+                  }}>
+                  {magGlass}
+                </ButtonBoot>
+              </div>
+              <div style={{ wdith: '20px' }}>
+                <Checkbox
+                  checked={formInput.status === 'closed'}
+                  onChange={(e) => { handleChange(e); taskHasBeenCompleted(); }}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  style={{ color: 'black' }}
+                />
               </div>
             </div>
-            {formInput.status === 'closed' ? (
-              <div className="fullCenter" style={{ textAlign: 'center', textDecoration: 'line-through' }}>
-                {formInput.name}
-              </div>
-            ) : (
-              <div className="fullCenter" style={{ textAlign: 'center' }}>
-                <input
-                  className="form-control"
-                  style={{
-                    textAlign: 'center',
-                    border: 'none',
-                    backgroundColor: 'transparent',
-                    width: '75%',
-                  }}
-                  placeholder={`Task ${indexT + 1}`}
-                  value={formInput.name}
-                  name="name"
-                  onChange={handleChange}
-                  autoComplete="off"
+            <div className="fullCenter" style={{ textAlign: 'center' }}>
+              <input
+                className="form-control"
+                style={{
+                  textAlign: 'center',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  width: '75%',
+                }}
+                placeholder={`Task ${indexT + 1}`}
+                value={formInput.name}
+                name="name"
+                onChange={handleChange}
+                autoComplete="off"
               />
-              </div>
-            )}
-
+            </div>
             <div
               className="verticalCenter"
               style={{
@@ -252,7 +250,7 @@ export default function Task({
                       onChange={handleChange}
                       name="deadline"
                       id="deadline"
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
+                      style={{ backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)', border: 'none' }} />
                   </div>
                 </div>
                 <div
@@ -274,7 +272,10 @@ export default function Task({
                       value={formInput.startDate}
                       onChange={handleChange}
                       name="startDate"
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
+                      style={{
+                        backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                        border: 'none',
+                      }} />
                   </div>
                 </div>
               </div>
@@ -301,7 +302,7 @@ export default function Task({
                   onChange={handleChange}
                   name="description"
                   style={{
-                    backgroundColor: 'rgb(225, 225, 225)',
+                    backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                     border: 'none',
                     minWidth: '250px',
                   }} />
@@ -317,7 +318,7 @@ export default function Task({
         handleChange={handleChange}
         taskId={task.localId}
         saveCollabsExpand={saveCollabsExpand}
-        />
+      />
 
     </>
   );

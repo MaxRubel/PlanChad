@@ -21,6 +21,8 @@ export default function Checkpoint({
   min,
   index,
   isLoading,
+  progressIsShowing,
+
 }) {
   const [formInput, setFormInput] = useState({
     description: '',
@@ -30,9 +32,16 @@ export default function Checkpoint({
     index: '',
   });
 
+  const {
+    addToSaveManager,
+    allTasks,
+    deleteFromSaveManager,
+    saveInput,
+  } = useSaveContext();
+
   const [tasks, setTasks] = useState([]);
+  const [taskCompleted, setTaskCompleted] = useState(0);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
-  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
 
   const downIcon = (
     <svg
@@ -77,7 +86,7 @@ export default function Checkpoint({
   useEffect(() => { // refresh tasks from save manager
     const copy = [...saveInput.tasks];
     const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
-    setTasks(theseTasks);
+    setTasks((preVal) => theseTasks);
   }, [checkPrefresh]);
 
   useEffect(() => { // minimize
@@ -88,11 +97,69 @@ export default function Checkpoint({
     }
   }, [min]);
 
+  useEffect(() => { // show progress bar animation
+    let timeout;
+    if (progressIsShowing) {
+      const tasksCopy = [...saveInput.tasks];
+      const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
+      const totalTasks = theseTasks.length;
+      let closedTasks = 0;
+      let closedPercentage = 0;
+      for (let i = 0; i < totalTasks; i++) {
+        if (theseTasks[i].status === 'closed') {
+          closedTasks += 1;
+        }
+      }
+      if (totalTasks !== 0) {
+        closedPercentage = Math.round((closedTasks / totalTasks) * 100);
+      }
+      let i = 0;
+      const interval = setInterval(() => {
+        document.getElementById(`progressOf${checkP.localId}`).style.width = `${i}%`;
+        i += 1;
+        if (i > closedPercentage) {
+          clearInterval(interval);
+        }
+      }, 20);
+    } else {
+      document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
+    }
+    return () => {
+      clearInterval(timeout);
+    };
+  }, [progressIsShowing]);
+
+  // useEffect(() => { // show progress bar on change of task
+  //   console.log(taskCompleted);
+  //   if (progressIsShowing) {
+  //     const tasksCopy = [...saveInput.tasks];
+  //     const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
+  //     const totalTasks = theseTasks.length;
+  //     let closedTasks = 0;
+  //     let closedPercentage = 0;
+  //     for (let i = 0; i < totalTasks; i++) {
+  //       if (theseTasks[i].status === 'closed') {
+  //         closedTasks += 1;
+  //       }
+  //     }
+  //     if (totalTasks !== 0) {
+  //       closedPercentage = Math.round((closedTasks / totalTasks) * 100);
+  //     }
+  //     document.getElementById(`progressOf${checkP.localId}`).style.width = `${closedPercentage}%`;
+  //   } else {
+  //     document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
+  //   }
+  // }, [taskCompleted]);
+
   const dance = () => {
     document.getElementById(`addTask${checkP.localId}`).animate(
       [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
       { duration: 500, iterations: 1 },
     );
+  };
+
+  const taskHasBeenCompleted = () => {
+    setTaskCompleted((preVal) => preVal + 1);
   };
 
   const refreshCheckP = () => {
@@ -170,6 +237,7 @@ export default function Checkpoint({
             {/* <div> */}
             <div className="card" style={{ margin: '3px 0px' }}>
               <div className="card-header 2">
+                <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
                 <div className="verticalCenter">
                   <ButtonBoot
                     onClick={handleCollapse}
@@ -211,7 +279,7 @@ export default function Checkpoint({
                     name="name"
                     onChange={handleChange}
                     autoComplete="off"
-                    />
+                  />
                 </div>
                 <div
                   className="verticalCenter"
@@ -324,6 +392,7 @@ export default function Checkpoint({
               indexT={indexT}
               isLoading={isLoading}
               refreshCheckP={refreshCheckP}
+              taskHasBeenCompleted={taskHasBeenCompleted}
             />
           ))}
         </div>

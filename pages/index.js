@@ -4,6 +4,7 @@ import { getCollabsOfUser } from '../api/collabs';
 import { useAuth } from '../utils/context/authContext';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useSaveContext } from '../utils/context/saveManager';
+import { clientCredentials } from '../utils/client';
 
 export default function Home() {
   const { clearSaveManager, singleProjectRunning, sendToServer } = useSaveContext();

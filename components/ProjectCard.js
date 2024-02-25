@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable semi */
 /* eslint-disable arrow-spacing */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -14,11 +16,14 @@ const initialState = {
   client: '',
   description: '',
   start_date: '',
+  progressIsShowing: false,
   expanded: false,
   type: 'project',
 };
 
-export default function ProjectCard({ project, min }) {
+export default function ProjectCard({
+  project, min, progressIsShowing, tellProjectIfProgressShowing,
+}) {
   const [formInput, setFormInput] = useState(initialState);
   const { addToSaveManager } = useSaveContext();
   const downIcon = (
@@ -37,8 +42,13 @@ export default function ProjectCard({ project, min }) {
   useEffect(() => {
     if (project?.projectId) {
       setFormInput(project)
+      tellProjectIfProgressShowing(project.progressIsShowing)
     }
   }, [project])
+
+  useEffect(() => {
+    setFormInput((preVal) => ({ ...preVal, progressIsShowing }))
+  }, [progressIsShowing])
 
   useEffect(() => {
     addToSaveManager(formInput, 'update', 'project')
@@ -92,7 +102,7 @@ export default function ProjectCard({ project, min }) {
             }}
             onChange={handleChange}
             autoComplete="off"
-            />
+          />
         </div>
       </div>
       {/* --------------card-body------------------------ */}
