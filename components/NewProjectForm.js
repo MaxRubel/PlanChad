@@ -31,6 +31,7 @@ export default function NewProjectForm() {
       expanded: true,
       checkpoints: null,
       tasks: null,
+      progressIsShowing: false,
     };
 
     createNewProject(payload)

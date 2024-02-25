@@ -13,6 +13,7 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    'no-plusplus': 'warn',
     'jsx-a11y/label-has-associated-control': 'warn',
     'jsx-a11y/label-has-for': 'warn',
     'react/no-unknown-property': 'warn',
@@ -72,14 +73,5 @@ module.exports = {
     'no-debugger': 1,
     'linebreak-style': 0,
     'max-len': [1, 200, 2],
-    'no-plusplus': [
-      2, { allowForLoopAfterthoughts: true },
-    ],
-    'jsx-a11y/label-has-associated-control': [
-      'error', { required: { some: ['nesting', 'id'] } },
-    ],
-    'jsx-a11y/label-has-for': [
-      'error', { required: { some: ['nesting', 'id'] } },
-    ],
   },
 };

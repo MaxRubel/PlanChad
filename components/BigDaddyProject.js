@@ -3,7 +3,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Button } from '@mui/material';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
@@ -21,6 +20,7 @@ export default function BigDaddyProject({ projectId }) {
   const [refresh, setRefresh] = useState(0);
   const [minColor, setMinColor] = useState(0);
   const [isLoading, setIsloading] = useState(true);
+  const [progressIsShowing, setProgressIsShowing] = useState(false);
 
   const {
     addToSaveManager,
@@ -34,7 +34,6 @@ export default function BigDaddyProject({ projectId }) {
     isSaving,
   } = useSaveContext();
 
-  const { addToCollabManager, clearCollabManager, loaded } = useCollabContext();
   const router = useRouter();
 
   useEffect(() => { // refresh checkpoint from save manager
@@ -64,6 +63,10 @@ export default function BigDaddyProject({ projectId }) {
     setCheckpoints(ordered);
   };
 
+  const tellProjectIfProgressShowing = (value) => {
+    setProgressIsShowing((preVal) => value);
+  };
+
   const handleRefresh = () => { // retreive from save manager
     setRefresh((prevVal) => prevVal + 1);
   };
@@ -84,7 +87,6 @@ export default function BigDaddyProject({ projectId }) {
   useEffect(() => { // minimize button color animation
     let saveColorChange;
     if (isSaving) {
-      console.log('color change');
       const saveButton = document.getElementById('saveButton');
       saveButton.style.color = 'rgb(16, 197, 234)';
       saveColorChange = setTimeout(() => {
@@ -166,12 +168,22 @@ export default function BigDaddyProject({ projectId }) {
               onClick={() => { router.push(`/collaborators/${projectId}`); }}>
               MANAGE COLLABORATORS
             </button>
+            <button
+              id="minButton"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { setProgressIsShowing((preVal) => !preVal); }}>
+              {progressIsShowing ? 'HIDE PROGRESS' : 'SHOW PROGRESS'}
+            </button>
           </div>
           <ProjectCard
             save={save}
             min={min}
             minAll={minAll}
             project={project}
+            progressIsShowing={progressIsShowing}
+            tellProjectIfProgressShowing={tellProjectIfProgressShowing}
           />
           <div
             id="add-checkpt-button"
@@ -211,6 +223,7 @@ export default function BigDaddyProject({ projectId }) {
                         index={index}
                         refresh={refresh}
                         isLoading={isLoading}
+                        progressIsShowing={progressIsShowing}
                       />
                     ))}
                     {provided.placeholder}
