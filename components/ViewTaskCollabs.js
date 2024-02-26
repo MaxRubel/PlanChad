@@ -59,7 +59,7 @@ export default function ViewTaskCollabs({
       const thisProjectsTasks = copy.filter((item) => item.projectId === projectToAssign);
       setTasks((preVal) => thisProjectsTasks);
     }
-  }, [projectToAssign, projectId, allTasks]);
+  }, [projectToAssign, projectId, allTasks, taskCollabJoins]);
 
   return (
     <>

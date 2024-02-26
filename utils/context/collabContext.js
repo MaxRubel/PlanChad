@@ -102,16 +102,14 @@ const CollabContextProvider = ({ children }) => {
       setAllCollabs((preVal) => (copy));
     }
     if (type === 'projCollabJoin') {
-      const copy = [...projCollabJoins];
-      const deleteIndex = copy.findIndex((item) => item.projCollabId === id);
-      copy.splice(deleteIndex, 1);
-      setProjCollabJoins((preVal) => (copy));
+      console.log(id); // the id of the proj collab join
+      const projCollabJoinscopy = [...projCollabJoins];
+      const deleteIndex = projCollabJoinscopy.findIndex((item) => item.projCollabId === id);
+      projCollabJoinscopy.splice(deleteIndex, 1);
+      setProjCollabJoins((preVal) => (projCollabJoinscopy));
     }
     if (type === 'taskCollabJoin') {
-      const copy = [...taskCollabJoins];
-      const deleteIndex = copy.findIndex((item) => item.taskCollabId === id);
-      copy.splice(deleteIndex, 1);
-      setTaskCollabJoins((preVal) => (copy));
+      setTaskCollabJoins((prevTaskCollabJoins) => prevTaskCollabJoins.filter((item) => item.taskCollabId !== id));
     }
   };
 
