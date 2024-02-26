@@ -54,7 +54,14 @@ export default function NewProjectForm() {
         boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px3px',
       }}
       onSubmit={handleSubmit}>
-      <div className="card text-bg-info mb-3" style={{ minWidth: '400px', boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px3px', maxWidth: '600px' }}>
+      <div
+        className="card text-bg-info mb-3"
+        style={{
+          minWidth: '400px',
+          boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px3px',
+          maxWidth: '600px',
+          // backgroundColor: 'red',
+        }}>
         <div style={{
           textAlign: 'center',
           fontSize: '18px',

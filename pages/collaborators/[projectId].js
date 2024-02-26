@@ -1,23 +1,23 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AddCollabForm from '../../components/AddCollabForm';
 import ViewAllCollabs from '../../components/ViewAllCollabs';
-import { rightArrow } from '../../public/icons';
 import ViewProjCollabs from '../../components/ViewProjCollabs';
-import { fetchProjectCollabs } from '../../utils/fetchAll';
-import { useCollabContext } from '../../utils/context/collabContext';
-import { getCollabsOfUser } from '../../api/collabs';
-import { useAuth } from '../../utils/context/authContext';
 import ViewTaskCollabs from '../../components/ViewTaskCollabs';
+import { useSaveContext } from '../../utils/context/saveManager';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
   const { projectId } = router.query;
   const [refreshAllCs, setRefreshAllCs] = useState(0);
   const [refreshProjCs, setRefreshProjCs] = useState(0);
-  const { user } = useAuth();
   const [projectToAssign, setProjectToAssign] = useState('');
   const [taskToAssign, setTaskToAssign] = useState('');
+  const { sendToServer } = useSaveContext();
+
+  useEffect(() => {
+    sendToServer();
+  }, []);
 
   const refreshAllColabs = () => {
     setRefreshAllCs((prevVal) => prevVal + 1);

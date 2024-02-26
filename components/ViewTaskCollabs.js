@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
+import { Form } from 'react-bootstrap';
 import { useSaveContext } from '../utils/context/saveManager';
 import CollabCardForTask from './CollabCardForTask';
 import { useCollabContext } from '../utils/context/collabContext';
@@ -14,7 +15,6 @@ export default function ViewTaskCollabs({
 }) {
   const {
     saveInput,
-    openAssigneesModal,
     allTasks,
   } = useSaveContext();
   const { taskCollabJoins, allCollabs } = useCollabContext();
@@ -47,12 +47,19 @@ export default function ViewTaskCollabs({
 
   useEffect(() => {
     if (projectToAssign === projectId) {
-      setTasks((preVal) => saveInput.tasks);
+      if (!saveInput.project.projectId) {
+        const copy = [...allTasks];
+        const thisProjectsTasks = copy.filter((item) => item.projectId === projectToAssign);
+        setTasks((preVal) => thisProjectsTasks);
+      } else {
+        setTasks((preVal) => saveInput.tasks);
+      }
     } else {
-      const thisProjectsTasks = allTasks.filter((item) => item.projectId === projectToAssign);
+      const copy = [...allTasks];
+      const thisProjectsTasks = copy.filter((item) => item.projectId === projectToAssign);
       setTasks((preVal) => thisProjectsTasks);
     }
-  }, [projectToAssign]);
+  }, [projectToAssign, projectId, allTasks]);
 
   return (
     <>
@@ -60,11 +67,11 @@ export default function ViewTaskCollabs({
         <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
           <div> Assigned to Task:</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
-            <select name="tasks" id="tasks" className="form-control" onChange={handleChange}>
+            <Form.Select name="tasks" id="tasks" className="form-control" onChange={handleChange}>
               {tasks.map((task, index) => (
-                <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}` }</option>
+                <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}`}</option>
               ))}
-            </select>
+            </Form.Select>
           </div>
         </div>
         <div className="card-body">

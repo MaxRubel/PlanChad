@@ -14,8 +14,6 @@ import { removeIcon } from '../public/icons';
 export default function CollabCardforProject({
   collab,
   projectId,
-  ofProj,
-  refreshProjCollabs,
   taskToAssign,
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -120,42 +118,16 @@ export default function CollabCardforProject({
   };
 
   const handleRemove = () => {
+    console.log('removing');
     const copy = [...projCollabJoins];
     const thisProjJoin = copy.filter((item) => item.projectId === projectId);
-    console.log('this project id: ', projectId);
-    console.log('this project joins: ', thisProjJoin);
+    // console.log('this project id: ', projectId);
+    // console.log('this project joins: ', thisProjJoin);
     const delItem = thisProjJoin.find((item) => item.collabId === collab.collabId);
-    console.log('this item to delete: ', delItem);
     deleteProjCollab(delItem.projCollabId).then(() => {
       deleteFromCollabManager(delItem.projCollabId, 'projCollabJoin');
     });
   };
-
-  //   const handleAddToProj = () => {
-  //     const payload = {
-  //       projectId,
-  //       collabId: collab.collabId,
-  //       userId: user.uid,
-  //     };
-  //     let isAlreadyIn = false;
-  //     const copy = [...projCollabJoins];
-  //     const thisProjCopy = copy.filter((item) => item.projectId === projectId);
-  //     for (let i = 0; i < thisProjCopy.length; i++) {
-  //       if (payload.collabId === thisProjCopy[i].collabId) {
-  //         isAlreadyIn = true;
-  //       }
-  //     }
-  //     if (isAlreadyIn) {
-  //       console.log('already added this collaborator to this project');
-  //     }
-  //     if (!isAlreadyIn) {
-  //       createNewProjCollab(payload).then(({ name }) => { // JOIN TABLE
-  //         const payload2 = { projCollabId: name };
-  //         updateProjCollab(payload2);
-  //         addToCollabManager({ ...payload, ...payload2 }, 'projCollabJoins', 'create');
-  //       });
-  //     }
-  //   };
 
   return (
     <div className="card" style={{ margin: '1% 0%' }}>

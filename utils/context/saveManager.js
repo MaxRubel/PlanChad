@@ -53,6 +53,7 @@ export const SaveContextProvider = ({ children }) => {
 
   const clearSaveManager = () => {
     setSaveInput((prevVal) => initState);
+    setMin((preVal) => 0);
     setSingleProjectRunning((preVal) => false);
   };
 
