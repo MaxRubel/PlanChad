@@ -7,17 +7,10 @@ import { useCollabContext } from '../utils/context/collabContext';
 
 // eslint-disable-next-line react/prop-types
 export default function ViewTaskCollabsInProj({
-  projectId,
   refreshProjCollabs,
   collabsExpand,
   taskId,
 }) {
-  const {
-    saveInput,
-    openAssigneesModal,
-    allTasks,
-  } = useSaveContext();
-
   const { taskCollabJoins, allCollabs } = useCollabContext();
 
   const [collabsOfTask, setCollabsOfTask] = useState([]);
@@ -27,7 +20,7 @@ export default function ViewTaskCollabsInProj({
     const filtered = copy.filter((item) => item.taskId === taskId);
     const collabs = [];
     for (let i = 0; i < filtered.length; i++) {
-      const collab = allCollabs.find((item) => item.collabId === copy[i].collabId);
+      const collab = allCollabs.find((item) => item.collabId === filtered[i].collabId);
       collabs.push(collab);
     }
     setCollabsOfTask((preVal) => collabs);

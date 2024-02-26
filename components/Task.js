@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
-import { trashIcon, editIcon } from '../public/icons';
+import { trashIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
 
@@ -151,10 +151,11 @@ export default function Task({
           style={{
             margin: '3px 0px',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
+            transition: '1.5s all ease',
           }}>
-          <div className="card-header 2" style={{ height: '52.89px' }}>
+          <div className="card-header 2" style={{ height: '52.89px', border: !formInput.expanded ? 'none' : '' }}>
             <div id="button-row" className="verticalCenter">
-              <div style={{ wdith: '30px', paddingLeft: '5%' }}>
+              <div style={{ wdith: '20px', paddingLeft: '5%' }}>
                 <ButtonBoot
                   onClick={handleCollapse}
                   style={{
@@ -230,7 +231,7 @@ export default function Task({
           {/* --------------card-body------------------------ */}
           <Collapse in={formInput.expanded}>
             <div id="whole-card">
-              <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
+              <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
                 <div
                   id="row2"
                   className="cardRow">
@@ -250,7 +251,12 @@ export default function Task({
                       onChange={handleChange}
                       name="deadline"
                       id="deadline"
-                      style={{ backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)', border: 'none' }} />
+                      style={{
+                        backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                        border: 'none',
+                        transition: '1.5s all ease',
+                      }}
+                    />
                   </div>
                 </div>
                 <div
@@ -275,6 +281,7 @@ export default function Task({
                       style={{
                         backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                         border: 'none',
+                        transition: '1.5s all ease',
                       }} />
                   </div>
                 </div>
@@ -283,7 +290,7 @@ export default function Task({
                 id="description-field"
                 className="fullCenter"
                 style={{
-                  borderTop: '1px solid rgb(180, 180, 180)',
+                  borderTop: formInput.status === 'closed' ? 'none' : '1px solid rgb(180, 180, 180)',
                   padding: '2% 10%',
                   display: 'flex',
                   flexDirection: 'column',
@@ -303,6 +310,7 @@ export default function Task({
                   name="description"
                   style={{
                     backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                    transition: '1.5s all ease',
                     border: 'none',
                     minWidth: '250px',
                   }} />

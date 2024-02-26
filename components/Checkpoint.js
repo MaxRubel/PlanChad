@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-closing-bracket-location */
@@ -90,11 +92,7 @@ export default function Checkpoint({
   }, [checkPrefresh]);
 
   useEffect(() => { // minimize
-    if (!isLoading) {
-      if (formInput.expanded) {
-        setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
-      }
-    }
+    setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
   }, [min]);
 
   useEffect(() => { // show progress bar animation
@@ -129,27 +127,26 @@ export default function Checkpoint({
     };
   }, [progressIsShowing]);
 
-  // useEffect(() => { // show progress bar on change of task
-  //   console.log(taskCompleted);
-  //   if (progressIsShowing) {
-  //     const tasksCopy = [...saveInput.tasks];
-  //     const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
-  //     const totalTasks = theseTasks.length;
-  //     let closedTasks = 0;
-  //     let closedPercentage = 0;
-  //     for (let i = 0; i < totalTasks; i++) {
-  //       if (theseTasks[i].status === 'closed') {
-  //         closedTasks += 1;
-  //       }
-  //     }
-  //     if (totalTasks !== 0) {
-  //       closedPercentage = Math.round((closedTasks / totalTasks) * 100);
-  //     }
-  //     document.getElementById(`progressOf${checkP.localId}`).style.width = `${closedPercentage}%`;
-  //   } else {
-  //     document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
-  //   }
-  // }, [taskCompleted]);
+  useEffect(() => { // show progress bar on change of task
+    if (progressIsShowing) {
+      const tasksCopy = [...saveInput.tasks];
+      const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
+      const totalTasks = theseTasks.length;
+      let closedTasks = 0;
+      let closedPercentage = 0;
+      for (let i = 0; i < totalTasks; i++) {
+        if (theseTasks[i].status === 'closed') {
+          closedTasks += 1;
+        }
+      }
+      if (totalTasks !== 0) {
+        closedPercentage = Math.round((closedTasks / totalTasks) * 100);
+      }
+      document.getElementById(`progressOf${checkP.localId}`).style.width = `${closedPercentage}%`;
+    } else {
+      document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
+    }
+  }, [saveInput.tasks]);
 
   const dance = () => {
     document.getElementById(`addTask${checkP.localId}`).animate(
@@ -236,7 +233,7 @@ export default function Checkpoint({
             {/* <div style={{ margin: '1% 0%' }}> */}
             {/* <div> */}
             <div className="card" style={{ margin: '3px 0px' }}>
-              <div className="card-header 2">
+              <div className="card-header 2" style={{ border: !formInput.expanded ? 'none' : '' }}>
                 <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
                 <div className="verticalCenter">
                   <ButtonBoot
@@ -266,13 +263,14 @@ export default function Checkpoint({
                     {plusIcon}
                   </ButtonBoot>
                 </div>
-                <div className="verticalCenter">
+                <div className="verticalCenter" style={{ justifyContent: 'center' }}>
                   <input
                     className="form-control"
                     style={{
                       textAlign: 'center',
                       border: 'none',
                       backgroundColor: 'transparent',
+                      width: '75%',
                     }}
                     placeholder={`Checkpoint ${index}`}
                     value={formInput.name}
@@ -302,7 +300,7 @@ export default function Checkpoint({
               {/* --------------card-body------------------------ */}
               <Collapse in={formInput.expanded}>
                 <div id="whole-card">
-                  <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
+                  <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '0% 0% !important' }}>
                     <div
                       id="row2"
                       className="cardRow">
@@ -354,7 +352,7 @@ export default function Checkpoint({
                     className="fullCenter"
                     style={{
                       borderTop: '1px solid rgb(180, 180, 180)',
-                      padding: '2% 10%',
+                      padding: '1.4% 10%',
                       display: 'flex',
                       flexDirection: 'column',
                     }}>

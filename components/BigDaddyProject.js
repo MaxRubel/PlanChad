@@ -9,9 +9,7 @@ import { useRouter } from 'next/router';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-
 import AddAsigneeModal from './AddAsigneeModal';
-import { useCollabContext } from '../utils/context/collabContext';
 
 export default function BigDaddyProject({ projectId }) {
   const [project, setProject] = useState({});
@@ -37,7 +35,7 @@ export default function BigDaddyProject({ projectId }) {
   const router = useRouter();
 
   useEffect(() => { // refresh checkpoint from save manager
-    console.log('refreshing...');
+    // console.log('refreshing...');
     const copy = [...saveInput.checkpoints];
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
@@ -71,18 +69,22 @@ export default function BigDaddyProject({ projectId }) {
     setRefresh((prevVal) => prevVal + 1);
   };
 
-  useEffect(() => { // minimize button color animation
+  useEffect(() => {
     let minColorChange;
-    if (minColor > 0) {
-      document.getElementById('minButton').style.color = 'rgb(16, 197, 234)';
+    const minButton = document.getElementById('minButton');
+    if (min > 0 && minButton) {
+      console.log('fire min');
+      minButton.style.color = 'rgb(16, 197, 234)';
       minColorChange = setTimeout(() => {
-        document.getElementById('minButton').style.color = 'rgb(200, 200, 200)';
+        minButton.style.color = 'rgb(200, 200, 200)';
       }, 1000);
     }
     return () => {
-      clearTimeout(minColorChange);
+      if (minColorChange) {
+        clearTimeout(minColorChange);
+      }
     };
-  }, [minColor]);
+  }, [min]);
 
   useEffect(() => { // minimize button color animation
     let saveColorChange;
@@ -93,9 +95,6 @@ export default function BigDaddyProject({ projectId }) {
         saveButton.style.color = 'rgb(200, 200, 200)';
       }, 1000);
     }
-    // return () => {
-    //   clearTimeout(saveColorChange);
-    // };
   }, [isSaving]);
 
   const addCheckpoint = () => {

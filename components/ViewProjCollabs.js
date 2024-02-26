@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
-import { getCollabsOfProject } from '../api/projCollab';
-import CollabCard from './CollabCard';
-import { getSingleCollab } from '../api/collabs';
+import { Form } from 'react-bootstrap';
 import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
 import CollabCardforProject from './CollabCardForProject';
@@ -16,9 +14,8 @@ export default function ViewProjCollabs({
   const [thisProject, setThisProject] = useState({});
   const [selectInput, setSelectInput] = useState('');
   const [taskToAssign2, setTaskToAssign2] = useState('');
-  const { saveInput, allProjects } = useSaveContext();
+  const { allProjects } = useSaveContext();
   const {
-    refreshAllCollabs,
     allCollabs,
     projCollabJoins,
   } = useCollabContext();
@@ -26,30 +23,32 @@ export default function ViewProjCollabs({
   useEffect(() => {
     // load in either the projectId from the router query or let the user choose from dropdown
     if (projectId) {
-      // console.log('coming from a running project');
       const runningProject = allProjects.find((item) => item.projectId === projectId);
       setThisProject((preVal) => runningProject);
-      setSelectInput((preVal) => runningProject?.projectId);
+      setSelectInput((preVal) => projectId);
       setProjectToAssignChild(projectId);
     }
-  }, [projectId]);
+  }, [projectId, allProjects]);
 
   useEffect(() => {
-    const thisProjCollabs = [];
-    const copy = [...projCollabJoins];
-    const thisProjCollabJoins = copy.filter((item) => item.projectId === thisProject?.projectId);
-    const collabIds = thisProjCollabJoins.map((item) => item.collabId);
-    for (let i = 0; i < allCollabs.length; i++) {
-      if (collabIds.includes(allCollabs[i].collabId)) {
-        thisProjCollabs.push(allCollabs[i]);
+    if (projectId) {
+      const thisProjCollabs = [];
+      const copy = [...projCollabJoins];
+      const thisProjCollabJoins = copy.filter((item) => item.projectId === thisProject?.projectId);
+      const collabIds = thisProjCollabJoins.map((item) => item.collabId);
+      console.log(thisProject);
+      for (let i = 0; i < allCollabs.length; i++) {
+        if (collabIds.includes(allCollabs[i].collabId)) {
+          thisProjCollabs.push(allCollabs[i]);
+        }
       }
+      setCollabsOfProj((preVal) => thisProjCollabs);
     }
-    setCollabsOfProj((preVal) => thisProjCollabs);
-  }, [projCollabJoins, selectInput]);
+  }, [projCollabJoins, projectId, selectInput, allCollabs, thisProject]);
 
   useEffect(() => {
     setTaskToAssign2(taskToAssign);
-  }, [taskToAssign]);
+  }, [taskToAssign, projectId]);
 
   const changeProject = (e) => {
     const { value } = e.target;
@@ -64,7 +63,7 @@ export default function ViewProjCollabs({
       <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
         <div> Assigned to Project:</div>
         <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
-          <select
+          <Form.Select
             name="projects"
             id="projects"
             className="form-control"
@@ -74,7 +73,7 @@ export default function ViewProjCollabs({
             {allProjects.map((project) => (
               <option key={project.projectId} value={project.projectId}>{project.name}</option>
             ))}
-          </select>
+          </Form.Select>
         </div>
       </div>
       <div className="card-body">
@@ -87,7 +86,7 @@ export default function ViewProjCollabs({
                 collab={collab}
                 ofProj
                 refreshProjCollabs={refreshProjCollabs}
-                projectId={thisProject.projectId}
+                projectId={projectId}
               />
             )))}
           </div>
