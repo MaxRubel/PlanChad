@@ -73,7 +73,6 @@ export default function BigDaddyProject({ projectId }) {
     let minColorChange;
     const minButton = document.getElementById('minButton');
     if (min > 0 && minButton) {
-      console.log('fire min');
       minButton.style.color = 'rgb(16, 197, 234)';
       minColorChange = setTimeout(() => {
         minButton.style.color = 'rgb(200, 200, 200)';

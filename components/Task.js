@@ -32,7 +32,6 @@ export default function Task({
   min,
   refreshCheckP,
   indexT,
-  isLoading,
   taskHasBeenCompleted,
 }) {
   const [formInput, setFormInput] = useState(initialState);

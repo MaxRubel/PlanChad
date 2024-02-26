@@ -33,13 +33,13 @@ const CollabContextProvider = ({ children }) => {
 
   useEffect(() => { // get all of the user's collabs on initial app load
     if (user && !loaded) {
-      console.log('Grabbing user data...');
+      // console.log('Grabbing user data...');
       getCollabsOfUser(user.uid).then((userCollabs) => {
         getProjCollabsOfUser(user.uid).then((userProjCollabJoins) => {
           getTaskCollabsOfUser(user.uid).then((taskCollabJoinData) => {
-            console.log('All Collaborators: ', userCollabs);
-            console.log('All Proj/Collab Joins: ', userProjCollabJoins);
-            console.log('All Task Collab Joins:', taskCollabJoinData);
+            // console.log('All Collaborators: ', userCollabs);
+            // console.log('All Proj/Collab Joins: ', userProjCollabJoins);
+            // console.log('All Task Collab Joins:', taskCollabJoinData);
             setAllCollabs((preVal) => userCollabs);
             setProjCollabJoins((preVal) => userProjCollabJoins);
             setTaskCollabJoins((preVal) => taskCollabJoinData);
@@ -102,11 +102,7 @@ const CollabContextProvider = ({ children }) => {
       setAllCollabs((preVal) => (copy));
     }
     if (type === 'projCollabJoin') {
-      console.log(id); // the id of the proj collab join
-      const projCollabJoinscopy = [...projCollabJoins];
-      const deleteIndex = projCollabJoinscopy.findIndex((item) => item.projCollabId === id);
-      projCollabJoinscopy.splice(deleteIndex, 1);
-      setProjCollabJoins((preVal) => (projCollabJoinscopy));
+      setProjCollabJoins((prevProjCollabJoins) => prevProjCollabJoins.filter((item) => item.projCollabId !== id));
     }
     if (type === 'taskCollabJoin') {
       setTaskCollabJoins((prevTaskCollabJoins) => prevTaskCollabJoins.filter((item) => item.taskCollabId !== id));
