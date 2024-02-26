@@ -133,16 +133,27 @@ export default function Task({
           <div
             id="line"
             style={{
-              borderLeft: '2px solid rgb(251, 157, 80, .5)',
+              borderLeft: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+              transition: '1.5s all ease',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
             }}>
-            <div id="empty" style={{ borderBottom: '2px solid rgb(251, 157, 80, .5)' }} />
+            <div
+              id="empty"
+              style={{
+                transition: '1.5s all ease',
+                borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+              }} />
             <div />
           </div>
         </div>
         <div id="line" style={{ display: 'grid', gridTemplateRows: '1fr 1fr' }}>
-          <div id="top-div" style={{ borderBottom: '2px solid rgb(251, 157, 80, .5)' }} />
+          <div
+            id="top-div"
+            style={{
+              transition: '1.5s all ease',
+              borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+            }} />
           <div id="bottom-div" />
         </div>
         {/* -----------card---------------------- */}
