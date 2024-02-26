@@ -9,6 +9,7 @@ import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
 import { downArrow } from '../public/icons';
+import { deleteTaskCollab } from '../api/taskCollab';
 
 export default function CollabCard({
   collab,
@@ -20,8 +21,10 @@ export default function CollabCard({
   const {
     addToCollabManager,
     projCollabs,
+    allCollabs,
     deleteFromCollabManager,
     projCollabJoins,
+    taskCollabJoins,
     setUpdateCollab,
   } = useCollabContext();
 
@@ -100,9 +103,23 @@ export default function CollabCard({
   };
 
   const handleDelete = () => {
-    deleteCollab(collab.collabId).then(() => {
-      const deleteArray = projCollabJoins.map((item) => (deleteProjCollab(item.projCollabId)));
-      Promise.all(deleteArray).then(() => {
+    const projCollabJoinsCopy = [...projCollabJoins];
+    const taskCollabJoinsCopy = [...taskCollabJoins];
+
+    const theseProjJoins = projCollabJoinsCopy.filter((item) => item.collabId === collab.collabId);
+    const theseTaskCollabsJoins = taskCollabJoinsCopy.filter((item) => item.collabId === collab.collabId);
+    const theseProjJoinIds = theseProjJoins.map((item) => item.projCollabId);
+    const theseTaskCollabsJoinsIds = theseTaskCollabsJoins.map((item) => item.taskCollabId);
+    for (let i = 0; i < theseProjJoinIds.length; i++) {
+      deleteFromCollabManager(theseProjJoinIds[i], 'projCollabJoin');
+    }
+    for (let i = 0; i < theseTaskCollabsJoinsIds.length; i++) {
+      deleteFromCollabManager(theseTaskCollabsJoinsIds[i], 'taskCollabJoin');
+    }
+    const removeTaskJoinArray = theseTaskCollabsJoins.map((item) => deleteTaskCollab(item.taskCollabId));
+    const removeProjoinArray = theseProjJoins.map((item) => deleteProjCollab(item.projCollabId));
+    Promise.all([...removeTaskJoinArray, ...removeProjoinArray]).then(() => {
+      deleteCollab(collab.collabId).then(() => {
         deleteFromCollabManager(collab.collabId, 'allCollabs');
       });
     });
@@ -111,10 +128,7 @@ export default function CollabCard({
   const handleRemove = () => {
     const copy = [...projCollabJoins];
     const thisProjJoin = copy.filter((item) => item.projectId === projectToAssign);
-    console.log('this project id: ', projectToAssign);
-    console.log('this project joins: ', thisProjJoin);
     const delItem = thisProjJoin.find((item) => item.collabId === collab.collabId);
-    console.log('this item to delete: ', delItem);
     deleteProjCollab(delItem.projCollabId).then(() => {
       deleteFromCollabManager(delItem.projCollabId, 'projCollabJoin');
     });
@@ -133,9 +147,6 @@ export default function CollabCard({
       if (payload.collabId === thisProjCopy[i].collabId) {
         isAlreadyIn = true;
       }
-    }
-    if (isAlreadyIn) {
-      console.log('already added this collaborator to this project');
     }
     if (!isAlreadyIn) {
       createNewProjCollab(payload).then(({ name }) => { // JOIN TABLE

@@ -29,7 +29,6 @@ export default function ManageCollaboratorsPage() {
 
   const setProjectToAssignChild = (value) => {
     setProjectToAssign((preVal) => value);
-    console.log(value);
   };
 
   const setTaskToAssignChild = (value) => {

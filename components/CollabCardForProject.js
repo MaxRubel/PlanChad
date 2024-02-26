@@ -93,21 +93,11 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
       };
       createTaskCollab(payload).then(({ name }) => {
         const payload2 = { taskCollabId: name };
-        updateTaskCollab(payload2).then(() => {
-          addToCollabManager({ ...payload, ...payload2 }, 'taskCollabJoins', 'create');
-        });
+        addToCollabManager({ ...payload, ...payload2 }, 'taskCollabJoins', 'create');
+        updateTaskCollab(payload2);
       });
     }
   };
-
-  // const handleDelete = () => {
-  //   deleteCollab(collab.collabId).then(() => {
-  //     const deleteArray = projCollabJoins.map((item) => (deleteProjCollab(item.projCollabId)));
-  //     Promise.all(deleteArray).then(() => {
-  //       deleteFromCollabManager(collab.collabId, 'allCollabs');
-  //     });
-  //   });
-  // };
 
   const handleRemove = () => {
     const copy = [...projCollabJoins];

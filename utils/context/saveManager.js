@@ -107,7 +107,6 @@ export const SaveContextProvider = ({ children }) => {
       if (action === 'create') {
         const copy = [...allProjects];
         copy.push(input);
-        console.log(copy);
         setAllProjects((preVal) => copy);
       }
       if (action === 'update') {
@@ -136,7 +135,6 @@ export const SaveContextProvider = ({ children }) => {
     // ------------tasks-------------
     if (type === 'task') {
       if (action === 'create') { // create tasks
-        console.log('creating task');
         setSaveInput((prevVal) => ({
           ...prevVal,
           tasks: [...prevVal.tasks, input],
@@ -191,7 +189,7 @@ export const SaveContextProvider = ({ children }) => {
   });
 
   const sendToServer = () => {
-    console.log('sending to server...');
+    // console.log('sending to server...');
     setIsSaving((preVal) => true);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
