@@ -12,13 +12,11 @@ export default function ViewProjCollabs({
 }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
   const [thisProject, setThisProject] = useState({});
+  const [projectToAssign, setProjectToAssign] = useState('');
   const [selectInput, setSelectInput] = useState('');
   const [taskToAssign2, setTaskToAssign2] = useState('');
   const { allProjects } = useSaveContext();
-  const {
-    allCollabs,
-    projCollabJoins,
-  } = useCollabContext();
+  const { allCollabs, projCollabJoins } = useCollabContext();
 
   useEffect(() => {
     // load in either the projectId from the router query or let the user choose from dropdown
@@ -27,6 +25,7 @@ export default function ViewProjCollabs({
       setThisProject((preVal) => runningProject);
       setSelectInput((preVal) => projectId);
       setProjectToAssignChild(projectId);
+      setProjectToAssign((preVal) => projectId);
     }
   }, [projectId, allProjects]);
 
@@ -36,7 +35,7 @@ export default function ViewProjCollabs({
       const copy = [...projCollabJoins];
       const thisProjCollabJoins = copy.filter((item) => item.projectId === thisProject?.projectId);
       const collabIds = thisProjCollabJoins.map((item) => item.collabId);
-      console.log(thisProject);
+      // console.log(thisProject);
       for (let i = 0; i < allCollabs.length; i++) {
         if (collabIds.includes(allCollabs[i].collabId)) {
           thisProjCollabs.push(allCollabs[i]);
@@ -56,8 +55,8 @@ export default function ViewProjCollabs({
     setThisProject((preVal) => project);
     setSelectInput((preVal) => value);
     setProjectToAssignChild(value);
+    setProjectToAssign((preVal) => value);
   };
-
   return (
     <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
       <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
@@ -87,6 +86,7 @@ export default function ViewProjCollabs({
                 ofProj
                 refreshProjCollabs={refreshProjCollabs}
                 projectId={projectId}
+                projectToAssign={projectToAssign}
               />
             )))}
           </div>

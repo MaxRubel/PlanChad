@@ -29,6 +29,7 @@ export default function ManageCollaboratorsPage() {
 
   const setProjectToAssignChild = (value) => {
     setProjectToAssign((preVal) => value);
+    console.log(value);
   };
 
   const setTaskToAssignChild = (value) => {
@@ -82,6 +83,7 @@ export default function ManageCollaboratorsPage() {
           refreshProjCs={refreshProjCs}
           setProjectToAssignChild={setProjectToAssignChild}
           taskToAssign={taskToAssign}
+          projectToAssign={projectToAssign}
         />
         <ViewTaskCollabs
           projectId={projectId}

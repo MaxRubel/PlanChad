@@ -1,21 +1,13 @@
 /* eslint-disable react/prop-types */
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
-import { deleteCollab } from '../api/collabs';
-import {
-  createNewProjCollab, deleteProjCollab, getProjCollabsOfCollab, updateProjCollab,
-} from '../api/projCollab';
-import { useSaveContext } from '../utils/context/saveManager';
+import { deleteProjCollab } from '../api/projCollab';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
-import { createTaskCollab, updateTaskCollab } from '../api/taskCollab';
+import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
 import { removeIcon } from '../public/icons';
 
-export default function CollabCardforProject({
-  collab,
-  projectId,
-  taskToAssign,
-}) {
+export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
   const {
     deleteFromCollabManager,
@@ -94,7 +86,7 @@ export default function CollabCardforProject({
     }
     if (!isInTask) {
       const payload = {
-        projectId,
+        projectId: projectToAssign,
         collabId: collab.collabId,
         taskId: taskToAssign,
         userId: user.uid,
@@ -108,24 +100,31 @@ export default function CollabCardforProject({
     }
   };
 
-  const handleDelete = () => {
-    deleteCollab(collab.collabId).then(() => {
-      const deleteArray = projCollabJoins.map((item) => (deleteProjCollab(item.projCollabId)));
-      Promise.all(deleteArray).then(() => {
-        deleteFromCollabManager(collab.collabId, 'allCollabs');
-      });
-    });
-  };
+  // const handleDelete = () => {
+  //   deleteCollab(collab.collabId).then(() => {
+  //     const deleteArray = projCollabJoins.map((item) => (deleteProjCollab(item.projCollabId)));
+  //     Promise.all(deleteArray).then(() => {
+  //       deleteFromCollabManager(collab.collabId, 'allCollabs');
+  //     });
+  //   });
+  // };
 
   const handleRemove = () => {
-    console.log('removing');
     const copy = [...projCollabJoins];
-    const thisProjJoin = copy.filter((item) => item.projectId === projectId);
-    // console.log('this project id: ', projectId);
-    // console.log('this project joins: ', thisProjJoin);
+    const thisCollabJoinsCopy = [...taskCollabJoins];
+    const thisProjJoin = copy.filter((item) => item.projectId === projectToAssign);
     const delItem = thisProjJoin.find((item) => item.collabId === collab.collabId);
-    deleteProjCollab(delItem.projCollabId).then(() => {
-      deleteFromCollabManager(delItem.projCollabId, 'projCollabJoin');
+    const thisProjTasks = thisCollabJoinsCopy.filter((item) => item.projectId === projectToAssign);
+    const tasksOfThisCollab = thisProjTasks.filter((item) => item.collabId === delItem.collabId);
+    const tasksToRemoveIds = tasksOfThisCollab.map((item) => item.taskCollabId);
+    const taskDeleteArray = tasksToRemoveIds.map((id) => deleteTaskCollab(id));
+    Promise.all(taskDeleteArray).then(() => {
+      for (let i = 0; i < tasksToRemoveIds.length; i++) {
+        deleteFromCollabManager(tasksToRemoveIds[i], 'taskCollabJoin');
+      }
+      deleteProjCollab(delItem.projCollabId).then(() => {
+        deleteFromCollabManager(delItem.projCollabId, 'projCollabJoin');
+      });
     });
   };
 
