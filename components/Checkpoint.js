@@ -230,8 +230,6 @@ export default function Checkpoint({
                 <div />
               </div>
             </div>
-            {/* <div style={{ margin: '1% 0%' }}> */}
-            {/* <div> */}
             <div className="card" style={{ margin: '3px 0px' }}>
               <div className="card-header 2" style={{ border: !formInput.expanded ? 'none' : '' }}>
                 <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
