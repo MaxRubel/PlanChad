@@ -22,10 +22,10 @@ const initialState = {
 };
 
 export default function ProjectCard({
-  project, min, progressIsShowing, tellProjectIfProgressShowing,
+  project, min, progressIsShowing, tellProjectIfProgressShowing, hideCompletedTasksChild,
 }) {
   const [formInput, setFormInput] = useState(initialState);
-  const { addToSaveManager } = useSaveContext();
+  const { addToSaveManager, saveInput } = useSaveContext();
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
@@ -47,8 +47,8 @@ export default function ProjectCard({
   }, [project])
 
   useEffect(() => {
-    setFormInput((preVal) => ({ ...preVal, progressIsShowing }))
-  }, [progressIsShowing])
+    setFormInput((preVal) => ({ ...preVal, progressIsShowing, hideCompletedTasks: hideCompletedTasksChild }))
+  }, [progressIsShowing, hideCompletedTasksChild])
 
   useEffect(() => {
     addToSaveManager(formInput, 'update', 'project')

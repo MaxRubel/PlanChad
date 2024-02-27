@@ -194,6 +194,14 @@ body {
   background-color: rgb(16, 197, 234, .5);
 }
 
+.dropdown-item {
+  color: rgb(200, 200, 200)
+}
+
+.dropdown-item:hover {
+  background-color: rgb(130, 130, 130);
+}
+
 .container {
   padding: 0px;
 

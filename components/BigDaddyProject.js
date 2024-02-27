@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
+import { Dropdown } from 'react-bootstrap';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -16,9 +17,9 @@ export default function BigDaddyProject({ projectId }) {
   const [checkpoints, setCheckpoints] = useState([]);
   const [save, setSave] = useState(0);
   const [refresh, setRefresh] = useState(0);
-  const [minColor, setMinColor] = useState(0);
   const [isLoading, setIsloading] = useState(true);
   const [progressIsShowing, setProgressIsShowing] = useState(false);
+  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(false);
 
   const {
     addToSaveManager,
@@ -30,6 +31,7 @@ export default function BigDaddyProject({ projectId }) {
     projectsLoaded,
     singleProjectRunning,
     isSaving,
+    hideCompletedTasks,
   } = useSaveContext();
 
   const router = useRouter();
@@ -69,7 +71,7 @@ export default function BigDaddyProject({ projectId }) {
     setRefresh((prevVal) => prevVal + 1);
   };
 
-  useEffect(() => {
+  useEffect(() => { // minimize animation
     let minColorChange;
     const minButton = document.getElementById('minButton');
     if (min > 0 && minButton) {
@@ -85,7 +87,7 @@ export default function BigDaddyProject({ projectId }) {
     };
   }, [min]);
 
-  useEffect(() => { // minimize button color animation
+  useEffect(() => { // save button color animation
     let saveColorChange;
     if (isSaving) {
       const saveButton = document.getElementById('saveButton');
@@ -136,6 +138,21 @@ export default function BigDaddyProject({ projectId }) {
     setCheckpoints(reorderedChecks);
   };
 
+  const handleChange = (e) => {
+    console.log(e);
+    if (e === 'minAll') {
+      minAll();
+    }
+    if (e === 'showProgress') {
+      setProgressIsShowing((preVal) => !preVal);
+    }
+    if (e === 'hideCompleted') {
+      console.log('hide completed tasks was triggered');
+      hideCompletedTasks();
+      setHideCompletedTasksChild((preVal) => !preVal);
+    }
+  };
+
   return (
     <>
       <AddAsigneeModal />
@@ -150,30 +167,45 @@ export default function BigDaddyProject({ projectId }) {
               onClick={sendToServer}>
               SAVE
             </button>
-            <button
+            <Dropdown
+              onSelect={handleChange}
+            >
+              <Dropdown.Toggle
+                style={{ backgroundColor: 'transparent', border: 'none', color: 'rgb(200, 200, 200)' }}
+                id="dropdown-view-options"
+              >
+                VIEW OPTIONS
+              </Dropdown.Toggle>
+              <Dropdown.Menu style={{ backgroundColor: 'black', color: 'white' }}>
+                <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
+                <Dropdown.Item eventKey="showProgress">{progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
+                <Dropdown.Item eventKey="hideCompleted">{saveInput.project.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+            {/* <button
               id="minButton"
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
               onClick={minAll}>
               MINIMIZE All
-            </button>
+            </button> */}
             <button
-              id="minButton"
+              id="manageCollaborators"
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { router.push(`/collaborators/${projectId}`); }}>
               MANAGE COLLABORATORS
             </button>
-            <button
-              id="minButton"
+            {/* <button
+              id="hideProg"
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { setProgressIsShowing((preVal) => !preVal); }}>
               {progressIsShowing ? 'HIDE PROGRESS' : 'SHOW PROGRESS'}
-            </button>
+            </button> */}
           </div>
           <ProjectCard
             save={save}
@@ -181,6 +213,7 @@ export default function BigDaddyProject({ projectId }) {
             minAll={minAll}
             project={project}
             progressIsShowing={progressIsShowing}
+            hideCompletedTasksChild={hideCompletedTasksChild}
             tellProjectIfProgressShowing={tellProjectIfProgressShowing}
           />
           <div
