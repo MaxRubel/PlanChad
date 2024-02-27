@@ -118,6 +118,9 @@ export default function Task({
     refreshCheckP();
   };
 
+  if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
+    return (<div style={{ display: 'none' }} />);
+  }
   return (
     <>
       <div className="task">
