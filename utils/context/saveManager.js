@@ -1,13 +1,10 @@
 import React, {
   createContext, useContext, useEffect, useState,
 } from 'react';
-import {
-  createNewCheckpoint, deleteCheckpoint, getCheckpointsOfProject, updateCheckpoint,
-} from '../../api/checkpoint';
-import { createNewTask, deleteTask, updateTask } from '../../api/task';
+import { getCheckpointsOfProject } from '../../api/checkpoint';
 import { getUserProjects, updateProject } from '../../api/project';
 import { useAuth } from './authContext';
-import { getProjCollabsOfUser } from '../../api/projCollab';
+
 // import { useCollabContext } from './collabContext';
 
 const saveContext = createContext(null);
