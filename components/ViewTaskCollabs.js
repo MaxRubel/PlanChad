@@ -31,7 +31,7 @@ export default function ViewTaskCollabs({
       theseCollabs.push(collab);
     }
     setCollabsOfTask((preVal) => theseCollabs);
-  }, [taskCollabJoins, taskId]);
+  }, [taskCollabJoins, allCollabs, taskId]);
 
   useEffect(() => {
     const val = document.getElementById('tasks').value;
