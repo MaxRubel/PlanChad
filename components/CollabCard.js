@@ -108,16 +108,20 @@ export default function CollabCard({
 
     const theseProjJoins = projCollabJoinsCopy.filter((item) => item.collabId === collab.collabId);
     const theseTaskCollabsJoins = taskCollabJoinsCopy.filter((item) => item.collabId === collab.collabId);
+
     const theseProjJoinIds = theseProjJoins.map((item) => item.projCollabId);
     const theseTaskCollabsJoinsIds = theseTaskCollabsJoins.map((item) => item.taskCollabId);
+
     for (let i = 0; i < theseProjJoinIds.length; i++) {
       deleteFromCollabManager(theseProjJoinIds[i], 'projCollabJoin');
     }
     for (let i = 0; i < theseTaskCollabsJoinsIds.length; i++) {
       deleteFromCollabManager(theseTaskCollabsJoinsIds[i], 'taskCollabJoin');
     }
+
     const removeTaskJoinArray = theseTaskCollabsJoins.map((item) => deleteTaskCollab(item.taskCollabId));
     const removeProjoinArray = theseProjJoins.map((item) => deleteProjCollab(item.projCollabId));
+
     Promise.all([...removeTaskJoinArray, ...removeProjoinArray]).then(() => {
       deleteCollab(collab.collabId).then(() => {
         deleteFromCollabManager(collab.collabId, 'allCollabs');
