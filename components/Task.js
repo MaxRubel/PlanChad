@@ -64,7 +64,7 @@ export default function Task({
   );
 
   useEffect(() => {
-    setFormInput(task);
+    setFormInput((preVal) => task);
   }, [task]);
 
   useEffect(() => {
@@ -101,10 +101,17 @@ export default function Task({
 
   const handleChange = (e) => {
     handleFreshness();
-    const { name, value, checked } = e.target;
+    const { name, value } = e.target;
     setFormInput((prevVal) => ({
       ...prevVal,
       [name]: value,
+    }));
+  };
+
+  const handleCheck = (e) => {
+    const { checked } = e.target;
+    setFormInput((prevVal) => ({
+      ...prevVal,
       status: checked ? 'closed' : 'open',
     }));
   };
@@ -201,7 +208,7 @@ export default function Task({
               <div style={{ wdith: '20px' }}>
                 <Checkbox
                   checked={formInput.status === 'closed'}
-                  onChange={(e) => { handleChange(e); taskHasBeenCompleted(); }}
+                  onChange={(e) => { handleCheck(e); taskHasBeenCompleted(); }}
                   inputProps={{ 'aria-label': 'controlled' }}
                   style={{ color: 'black' }}
                 />

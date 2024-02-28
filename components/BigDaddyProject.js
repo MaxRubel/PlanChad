@@ -20,6 +20,9 @@ export default function BigDaddyProject({ projectId }) {
   const [isLoading, setIsloading] = useState(true);
   const [progressIsShowing, setProgressIsShowing] = useState(false);
   const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(false);
+  const [refreshTasks, setRefreshTasks] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [checkPBeingDragged, setcheckPBeingDragged] = useState(null);
 
   const {
     addToSaveManager,
@@ -37,7 +40,6 @@ export default function BigDaddyProject({ projectId }) {
   const router = useRouter();
 
   useEffect(() => { // refresh checkpoint from save manager
-    // console.log('refreshing...');
     const copy = [...saveInput.checkpoints];
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
@@ -48,20 +50,15 @@ export default function BigDaddyProject({ projectId }) {
       if (!singleProjectRunning) {
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
-        setCheckpoints((preVal) => projectDetails.checkpoints);
+        const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
+        setCheckpoints(checkpointsSorted);
       } else {
         setProject((preVal) => saveInput.project);
-        setCheckpoints((preVal) => saveInput.checkpoints);
+        const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
+        setCheckpoints((preVal) => checkpointsSorted);
       }
     }
   }, [projectId, projectsLoaded]);
-
-  const saveIndexes = () => { // send all to save manager
-    setSave((prevVal) => prevVal + 1);
-    const copy = [...saveInput.checkpoints];
-    const ordered = copy.sort((a, b) => a.index - b.index);
-    setCheckpoints(ordered);
-  };
 
   const tellProjectIfProgressShowing = (value) => {
     setProgressIsShowing((preVal) => value);
@@ -115,31 +112,48 @@ export default function BigDaddyProject({ projectId }) {
     };
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
-    saveIndexes();
   };
 
-  const handleDragStart = () => {
-    saveIndexes();
+  const handleDragStart = (e) => {
+    const [, checkPId] = e.source.droppableId.split('--');
+    setIsDragging((preVal) => true);
+    setcheckPBeingDragged((preVal) => checkPId);
   };
 
   const handleDragEnd = (result) => {
+    setIsDragging((preVal) => false);
     const { destination, source, draggableId } = result;
     if (!destination) {
+      console.log('nope!');
       return;
     }
-    const reorderedChecks = [...checkpoints];
-    const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
-    reorderedChecks.splice(destination.index, 0, reorderedCheckp);
-
-    for (let i = 0; i < reorderedChecks.length; i++) { // add new array to save manager
-      reorderedChecks[i].index = i;
-      addToSaveManager(reorderedChecks[i], 'update', 'checkpoint');
+    const sourceId = source.droppableId;
+    const destinationId = destination.droppableId;
+    if (source.droppableId !== destination.droppableId) {
+      console.log('nope!');
     }
-    setCheckpoints(reorderedChecks);
+    if (sourceId.includes('tasks') && sourceId === destinationId) {
+      const [, checkpointId] = destinationId.split('--');
+      const projectTasks = Array.from(saveInput.tasks);
+      const tasksOfCheckp = projectTasks.filter((item) => item.checkpointId === checkpointId);
+      const [reOrderedTask] = tasksOfCheckp.splice(source.index, 1);
+      tasksOfCheckp.splice(destination.index, 0, reOrderedTask);
+      const indexedArr = tasksOfCheckp.map((item, index) => ({ ...item, index }));
+      addToSaveManager(indexedArr, 'update', 'reorderedTasks');
+      setRefreshTasks((preVal) => preVal + 1);
+    }
+    if (sourceId === 'checkPDrop' && destinationId === 'checkPDrop') {
+      const reorderedChecks = Array.from(saveInput.checkpoints);
+      const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
+      reorderedChecks.splice(destination.index, 0, reorderedCheckp);
+      const indexedArr = reorderedChecks.map((item, index) => ({ ...item, index }));
+      const sortedArray = indexedArr.sort((a, b) => a.index - b.index);
+      addToSaveManager(sortedArray, 'update', 'reorderedCheckPs');
+      setCheckpoints(indexedArr);
+    }
   };
 
   const handleChange = (e) => {
-    console.log(e);
     if (e === 'minAll') {
       minAll();
     }
@@ -147,7 +161,6 @@ export default function BigDaddyProject({ projectId }) {
       setProgressIsShowing((preVal) => !preVal);
     }
     if (e === 'hideCompleted') {
-      console.log('hide completed tasks was triggered');
       hideCompletedTasks();
       setHideCompletedTasksChild((preVal) => !preVal);
     }
@@ -182,14 +195,6 @@ export default function BigDaddyProject({ projectId }) {
                 <Dropdown.Item eventKey="hideCompleted">{saveInput.project.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            {/* <button
-              id="minButton"
-              type="button"
-              className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={minAll}>
-              MINIMIZE All
-            </button> */}
             <button
               id="manageCollaborators"
               type="button"
@@ -198,14 +203,6 @@ export default function BigDaddyProject({ projectId }) {
               onClick={() => { router.push(`/collaborators/${projectId}`); }}>
               MANAGE COLLABORATORS
             </button>
-            {/* <button
-              id="hideProg"
-              type="button"
-              className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { setProgressIsShowing((preVal) => !preVal); }}>
-              {progressIsShowing ? 'HIDE PROGRESS' : 'SHOW PROGRESS'}
-            </button> */}
           </div>
           <ProjectCard
             save={save}
@@ -245,6 +242,7 @@ export default function BigDaddyProject({ projectId }) {
                   <div ref={provided.innerRef} {...provided.droppableProps}>
                     {checkpoints.map((checkP, index) => (
                       <Checkpoint
+                        refreshTasks={refreshTasks}
                         key={checkP.localId}
                         checkP={checkP}
                         handleRefresh={handleRefresh}
@@ -255,6 +253,8 @@ export default function BigDaddyProject({ projectId }) {
                         refresh={refresh}
                         isLoading={isLoading}
                         progressIsShowing={progressIsShowing}
+                        isDragging={isDragging}
+                        checkPBeingDragged={checkPBeingDragged}
                       />
                     ))}
                     {provided.placeholder}
