@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -7,7 +8,7 @@
 // import { FormControlLabel, FormGroup } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
-import { Draggable } from '@hello-pangea/dnd';
+import { Draggable, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import { trashIcon } from '../public/icons';
 import Task from './Task';
@@ -24,7 +25,9 @@ export default function Checkpoint({
   index,
   isLoading,
   progressIsShowing,
-
+  refreshTasks,
+  isDragging,
+  checkPBeingDragged,
 }) {
   const [formInput, setFormInput] = useState({
     description: '',
@@ -35,10 +38,7 @@ export default function Checkpoint({
   });
 
   const {
-    addToSaveManager,
-    allTasks,
-    deleteFromSaveManager,
-    saveInput,
+    addToSaveManager, deleteFromSaveManager, saveInput, sendThisArray,
   } = useSaveContext();
 
   const [tasks, setTasks] = useState([]);
@@ -71,11 +71,24 @@ export default function Checkpoint({
   );
 
   useEffect(() => { // grab and sort the tasks from save manager
-    setFormInput(checkP);
-    const copy = [...saveInput.tasks];
-    const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
-    setTasks(theseTasks);
+    if (!isDragging) {
+      console.log('render 1');
+      setFormInput(checkP);
+      const copy = [...saveInput.tasks];
+      const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
+      const sorted = theseTasks.sort((a, b) => a.index - b.index);
+      setTasks(sorted);
+    }
   }, [checkP]);
+
+  useEffect(() => {
+    if (refreshTasks > 0 && !isDragging) {
+      if (checkP.localId === checkPBeingDragged) {
+        console.log('render 2');
+        setTasks((preVal) => sendThisArray);
+      }
+    }
+  }, [sendThisArray]);
 
   useEffect(() => { // send to save manager
     addToSaveManager(formInput, 'update', 'checkpoint');
@@ -194,7 +207,7 @@ export default function Checkpoint({
       prep: '',
       exec: '',
       debrief: '',
-      index: '',
+      index: tasks.length,
       weight: '',
       status: 'open',
       fresh: true,
@@ -207,7 +220,7 @@ export default function Checkpoint({
   };
 
   return (
-    <Draggable draggableId={checkP.checkpointId ? checkP.checkpointId : checkP.localId} index={index}>
+    <Draggable key={checkP.localId} draggableId={checkP.localId} index={index}>
       {(provided) => (
         <div
           id="projectRow"
@@ -375,22 +388,41 @@ export default function Checkpoint({
             {/* -----add-a-task------ */}
             <div className="marginR" />
           </div>
-          {tasks.map((task, indexT) => (
-            <Task
-              key={task.localId}
-              task={task}
-              minAll={minAll}
-              save={save}
-              saveIndexes={saveIndexes}
-              min={min}
-              saveSuccess={saveSuccess}
-              handleRefresh={handleRefresh}
-              indexT={indexT}
-              isLoading={isLoading}
-              refreshCheckP={refreshCheckP}
-              taskHasBeenCompleted={taskHasBeenCompleted}
-            />
-          ))}
+          <Droppable key={checkP.localId} droppableId={`tasks--${checkP.localId}`} type="drop">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {tasks.map((task, indexT) => (
+                  <Draggable key={task.localId} draggableId={`task${task.localId}`} index={indexT}>
+                    {(providedDraggable) => (
+                      <div
+                        ref={providedDraggable.innerRef}
+                        {...providedDraggable.draggableProps}
+                        {...providedDraggable.dragHandleProps}
+            >
+                        <Task
+                          key={task.localId}
+                          task={task}
+                          minAll={minAll}
+                          save={save}
+                          saveIndexes={saveIndexes}
+                          min={min}
+                          saveSuccess={saveSuccess}
+                          handleRefresh={handleRefresh}
+                          indexT={indexT}
+                          isLoading={isLoading}
+                          refreshCheckP={refreshCheckP}
+                          taskHasBeenCompleted={taskHasBeenCompleted}
+              />
+                        {providedDraggable.placeholder}
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+
         </div>
       )}
 

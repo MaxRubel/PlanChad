@@ -35,7 +35,6 @@ export default function ViewProjCollabs({
       const copy = [...projCollabJoins];
       const thisProjCollabJoins = copy.filter((item) => item.projectId === thisProject?.projectId);
       const collabIds = thisProjCollabJoins.map((item) => item.collabId);
-      // console.log(thisProject);
       for (let i = 0; i < allCollabs.length; i++) {
         if (collabIds.includes(allCollabs[i].collabId)) {
           thisProjCollabs.push(allCollabs[i]);

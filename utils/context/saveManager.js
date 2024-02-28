@@ -26,6 +26,7 @@ export const SaveContextProvider = ({ children }) => {
   const { user } = useAuth();
   const [singleProjectRunning, setSingleProjectRunning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [sendThisArray, setSendThisArray] = useState(null);
 
   useEffect(() => {
     if (user && !projectsLoaded) { // load in all user project data when page first loads
@@ -98,7 +99,7 @@ export const SaveContextProvider = ({ children }) => {
     }));
     setSaveInput((prevVal) => ({ ...prevVal, checkpoints: minimizedChecks, tasks: minimizedTasks }));
   };
-  console.log(saveInput.project.hideCompletedTasks);
+
   const hideCompletedTasks = () => {
     setSaveInput((prevVal) => ({
       ...prevVal,
@@ -114,7 +115,6 @@ export const SaveContextProvider = ({ children }) => {
       if (action === 'create') {
         const copy = [...allProjects];
         copy.push(input);
-        console.log(copy);
         setAllProjects((preVal) => copy);
       }
       if (action === 'update') {
@@ -139,10 +139,12 @@ export const SaveContextProvider = ({ children }) => {
     if (type === 'checkpointsArr') { // load in array on fetch //reorder index
       setSaveInput((preVal) => ({ ...preVal, checkpoints: input }));
     }
+    if (type === 'reorderedCheckPs') {
+      setSaveInput((preVal) => ({ ...preVal, checkpoints: input }));
+    }
     // ------------tasks-------------
     if (type === 'task') {
       if (action === 'create') { // create tasks
-        console.log('creating task');
         setSaveInput((prevVal) => ({
           ...prevVal,
           tasks: [...prevVal.tasks, input],
@@ -155,13 +157,22 @@ export const SaveContextProvider = ({ children }) => {
         copy[index] = input;
         setSaveInput((prevVal) => ({ ...prevVal, tasks: copy }));
         const tasksCopy = [...allTasks];
-        const tasksIndex = tasksCopy.findIndex((item) => (item.localId === input.localId));
         tasksCopy[index] = input;
-        setAllTasks((preVal) => tasksCopy);
+        setAllTasks((prevVal) => tasksCopy);
       }
     }
     if (type === 'tasksArr') {
       setSaveInput((prevVal) => ({ ...prevVal, tasks: [...prevVal.tasks, ...input] }));
+    }
+    if (type === 'reorderedTasks') {
+      setSendThisArray(input);
+      setSaveInput((prevSaveInput) => {
+        const copy = [...prevSaveInput.tasks];
+        const filteredTasks = copy.filter((task) => !input.some((inputTask) => inputTask.checkpointId === task.checkpointId));
+        const updatedTasks = input.map((inputTask) => inputTask);
+        const newTasks = [...filteredTasks, ...updatedTasks];
+        return { ...prevSaveInput, tasks: newTasks };
+      });
     }
   };
   // --------delete-----------------
@@ -197,7 +208,6 @@ export const SaveContextProvider = ({ children }) => {
   });
 
   const sendToServer = () => {
-    console.log('sending to server...');
     setIsSaving((preVal) => true);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
@@ -240,6 +250,7 @@ export const SaveContextProvider = ({ children }) => {
       singleProjectRunning,
       isSaving,
       hideCompletedTasks,
+      sendThisArray,
     }}
     >
       {children}
