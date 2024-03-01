@@ -50,6 +50,7 @@ export default function BigDaddyProject({ projectId }) {
       if (!singleProjectRunning) {
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
+        setHideCompletedTasksChild((preVal) => projectDetails.project.hideCompletedTasks);
         const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints(checkpointsSorted);
       } else {
