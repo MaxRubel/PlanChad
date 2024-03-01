@@ -25,7 +25,7 @@ export default function ProjectCard({
   project, min, progressIsShowing, tellProjectIfProgressShowing, hideCompletedTasksChild,
 }) {
   const [formInput, setFormInput] = useState(initialState);
-  const { addToSaveManager, saveInput } = useSaveContext();
+  const { addToSaveManager } = useSaveContext();
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
@@ -74,7 +74,12 @@ export default function ProjectCard({
     <div className="card text-bg-info mb-3">
       <div
         className="card-header"
-        style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+        style={{
+          minWidth: '409.6px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          borderBottom: 'none',
+        }}>
         <Button
           onClick={handleCollapse}
           style={{
