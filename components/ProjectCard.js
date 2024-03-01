@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/label-has-for */
 /* eslint-disable semi */
 /* eslint-disable arrow-spacing */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -5,7 +7,7 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 import { useEffect, useState } from 'react';
 import { Collapse, Button } from 'react-bootstrap';
-import { getSingleProject, updateProject } from '../api/project';
+import { useSaveContext } from '../utils/context/saveManager';
 
 const initialState = {
   name: '',
@@ -14,43 +16,46 @@ const initialState = {
   client: '',
   description: '',
   start_date: '',
-  projectId: '',
-  user_id: '',
+  progressIsShowing: false,
   expanded: false,
+  type: 'project',
 };
 
 export default function ProjectCard({
-  projectId, save, saveSuccess, min,
+  project, min, progressIsShowing, tellProjectIfProgressShowing, hideCompletedTasksChild,
 }) {
   const [formInput, setFormInput] = useState(initialState);
-  const [open, setOpen] = useState(false);
-  const [hasChanged, setHasChanged] = useState(false);
-
+  const { addToSaveManager } = useSaveContext();
   const downIcon = (
-    <svg className={open ? 'icon-up' : 'icon-down'} xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 0 320 512">
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
+    <svg
+      className={formInput.expanded ? 'icon-up' : 'icon-down'}
+      xmlns="http://www.w3.org/2000/svg"
+      height="16px"
+      viewBox="0 0 320 512">
+      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9
+      0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5
+      101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4
+      33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
     </svg>
   );
 
   useEffect(() => {
-    getSingleProject(projectId).then((data) => {
-      setFormInput(data);
-      setOpen(data.expanded);
-    });
-  }, [projectId]);
+    if (project?.projectId) {
+      setFormInput(project)
+      tellProjectIfProgressShowing(project.progressIsShowing)
+    }
+  }, [project])
 
   useEffect(() => {
-    if (hasChanged) {
-      updateProject(formInput);
-      setHasChanged((prevVal) => false);
-      saveSuccess();
-    }
-  }, [save]);
+    setFormInput((preVal) => ({ ...preVal, progressIsShowing, hideCompletedTasks: hideCompletedTasksChild }))
+  }, [progressIsShowing, hideCompletedTasksChild])
+
+  useEffect(() => {
+    addToSaveManager(formInput, 'update', 'project')
+  }, [formInput])
 
   const handleCollapse = () => {
-    setOpen(!open);
-    setHasChanged((prevVal) => true);
-    setFormInput((prevVal) => ({ ...prevVal, expanded: !open }));
+    setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
   useEffect(() => {
@@ -60,7 +65,6 @@ export default function ProjectCard({
   }, [min]);
 
   const handleChange = (e) => {
-    setHasChanged((prevVal) => true);
     const { name, value } = e.target;
     setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
   };
@@ -68,11 +72,23 @@ export default function ProjectCard({
   return (
     // -----------------card--header----------------
     <div className="card text-bg-info mb-3">
-      <div className="card-header" style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+      <div
+        className="card-header"
+        style={{
+          minWidth: '409.6px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          borderBottom: 'none',
+        }}>
         <Button
           onClick={handleCollapse}
           style={{
-            backgroundColor: 'transparent', border: 'none', padding: '0px', paddingLeft: '10%', textAlign: 'left', color: 'black',
+            backgroundColor: 'transparent',
+            border: 'none',
+            padding: '0px',
+            paddingLeft: '10%',
+            textAlign: 'left',
+            color: 'black',
           }}>
           {downIcon}
         </Button>
@@ -82,14 +98,20 @@ export default function ProjectCard({
             name="name"
             value={formInput.name}
             style={{
-              textAlign: 'center', minWidth: '250px', fontSize: '20px', backgroundColor: 'transparent', border: 'none', fontWeight: '700',
+              textAlign: 'center',
+              minWidth: '250px',
+              fontSize: '20px',
+              backgroundColor: 'transparent',
+              border: 'none',
+              fontWeight: '700',
             }}
-            onChange={handleChange} />
-
+            onChange={handleChange}
+            autoComplete="off"
+          />
         </div>
       </div>
       {/* --------------card-body------------------------ */}
-      <Collapse in={open}>
+      <Collapse in={formInput.expanded}>
         <div id="whole-card">
           <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
             <div

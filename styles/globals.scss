@@ -11,7 +11,8 @@
 }
 
 body {
-  background-color: rgb(34, 37, 41);
+  // background-color: rgb(34, 37, 41);
+  background-color: black;
   height: 100vh;
   width: 100vw;
   transition: all var(--background1) ease;
@@ -78,6 +79,14 @@ body {
   margin: .5% 0%,
 }
 
+.btn.btn-outline-secondary {
+  transition: all ease 1s;
+}
+
+.btn.btn-outline-secondary:hover {
+  background-color: rgb(56, 56, 56);
+}
+
 .fullCenter {
   display: flex;
   align-items: center;
@@ -139,17 +148,15 @@ body {
 }
 
 .checkpoint {
+  // position: relative;
   display: grid;
   grid-template-columns: 84px 75% 100px;
-  /* First column is 100px, second column is 200px, third column takes the remaining space */
-  // gap: 1%;
   min-width: 500px;
 }
 
 .task {
   display: grid;
   grid-template-columns: 84px 8% 67% 100px;
-  /* First column is 100px, second column is 200px, third column takes the remaining space */
   // gap: 1%;
   min-width: 500px;
 }
@@ -157,13 +164,16 @@ body {
 .taskDeets {
   display: grid;
   grid-template-columns: 84px 16% 59% 100px;
-  /* First column is 100px, second column is 200px, third column takes the remaining space */
-  // gap: 1%;
   min-width: 500px;
+  transition: all ease .2s;
 }
 
-#marginL {
-  background-color: rgba(255, 121, 221, 0.448);
+.taskDeetsExpand {
+  display: grid;
+  grid-template-columns: 84px 1fr 1fr 100px;
+  gap: 6px;
+  min-width: 500px;
+  transition: all ease .2s;
 }
 
 .card {
@@ -171,8 +181,25 @@ body {
 }
 
 .card-header.\32 {
+  position: relative;
   display: grid;
   grid-template-columns: 20% 60% 20%;
+}
+
+.checkpoint-progress {
+  position: absolute;
+  pointer-events: none;
+  height: 100%;
+  width: 100%;
+  background-color: rgb(16, 197, 234, .5);
+}
+
+.dropdown-item {
+  color: rgb(200, 200, 200)
+}
+
+.dropdown-item:hover {
+  background-color: rgb(130, 130, 130);
 }
 
 .container {
@@ -190,4 +217,9 @@ body {
 
 .rotate {
   transform: rotate(360deg);
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
 }
