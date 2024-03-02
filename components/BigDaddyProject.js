@@ -97,12 +97,6 @@ export default function BigDaddyProject({ projectId }) {
     }
   }, [isSaving]);
 
-  // useEffect(() => {
-  //   // if (saveInput.checkpoints.length > 0) {
-  //   setCheckpoints((preVal) => saveInput.checkpoints);
-  //   // }
-  // }, [saveInput.checkpoints]);
-
   const addCheckpoint = () => {
     const emptyChckP = {
       projectId,
@@ -121,45 +115,6 @@ export default function BigDaddyProject({ projectId }) {
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
   };
-
-  // const handleDragStart = (e) => {
-  //   const [, checkPId] = e.source.droppableId.split('--');
-  //   setIsDragging((preVal) => true);
-  //   setcheckPBeingDragged((preVal) => checkPId);
-  // };
-
-  // const handleDragEnd = (result) => {
-  //   setIsDragging((preVal) => false);
-  //   const { destination, source, draggableId } = result;
-  //   if (!destination) {
-  //     console.log('nope!');
-  //     return;
-  //   }
-  //   const sourceId = source.droppableId;
-  //   const destinationId = destination.droppableId;
-  //   if (source.droppableId !== destination.droppableId) {
-  //     console.log('nope!');
-  //   }
-  //   if (sourceId.includes('tasks') && sourceId === destinationId) {
-  //     const [, checkpointId] = destinationId.split('--');
-  //     const projectTasks = Array.from(saveInput.tasks);
-  //     const tasksOfCheckp = projectTasks.filter((item) => item.checkpointId === checkpointId);
-  //     const [reOrderedTask] = tasksOfCheckp.splice(source.index, 1);
-  //     tasksOfCheckp.splice(destination.index, 0, reOrderedTask);
-  //     const indexedArr = tasksOfCheckp.map((item, index) => ({ ...item, index }));
-  //     addToSaveManager(indexedArr, 'update', 'reorderedTasks');
-  //     setRefreshTasks((preVal) => preVal + 1);
-  //   }
-  //   if (sourceId === 'checkPDrop' && destinationId === 'checkPDrop') {
-  //     const reorderedChecks = Array.from(saveInput.checkpoints);
-  //     const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
-  //     reorderedChecks.splice(destination.index, 0, reorderedCheckp);
-  //     const indexedArr = reorderedChecks.map((item, index) => ({ ...item, index }));
-  //     const sortedArray = indexedArr.sort((a, b) => a.index - b.index);
-  //     addToSaveManager(sortedArray, 'update', 'reorderedCheckPs');
-  //     setCheckpoints(indexedArr);
-  //   }
-  // };
 
   const handleDragStart = () => {
     setCheckpoints(saveInput.checkpoints);
@@ -189,7 +144,7 @@ export default function BigDaddyProject({ projectId }) {
     <>
       <AddAsigneeModal />
       <div className="bigDad">
-        <div id="project-container">
+        <div id="project-container" style={{}}>
           <div id="project-top-bar" style={{ marginBottom: '3%' }}>
             <button
               id="saveButton"
@@ -200,6 +155,7 @@ export default function BigDaddyProject({ projectId }) {
               SAVE
             </button>
             <Dropdown
+              style={{ outline: 'none' }}
               onSelect={handleChange}
             >
               <Dropdown.Toggle
@@ -255,38 +211,40 @@ export default function BigDaddyProject({ projectId }) {
             </button>
           </div>
           <div id="dnd-container">
-            <m.div
-              onDragStart={() => { console.log('drag start'); }}
-            >
-              <Reorder.Group
-                as="div"
-                axis="y"
-                values={checkpoints}
-                onReorder={reOrderCheckPoints}>
-                <div>
-                  {checkpoints.map((checkP, index) => (
-                    <Reorder.Item as="div" key={checkP.localId} value={checkP} onDragStart={handleDragStart}>
-                      <Checkpoint
-                        refreshTasks={refreshTasks}
-                        key={checkP.localId}
-                        checkP={checkP}
-                        handleRefresh={handleRefresh}
-                        save={save}
-                        minAll={minAll}
-                        min={min}
-                        index={index}
-                        refresh={refresh}
-                        isLoading={isLoading}
-                        progressIsShowing={progressIsShowing}
-                        isDragging={isDragging}
-                        checkPBeingDragged={checkPBeingDragged}
-                    />
-                    </Reorder.Item>
-                  ))}
 
-                </div>
-              </Reorder.Group>
-            </m.div>
+            <Reorder.Group
+              as="div"
+              axis="y"
+              values={checkpoints}
+              onReorder={reOrderCheckPoints}>
+              <div>
+                {checkpoints.map((checkP, index) => (
+                  <Reorder.Item
+                    as="div"
+                    key={checkP.localId}
+                    value={checkP}
+                    style={{ cursor: 'grab' }}
+                    onDragStart={handleDragStart}>
+                    <Checkpoint
+                      refreshTasks={refreshTasks}
+                      key={checkP.localId}
+                      checkP={checkP}
+                      handleRefresh={handleRefresh}
+                      save={save}
+                      minAll={minAll}
+                      min={min}
+                      index={index}
+                      refresh={refresh}
+                      isLoading={isLoading}
+                      progressIsShowing={progressIsShowing}
+                      isDragging={isDragging}
+                      checkPBeingDragged={checkPBeingDragged}
+                    />
+                  </Reorder.Item>
+                ))}
+              </div>
+            </Reorder.Group>
+
           </div>
         </div>
       </div>

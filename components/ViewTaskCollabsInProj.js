@@ -10,6 +10,7 @@ export default function ViewTaskCollabsInProj({
   refreshProjCollabs,
   collabsExpand,
   taskId,
+  formInput,
 }) {
   const { taskCollabJoins, allCollabs } = useCollabContext();
 
@@ -28,14 +29,36 @@ export default function ViewTaskCollabsInProj({
 
   return (
     <>
-      <div className="card" style={{ marginTop: '3px', display: collabsExpand ? 'block' : 'none' }}>
+      <div
+        className="card"
+        style={{
+          margin: '3px 1.5px',
+          height: '293px',
+          display: collabsExpand ? 'block' : 'none',
+          border: formInput.status === 'closed' ? 'grey' : '1px solid lightgrey',
+          backgroundColor: formInput.status === 'closed' ? 'grey' : '',
+          transition: 'all 1.5s ease',
+        }}
+      >
         <div className="card-header" style={{ fontSize: '18px', textAlign: 'center' }}>
           <div> Assigned to This Task:</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }} />
         </div>
         <div className="card-body">
-          <div className="card">
-            <div className="card-body">
+          <div
+            className="card"
+            style={{
+              transition: 'all 1.5s ease',
+              border: formInput.status === 'closed' ? 'grey' : '',
+            }}
+          >
+            <div
+              className="card-body"
+              style={{
+                transition: 'all 1.5s ease',
+                backgroundColor: formInput.status === 'closed' ? 'grey' : '',
+              }}
+            >
               {collabsOfTask.length === 0 ? (
                 'No one is assigned to this task...'
               ) : (
@@ -45,6 +68,7 @@ export default function ViewTaskCollabsInProj({
                     collab={collab}
                     refreshProjCollabs={refreshProjCollabs}
                     taskId={taskId}
+                    formInput={formInput}
                   />
                 ))
               )}

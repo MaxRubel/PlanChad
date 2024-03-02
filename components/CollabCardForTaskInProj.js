@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Collapse } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSaveContext } from '../utils/context/saveManager';
 import { plusIcon, removeIcon } from '../public/icons';
 import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
@@ -9,13 +9,9 @@ import { useCollabContext } from '../utils/context/collabContext';
 export default function CollabCardForTaskInProj({
   taskId,
   collab,
+  formInput,
 }) {
   const [expanded, setExpanded] = useState(false);
-  //   const {
-  //     setTaskCollabs,
-  //     taskCollabs,
-  //     saveInput,
-  //   } = useSaveContext();
 
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
@@ -41,15 +37,16 @@ export default function CollabCardForTaskInProj({
       deleteFromCollabManager(itemToRemove.taskCollabId, 'taskCollabJoin');
     });
   };
-
+  useEffect(() => {
+    console.log(formInput);
+  }, [formInput]);
   const handleCollapse = () => {
     setExpanded((prevVal) => !prevVal);
   };
-
+  console.log(formInput);
   return (
-    <div className="card" style={{ margin: '1% 0%' }}>
+    <div className="card" style={{ margin: '1% 0%', backgroundColor: formInput.status === 'closed' ? 'grey' : '' }}>
       <div className="card-body" style={{ padding: '2%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-
         <div id="col1">
           <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
             {downIcon}
