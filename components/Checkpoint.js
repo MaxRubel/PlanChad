@@ -6,12 +6,15 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 // import Checkbox from '@mui/material/Checkbox';
 import { useState, useEffect } from 'react';
-import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
+import { Collapse, Button as ButtonBoot, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
 import { Reorder } from 'framer-motion';
 import { trashIcon } from '../public/icons';
 import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
+import {
+  expandTooltip, collapseToolTip, addTaskToolTip, deleteSegment,
+} from './toolTips';
 
 export default function Checkpoint({
   checkP,
@@ -247,36 +250,46 @@ export default function Checkpoint({
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div className="verticalCenter">
               <div className="verticalCenter">
-                <button
-                  type="button"
-                  onClick={handleCollapse}
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    padding: '0px',
-                    textAlign: 'center',
-                    color: 'black',
-                    width: '35px',
-                    height: '35px',
-                  }}>
-                  {downIcon}
-                </button>
-                <button
-                  type="button"
-                  id={`addTask${checkP.localId}`}
-                  onClick={addTask}
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    padding: '0px',
-                    marginLeft: '10%',
-                    textAlign: 'center',
-                    color: 'black',
-                    width: '35px',
-                    height: '35px',
-                  }}>
-                  {plusIcon}
-                </button>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={formInput.expanded ? collapseToolTip : expandTooltip}
+                  trigger={['hover', 'focus']}
+                  delay={500}
+                  // // defaultShow={1000}
+                  >
+                  <button
+                    type="button"
+                    onClick={handleCollapse}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '0px',
+                      textAlign: 'center',
+                      color: 'black',
+                      width: '35px',
+                      height: '35px',
+                    }}>
+                    {downIcon}
+                  </button>
+                </OverlayTrigger>
+                <OverlayTrigger placement="top" overlay={addTaskToolTip} delay={500}>
+                  <button
+                    type="button"
+                    id={`addTask${checkP.localId}`}
+                    onClick={addTask}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '0px',
+                      marginLeft: '10%',
+                      textAlign: 'center',
+                      color: 'black',
+                      width: '35px',
+                      height: '35px',
+                    }}>
+                    {plusIcon}
+                  </button>
+                </OverlayTrigger>
               </div>
             </div>
             <div className="verticalCenter" style={{ justifyContent: 'center' }}>
@@ -303,19 +316,21 @@ export default function Checkpoint({
                 justifyContent: 'center',
                 paddingRight: '8%',
               }}>
-              <button
-                type="button"
-                onClick={handleDelete}
-                style={{
-                  paddingBottom: '4px',
-                  color: 'black',
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  width: '35px',
-                  height: '35px',
-                }}
+              <OverlayTrigger placement="top" overlay={deleteSegment}>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  style={{
+                    paddingBottom: '4px',
+                    color: 'black',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    width: '35px',
+                    height: '35px',
+                  }}
                   >{trashIcon}
-              </button>
+                </button>
+              </OverlayTrigger>
             </div>
           </div>
           {/* --------------card-body------------------------ */}

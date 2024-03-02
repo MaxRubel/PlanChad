@@ -166,20 +166,6 @@ body {
   min-width: 500px;
 }
 
-// .taskDeets {
-//   display: grid;
-//   grid-template-columns: 10% 8% 1fr 10%;
-//   min-width: 500px;
-//   transition: all ease .2s;
-// }
-
-// .taskDeetsExpand {
-//   display: grid;
-//   grid-template-columns: 10% 1fr 1fr 10%;
-//   min-width: 500px;
-//   transition: all ease .2s;
-// }
-
 .taskDeets {
   display: grid;
   grid-template-columns: 10% 8% 72% 10%;
@@ -191,47 +177,6 @@ body {
   transition: all 1s ease;
   grid-template-columns: 10% 40% 40% 10%;
 }
-
-// @media (prefers-reduced-motion: reduce) {
-//   .collapsing {
-//       transition-property: height, visibility;
-//       transition-duration: .35s;
-//   }
-// }
-
-// .taskDeets,
-// .taskDeetsExpand {
-//   display: grid;
-//   grid-template-columns: 10% 1fr 1fr 10%;
-//   min-width: 500px;
-//   transition: all ease .2s;
-// }
-
-// .taskDeets {
-//   grid-template-areas: "col1 col2 col3 col4";
-// }
-
-// .taskDeetsExpand {
-//   grid-template-areas: "col1 col2 col3 col4";
-// }
-
-// /* Define the areas for each column */
-// .col1 {
-//   grid-area: col1;
-// }
-
-// .col2 {
-//   grid-area: col2;
-// }
-
-// .col3 {
-//   grid-area: col3;
-// }
-
-// .col4 {
-//   grid-area: col4;
-// }
-
 
 .card {
   background-color: rgb(225, 225, 225);
@@ -281,4 +226,13 @@ body {
 .grid3 {
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
+}
+
+.arrowOpen{
+  transition: all 1s ease;
+  transform: rotate(180deg);
+}
+
+.arrowClosed {
+  transition: all 1s ease;
 }

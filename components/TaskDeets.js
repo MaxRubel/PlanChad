@@ -1,15 +1,33 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 
-import { Collapse } from 'react-bootstrap';
+import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { peopleIcon, rightArrowSmall } from '../public/icons';
 import ViewTaskCollabsInProj from './ViewTaskCollabsInProj';
+import { hideCollabsToolTips, viewCollabsToolTips } from './toolTips';
 
 export default function TaskDeets({
   formInput, handleChange, taskId, saveCollabsExpand,
 }) {
   const [collabsExpand, setCollabsExpand] = useState(false);
+
+  const arrowSmall = (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="22"
+      height="22"
+      fill="currentColor"
+      className={formInput.collabsExpanded ? 'arrowOpen' : 'arrowClosed'}
+      viewBox="0 0 16 16"
+    >
+      <path
+        fillRule="evenodd"
+        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0
+      1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
+      />
+    </svg>
+  );
 
   useEffect(() => {
     setCollabsExpand((preVal) => formInput.collabsExpanded);
@@ -50,7 +68,7 @@ export default function TaskDeets({
               <div
                 id="line"
                 style={{
-                  transition: '1.5s all ease',
+                  transition: '1.5s border ease',
                   borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
                 }}
               />
@@ -71,20 +89,32 @@ export default function TaskDeets({
                 transition: 'all 1.5s ease',
               }}
             >
-              <div id="card-header" style={{ display: 'flex', flexDirection: 'column', padding: '10px 45px' }}>
+              <div
+                id="card-header"
+                style={{
+                  display: 'flex', flexDirection: 'column', height: '43.89px', padding: '10px 30px',
+                }}
+              >
                 <div className="veritcalCenter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
                   <div className="veritcalCenter" style={{ fontSize: '18px', paddingTop: '1%', fontWeight: '600' }}>
                     <label htmlFor={`planning${taskId}`}>Planning:</label>
                   </div>
                   <div id="smallHeader" style={{ textAlign: 'right' }}>
-                    <button
-                      type="button"
-                      className="clearButton"
-                      style={{ color: 'black' }}
-                      onClick={handleExpand}
+                    <OverlayTrigger
+                      placement="top"
+                      overlay={formInput.collabsExpanded ? hideCollabsToolTips : viewCollabsToolTips}
+                      trigger={['hover', 'focus']}
+                      delay={500}
                     >
-                      {peopleIcon} {rightArrowSmall}
-                    </button>
+                      <button
+                        type="button"
+                        className="clearButton"
+                        style={{ color: 'black' }}
+                        onClick={handleExpand}
+                      >
+                        {peopleIcon} {arrowSmall}
+                      </button>
+                    </OverlayTrigger>
                   </div>
                 </div>
                 {/* -----------------header----------------------- */}

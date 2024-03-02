@@ -5,11 +5,15 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 
 import { useState, useEffect } from 'react';
-import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
+import { Collapse, Button as ButtonBoot, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import { trashIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
+import {
+  closeTaskToolTip,
+  collapseToolTaskTip, deleteTaskToolTip, expandTaskTooltip, viewTaskDeetsToolTip,
+} from './toolTips';
 
 const initialState = {
   localId: true,
@@ -190,45 +194,65 @@ export default function Task({
                 style={{
                   alignItems: 'center',
                 }}>
-                <button
-                  type="button"
-                  onClick={handleCollapse}
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    padding: '0px',
-                    textAlign: 'center',
-                    color: 'black',
-                    width: '35px',
-                    height: '35px',
-                  }}>
-                  {downIcon}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCollapse2}
-                  style={{
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    marginLeft: '7px',
-                    padding: '0px !important',
-                    paddingLeft: '0px !important',
-                    paddingRight: '0px !important',
-                    textAlign: 'center',
-                    color: 'black',
-                    width: '35px',
-                    height: '35px',
-                  }}>
-                  {magGlass}
-                </button>
-                <Checkbox
-                  checked={formInput.status === 'closed'}
-                  onChange={(e) => { handleCheck(e); taskHasBeenCompleted(); }}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                  size="medium"
-                  style={{ color: 'black', height: '35px', marginLeft: '7px' }}
+                <OverlayTrigger
+                  placement="top"
+                  overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
+                  trigger={['hover', 'focus']}
+                  delay={500}
+                  >
+                  <button
+                    type="button"
+                    onClick={handleCollapse}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '0px',
+                      textAlign: 'center',
+                      color: 'black',
+                      width: '35px',
+                      height: '35px',
+                    }}>
+                    {downIcon}
+                  </button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={viewTaskDeetsToolTip}
+                  trigger={['hover', 'focus']}
+                  delay={500}
+                  >
+                  <button
+                    type="button"
+                    onClick={handleCollapse2}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      marginLeft: '7px',
+                      padding: '0px !important',
+                      paddingLeft: '0px !important',
+                      paddingRight: '0px !important',
+                      textAlign: 'center',
+                      color: 'black',
+                      width: '35px',
+                      height: '35px',
+                    }}>
+                    {magGlass}
+                  </button>
+                </OverlayTrigger>
+                <OverlayTrigger
+                  placement="top"
+                  overlay={closeTaskToolTip}
+                  trigger={['hover', 'focus']}
+                  delay={500}
+                  >
+                  <Checkbox
+                    checked={formInput.status === 'closed'}
+                    onChange={(e) => { handleCheck(e); taskHasBeenCompleted(); }}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                    size="medium"
+                    style={{ color: 'black', height: '35px', marginLeft: '7px' }}
                 />
-
+                </OverlayTrigger>
               </div>
             </div>
             <div className="fullCenter" style={{ textAlign: 'center' }}>
@@ -255,14 +279,21 @@ export default function Task({
                 justifyContent: 'center',
                 paddingRight: '8%',
               }}>
-              <button
-                type="button"
-                onClick={handleDelete}
-                style={{
-                  paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
-                }}>
-                {trashIcon}
-              </button>
+              <OverlayTrigger
+                placement="top"
+                overlay={deleteTaskToolTip}
+                trigger={['hover', 'focus']}
+                delay={500}
+                  >
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  style={{
+                    paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
+                  }}>
+                  {trashIcon}
+                </button>
+              </OverlayTrigger>
             </div>
           </div>
           {/* --------------card-body------------------------ */}
