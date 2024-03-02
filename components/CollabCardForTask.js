@@ -2,8 +2,8 @@
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
 import { useSaveContext } from '../utils/context/saveManager';
-import { plusIcon, removeIcon } from '../public/icons';
-import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
+import { removeIcon } from '../public/icons';
+import { deleteTaskCollab } from '../api/taskCollab';
 import { useCollabContext } from '../utils/context/collabContext';
 
 export default function CollabCardForTask({

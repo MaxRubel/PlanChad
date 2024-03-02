@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import ProjectsTable from '../components/ProjectsTable';
 import { useSaveContext } from '../utils/context/saveManager';

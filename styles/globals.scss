@@ -35,7 +35,11 @@ body {
   // align-items: center;
   // justify-content: center;
   // padding: 2% 10%;
+  min-width: 600px;
   padding-bottom: 50vh;
+}
+.projectContainr{
+  background-color: aqua;
 }
 
 .btn.btn-outline-dark.rounded-0 {
@@ -150,31 +154,84 @@ body {
 .checkpoint {
   // position: relative;
   display: grid;
-  grid-template-columns: 84px 75% 100px;
+  // grid-template-columns: 84px 75% 100px;
+  grid-template-columns: 10% 1fr 10%;
   min-width: 500px;
 }
 
 .task {
   display: grid;
-  grid-template-columns: 84px 8% 67% 100px;
+  grid-template-columns: 10% 8% 1fr 10%;
   // gap: 1%;
   min-width: 500px;
 }
 
+// .taskDeets {
+//   display: grid;
+//   grid-template-columns: 10% 8% 1fr 10%;
+//   min-width: 500px;
+//   transition: all ease .2s;
+// }
+
+// .taskDeetsExpand {
+//   display: grid;
+//   grid-template-columns: 10% 1fr 1fr 10%;
+//   min-width: 500px;
+//   transition: all ease .2s;
+// }
+
 .taskDeets {
   display: grid;
-  grid-template-columns: 84px 16% 59% 100px;
+  grid-template-columns: 10% 8% 72% 10%;
   min-width: 500px;
-  transition: all ease .2s;
+  transition: all 1s ease;
 }
 
 .taskDeetsExpand {
-  display: grid;
-  grid-template-columns: 84px 1fr 1fr 100px;
-  gap: 6px;
-  min-width: 500px;
-  transition: all ease .2s;
+  transition: all 1s ease;
+  grid-template-columns: 10% 40% 40% 10%;
 }
+
+// @media (prefers-reduced-motion: reduce) {
+//   .collapsing {
+//       transition-property: height, visibility;
+//       transition-duration: .35s;
+//   }
+// }
+
+// .taskDeets,
+// .taskDeetsExpand {
+//   display: grid;
+//   grid-template-columns: 10% 1fr 1fr 10%;
+//   min-width: 500px;
+//   transition: all ease .2s;
+// }
+
+// .taskDeets {
+//   grid-template-areas: "col1 col2 col3 col4";
+// }
+
+// .taskDeetsExpand {
+//   grid-template-areas: "col1 col2 col3 col4";
+// }
+
+// /* Define the areas for each column */
+// .col1 {
+//   grid-area: col1;
+// }
+
+// .col2 {
+//   grid-area: col2;
+// }
+
+// .col3 {
+//   grid-area: col3;
+// }
+
+// .col4 {
+//   grid-area: col4;
+// }
+
 
 .card {
   background-color: rgb(225, 225, 225);
@@ -184,6 +241,8 @@ body {
   position: relative;
   display: grid;
   grid-template-columns: 20% 60% 20%;
+  // justify-items: center;
+  align-items: center;
 }
 
 .checkpoint-progress {
