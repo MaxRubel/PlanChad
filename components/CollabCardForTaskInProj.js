@@ -43,7 +43,7 @@ export default function CollabCardForTaskInProj({
   };
 
   return (
-    <div className="card" style={{ margin: '1% 0%', backgroundColor: formInput.status === 'closed' ? 'grey' : '' }}>
+    <div className="card" style={{ margin: '1% 0%', backgroundColor: formInput.status === 'closed' ? 'grey' : 'white' }}>
       <div className="card-body" style={{ padding: '2%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
         <div id="col1">
           <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
