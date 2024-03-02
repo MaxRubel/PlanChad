@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../utils/context/authContext';
 import { getCollabsOfUser } from '../api/collabs';
 import CollabCard from './CollabCard';
-import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
 
 export default function ViewAllCollabs({

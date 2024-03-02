@@ -1,9 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-// import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import { useState, useEffect } from 'react';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';

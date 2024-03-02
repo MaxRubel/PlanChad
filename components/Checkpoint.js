@@ -5,7 +5,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-closing-bracket-location */
 // import Checkbox from '@mui/material/Checkbox';
-// import { FormControlLabel, FormGroup } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import uniqid from 'uniqid';
@@ -242,36 +241,43 @@ export default function Checkpoint({
             <div />
           </div>
         </div>
-        <div className="card" style={{ margin: '3px 0px' }}>
-          <div className="card-header 2" style={{ border: !formInput.expanded ? 'none' : '' }}>
+        {/* --------------card------------------------ */}
+        <div className="card" style={{ margin: '3px 0px', minWidth: '565px' }}>
+          <div className="card-header 2" style={{ minWidth: '516px', border: !formInput.expanded ? 'none' : '' }}>
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div className="verticalCenter">
-              <ButtonBoot
-                onClick={handleCollapse}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  padding: '0px',
-                  paddingLeft: '10%',
-                  textAlign: 'left',
-                  color: 'black',
-                  width: '35px',
-                }}>
-                {downIcon}
-              </ButtonBoot>
-              <ButtonBoot
-                id={`addTask${checkP.localId}`}
-                onClick={addTask}
-                style={{
-                  backgroundColor: 'transparent',
-                  border: 'none',
-                  padding: '0px',
-                  marginLeft: '10%',
-                  textAlign: 'left',
-                  color: 'black',
-                }}>
-                {plusIcon}
-              </ButtonBoot>
+              <div className="verticalCenter">
+                <button
+                  type="button"
+                  onClick={handleCollapse}
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '0px',
+                    textAlign: 'center',
+                    color: 'black',
+                    width: '35px',
+                    height: '35px',
+                  }}>
+                  {downIcon}
+                </button>
+                <button
+                  type="button"
+                  id={`addTask${checkP.localId}`}
+                  onClick={addTask}
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    padding: '0px',
+                    marginLeft: '10%',
+                    textAlign: 'center',
+                    color: 'black',
+                    width: '35px',
+                    height: '35px',
+                  }}>
+                  {plusIcon}
+                </button>
+              </div>
             </div>
             <div className="verticalCenter" style={{ justifyContent: 'center' }}>
               <input
@@ -301,7 +307,12 @@ export default function Checkpoint({
                 type="button"
                 onClick={handleDelete}
                 style={{
-                  paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
+                  paddingBottom: '4px',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  width: '35px',
+                  height: '35px',
                 }}
                   >{trashIcon}
               </button>
@@ -385,7 +396,7 @@ export default function Checkpoint({
           </Collapse>
         </div>
         {/* -----add-a-task------ */}
-        <div className="marginR" />
+        {/* <div className="marginR" /> */}
       </div>
 
       <div>

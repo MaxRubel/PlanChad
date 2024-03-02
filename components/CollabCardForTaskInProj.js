@@ -37,13 +37,11 @@ export default function CollabCardForTaskInProj({
       deleteFromCollabManager(itemToRemove.taskCollabId, 'taskCollabJoin');
     });
   };
-  useEffect(() => {
-    console.log(formInput);
-  }, [formInput]);
+
   const handleCollapse = () => {
     setExpanded((prevVal) => !prevVal);
   };
-  console.log(formInput);
+
   return (
     <div className="card" style={{ margin: '1% 0%', backgroundColor: formInput.status === 'closed' ? 'grey' : '' }}>
       <div className="card-body" style={{ padding: '2%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>

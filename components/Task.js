@@ -3,6 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-closing-bracket-location */
+
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
@@ -172,46 +173,62 @@ export default function Task({
             margin: '3px 0px',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
             transition: '1.5s all ease',
+            minWidth: '516px',
           }}>
-          <div className="card-header 2" style={{ height: '52.89px', border: !formInput.expanded ? 'none' : '' }}>
-            <div id="button-row" className="verticalCenter">
-              <div style={{ wdith: '20px', paddingLeft: '5%' }}>
-                <ButtonBoot
+          <div
+            className="card-header 2"
+            style={{
+              minWidth: '516px',
+              alignContent: 'center',
+              height: '53px',
+              border: !formInput.expanded ? 'none' : '',
+            }}>
+            <div className="verticalCenter">
+              <div
+                id="button-row"
+                className="verticalCenter"
+                style={{
+                  alignItems: 'center',
+                }}>
+                <button
+                  type="button"
                   onClick={handleCollapse}
                   style={{
                     backgroundColor: 'transparent',
                     border: 'none',
                     padding: '0px',
-                    paddingLeft: '10%',
-                    textAlign: 'left',
+                    textAlign: 'center',
                     color: 'black',
-                    width: '50px',
+                    width: '35px',
+                    height: '35px',
                   }}>
                   {downIcon}
-                </ButtonBoot>
-              </div>
-              <div style={{ wdith: '20px' }}>
-                <ButtonBoot
+                </button>
+                <button
+                  type="button"
                   onClick={handleCollapse2}
                   style={{
                     backgroundColor: 'transparent',
                     border: 'none',
-                    padding: '0px',
-                    paddingLeft: '5%',
-                    textAlign: 'left',
+                    marginLeft: '7px',
+                    padding: '0px !important',
+                    paddingLeft: '0px !important',
+                    paddingRight: '0px !important',
+                    textAlign: 'center',
                     color: 'black',
-                    width: '50px',
+                    width: '35px',
+                    height: '35px',
                   }}>
                   {magGlass}
-                </ButtonBoot>
-              </div>
-              <div style={{ wdith: '20px' }}>
+                </button>
                 <Checkbox
                   checked={formInput.status === 'closed'}
                   onChange={(e) => { handleCheck(e); taskHasBeenCompleted(); }}
                   inputProps={{ 'aria-label': 'controlled' }}
-                  style={{ color: 'black' }}
+                  size="medium"
+                  style={{ color: 'black', height: '35px', marginLeft: '7px' }}
                 />
+
               </div>
             </div>
             <div className="fullCenter" style={{ textAlign: 'center' }}>
@@ -341,6 +358,7 @@ export default function Task({
         {/* -----add-a-task------ */}
         <div className="marginR" />
       </div>
+
       <TaskDeets
         formInput={formInput}
         handleChange={handleChange}
