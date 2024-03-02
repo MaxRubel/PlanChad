@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
-import { Button } from '@mui/material';
+// import { Button } from '@mui/material';
 import { useSaveContext } from '../utils/context/saveManager';
 import CollabCardForTask from './CollabCardForTask';
 import { useCollabContext } from '../utils/context/collabContext';
@@ -58,7 +58,7 @@ export default function AddAsigneeModal() {
             </div>
           </div>
           <div style={{ textAlign: 'center', marginTop: '3%' }}>
-            <Button
+            {/* <Button
               variant="outlined"
               onClick={() => { closeAsigneesModal(); }}
               style={{
@@ -68,7 +68,7 @@ export default function AddAsigneeModal() {
               }}
             >
               Back To Project
-            </Button>
+            </Button> */}
           </div>
         </Modal.Body>
       </Modal>

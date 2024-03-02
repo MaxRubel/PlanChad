@@ -8,7 +8,6 @@
 // import { FormControlLabel, FormGroup } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
-import { Draggable, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import { Reorder } from 'framer-motion';
 import { trashIcon } from '../public/icons';
@@ -213,9 +212,7 @@ export default function Checkpoint({
       startDate: '',
       deadline: '',
       description: '',
-      prep: '',
-      exec: '',
-      debrief: '',
+      planning: '',
       index: tasks.length,
       weight: '',
       status: 'open',
@@ -285,7 +282,7 @@ export default function Checkpoint({
                   backgroundColor: 'transparent',
                   width: '75%',
                 }}
-                placeholder={`Checkpoint ${index}`}
+                placeholder={`Segment ${index}`}
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}
@@ -394,7 +391,12 @@ export default function Checkpoint({
       <div>
         <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
           {tasks.map((task, indexT) => (
-            <Reorder.Item key={task.localId} value={task} as="div" onDragStart={handleDragStart}>
+            <Reorder.Item
+              key={task.localId}
+              value={task}
+              as="div"
+              style={{ cursor: 'grab' }}
+              onDragStart={handleDragStart}>
               <Task
                 key={task.localId}
                 task={task}

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {
   Navbar, Container, Nav,
 } from 'react-bootstrap';
-import { Button } from '@mui/material';
+
 import { signOut } from '../utils/auth';
 
 export default function NavBar() {
