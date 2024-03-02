@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { Collapse, Button as ButtonBoot } from 'react-bootstrap';
 import { Draggable, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
+import { Reorder } from 'framer-motion';
 import { trashIcon } from '../public/icons';
 import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -72,7 +73,6 @@ export default function Checkpoint({
 
   useEffect(() => { // grab and sort the tasks from save manager
     if (!isDragging) {
-      console.log('render 1');
       setFormInput(checkP);
       const copy = [...saveInput.tasks];
       const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
@@ -84,7 +84,6 @@ export default function Checkpoint({
   useEffect(() => {
     if (refreshTasks > 0 && !isDragging) {
       if (checkP.localId === checkPBeingDragged) {
-        console.log('render 2');
         setTasks((preVal) => sendThisArray);
       }
     }
@@ -189,6 +188,16 @@ export default function Checkpoint({
     }
   };
 
+  const handleDragStart = () => {
+    refreshCheckP();
+  };
+
+  const handleReorder = (e) => {
+    const reordered = e.map((item, index) => ({ ...item, index }));
+    setTasks((preVal) => reordered);
+    addToSaveManager(reordered, 'update', 'reorderedTasks');
+  };
+
   const handleDelete = () => {
     deleteFromSaveManager(formInput, 'delete', 'checkpoint');
     handleRefresh();
@@ -220,212 +229,192 @@ export default function Checkpoint({
   };
 
   return (
-    <Draggable key={checkP.localId} draggableId={checkP.localId} index={index}>
-      {(provided) => (
-        <div
-          id="projectRow"
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-        >
-          <div className="checkpoint">
-            {/* -------line-side------------- */}
-            <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-              <div id="empty" />
-              <div
-                id="line"
+    <>
+      <div className="checkpoint">
+        {/* -------line-side------------- */}
+        <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+          <div id="empty" />
+          <div
+            id="line"
+            style={{
+              borderLeft: '2px solid rgb(16, 197, 234, .6)',
+              display: 'grid',
+              gridTemplateRows: '1fr 1fr',
+            }}>
+            <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .6)' }} />
+            <div />
+          </div>
+        </div>
+        <div className="card" style={{ margin: '3px 0px' }}>
+          <div className="card-header 2" style={{ border: !formInput.expanded ? 'none' : '' }}>
+            <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
+            <div className="verticalCenter">
+              <ButtonBoot
+                onClick={handleCollapse}
                 style={{
-                  borderLeft: '2px solid rgb(16, 197, 234, .6)',
-                  display: 'grid',
-                  gridTemplateRows: '1fr 1fr',
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '0px',
+                  paddingLeft: '10%',
+                  textAlign: 'left',
+                  color: 'black',
+                  width: '35px',
                 }}>
-                <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .6)' }} />
-                <div />
-              </div>
+                {downIcon}
+              </ButtonBoot>
+              <ButtonBoot
+                id={`addTask${checkP.localId}`}
+                onClick={addTask}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  padding: '0px',
+                  marginLeft: '10%',
+                  textAlign: 'left',
+                  color: 'black',
+                }}>
+                {plusIcon}
+              </ButtonBoot>
             </div>
-            <div className="card" style={{ margin: '3px 0px' }}>
-              <div className="card-header 2" style={{ border: !formInput.expanded ? 'none' : '' }}>
-                <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
-                <div className="verticalCenter">
-                  <ButtonBoot
-                    onClick={handleCollapse}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      paddingLeft: '10%',
-                      textAlign: 'left',
-                      color: 'black',
-                      width: '35px',
-                    }}>
-                    {downIcon}
-                  </ButtonBoot>
-                  <ButtonBoot
-                    id={`addTask${checkP.localId}`}
-                    onClick={addTask}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      marginLeft: '10%',
-                      textAlign: 'left',
-                      color: 'black',
-                    }}>
-                    {plusIcon}
-                  </ButtonBoot>
-                </div>
-                <div className="verticalCenter" style={{ justifyContent: 'center' }}>
-                  <input
-                    className="form-control"
-                    style={{
-                      textAlign: 'center',
-                      border: 'none',
-                      backgroundColor: 'transparent',
-                      width: '75%',
-                    }}
-                    placeholder={`Checkpoint ${index}`}
-                    value={formInput.name}
-                    name="name"
-                    onChange={handleChange}
-                    autoComplete="off"
+            <div className="verticalCenter" style={{ justifyContent: 'center' }}>
+              <input
+                className="form-control"
+                style={{
+                  textAlign: 'center',
+                  border: 'none',
+                  backgroundColor: 'transparent',
+                  width: '75%',
+                }}
+                placeholder={`Checkpoint ${index}`}
+                value={formInput.name}
+                name="name"
+                onChange={handleChange}
+                autoComplete="off"
                   />
+            </div>
+            <div
+              className="verticalCenter"
+              style={{
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                justifyContent: 'center',
+                paddingRight: '8%',
+              }}>
+              <button
+                type="button"
+                onClick={handleDelete}
+                style={{
+                  paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
+                }}
+                  >{trashIcon}
+              </button>
+            </div>
+          </div>
+          {/* --------------card-body------------------------ */}
+          <Collapse in={formInput.expanded}>
+            <div id="whole-card">
+              <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '0% 0% !important' }}>
+                <div
+                  id="row2"
+                  className="cardRow">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                    <div className="verticalCenter">
+                      <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
+                    </div>
+                    <div />
+                  </div>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+                  }}>
+                    <input
+                      className="form-control"
+                      type="date"
+                      value={formInput.deadline}
+                      onChange={handleChange}
+                      name="deadline"
+                      id={`deadline${checkP.localId}`}
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
+                  </div>
                 </div>
                 <div
-                  className="verticalCenter"
-                  style={{
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    justifyContent: 'center',
-                    paddingRight: '8%',
-                  }}>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    style={{
-                      paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
-                    }}
-                  >{trashIcon}
-                  </button>
-                </div>
-              </div>
-              {/* --------------card-body------------------------ */}
-              <Collapse in={formInput.expanded}>
-                <div id="whole-card">
-                  <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '0% 0% !important' }}>
-                    <div
-                      id="row2"
-                      className="cardRow">
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                        <div className="verticalCenter">
-                          <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
-                        </div>
-                        <div />
-                      </div>
-                      <div style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-                      }}>
-                        <input
-                          className="form-control"
-                          type="date"
-                          value={formInput.deadline}
-                          onChange={handleChange}
-                          name="deadline"
-                          id={`deadline${checkP.localId}`}
-                          style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
-                      </div>
+                  id="row3"
+                  className="cardRow">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                    <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
+                      <label htmlFor={`budget${checkP.localId}`}>Start Date:</label>
                     </div>
-                    <div
-                      id="row3"
-                      className="cardRow">
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                        <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
-                          <label htmlFor={`budget${checkP.localId}`}>Start Date:</label>
-                        </div>
-                        <div />
-                      </div>
-                      <div
-                        className="fullCenter"
-                        style={{ paddingRight: '20%' }}>
-                        <input
-                          id={`budget${checkP.localId}`}
-                          className="form-control"
-                          type="date"
-                          value={formInput.startDate}
-                          placeholder="$$$"
-                          onChange={handleChange}
-                          name="startDate"
-                          style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
-                      </div>
-                    </div>
+                    <div />
                   </div>
                   <div
-                    id="description-field"
                     className="fullCenter"
-                    style={{
-                      borderTop: '1px solid rgb(180, 180, 180)',
-                      padding: '1.4% 10%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}>
-                    <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
-                      <label htmlFor={`description${checkP.localId}`} className="form-label" style={{ textAlign: 'center' }}>
-                        Description:
-                      </label>
-                    </div>
-                    <textarea
+                    style={{ paddingRight: '20%' }}>
+                    <input
+                      id={`budget${checkP.localId}`}
                       className="form-control"
-                      placeholder="A description of your checkpoint..."
-                      id={`description${checkP.localId}`}
-                      rows="3"
-                      value={formInput.description}
+                      type="date"
+                      value={formInput.startDate}
+                      placeholder="$$$"
                       onChange={handleChange}
-                      name="description"
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }} />
+                      name="startDate"
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }} />
                   </div>
                 </div>
-              </Collapse>
-            </div>
-            {/* -----add-a-task------ */}
-            <div className="marginR" />
-          </div>
-          <Droppable key={checkP.localId} droppableId={`tasks--${checkP.localId}`} type="drop">
-            {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
-                {tasks.map((task, indexT) => (
-                  <Draggable key={task.localId} draggableId={`task${task.localId}`} index={indexT}>
-                    {(providedDraggable) => (
-                      <div
-                        ref={providedDraggable.innerRef}
-                        {...providedDraggable.draggableProps}
-                        {...providedDraggable.dragHandleProps}
-            >
-                        <Task
-                          key={task.localId}
-                          task={task}
-                          minAll={minAll}
-                          save={save}
-                          saveIndexes={saveIndexes}
-                          min={min}
-                          saveSuccess={saveSuccess}
-                          handleRefresh={handleRefresh}
-                          indexT={indexT}
-                          isLoading={isLoading}
-                          refreshCheckP={refreshCheckP}
-                          taskHasBeenCompleted={taskHasBeenCompleted}
-              />
-                        {providedDraggable.placeholder}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
               </div>
-            )}
-          </Droppable>
-
+              <div
+                id="description-field"
+                className="fullCenter"
+                style={{
+                  borderTop: '1px solid rgb(180, 180, 180)',
+                  padding: '1.4% 10%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                }}>
+                <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
+                  <label htmlFor={`description${checkP.localId}`} className="form-label" style={{ textAlign: 'center' }}>
+                    Description:
+                  </label>
+                </div>
+                <textarea
+                  className="form-control"
+                  placeholder="A description of your segment..."
+                  id={`description${checkP.localId}`}
+                  rows="3"
+                  value={formInput.description}
+                  onChange={handleChange}
+                  name="description"
+                  style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }} />
+              </div>
+            </div>
+          </Collapse>
         </div>
-      )}
+        {/* -----add-a-task------ */}
+        <div className="marginR" />
+      </div>
 
-    </Draggable>
+      <div>
+        <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
+          {tasks.map((task, indexT) => (
+            <Reorder.Item key={task.localId} value={task} as="div" onDragStart={handleDragStart}>
+              <Task
+                key={task.localId}
+                task={task}
+                minAll={minAll}
+                save={save}
+                saveIndexes={saveIndexes}
+                min={min}
+                saveSuccess={saveSuccess}
+                handleRefresh={handleRefresh}
+                indexT={indexT}
+                isLoading={isLoading}
+                refreshCheckP={refreshCheckP}
+                taskHasBeenCompleted={taskHasBeenCompleted}
+              />
+            </Reorder.Item>
+          ))}
+        </Reorder.Group>
+      </div>
+
+    </>
+
   );
 }

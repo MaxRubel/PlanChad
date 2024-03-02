@@ -3,10 +3,11 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+// import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
+import { Reorder, m } from 'framer-motion';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -96,6 +97,12 @@ export default function BigDaddyProject({ projectId }) {
     }
   }, [isSaving]);
 
+  // useEffect(() => {
+  //   // if (saveInput.checkpoints.length > 0) {
+  //   setCheckpoints((preVal) => saveInput.checkpoints);
+  //   // }
+  // }, [saveInput.checkpoints]);
+
   const addCheckpoint = () => {
     const emptyChckP = {
       projectId,
@@ -115,43 +122,54 @@ export default function BigDaddyProject({ projectId }) {
     handleRefresh();
   };
 
-  const handleDragStart = (e) => {
-    const [, checkPId] = e.source.droppableId.split('--');
+  // const handleDragStart = (e) => {
+  //   const [, checkPId] = e.source.droppableId.split('--');
+  //   setIsDragging((preVal) => true);
+  //   setcheckPBeingDragged((preVal) => checkPId);
+  // };
+
+  // const handleDragEnd = (result) => {
+  //   setIsDragging((preVal) => false);
+  //   const { destination, source, draggableId } = result;
+  //   if (!destination) {
+  //     console.log('nope!');
+  //     return;
+  //   }
+  //   const sourceId = source.droppableId;
+  //   const destinationId = destination.droppableId;
+  //   if (source.droppableId !== destination.droppableId) {
+  //     console.log('nope!');
+  //   }
+  //   if (sourceId.includes('tasks') && sourceId === destinationId) {
+  //     const [, checkpointId] = destinationId.split('--');
+  //     const projectTasks = Array.from(saveInput.tasks);
+  //     const tasksOfCheckp = projectTasks.filter((item) => item.checkpointId === checkpointId);
+  //     const [reOrderedTask] = tasksOfCheckp.splice(source.index, 1);
+  //     tasksOfCheckp.splice(destination.index, 0, reOrderedTask);
+  //     const indexedArr = tasksOfCheckp.map((item, index) => ({ ...item, index }));
+  //     addToSaveManager(indexedArr, 'update', 'reorderedTasks');
+  //     setRefreshTasks((preVal) => preVal + 1);
+  //   }
+  //   if (sourceId === 'checkPDrop' && destinationId === 'checkPDrop') {
+  //     const reorderedChecks = Array.from(saveInput.checkpoints);
+  //     const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
+  //     reorderedChecks.splice(destination.index, 0, reorderedCheckp);
+  //     const indexedArr = reorderedChecks.map((item, index) => ({ ...item, index }));
+  //     const sortedArray = indexedArr.sort((a, b) => a.index - b.index);
+  //     addToSaveManager(sortedArray, 'update', 'reorderedCheckPs');
+  //     setCheckpoints(indexedArr);
+  //   }
+  // };
+
+  const handleDragStart = () => {
+    setCheckpoints(saveInput.checkpoints);
     setIsDragging((preVal) => true);
-    setcheckPBeingDragged((preVal) => checkPId);
   };
 
-  const handleDragEnd = (result) => {
-    setIsDragging((preVal) => false);
-    const { destination, source, draggableId } = result;
-    if (!destination) {
-      console.log('nope!');
-      return;
-    }
-    const sourceId = source.droppableId;
-    const destinationId = destination.droppableId;
-    if (source.droppableId !== destination.droppableId) {
-      console.log('nope!');
-    }
-    if (sourceId.includes('tasks') && sourceId === destinationId) {
-      const [, checkpointId] = destinationId.split('--');
-      const projectTasks = Array.from(saveInput.tasks);
-      const tasksOfCheckp = projectTasks.filter((item) => item.checkpointId === checkpointId);
-      const [reOrderedTask] = tasksOfCheckp.splice(source.index, 1);
-      tasksOfCheckp.splice(destination.index, 0, reOrderedTask);
-      const indexedArr = tasksOfCheckp.map((item, index) => ({ ...item, index }));
-      addToSaveManager(indexedArr, 'update', 'reorderedTasks');
-      setRefreshTasks((preVal) => preVal + 1);
-    }
-    if (sourceId === 'checkPDrop' && destinationId === 'checkPDrop') {
-      const reorderedChecks = Array.from(saveInput.checkpoints);
-      const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
-      reorderedChecks.splice(destination.index, 0, reorderedCheckp);
-      const indexedArr = reorderedChecks.map((item, index) => ({ ...item, index }));
-      const sortedArray = indexedArr.sort((a, b) => a.index - b.index);
-      addToSaveManager(sortedArray, 'update', 'reorderedCheckPs');
-      setCheckpoints(indexedArr);
-    }
+  const reOrderCheckPoints = (e) => {
+    const reordered = e.map((item, index) => ({ ...item, index }));
+    setCheckpoints((preVal) => reordered);
+    addToSaveManager(reordered, 'update', 'checkpointsArr');
   };
 
   const handleChange = (e) => {
@@ -233,15 +251,21 @@ export default function BigDaddyProject({ projectId }) {
                 color: 'rgb(200, 200, 200)',
                 border: '1px solid rgb(100, 100, 100)',
               }}>
-              Add A Checkpoint
+              Add A Segment
             </button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-              <Droppable droppableId="checkPDrop">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    {checkpoints.map((checkP, index) => (
+            <m.div
+              onDragStart={() => { console.log('drag start'); }}
+            >
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={checkpoints}
+                onReorder={reOrderCheckPoints}>
+                <div>
+                  {checkpoints.map((checkP, index) => (
+                    <Reorder.Item as="div" key={checkP.localId} value={checkP} onDragStart={handleDragStart}>
                       <Checkpoint
                         refreshTasks={refreshTasks}
                         key={checkP.localId}
@@ -256,13 +280,13 @@ export default function BigDaddyProject({ projectId }) {
                         progressIsShowing={progressIsShowing}
                         isDragging={isDragging}
                         checkPBeingDragged={checkPBeingDragged}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+                    />
+                    </Reorder.Item>
+                  ))}
+
+                </div>
+              </Reorder.Group>
+            </m.div>
           </div>
         </div>
       </div>
