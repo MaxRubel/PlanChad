@@ -109,7 +109,7 @@ export default function Checkpoint({
   }, [min]);
 
   useEffect(() => { // show progress bar animation
-    let timeout;
+    let interval;
     if (progressIsShowing) {
       const tasksCopy = [...saveInput.tasks];
       const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
@@ -125,7 +125,7 @@ export default function Checkpoint({
         closedPercentage = Math.round((closedTasks / totalTasks) * 100);
       }
       let i = 0;
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         document.getElementById(`progressOf${checkP.localId}`).style.width = `${i}%`;
         i += 1;
         if (i > closedPercentage) {
@@ -136,7 +136,7 @@ export default function Checkpoint({
       document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
     }
     return () => {
-      clearInterval(timeout);
+      clearInterval(interval);
     };
   }, [progressIsShowing]);
 

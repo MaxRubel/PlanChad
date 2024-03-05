@@ -10,7 +10,6 @@ import { Reorder, m } from 'framer-motion';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import AddAsigneeModal from './AddAsigneeModal';
 
 export default function BigDaddyProject({ projectId }) {
   const [project, setProject] = useState({});
@@ -141,7 +140,7 @@ export default function BigDaddyProject({ projectId }) {
 
   return (
     <>
-      <AddAsigneeModal />
+
       <div className="bigDad">
         <div id="project-container" style={{}}>
           <div id="project-top-bar" style={{ marginBottom: '3%' }}>

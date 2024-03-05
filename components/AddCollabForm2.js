@@ -1,0 +1,128 @@
+/* eslint-disable react/prop-types */
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import { useEffect, useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import { useAuth } from '../utils/context/authContext';
+import { useCollabContext } from '../utils/context/collabContext';
+import { createNewCollab, updateCollab } from '../api/collabs';
+
+const initialState = {
+  name: '',
+  phone: '',
+  email: '',
+  notes: '',
+};
+
+export default function AddCollabForm2(props) {
+  const { handleClose, show } = props;
+  const [formInput, setForminput] = useState(initialState);
+  const [addToProject, setAddtoProj] = useState(false);
+  const [role, setRole] = useState('');
+  const { user } = useAuth();
+  const { addToCollabManager, updateCollaborator, setUpdateCollab } = useCollabContext();
+
+  useEffect(() => {
+    if (updateCollaborator) {
+      setForminput(updateCollaborator);
+    }
+  }, [updateCollaborator]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'role') {
+      setRole((prevVal) => value);
+    } else {
+      setForminput((prevVal) => ({ ...prevVal, [name]: value }));
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (updateCollaborator) { // update collaborator
+      const payload = { ...formInput, collabId: updateCollaborator.collabId };
+      updateCollab(payload);
+      setForminput(initialState);
+      addToCollabManager(payload, 'allCollabs', 'update');
+    } else { // create collaborator
+      const payload = { ...formInput, userId: user.uid };
+      createNewCollab(payload).then(({ name }) => {
+        updateCollab({ collabId: name });
+        setAddtoProj((prevVal) => false);
+        setForminput((prevVal) => initialState);
+        addToCollabManager({ ...payload, collabId: name }, 'allCollabs', 'create');
+      });
+    }
+    handleClose();
+    setForminput(initialState);
+  };
+
+  return (
+    <>
+      <Modal show={show} onHide={handleClose} animation>
+        <Modal.Header closeButton>
+          <Modal.Title>{updateCollaborator ? 'Edit Collaborator' : 'Add a Collaborator'}</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleSubmit}>
+          <Modal.Body>
+            <Form.Group className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                value={formInput.name}
+                onChange={handleChange}
+                name="name"
+                id="name"
+                autoComplete="off"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                type="phone"
+                value={formInput.phone}
+                onChange={handleChange}
+                name="phone"
+                id="phone"
+                autoComplete="off"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                type="email"
+                value={formInput.email}
+                onChange={handleChange}
+                name="email"
+                id="email"
+                autoComplete="off"
+              />
+            </Form.Group>
+            <Form.Group
+              className="mb-3"
+            >
+              <Form.Label>Notes</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                value={formInput.notes}
+                onChange={handleChange}
+                name="notes"
+                id="notes"
+              />
+            </Form.Group>
+
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" type="submit">
+              Save Changes
+            </Button>
+            <Button variant="secondary" onClick={() => { handleClose(); setForminput(initialState); }}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+    </>
+  );
+}

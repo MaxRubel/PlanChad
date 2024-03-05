@@ -3,25 +3,21 @@ import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
 import { deleteCollab } from '../api/collabs';
 import {
-  createNewProjCollab, deleteProjCollab, getProjCollabsOfCollab, updateProjCollab,
+  createNewProjCollab, deleteProjCollab, updateProjCollab,
 } from '../api/projCollab';
-import { useSaveContext } from '../utils/context/saveManager';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
-import { downArrow } from '../public/icons';
+import { plusIconSmol } from '../public/icons';
 import { deleteTaskCollab } from '../api/taskCollab';
 
 export default function CollabCard({
   collab,
-  projectId,
   ofProj,
   projectToAssign,
 }) {
   const [expanded, setExpanded] = useState(false);
   const {
     addToCollabManager,
-    projCollabs,
-    allCollabs,
     deleteFromCollabManager,
     projCollabJoins,
     taskCollabJoins,
@@ -163,8 +159,14 @@ export default function CollabCard({
 
   return (
     <div className="card" style={{ margin: '1% 0%' }}>
-      <div className="card-body" style={{ padding: '2%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-
+      <div
+        className="card-body"
+        style={{
+          padding: '1%',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+        }}
+      >
         <div id="col1">
           <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
             {downIcon}
@@ -191,7 +193,7 @@ export default function CollabCard({
               style={{ color: 'black' }}
               onClick={handleAssignToProj}
             >
-              {downArrow}
+              {plusIconSmol}
             </button>
             <button
               id="update-collab"

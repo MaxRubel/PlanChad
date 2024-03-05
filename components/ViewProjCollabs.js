@@ -57,16 +57,29 @@ export default function ViewProjCollabs({
     setProjectToAssign((preVal) => value);
   };
   return (
-    <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
+    <div
+      className="card"
+      style={{
+        // backgroundColor: 'rgb(31, 31, 31)',
+        // color: 'rgb(204,204,204)',
+        height: '35vh',
+        width: '47%',
+      }}
+    >
       <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
-        <div> Assigned to Project:</div>
+        <div style={{ marginBottom: '2%' }}> Assigned to Project:</div>
         <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
           <Form.Select
             name="projects"
             id="projects"
-            className="form-control"
+            className="form-control shadow-none"
             value={selectInput}
             onChange={changeProject}
+            style={{
+              // backgroundColor: 'rgb(31, 31, 31)',
+              // color: 'rgb(204,204,204)',
+              // border: '1px solid rgb(204,204,204, .3)',
+            }}
           >
             {allProjects.map((project) => (
               <option key={project.projectId} value={project.projectId}>{project.name}</option>
