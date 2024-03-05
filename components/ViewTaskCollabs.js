@@ -104,10 +104,10 @@ export default function ViewTaskCollabs({
               onFocus={(e) => {
                 e.target.style.borderColor = 'none';
               }}
-            >
-              {tasks.map((task, index) => (
-                <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}`}</option>
-              ))}
+            >{tasks.length > 0 ? (tasks.map((task, index) => (
+              <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}`}</option>
+            ))) : (<option key={1} value={null}>No tasks have been created...</option>)}
+
             </Form.Select>
           </div>
         </div>

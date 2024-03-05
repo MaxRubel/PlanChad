@@ -84,13 +84,15 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
         isInTask = true;
       }
     }
-    if (!isInTask) {
+
+    if (!isInTask && taskToAssign !== 'No tasks have been created...') {
       const payload = {
         projectId: projectToAssign,
         collabId: collab.collabId,
         taskId: taskToAssign,
         userId: user.uid,
       };
+
       createTaskCollab(payload).then(({ name }) => {
         const payload2 = { taskCollabId: name };
         addToCollabManager({ ...payload, ...payload2 }, 'taskCollabJoins', 'create');
