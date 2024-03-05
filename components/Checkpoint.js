@@ -15,6 +15,8 @@ import { useSaveContext } from '../utils/context/saveManager';
 import {
   expandTooltip, collapseToolTip, addTaskToolTip, deleteSegment,
 } from './toolTips';
+import { useCollabContext } from '../utils/context/collabContext';
+import { deleteTaskCollab } from '../api/taskCollab';
 
 export default function Checkpoint({
   checkP,
@@ -42,6 +44,8 @@ export default function Checkpoint({
   const {
     addToSaveManager, deleteFromSaveManager, saveInput, sendThisArray,
   } = useSaveContext();
+
+  const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
   const [tasks, setTasks] = useState([]);
   const [taskCompleted, setTaskCompleted] = useState(0);
@@ -200,8 +204,24 @@ export default function Checkpoint({
   };
 
   const handleDelete = () => {
-    deleteFromSaveManager(formInput, 'delete', 'checkpoint');
-    handleRefresh();
+    const tasksCopy = [...saveInput.tasks];
+    const taskCollabsCopy = [...taskCollabJoins];
+    const checkPtasks = tasksCopy.filter((item) => item.checkpointId === checkP.localId);
+    const collabDeleteArray = [];
+    for (let i = 0; i < checkPtasks.length; i++) {
+      const filtered = taskCollabsCopy.filter((item) => item.taskId === checkPtasks[i].localId);
+      for (let i = 0; i < filtered.length; i++) {
+        collabDeleteArray.push(filtered[i]);
+      }
+    }
+    Promise.all(collabDeleteArray.map((item) => deleteTaskCollab(item.taskCollabId)))
+      .then(() => {
+        for (let i = 0; i < collabDeleteArray.length; i++) {
+          deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
+        }
+        deleteFromSaveManager(formInput, 'delete', 'checkpoint');
+        handleRefresh();
+      });
   };
 
   const addTask = () => {
@@ -255,7 +275,6 @@ export default function Checkpoint({
                   overlay={formInput.expanded ? collapseToolTip : expandTooltip}
                   trigger={['hover', 'focus']}
                   delay={500}
-                // // defaultShow={1000}
                 >
                   <button
                     type="button"

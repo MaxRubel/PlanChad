@@ -12,8 +12,13 @@ import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
   closeTaskToolTip,
-  collapseToolTaskTip, deleteTaskToolTip, expandTaskTooltip, viewTaskDeetsToolTip,
+  collapseToolTaskTip,
+  deleteTaskToolTip,
+  expandTaskTooltip,
+  viewTaskDeetsToolTip,
 } from './toolTips';
+import { useCollabContext } from '../utils/context/collabContext';
+import { deleteTaskCollab } from '../api/taskCollab';
 
 const initialState = {
   localId: true,
@@ -42,6 +47,7 @@ export default function Task({
   const [formInput, setFormInput] = useState(initialState);
   const [hasChanged, setHasChanged] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
+  const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
   const downIcon = (
     <svg
@@ -126,6 +132,14 @@ export default function Task({
   };
 
   const handleDelete = () => {
+    const joinsCopy = [...taskCollabJoins];
+    const filteredCopy = joinsCopy.filter((item) => item.taskId === task.localId);
+    const promiseArray = filteredCopy.map((item) => deleteTaskCollab(item.taskCollabId));
+    Promise.all(promiseArray).then(() => {
+      for (let i = 0; i < filteredCopy.length; i++) {
+        deleteFromCollabManager(filteredCopy[i].taskCollabId, 'taskCollabJoin');
+      }
+    });
     deleteFromSaveManager(formInput, 'delete', 'task');
     refreshCheckP();
   };
