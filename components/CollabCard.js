@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
-import { Collapse } from 'react-bootstrap';
-import { useState } from 'react';
+import { Collapse, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { useEffect, useRef, useState } from 'react';
 import { deleteCollab } from '../api/collabs';
 import {
   createNewProjCollab, deleteProjCollab, updateProjCollab,
@@ -9,6 +9,8 @@ import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
 import { plusIconSmol } from '../public/icons';
 import { deleteTaskCollab } from '../api/taskCollab';
+import { deleteCollabTT, editCollabTT, viewCollabDeetsTT } from './toolTips';
+import { useSaveContext } from '../utils/context/saveManager';
 
 export default function CollabCard({
   collab,
@@ -23,8 +25,16 @@ export default function CollabCard({
     taskCollabJoins,
     setUpdateCollab,
   } = useCollabContext();
-
+  const { allProjects } = useSaveContext();
   const { user } = useAuth();
+  const projectName = useRef();
+
+  useEffect(() => {
+    const allProjCop = [...allProjects];
+    const project = allProjCop.find((item) => item.projectId === projectToAssign);
+    projectName.current = project.name;
+  }, [projectToAssign]);
+
   const downIcon = (
     <svg
       className={expanded ? 'icon-up' : 'icon-down'}
@@ -157,6 +167,12 @@ export default function CollabCard({
     }
   };
 
+  const addToProjTT = (
+    <Tooltip id="editCollabTT">
+      Add To Project &quot;{projectName.current}&quot;
+    </Tooltip>
+  );
+
   return (
     <div className="card" style={{ margin: '1% 0%' }}>
       <div
@@ -168,9 +184,11 @@ export default function CollabCard({
         }}
       >
         <div id="col1">
-          <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
-            {downIcon}
-          </button>
+          <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={500}>
+            <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
+              {downIcon}
+            </button>
+          </OverlayTrigger>
           {collab.name}
         </div>
         {ofProj ? (
@@ -185,33 +203,38 @@ export default function CollabCard({
             </button>
           </div>
         ) : (
-
           <div id="col2" style={{ textAlign: 'right' }}>
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={handleAssignToProj}
-            >
-              {plusIconSmol}
-            </button>
-            <button
-              id="update-collab"
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={handleUpdate}
-            >
-              {editIcon}
-            </button>
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={handleDelete}
-            >
-              {deleteIcon}
-            </button>
+            <OverlayTrigger placement="top" overlay={addToProjTT} delay={500}>
+              <button
+                type="button"
+                className="clearButton"
+                style={{ color: 'black' }}
+                onClick={handleAssignToProj}
+              >
+                {plusIconSmol}
+              </button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="top" overlay={editCollabTT} delay={500}>
+              <button
+                id="update-collab"
+                type="button"
+                className="clearButton"
+                style={{ color: 'black' }}
+                onClick={handleUpdate}
+              >
+                {editIcon}
+              </button>
+            </OverlayTrigger>
+            <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={500}>
+              <button
+                type="button"
+                className="clearButton"
+                style={{ color: 'black' }}
+                onClick={handleDelete}
+              >
+                {deleteIcon}
+              </button>
+            </OverlayTrigger>
           </div>
         )}
 

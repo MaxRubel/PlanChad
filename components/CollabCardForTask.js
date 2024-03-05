@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
-import { Collapse } from 'react-bootstrap';
+import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { useState } from 'react';
 import { useSaveContext } from '../utils/context/saveManager';
 import { removeIcon } from '../public/icons';
 import { deleteTaskCollab } from '../api/taskCollab';
 import { useCollabContext } from '../utils/context/collabContext';
+import { removeFromTaskTT, viewCollabDeetsTT } from './toolTips';
 
 export default function CollabCardForTask({
   taskId,
@@ -48,24 +49,52 @@ export default function CollabCardForTask({
 
   return (
     <div className="card" style={{ margin: '1% 0%' }}>
-      <div className="card-body" style={{ padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+      <div
+        className="card-body"
+        style={{
+          padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr',
+        }}
+      >
 
         <div id="col1">
-          <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
-            {downIcon}
-          </button>
+          <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={500}>
+            <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
+              {downIcon}
+            </button>
+          </OverlayTrigger>
           {collab.name}
         </div>
         <div id="col2" style={{ textAlign: 'right' }}>
-          <button
-            type="button"
-            className="clearButton"
-            style={{ color: 'black' }}
-            onClick={removeFromTask}
-          >
-            {removeIcon}
-          </button>
+          <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={500}>
+            <button
+              type="button"
+              className="clearButton"
+              style={{ color: 'black' }}
+              onClick={removeFromTask}
+            >
+              {removeIcon}
+            </button>
+          </OverlayTrigger>
         </div>
+        <Collapse in={expanded}>
+          <div>
+            <div className="grid3">
+              <div />
+              <div>Phone:</div>
+              {collab.phone}
+            </div>
+            <div className="grid3">
+              <div />
+              <div>Email:</div>
+              {collab.email}
+            </div>
+            <div className="grid3">
+              <div />
+              <div>Notes:</div>
+              {collab.notes}
+            </div>
+          </div>
+        </Collapse>
       </div>
     </div>
   );
