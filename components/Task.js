@@ -260,6 +260,7 @@ export default function Task({
                   delay={500}
                 >
                   <Checkbox
+                    id={`task-completed${task.localId}`}
                     checked={formInput.status === 'closed'}
                     onChange={(e) => { handleCheck(e); taskHasBeenCompleted(); }}
                     inputProps={{ 'aria-label': 'controlled' }}

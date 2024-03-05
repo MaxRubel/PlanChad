@@ -65,3 +65,33 @@ export const deleteTaskToolTip = (
     Delete this Task
   </Tooltip>
 );
+
+export const deleteCollabTT = (
+  <Tooltip id="deleteCollaborator">
+    Delete This Collaborator
+  </Tooltip>
+);
+
+export const editCollabTT = (
+  <Tooltip id="editCollabTT">
+    Edit This Collaborator
+  </Tooltip>
+);
+
+export const viewCollabDeetsTT = (
+  <Tooltip id="viewCollabDeets">
+    View Collaborator Details
+  </Tooltip>
+);
+
+export const removeFromProjTT = (
+  <Tooltip id="viewCollabDeets">
+    Remove From This Project
+  </Tooltip>
+);
+
+export const removeFromTaskTT = (
+  <Tooltip id="viewCollabDeets">
+    Remove From This Task
+  </Tooltip>
+);
