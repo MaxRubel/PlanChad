@@ -36,7 +36,7 @@ export default function CollabCardForTask({
 
   const removeFromTask = () => {
     const itemToRemove = taskCollabJoins.find((item) => item.collabId === collab.collabId
-    && item.taskId === taskId);
+      && item.taskId === taskId);
     deleteTaskCollab(itemToRemove.taskCollabId).then(() => {
       deleteFromCollabManager(itemToRemove.taskCollabId, 'taskCollabJoin');
     });
@@ -48,7 +48,7 @@ export default function CollabCardForTask({
 
   return (
     <div className="card" style={{ margin: '1% 0%' }}>
-      <div className="card-body" style={{ padding: '2%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+      <div className="card-body" style={{ padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 
         <div id="col1">
           <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>

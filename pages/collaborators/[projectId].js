@@ -17,7 +17,7 @@ export default function ManageCollaboratorsPage() {
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
   const { sendToServer } = useSaveContext();
-  const { updateCollaborator, setUpdateCollab } = useCollabContext();
+  const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
 
   useEffect(() => {
     sendToServer();
@@ -50,9 +50,14 @@ export default function ManageCollaboratorsPage() {
     setModalShow((preVal) => false);
   };
 
+  const handleSearch = (e) => {
+    const { value } = e.target;
+    updateSearchInput(value);
+  };
+
   return (
     <>
-      <div id="project-top-bar" style={{ marginBottom: '3%' }}>
+      <div id="project-top-bar" style={{ marginBottom: '2%' }}>
         <button
           id="saveButton"
           type="button"
@@ -71,8 +76,20 @@ export default function ManageCollaboratorsPage() {
         >
           ADD A COLLABORATOR
         </button>
+        <div
+          id="inputControl"
+          style={{
+            flex: '1', marginBottom: '8px', marginTop: '-8px',
+          }}
+        >
+          <input
+            className="form-control"
+            placeholder="Search collaborators..."
+            onChange={handleSearch}
+            style={{ backgroundColor: 'rgb(225, 225, 225)' }}
+          />
+        </div>
       </div>
-      {/* <AddCollabForm refreshAllColabs={refreshAllColabs} /> */}
       <AddCollabForm2
         show={modalShow}
         handleClose={handleClose}
@@ -85,7 +102,7 @@ export default function ManageCollaboratorsPage() {
           display: 'flex',
           flexDirection: 'row',
           gap: '3%',
-          margin: '3% 0%',
+          // margin: '1% 0%',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'rgb(180, 180, 180, .4)',

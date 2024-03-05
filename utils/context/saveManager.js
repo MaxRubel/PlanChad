@@ -27,6 +27,7 @@ export const SaveContextProvider = ({ children }) => {
   const [singleProjectRunning, setSingleProjectRunning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [sendThisArray, setSendThisArray] = useState(null);
+  const [isFetchingProjects, setIsFetchingProjects] = useState(true);
 
   useEffect(() => {
     if (user && !projectsLoaded) { // load in all user project data when page first loads
@@ -45,6 +46,7 @@ export const SaveContextProvider = ({ children }) => {
             }
           }
           setAllTasks((preVal) => allTasksArr);
+          setIsFetchingProjects((preVal) => false);
         });
     }
   }, [user]);
@@ -251,6 +253,7 @@ export const SaveContextProvider = ({ children }) => {
       isSaving,
       hideCompletedTasks,
       sendThisArray,
+      isFetchingProjects,
     }}
     >
       {children}

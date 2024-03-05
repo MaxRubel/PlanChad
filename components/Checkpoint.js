@@ -255,8 +255,8 @@ export default function Checkpoint({
                   overlay={formInput.expanded ? collapseToolTip : expandTooltip}
                   trigger={['hover', 'focus']}
                   delay={500}
-                  // // defaultShow={1000}
-                  >
+                // // defaultShow={1000}
+                >
                   <button
                     type="button"
                     onClick={handleCollapse}
@@ -306,7 +306,7 @@ export default function Checkpoint({
                 name="name"
                 onChange={handleChange}
                 autoComplete="off"
-                  />
+              />
             </div>
             <div
               className="verticalCenter"
@@ -328,7 +328,7 @@ export default function Checkpoint({
                     width: '35px',
                     height: '35px',
                   }}
-                  >{trashIcon}
+                >{trashIcon}
                 </button>
               </OverlayTrigger>
             </div>

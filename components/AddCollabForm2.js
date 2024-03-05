@@ -69,6 +69,7 @@ export default function AddCollabForm2(props) {
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
+                style={{ backgroundColor: 'rgb(225, 225, 225)' }}
                 value={formInput.name}
                 onChange={handleChange}
                 name="name"
@@ -80,6 +81,7 @@ export default function AddCollabForm2(props) {
               <Form.Label>Phone</Form.Label>
               <Form.Control
                 type="phone"
+                style={{ backgroundColor: 'rgb(225, 225, 225)' }}
                 value={formInput.phone}
                 onChange={handleChange}
                 name="phone"
@@ -91,6 +93,7 @@ export default function AddCollabForm2(props) {
               <Form.Label>Phone</Form.Label>
               <Form.Control
                 type="email"
+                style={{ backgroundColor: 'rgb(225, 225, 225)' }}
                 value={formInput.email}
                 onChange={handleChange}
                 name="email"
@@ -104,6 +107,7 @@ export default function AddCollabForm2(props) {
               <Form.Label>Notes</Form.Label>
               <Form.Control
                 as="textarea"
+                style={{ backgroundColor: 'rgb(225, 225, 225)' }}
                 rows={3}
                 value={formInput.notes}
                 onChange={handleChange}
