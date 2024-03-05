@@ -108,6 +108,7 @@ body {
   min-width: 129.29px;
 }
 
+
 .icon-down {
   transform: rotate(90deg);
   transition: all ease .5s;
@@ -235,9 +236,4 @@ body {
 
 .arrowClosed {
   transition: all 1s ease;
-}
-
-.modal-header{
-  display: flex !important;
-  text-align: center !important;
 }

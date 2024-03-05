@@ -63,11 +63,31 @@ export default function ViewTaskCollabs({
 
   return (
     <>
-      <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
+      <div
+        className="card"
+        style={{
+          // backgroundColor: 'rgb(31, 31, 31)',
+          // color: 'rgb(204,204,204)',
+          width: '47%',
+        }}
+      >
         <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
-          <div> Assigned to Task:</div>
+          <div style={{ marginBottom: '2%' }}> Assigned to Task:</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
-            <Form.Select name="tasks" id="tasks" className="form-control" onChange={handleChange}>
+            <Form.Select
+              style={{
+                // backgroundColor: 'rgb(31, 31, 31)',
+                // color: 'rgb(204,204,204)',
+                // border: '1px solid rgb(204,204,204, .3)',
+              }}
+              name="tasks"
+              id="tasks"
+              className="form-control shadow-none"
+              onChange={handleChange}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'none';
+              }}
+            >
               {tasks.map((task, index) => (
                 <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}`}</option>
               ))}

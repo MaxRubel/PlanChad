@@ -7,7 +7,7 @@ import {
 } from '../api/projCollab';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
-import { downArrow, plusIconSmol } from '../public/icons';
+import { plusIconSmol } from '../public/icons';
 import { deleteTaskCollab } from '../api/taskCollab';
 
 export default function CollabCard({

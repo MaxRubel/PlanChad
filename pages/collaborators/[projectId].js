@@ -6,6 +6,7 @@ import ViewTaskCollabs from '../../components/ViewTaskCollabs';
 import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/AddCollabForm2';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -16,10 +17,17 @@ export default function ManageCollaboratorsPage() {
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
   const { sendToServer } = useSaveContext();
+  const { updateCollaborator, setUpdateCollab } = useCollabContext();
 
   useEffect(() => {
     sendToServer();
   }, []);
+
+  useEffect(() => {
+    if (updateCollaborator) {
+      setModalShow((preVal) => true);
+    }
+  }, [updateCollaborator]);
 
   const refreshAllColabs = () => {
     setRefreshAllCs((prevVal) => prevVal + 1);
@@ -37,6 +45,11 @@ export default function ManageCollaboratorsPage() {
     setTaskToAssign((preVal) => value);
   };
 
+  const handleClose = () => {
+    setUpdateCollab(null);
+    setModalShow((preVal) => false);
+  };
+
   return (
     <>
       <div id="project-top-bar" style={{ marginBottom: '3%' }}>
@@ -50,7 +63,7 @@ export default function ManageCollaboratorsPage() {
           BACK TO PROJECT
         </button>
         <button
-          id="saveButton"
+          id="showModal"
           type="button"
           className="clearButton"
           style={{ color: 'rgb(200, 200, 200)' }}
@@ -62,7 +75,8 @@ export default function ManageCollaboratorsPage() {
       {/* <AddCollabForm refreshAllColabs={refreshAllColabs} /> */}
       <AddCollabForm2
         show={modalShow}
-        onHide={() => setModalShow(false)}
+        handleClose={handleClose}
+        onHide={() => setModalShow((preVal) => false)}
       />
       <div
         id="row1"

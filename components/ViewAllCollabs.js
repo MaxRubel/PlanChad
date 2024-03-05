@@ -23,13 +23,28 @@ export default function ViewAllCollabs({
   }, [allCollabs]);
 
   return (
-    <div className="card text-bg-info mb-3" style={{ paddingBottom: '16px', height: '45vh', width: '100%' }}>
-      <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
+    <div
+      className="card"
+      style={{
+        // backgroundColor: 'rgb(31, 31, 31)',
+        // color: 'rgb(204,204,204)',
+        paddingBottom: '16px',
+        height: '45vh',
+        width: '100%',
+        // border: 'none',
+      }}
+    >
+      <div
+        className="card-header"
+        style={{
+          fontSize: '22px', textAlign: 'center', fontWeight: '600',
+        }}
+      >
         All Collaborators
       </div>
       <div className="card-body" style={{ overflow: 'auto' }}>
         <div className="card">
-          <div className="card-body">
+          <div className="card-body" style={{ border: 'none' }}>
             {collabs.length === 0 ? (
               <div>There are no collaborators...</div>
             ) : (
