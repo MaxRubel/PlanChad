@@ -6,7 +6,7 @@
 /* eslint-disable react/jsx-closing-bracket-location */
 // import Checkbox from '@mui/material/Checkbox';
 import { useState, useEffect } from 'react';
-import { Collapse, Button as ButtonBoot, OverlayTrigger } from 'react-bootstrap';
+import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
 import { Reorder } from 'framer-motion';
 import { trashIcon } from '../public/icons';
@@ -17,6 +17,7 @@ import {
 } from './toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
+import DeleteCheckpointModal from './modals/DeleteCheckpoint';
 
 export default function Checkpoint({
   checkP,
@@ -39,6 +40,7 @@ export default function Checkpoint({
     startDate: '',
     deadline: '',
     index: '',
+    fresh: true,
   });
 
   const {
@@ -50,6 +52,7 @@ export default function Checkpoint({
   const [tasks, setTasks] = useState([]);
   const [taskCompleted, setTaskCompleted] = useState(0);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const downIcon = (
     <svg
@@ -180,7 +183,14 @@ export default function Checkpoint({
     setCheckPrefresh((prevVal) => prevVal + 1);
   };
 
+  const handleFresh = () => {
+    if (formInput.fresh) {
+      setFormInput((preVal) => ({ ...preVal, fresh: false }));
+    }
+  };
+
   const handleChange = (e) => {
+    handleFresh();
     const { name, value } = e.target;
     setFormInput((prevVal) => ({ ...prevVal, [name]: value }));
   };
@@ -223,9 +233,16 @@ export default function Checkpoint({
         handleRefresh();
       });
   };
+  const handleOpenModal = () => {
+    setOpenDeleteModal((prevVal) => true);
+  };
+  const handleCloseModal = () => {
+    setOpenDeleteModal((prevVal) => false);
+  };
 
   const addTask = () => {
     dance();
+    handleFresh();
     const emptyTask = {
       checkpointId: checkP.localId,
       projectId: checkP.projectId,
@@ -249,6 +266,7 @@ export default function Checkpoint({
 
   return (
     <>
+      <DeleteCheckpointModal handleDelete={handleDelete} closeModal={handleCloseModal} show={openDeleteModal} />
       <div className="checkpoint">
         {/* -------line-side------------- */}
         <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
@@ -338,7 +356,7 @@ export default function Checkpoint({
               <OverlayTrigger placement="top" overlay={deleteSegment}>
                 <button
                   type="button"
-                  onClick={handleDelete}
+                  onClick={formInput.fresh ? handleDelete : handleOpenModal}
                   style={{
                     paddingBottom: '4px',
                     color: 'black',

@@ -5,7 +5,7 @@ import ViewProjCollabs from '../../components/ViewProjCollabs';
 import ViewTaskCollabs from '../../components/ViewTaskCollabs';
 import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
-import AddCollabForm2 from '../../components/AddCollabForm2';
+import AddCollabForm2 from '../../components/modals/AddCollabForm2';
 import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function ManageCollaboratorsPage() {

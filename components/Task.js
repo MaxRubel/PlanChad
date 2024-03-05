@@ -19,6 +19,7 @@ import {
 } from './toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
+import DeleteTaskModal from './modals/DeleteTask';
 
 const initialState = {
   localId: true,
@@ -35,6 +36,7 @@ const initialState = {
   expanded: false,
   deetsExpanded: false,
   collabsExpanded: false,
+  fresh: true,
 };
 
 export default function Task({
@@ -45,7 +47,7 @@ export default function Task({
   taskHasBeenCompleted,
 }) {
   const [formInput, setFormInput] = useState(initialState);
-  const [hasChanged, setHasChanged] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
@@ -82,13 +84,8 @@ export default function Task({
     addToSaveManager(formInput, 'update', 'task');
   }, [formInput]);
 
-  const handleFreshness = () => {
-    if (formInput.fresh) {
-      setFormInput((prevVal) => ({ ...prevVal, fresh: false }));
-    }
-    if (!hasChanged) {
-      setHasChanged((prevVal) => !prevVal);
-    }
+  const handleFresh = () => {
+    setFormInput((preVal) => ({ ...preVal, fresh: false }));
   };
 
   useEffect(() => { // minimze task
@@ -96,22 +93,19 @@ export default function Task({
       setFormInput((prevVal) => ({
         ...prevVal, expanded: false, deetsExpanded: false,
       }));
-      setHasChanged((prevVal) => true);
     }
   }, [min]);
 
   const handleCollapse = () => { // collapse main details
-    handleFreshness();
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
   const handleCollapse2 = () => { // collapse extra details
-    handleFreshness();
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
   };
 
   const handleChange = (e) => {
-    handleFreshness();
+    handleFresh();
     const { name, value } = e.target;
     setFormInput((prevVal) => ({
       ...prevVal,
@@ -120,6 +114,7 @@ export default function Task({
   };
 
   const handleCheck = (e) => {
+    handleFresh();
     const { checked } = e.target;
     setFormInput((prevVal) => ({
       ...prevVal,
@@ -144,11 +139,20 @@ export default function Task({
     refreshCheckP();
   };
 
+  const handleOpenModal = () => {
+    setOpenDeleteModal((preVal) => true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenDeleteModal((prevVal) => false);
+  };
+
   if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
     return (<div style={{ display: 'none' }} />);
   }
   return (
     <>
+      <DeleteTaskModal show={openDeleteModal} handleDelete={handleDelete} closeModal={handleCloseModal} />
       <div className="task">
         {/* -------line-side------------- */}
         <div
@@ -302,7 +306,7 @@ export default function Task({
               >
                 <button
                   type="button"
-                  onClick={handleDelete}
+                  onClick={formInput.fresh ? handleDelete : handleOpenModal}
                   style={{
                     paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
                   }}>

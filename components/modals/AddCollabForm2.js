@@ -3,9 +3,9 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import { useAuth } from '../utils/context/authContext';
-import { useCollabContext } from '../utils/context/collabContext';
-import { createNewCollab, updateCollab } from '../api/collabs';
+import { useAuth } from '../../utils/context/authContext';
+import { useCollabContext } from '../../utils/context/collabContext';
+import { createNewCollab, updateCollab } from '../../api/collabs';
 
 const initialState = {
   name: '',
