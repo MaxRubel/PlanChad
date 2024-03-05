@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import AddCollabForm from '../../components/AddCollabForm';
 import ViewAllCollabs from '../../components/ViewAllCollabs';
 import ViewProjCollabs from '../../components/ViewProjCollabs';
 import ViewTaskCollabs from '../../components/ViewTaskCollabs';
 import { useSaveContext } from '../../utils/context/saveManager';
+import { rightArrowWhite } from '../../public/icons';
+import AddCollabForm2 from '../../components/AddCollabForm2';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function ManageCollaboratorsPage() {
   const [refreshProjCs, setRefreshProjCs] = useState(0);
   const [projectToAssign, setProjectToAssign] = useState('');
   const [taskToAssign, setTaskToAssign] = useState('');
+  const [modalShow, setModalShow] = useState(false);
   const { sendToServer } = useSaveContext();
 
   useEffect(() => {
@@ -47,9 +49,21 @@ export default function ManageCollaboratorsPage() {
         >
           BACK TO PROJECT
         </button>
+        <button
+          id="saveButton"
+          type="button"
+          className="clearButton"
+          style={{ color: 'rgb(200, 200, 200)' }}
+          onClick={() => setModalShow(true)}
+        >
+          ADD A COLLABORATOR
+        </button>
       </div>
-
-      <AddCollabForm refreshAllColabs={refreshAllColabs} />
+      {/* <AddCollabForm refreshAllColabs={refreshAllColabs} /> */}
+      <AddCollabForm2
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
       <div
         id="row1"
         style={{
@@ -74,7 +88,7 @@ export default function ManageCollaboratorsPage() {
       </div>
       <div
         id="twoTableRow"
-        style={{ display: 'flex', justifyContent: 'center', gap: '3%' }}
+        style={{ display: 'flex', justifyContent: 'space-between', gap: '2%' }}
       >
         <ViewProjCollabs
           projectId={projectId}
@@ -84,6 +98,9 @@ export default function ManageCollaboratorsPage() {
           taskToAssign={taskToAssign}
           projectToAssign={projectToAssign}
         />
+        <div className="verticalCenter">
+          {rightArrowWhite}
+        </div>
         <ViewTaskCollabs
           projectId={projectId}
           refreshProjCollabs={refreshProjCollabs}

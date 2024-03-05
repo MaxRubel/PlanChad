@@ -57,7 +57,7 @@ export default function ViewProjCollabs({
     setProjectToAssign((preVal) => value);
   };
   return (
-    <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
+    <div className="card text-bg-info mb-3" style={{ height: '35vh', width: '47%' }}>
       <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
         <div> Assigned to Project:</div>
         <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>

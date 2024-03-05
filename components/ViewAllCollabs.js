@@ -23,11 +23,11 @@ export default function ViewAllCollabs({
   }, [allCollabs]);
 
   return (
-    <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
+    <div className="card text-bg-info mb-3" style={{ paddingBottom: '16px', height: '45vh', width: '100%' }}>
       <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
         All Collaborators
       </div>
-      <div className="card-body">
+      <div className="card-body" style={{ overflow: 'auto' }}>
         <div className="card">
           <div className="card-body">
             {collabs.length === 0 ? (

@@ -236,3 +236,8 @@ body {
 .arrowClosed {
   transition: all 1s ease;
 }
+
+.modal-header{
+  display: flex !important;
+  text-align: center !important;
+}
