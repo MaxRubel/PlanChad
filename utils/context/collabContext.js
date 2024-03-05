@@ -22,8 +22,9 @@ const CollabContextProvider = ({ children }) => {
   const [taskCollabJoins, setTaskCollabJoins] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [updateCollaborator, setUpdateCollaborator] = useState(null);
+  const [searchInput, setSearchInput] = useState(null);
   const { user } = useAuth();
-
+  const [isFetchingCollabs, setIsFetchingCollabs] = useState(true);
   const clearCollabManager = () => {
     setAllCollabs((preVal) => []);
     setProjCollabs((preVal) => []);
@@ -47,11 +48,15 @@ const CollabContextProvider = ({ children }) => {
           });
         });
       });
+      setIsFetchingCollabs((preVal) => false);
     }
   }, [user]);
 
   const setUpdateCollab = (collabObj) => {
     setUpdateCollaborator(collabObj);
+  };
+  const updateSearchInput = (value) => {
+    setSearchInput((preVal) => value);
   };
 
   const addToCollabManager = (input, type, action) => {
@@ -122,6 +127,8 @@ const CollabContextProvider = ({ children }) => {
       loaded,
       projCollabJoins,
       taskCollabJoins,
+      updateSearchInput,
+      searchInput,
     }}
     >
       {children}

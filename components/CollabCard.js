@@ -162,7 +162,7 @@ export default function CollabCard({
       <div
         className="card-body"
         style={{
-          padding: '1%',
+          padding: '.5%',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
         }}

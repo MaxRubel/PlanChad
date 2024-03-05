@@ -1,14 +1,11 @@
 import React from 'react';
 
-import {
-  Spinner,
-} from 'react-bootstrap';
+import { Spinner } from 'react-bootstrap';
 
 export default function Loading() {
   return (
-    <div className="text-center mt-5">
+    <div style={{ height: '75vh', width: '100wh' }} className="fullCenter">
       <Spinner
-        animation="border"
         style={{
           color: '#00BF67',
           width: '100px',

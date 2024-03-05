@@ -18,7 +18,7 @@ export default function BigDaddyProject({ projectId }) {
   const [refresh, setRefresh] = useState(0);
   const [isLoading, setIsloading] = useState(true);
   const [progressIsShowing, setProgressIsShowing] = useState(false);
-  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(false);
+  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [refreshTasks, setRefreshTasks] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [checkPBeingDragged, setcheckPBeingDragged] = useState(null);
@@ -54,6 +54,8 @@ export default function BigDaddyProject({ projectId }) {
         setCheckpoints(checkpointsSorted);
       } else {
         setProject((preVal) => saveInput.project);
+
+        setHideCompletedTasksChild((preVal) => saveInput.project.hideCompletedTasks);
         const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints((preVal) => checkpointsSorted);
       }
@@ -140,7 +142,6 @@ export default function BigDaddyProject({ projectId }) {
 
   return (
     <>
-
       <div className="bigDad">
         <div id="project-container" style={{}}>
           <div id="project-top-bar" style={{ marginBottom: '3%' }}>
@@ -177,15 +178,17 @@ export default function BigDaddyProject({ projectId }) {
               MANAGE COLLABORATORS
             </button>
           </div>
-          <ProjectCard
-            save={save}
-            min={min}
-            minAll={minAll}
-            project={project}
-            progressIsShowing={progressIsShowing}
-            hideCompletedTasksChild={hideCompletedTasksChild}
-            tellProjectIfProgressShowing={tellProjectIfProgressShowing}
-          />
+          <div id="projectCard-container" className="fullCenter">
+            <ProjectCard
+              save={save}
+              min={min}
+              minAll={minAll}
+              project={project}
+              progressIsShowing={progressIsShowing}
+              hideCompletedTasksChild={hideCompletedTasksChild}
+              tellProjectIfProgressShowing={tellProjectIfProgressShowing}
+            />
+          </div>
           <div
             id="add-checkpt-button"
             style={{

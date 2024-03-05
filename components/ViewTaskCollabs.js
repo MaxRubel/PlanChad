@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { useSaveContext } from '../utils/context/saveManager';
 import CollabCardForTask from './CollabCardForTask';
@@ -17,10 +17,11 @@ export default function ViewTaskCollabs({
     saveInput,
     allTasks,
   } = useSaveContext();
-  const { taskCollabJoins, allCollabs } = useCollabContext();
+  const { taskCollabJoins, allCollabs, searchInput } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [taskId, setTaskId] = useState(null);
+  const OGCollabsOfTask = useRef([]);
 
   useEffect(() => {
     setCollabsOfTask((preVal) => []);
@@ -31,6 +32,7 @@ export default function ViewTaskCollabs({
       theseCollabs.push(collab);
     }
     setCollabsOfTask((preVal) => theseCollabs);
+    OGCollabsOfTask.current = theseCollabs;
   }, [taskCollabJoins, allCollabs, taskId]);
 
   useEffect(() => {
@@ -38,6 +40,17 @@ export default function ViewTaskCollabs({
     setTaskToAssignChild(val);
     setTaskId(((preVal) => val));
   }, [tasks]);
+
+  useEffect(() => {
+    if (searchInput) {
+      const collabsCopy = [...OGCollabsOfTask.current];
+      const searchResult = collabsCopy
+        .filter((item) => item.name.toLowerCase().includes(searchInput.toLowerCase()));
+      setCollabsOfTask((preVal) => searchResult);
+    } else {
+      setCollabsOfTask((preVal) => OGCollabsOfTask.current);
+    }
+  }, [searchInput]);
 
   const handleChange = (e) => {
     const { value } = e.target;
@@ -64,21 +77,25 @@ export default function ViewTaskCollabs({
   return (
     <>
       <div
-        className="card"
+        className="card text-bg-dark mb-3"
         style={{
-          // backgroundColor: 'rgb(31, 31, 31)',
-          // color: 'rgb(204,204,204)',
           width: '47%',
         }}
       >
-        <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
-          <div style={{ marginBottom: '2%' }}> Assigned to Task:</div>
+        <div
+          className="card-header"
+          style={{
+            color: 'rgb(200, 200, 200)',
+            fontSize: '22px',
+            textAlign: 'center',
+            fontWeight: '600',
+          }}
+        >
+          <div style={{ marginBottom: '2%' }}>Task</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
             <Form.Select
               style={{
-                // backgroundColor: 'rgb(31, 31, 31)',
-                // color: 'rgb(204,204,204)',
-                // border: '1px solid rgb(204,204,204, .3)',
+                backgroundColor: 'rgb(225, 225, 225)',
               }}
               name="tasks"
               id="tasks"
@@ -96,7 +113,13 @@ export default function ViewTaskCollabs({
         </div>
         <div className="card-body">
           <div className="card">
-            <div className="card-body">
+            <div
+              className="card-body"
+              style={{
+                height: '30vh',
+                overflow: 'auto',
+              }}
+            >
               {collabsOfTask.length === 0 ? (
                 'No one is assigned to this task...'
               ) : (

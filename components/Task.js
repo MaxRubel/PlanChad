@@ -147,7 +147,7 @@ export default function Task({
           <div
             id="line"
             style={{
-              borderLeft: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+              borderLeft: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(241, 146, 54, .5)',
               transition: '1.5s all ease',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
@@ -199,7 +199,7 @@ export default function Task({
                   overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
                   trigger={['hover', 'focus']}
                   delay={500}
-                  >
+                >
                   <button
                     type="button"
                     onClick={handleCollapse}
@@ -220,7 +220,7 @@ export default function Task({
                   overlay={viewTaskDeetsToolTip}
                   trigger={['hover', 'focus']}
                   delay={500}
-                  >
+                >
                   <button
                     type="button"
                     onClick={handleCollapse2}
@@ -244,14 +244,14 @@ export default function Task({
                   overlay={closeTaskToolTip}
                   trigger={['hover', 'focus']}
                   delay={500}
-                  >
+                >
                   <Checkbox
                     checked={formInput.status === 'closed'}
                     onChange={(e) => { handleCheck(e); taskHasBeenCompleted(); }}
                     inputProps={{ 'aria-label': 'controlled' }}
                     size="medium"
                     style={{ color: 'black', height: '35px', marginLeft: '7px' }}
-                />
+                  />
                 </OverlayTrigger>
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function Task({
                 overlay={deleteTaskToolTip}
                 trigger={['hover', 'focus']}
                 delay={500}
-                  >
+              >
                 <button
                   type="button"
                   onClick={handleDelete}

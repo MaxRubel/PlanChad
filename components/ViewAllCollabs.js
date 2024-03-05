@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../utils/context/authContext';
 import { getCollabsOfUser } from '../api/collabs';
 import CollabCard from './CollabCard';
@@ -10,34 +10,44 @@ export default function ViewAllCollabs({
 }) {
   const [collabs, setCollabs] = useState([]);
   const { user } = useAuth();
-  const { allCollabs } = useCollabContext();
-
-  useEffect(() => {
-    getCollabsOfUser(user.uid).then((data) => {
-      setCollabs(data);
-    });
-  }, [refreshAllCs, user.uid]);
+  const { allCollabs, searchInput } = useCollabContext();
+  const originalCollabs = useRef([]);
 
   useEffect(() => {
     setCollabs(allCollabs);
+    originalCollabs.current = allCollabs;
   }, [allCollabs]);
+
+  useEffect(() => {
+    if (searchInput) {
+      const collabsCopy = [...originalCollabs.current];
+      const searchResult = collabsCopy
+        .filter((item) => item.name.toLowerCase().includes(searchInput.toLowerCase()));
+      setCollabs(searchResult);
+    } else {
+      setCollabs(originalCollabs.current);
+    }
+  }, [searchInput]);
 
   return (
     <div
-      className="card"
+      className="card text-bg-dark mb-3"
       style={{
-        // backgroundColor: 'rgb(31, 31, 31)',
-        // color: 'rgb(204,204,204)',
-        paddingBottom: '16px',
+        color: 'rgb(200, 200, 200)',
+        paddingBottom: '8px',
         height: '45vh',
         width: '100%',
-        // border: 'none',
+        margin: '0px !important',
       }}
     >
       <div
         className="card-header"
         style={{
-          fontSize: '22px', textAlign: 'center', fontWeight: '600',
+          color: 'rgb(200, 200, 200)',
+          fontSize: '22px',
+          textAlign: 'center',
+          fontWeight: '600',
+          borderBottom: '1px solid rgb(84, 84, 84)',
         }}
       >
         All Collaborators

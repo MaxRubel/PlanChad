@@ -120,7 +120,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
 
   return (
     <div className="card" style={{ margin: '1% 0%' }}>
-      <div className="card-body" style={{ padding: '2%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+      <div className="card-body" style={{ padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 
         <div id="col1">
           <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>

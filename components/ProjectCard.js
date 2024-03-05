@@ -71,7 +71,7 @@ export default function ProjectCard({
 
   return (
     // -----------------card--header----------------
-    <div className="card text-bg-info mb-3">
+    <div className="card text-bg-info mb-3" style={{ width: '100%' }}>
       <div
         className="card-header"
         style={{
