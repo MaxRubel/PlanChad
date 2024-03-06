@@ -11,7 +11,8 @@ import { firebase } from '../client';
 
 const AuthContext = createContext();
 
-AuthContext.displayName = 'AuthContext'; // Context object accepts a displayName string property. React DevTools uses this string to determine what to display for the context. https://reactjs.org/docs/context.html#contextdisplayname
+AuthContext.displayName = 'AuthContext';
+// Context object accepts a displayName string property. React DevTools uses this string to determine what to display for the context. https://reactjs.org/docs/context.html#contextdisplayname
 
 const AuthProvider = (props) => {
   const [user, setUser] = useState(null);

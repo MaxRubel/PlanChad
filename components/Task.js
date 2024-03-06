@@ -1,12 +1,7 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable jsx-a11y/label-has-for */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/jsx-closing-bracket-location */
-
 import { useState, useEffect } from 'react';
-import { Collapse, Button as ButtonBoot, OverlayTrigger } from 'react-bootstrap';
+import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
+import PropTypes from 'prop-types';
 import { trashIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -22,7 +17,7 @@ import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteTaskModal from './modals/DeleteTask';
 
 const initialState = {
-  localId: true,
+  localId: '',
   name: '',
   startDate: '',
   deadline: '',
@@ -37,14 +32,11 @@ const initialState = {
   deetsExpanded: false,
   collabsExpanded: false,
   fresh: true,
+  planning: '',
 };
 
 export default function Task({
-  task,
-  min,
-  refreshCheckP,
-  indexT,
-  taskHasBeenCompleted,
+  task, min, refreshCheckP, indexT,
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -56,10 +48,12 @@ export default function Task({
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
       xmlns="http://www.w3.org/2000/svg"
       height="16px"
-      viewBox="0 0 320 512">
+      viewBox="0 0 320 512"
+    >
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5
       0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9
-      0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
+      0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
+      />
     </svg>
   );
 
@@ -70,9 +64,11 @@ export default function Task({
       height="16"
       fill="currentColor"
       className="bi bi-search"
-      viewBox="0 0 16 16">
+      viewBox="0 0 16 16"
+    >
       <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85
-      3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+      3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+      />
     </svg>
   );
 
@@ -160,7 +156,8 @@ export default function Task({
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-          }}>
+          }}
+        >
           <div id="empty" />
           <div
             id="line"
@@ -169,13 +166,15 @@ export default function Task({
               transition: '1.5s all ease',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
-            }}>
+            }}
+          >
             <div
               id="empty"
               style={{
                 transition: '1.5s all ease',
                 borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
-              }} />
+              }}
+            />
             <div />
           </div>
         </div>
@@ -185,7 +184,8 @@ export default function Task({
             style={{
               transition: '1.5s all ease',
               borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
-            }} />
+            }}
+          />
           <div id="bottom-div" />
         </div>
         {/* -----------card---------------------- */}
@@ -196,7 +196,8 @@ export default function Task({
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
             transition: '1.5s all ease',
             minWidth: '516px',
-          }}>
+          }}
+        >
           <div
             className="card-header 2"
             style={{
@@ -204,14 +205,16 @@ export default function Task({
               alignContent: 'center',
               height: '53px',
               border: !formInput.expanded ? 'none' : '',
-            }}>
+            }}
+          >
             <div className="verticalCenter">
               <div
                 id="button-row"
                 className="verticalCenter"
                 style={{
                   alignItems: 'center',
-                }}>
+                }}
+              >
                 <OverlayTrigger
                   placement="top"
                   overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
@@ -229,7 +232,8 @@ export default function Task({
                       color: 'black',
                       width: '35px',
                       height: '35px',
-                    }}>
+                    }}
+                  >
                     {downIcon}
                   </button>
                 </OverlayTrigger>
@@ -253,7 +257,8 @@ export default function Task({
                       color: 'black',
                       width: '35px',
                       height: '35px',
-                    }}>
+                    }}
+                  >
                     {magGlass}
                   </button>
                 </OverlayTrigger>
@@ -266,7 +271,7 @@ export default function Task({
                   <Checkbox
                     id={`task-completed${task.localId}`}
                     checked={formInput.status === 'closed'}
-                    onChange={(e) => { handleCheck(e); taskHasBeenCompleted(); }}
+                    onChange={(e) => { handleCheck(e); }}
                     inputProps={{ 'aria-label': 'controlled' }}
                     size="medium"
                     style={{ color: 'black', height: '35px', marginLeft: '7px' }}
@@ -297,7 +302,8 @@ export default function Task({
                 alignItems: 'flex-end',
                 justifyContent: 'center',
                 paddingRight: '8%',
-              }}>
+              }}
+            >
               <OverlayTrigger
                 placement="top"
                 overlay={deleteTaskToolTip}
@@ -309,7 +315,8 @@ export default function Task({
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
                   style={{
                     paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
-                  }}>
+                  }}
+                >
                   {trashIcon}
                 </button>
               </OverlayTrigger>
@@ -321,7 +328,8 @@ export default function Task({
               <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
                 <div
                   id="row2"
-                  className="cardRow">
+                  className="cardRow"
+                >
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
                     <div className="verticalCenter">
                       <label htmlFor="deadline">Deadline:</label>
@@ -330,7 +338,8 @@ export default function Task({
                   </div>
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-                  }}>
+                  }}
+                  >
                     <input
                       className="form-control"
                       type="date"
@@ -348,7 +357,8 @@ export default function Task({
                 </div>
                 <div
                   id="row3"
-                  className="cardRow">
+                  className="cardRow"
+                >
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
                     <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
                       <label htmlFor="startDate">Start Date:</label>
@@ -357,7 +367,8 @@ export default function Task({
                   </div>
                   <div
                     className="fullCenter"
-                    style={{ paddingRight: '20%' }}>
+                    style={{ paddingRight: '20%' }}
+                  >
                     <input
                       id="startDate"
                       className="form-control"
@@ -369,7 +380,8 @@ export default function Task({
                         backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                         border: 'none',
                         transition: '1.5s all ease',
-                      }} />
+                      }}
+                    />
                   </div>
                 </div>
               </div>
@@ -381,7 +393,8 @@ export default function Task({
                   padding: '2% 10%',
                   display: 'flex',
                   flexDirection: 'column',
-                }}>
+                }}
+              >
                 <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
                   <label htmlFor={`description${task.localId}`} className="form-label" style={{ textAlign: 'center' }}>
                     Description:
@@ -400,7 +413,8 @@ export default function Task({
                     transition: '1.5s all ease',
                     border: 'none',
                     minWidth: '250px',
-                  }} />
+                  }}
+                />
               </div>
             </div>
           </Collapse>
@@ -408,14 +422,25 @@ export default function Task({
         {/* -----add-a-task------ */}
         <div className="marginR" />
       </div>
-
       <TaskDeets
         formInput={formInput}
         handleChange={handleChange}
         taskId={task.localId}
         saveCollabsExpand={saveCollabsExpand}
       />
-
     </>
   );
 }
+
+Task.propTypes = {
+  task: PropTypes.shape({
+    localId: PropTypes.string.isRequired,
+    progressIsShowing: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.oneOf([undefined]),
+    ]),
+  }).isRequired,
+  min: PropTypes.number.isRequired,
+  refreshCheckP: PropTypes.func.isRequired,
+  indexT: PropTypes.number.isRequired,
+};

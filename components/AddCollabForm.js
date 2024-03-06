@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Collapse } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { Button, Checkbox, FormControlLabel } from '@mui/material';

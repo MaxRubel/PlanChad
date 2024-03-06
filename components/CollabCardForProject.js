@@ -1,6 +1,6 @@
-/* eslint-disable react/prop-types */
 import { Collapse, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { deleteProjCollab } from '../api/projCollab';
 import { useCollabContext } from '../utils/context/collabContext';
 import { useAuth } from '../utils/context/authContext';
@@ -188,3 +188,15 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
     </>
   );
 }
+
+CollabCardforProject.propTypes = {
+  collab: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    collabId: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    notes: PropTypes.string.isRequired,
+  }).isRequired,
+  taskToAssign: PropTypes.string.isRequired,
+  projectToAssign: PropTypes.string.isRequired,
+};

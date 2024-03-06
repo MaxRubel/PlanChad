@@ -1,12 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-closing-bracket-location */
-/* eslint-disable react/prop-types */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { useState, useEffect } from 'react';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
-import { Reorder, m } from 'framer-motion';
+import { Reorder } from 'framer-motion';
+import PropTypes from 'prop-types';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -14,14 +11,10 @@ import { useSaveContext } from '../utils/context/saveManager';
 export default function BigDaddyProject({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
-  const [save, setSave] = useState(0);
   const [refresh, setRefresh] = useState(0);
-  const [isLoading, setIsloading] = useState(true);
   const [progressIsShowing, setProgressIsShowing] = useState(false);
   const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
-  const [refreshTasks, setRefreshTasks] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [checkPBeingDragged, setcheckPBeingDragged] = useState(null);
 
   const {
     addToSaveManager,
@@ -95,6 +88,9 @@ export default function BigDaddyProject({ projectId }) {
         saveButton.style.color = 'rgb(200, 200, 200)';
       }, 1000);
     }
+    return () => {
+      clearTimeout(saveColorChange);
+    };
   }, [isSaving]);
 
   const addCheckpoint = () => {
@@ -150,7 +146,8 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={sendToServer}>
+              onClick={sendToServer}
+            >
               SAVE
             </button>
             <Dropdown
@@ -174,13 +171,13 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { router.push(`/collaborators/${projectId}`); }}>
+              onClick={() => { router.push(`/collaborators/${projectId}`); }}
+            >
               MANAGE COLLABORATORS
             </button>
           </div>
           <div id="projectCard-container" className="fullCenter">
             <ProjectCard
-              save={save}
               min={min}
               minAll={minAll}
               project={project}
@@ -197,8 +194,8 @@ export default function BigDaddyProject({ projectId }) {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-            }}>
-
+            }}
+          >
             <button
               type="button"
               className="btn btn-outline-secondary"
@@ -207,7 +204,8 @@ export default function BigDaddyProject({ projectId }) {
                 margin: '1% 0%',
                 color: 'rgb(200, 200, 200)',
                 border: '1px solid rgb(100, 100, 100)',
-              }}>
+              }}
+            >
               Add A Segment
             </button>
           </div>
@@ -217,7 +215,8 @@ export default function BigDaddyProject({ projectId }) {
               as="div"
               axis="y"
               values={checkpoints}
-              onReorder={reOrderCheckPoints}>
+              onReorder={reOrderCheckPoints}
+            >
               <div>
                 {checkpoints.map((checkP, index) => (
                   <Reorder.Item
@@ -225,30 +224,30 @@ export default function BigDaddyProject({ projectId }) {
                     key={checkP.localId}
                     value={checkP}
                     style={{ cursor: 'grab' }}
-                    onDragStart={handleDragStart}>
+                    onDragStart={handleDragStart}
+                  >
                     <Checkpoint
-                      refreshTasks={refreshTasks}
                       key={checkP.localId}
                       checkP={checkP}
                       handleRefresh={handleRefresh}
-                      save={save}
                       minAll={minAll}
                       min={min}
                       index={index}
                       refresh={refresh}
-                      isLoading={isLoading}
                       progressIsShowing={progressIsShowing}
                       isDragging={isDragging}
-                      checkPBeingDragged={checkPBeingDragged}
                     />
                   </Reorder.Item>
                 ))}
               </div>
             </Reorder.Group>
-
           </div>
         </div>
       </div>
     </>
   );
 }
+
+BigDaddyProject.propTypes = {
+  projectId: PropTypes.string.isRequired,
+};

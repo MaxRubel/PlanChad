@@ -1,9 +1,6 @@
 import React, {
   createContext, useState, useContext, useEffect,
 } from 'react';
-// import { getCollapseUtilityClass } from '@mui/material';
-import { fetchProjectCollabs } from '../fetchAll';
-// import { useSaveContext } from './saveManager';
 import { useAuth } from './authContext';
 import { getCollabsOfUser } from '../../api/collabs';
 import { getProjCollabsOfUser } from '../../api/projCollab';
@@ -17,7 +14,6 @@ export const useCollabContext = () => useContext(CollabContext);
 const CollabContextProvider = ({ children }) => {
   const [allCollabs, setAllCollabs] = useState([]);
   const [projCollabs, setProjCollabs] = useState([]);
-  const [taskCollabs, setTaskCollabs] = useState([]);
   const [projCollabJoins, setProjCollabJoins] = useState([]);
   const [taskCollabJoins, setTaskCollabJoins] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -25,6 +21,7 @@ const CollabContextProvider = ({ children }) => {
   const [searchInput, setSearchInput] = useState(null);
   const { user } = useAuth();
   const [isFetchingCollabs, setIsFetchingCollabs] = useState(true);
+
   const clearCollabManager = () => {
     setAllCollabs((preVal) => []);
     setProjCollabs((preVal) => []);
@@ -34,7 +31,6 @@ const CollabContextProvider = ({ children }) => {
 
   useEffect(() => { // get all of the user's collabs on initial app load
     if (user && !loaded) {
-      // console.log('Grabbing user data...');
       getCollabsOfUser(user.uid).then((userCollabs) => {
         getProjCollabsOfUser(user.uid).then((userProjCollabJoins) => {
           getTaskCollabsOfUser(user.uid).then((taskCollabJoinData) => {
@@ -117,7 +113,6 @@ const CollabContextProvider = ({ children }) => {
       addToCollabManager,
       allCollabs,
       projCollabs,
-      taskCollabs,
       updateCollaborator,
       setUpdateCollab,
       deleteFromCollabManager,
@@ -126,6 +121,7 @@ const CollabContextProvider = ({ children }) => {
       taskCollabJoins,
       updateSearchInput,
       searchInput,
+      isFetchingCollabs,
     }}
     >
       {children}

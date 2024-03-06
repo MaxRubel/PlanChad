@@ -1,9 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { peopleIcon, rightArrowSmall } from '../public/icons';
+import PropTypes from 'prop-types';
+import { peopleIcon } from '../public/icons';
 import ViewTaskCollabsInProj from './ViewTaskCollabsInProj';
 import { hideCollabsToolTips, viewCollabsToolTips } from './toolTips';
 
@@ -145,3 +143,20 @@ export default function TaskDeets({
     </>
   );
 }
+
+TaskDeets.propTypes = {
+  formInput: PropTypes.shape({
+    collabsExpanded: PropTypes.bool.isRequired,
+    localId: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
+    planning: PropTypes.string.isRequired,
+    deetsExpanded: PropTypes.bool.isRequired,
+    progressIsShowing: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.oneOf([undefined]),
+    ]),
+  }).isRequired,
+  handleChange: PropTypes.func.isRequired,
+  taskId: PropTypes.string.isRequired,
+  saveCollabsExpand: PropTypes.func.isRequired,
+};

@@ -1,22 +1,12 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { useSaveContext } from '../utils/context/saveManager';
 import CollabCardForTask from './CollabCardForTask';
 import { useCollabContext } from '../utils/context/collabContext';
 
-// eslint-disable-next-line react/prop-types
-export default function ViewTaskCollabs({
-  projectId,
-  refreshProjCollabs,
-  projectToAssign,
-  setTaskToAssignChild,
-}) {
-  const {
-    saveInput,
-    allTasks,
-  } = useSaveContext();
+export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
+  const { saveInput, allTasks } = useSaveContext();
   const { taskCollabJoins, allCollabs, searchInput } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -129,7 +119,6 @@ export default function ViewTaskCollabs({
                     taskId={taskId}
                     collab={collab}
                     ofProj
-                    refreshProjCollabs={refreshProjCollabs}
                     projectId={projectId}
                   />
                 ))
@@ -141,3 +130,9 @@ export default function ViewTaskCollabs({
     </>
   );
 }
+
+ViewTaskCollabs.propTypes = {
+  projectId: PropTypes.string.isRequired,
+  projectToAssign: PropTypes.string.isRequired,
+  setTaskToAssignChild: PropTypes.func.isRequired,
+};
