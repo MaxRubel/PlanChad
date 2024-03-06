@@ -3,17 +3,9 @@ import { useAuth } from './context/authContext';
 import Loading from '../components/Loading';
 import Signin from '../components/Signin';
 import NavBar from '../components/NavBar';
-import { useSaveContext } from './context/saveManager';
-import { useCollabContext } from './context/collabContext';
 
 const ViewDirectorBasedOnUserAuthStatus = ({ component: Component, pageProps }) => {
   const { user, userLoading } = useAuth();
-  const { isFetchingProjects } = useSaveContext();
-  const { isFetchingCollabs } = useCollabContext();
-
-  console.log('userLoading: ', userLoading);
-  console.log('isFetching Collabs: ', isFetchingCollabs);
-  console.log('isFetchingProjects: ', isFetchingProjects);
 
   // if user state is null, then show loader
   if (userLoading) {
