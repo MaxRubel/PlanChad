@@ -125,7 +125,7 @@ export default function TaskDeets({
                   style={{
                     height: '100%', /* Set height to 100% */
                     border: formInput.status === 'closed' ? 'grey' : '1px solid lightgrey',
-                    backgroundColor: formInput.status === 'closed' ? 'grey' : '',
+                    backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                     transition: 'all 1.5s ease',
                   }}
                   id={`planning${taskId}`}

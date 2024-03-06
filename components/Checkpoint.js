@@ -275,11 +275,11 @@ export default function Checkpoint({
           <div
             id="line"
             style={{
-              borderLeft: '2px solid rgb(16, 197, 234, .6)',
+              borderLeft: '2px solid rgb(16, 197, 234, .4)',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
             }}>
-            <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .6)' }} />
+            <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .4)' }} />
             <div />
           </div>
         </div>
