@@ -123,6 +123,7 @@ export default function Checkpoint({
       const totalTasks = theseTasks.length;
       let closedTasks = 0;
       let closedPercentage = 0;
+
       for (let i = 0; i < totalTasks; i++) {
         if (theseTasks[i].status === 'closed') {
           closedTasks += 1;

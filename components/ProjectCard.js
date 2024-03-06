@@ -133,6 +133,32 @@ export default function ProjectCard({
                   name="client"
                   value={formInput.client}
                   onChange={handleChange}
+                  style={{
+                    backgroundColor: 'rgb(13, 195, 240)',
+                    border: 'none',
+                  }}
+                />
+              </div>
+            </div>
+            <div
+              id="row2"
+              className="cardRow">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                <div className="verticalCenter">
+                  <label htmlFor="deadline">Start Date:</label>
+                </div>
+                <div />
+              </div>
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+              }}>
+                <input
+                  className="form-control"
+                  type="date"
+                  value={formInput.start_date}
+                  onChange={handleChange}
+                  name="start_date"
+                  id="start_date"
                   style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
                 />
               </div>
