@@ -59,7 +59,7 @@ export default function NewProjectForm() {
         className="card text-bg-info mb-3"
         style={{
           minWidth: '400px',
-          boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px, rgb(51, 51, 51) 0px 0px 0px3px',
+          boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)',
           maxWidth: '600px',
           // backgroundColor: 'red',
         }}>

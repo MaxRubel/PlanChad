@@ -38,6 +38,7 @@ export default function ViewAllCollabs({
         height: '45vh',
         width: '100%',
         margin: '0px !important',
+        // boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)',
       }}
     >
       <div
@@ -47,12 +48,12 @@ export default function ViewAllCollabs({
           fontSize: '22px',
           textAlign: 'center',
           fontWeight: '600',
-          borderBottom: '1px solid rgb(84, 84, 84)',
+          // borderBottom: '1px solid rgb(84, 84, 84)',
         }}
       >
         All Collaborators
       </div>
-      <div className="card-body" style={{ overflow: 'auto' }}>
+      <div className="card-body" style={{ paddingTop: '0px', overflow: 'auto' }}>
         <div className="card">
           <div className="card-body" style={{ border: 'none' }}>
             {collabs.length === 0 ? (

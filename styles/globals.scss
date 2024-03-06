@@ -13,6 +13,8 @@
 body {
   // background-color: rgb(34, 37, 41);
   background-color: black;
+  // background: rgb(25, 0, 17);
+  // background: radial-gradient(circle, rgba(25, 0, 17, 1) 0%, rgba(0, 0, 0, 0.7693671218487395) 100%);
   // height: 100vh;
   // width: 100vw;
   transition: all var(--background1) ease;
@@ -29,14 +31,30 @@ body {
   padding: 10% 4%;
 }
 
+#__next {
+  min-height: 100vh;
+  background-color: black;
+  // background: rgb(0, 20, 28);
+  // background: linear-gradient(90deg, rgba(0, 20, 28, 1) 0%, rgba(0, 0, 0, 1) 50%, rgb(23, 10, 0) 100%);
+  // background: rgb(0, 0, 0);
+  // background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgb(17, 11, 11) 100%);
+}
+
 .bigDad {
   // display: flex;
   // flex-direction: column;
   // align-items: center;
   // justify-content: center;
   // padding: 2% 10%;
+  // background: rgb(0, 17, 25);
+  // background: linear-gradient(90deg, rgba(0, 17, 25, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(46, 0, 21, 1) 100%);
   min-width: 600px;
   padding-bottom: 50vh;
+}
+
+.card.text-bg-dark.mb-3 {
+  opacity: .9;
+  background-color: rgba(51, 51, 52, 0.3) !important;
 }
 
 .btn.btn-outline-dark.rounded-0 {
@@ -140,9 +158,13 @@ body {
 .clearButton {
   background-color: transparent;
   border: none;
-  color: rgb(140,140, 140);
+  color: rgb(140, 140, 140);
   transition: all ease 1.5s;
 }
+
+// .clearButton:hover {
+//   background-color: #1f2226;
+// }
 
 .bottomRow {
   background-color: rgb(30, 30, 30);
@@ -178,7 +200,7 @@ body {
 }
 
 .card {
-  background-color: rgb(225, 225, 225);
+  background-color: rgb(225, 225, 225, .95);
 }
 
 .card-header.\32 {
@@ -213,7 +235,16 @@ body {
   pointer-events: none;
   height: 100%;
   width: 100%;
-  background-color: rgb(16, 197, 234, .5);
+  background-color: rgb(16, 197, 234, .4);
+  // box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.2), 0 0 10px 5px rgba(255, 255, 255, 0.1), inset 0 0 5px 0px rgba(255, 255, 255, 0.5);
+}
+
+.gradient-text {
+  font-family: Helvetica, arial, sans-serif;
+  background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #a8ffeb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .dropdown-item {
