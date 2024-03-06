@@ -6,7 +6,7 @@ export default function DeleteCollabModal({ show, closeModal, handleDelete }) {
   return (
     <>
       <Modal show={show} onHide={closeModal}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Delete Collaborator</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this collaborator?  This action will delete their task and project assignments and cannot be undone.</Modal.Body>

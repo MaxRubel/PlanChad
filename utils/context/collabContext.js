@@ -38,9 +38,6 @@ const CollabContextProvider = ({ children }) => {
       getCollabsOfUser(user.uid).then((userCollabs) => {
         getProjCollabsOfUser(user.uid).then((userProjCollabJoins) => {
           getTaskCollabsOfUser(user.uid).then((taskCollabJoinData) => {
-            // console.log('All Collaborators: ', userCollabs);
-            // console.log('All Proj/Collab Joins: ', userProjCollabJoins);
-            // console.log('All Task Collab Joins:', taskCollabJoinData);
             setAllCollabs((preVal) => userCollabs);
             setProjCollabJoins((preVal) => userProjCollabJoins);
             setTaskCollabJoins((preVal) => taskCollabJoinData);

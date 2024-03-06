@@ -7,7 +7,7 @@ export default function DeleteCheckpointModal({ show, closeModal, handleDelete }
   return (
     <>
       <Modal show={show} onHide={closeModal}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Delete Segment</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this Segment?  This action cannot be undone.</Modal.Body>

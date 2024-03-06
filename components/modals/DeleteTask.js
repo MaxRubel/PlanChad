@@ -6,7 +6,7 @@ export default function DeleteTaskModal({ show, closeModal, handleDelete }) {
   return (
     <>
       <Modal show={show} onHide={closeModal}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Delete Task</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure you want to delete this task?  This action cannot be undone</Modal.Body>
