@@ -1,16 +1,9 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import CollabCardForTaskInProj from './CollabCardForTaskInProj';
 import { useCollabContext } from '../utils/context/collabContext';
 
-// eslint-disable-next-line react/prop-types
-export default function ViewTaskCollabsInProj({
-  refreshProjCollabs,
-  collabsExpand,
-  taskId,
-  formInput,
-}) {
+export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput }) {
   const { taskCollabJoins, allCollabs } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
 
@@ -64,7 +57,6 @@ export default function ViewTaskCollabsInProj({
                   <CollabCardForTaskInProj
                     key={collab.collabId}
                     collab={collab}
-                    refreshProjCollabs={refreshProjCollabs}
                     taskId={taskId}
                     formInput={formInput}
                   />
@@ -77,3 +69,11 @@ export default function ViewTaskCollabsInProj({
     </>
   );
 }
+
+ViewTaskCollabsInProj.propTypes = {
+  collabsExpand: PropTypes.bool.isRequired,
+  taskId: PropTypes.string.isRequired,
+  formInput: PropTypes.shape({
+    status: PropTypes.string.isRequired,
+  }).isRequired,
+};

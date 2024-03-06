@@ -1,15 +1,10 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useRef, useState } from 'react';
-import { useAuth } from '../utils/context/authContext';
-import { getCollabsOfUser } from '../api/collabs';
+import PropTypes from 'prop-types';
 import CollabCard from './CollabCard';
 import { useCollabContext } from '../utils/context/collabContext';
 
-export default function ViewAllCollabs({
-  refreshAllCs, refreshProjCollabs, refreshAllColabs, projectId, projectToAssign,
-}) {
+export default function ViewAllCollabs({ projectToAssign }) {
   const [collabs, setCollabs] = useState([]);
-  const { user } = useAuth();
   const { allCollabs, searchInput } = useCollabContext();
   const originalCollabs = useRef([]);
 
@@ -62,9 +57,6 @@ export default function ViewAllCollabs({
               collabs.map((collab) => (
                 <CollabCard
                   key={collab.collabId}
-                  projectId={projectId}
-                  refreshProjCollabs={refreshProjCollabs}
-                  refreshAllColabs={refreshAllColabs}
                   collab={collab}
                   projectToAssign={projectToAssign}
                 />
@@ -76,3 +68,5 @@ export default function ViewAllCollabs({
     </div>
   );
 }
+
+ViewAllCollabs.propTypes = { projectToAssign: PropTypes.string.isRequired };

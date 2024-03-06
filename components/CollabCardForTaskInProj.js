@@ -1,18 +1,12 @@
-/* eslint-disable react/prop-types */
 import { Collapse } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-import { useSaveContext } from '../utils/context/saveManager';
-import { plusIcon, removeIcon } from '../public/icons';
-import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { removeIcon } from '../public/icons';
+import { deleteTaskCollab } from '../api/taskCollab';
 import { useCollabContext } from '../utils/context/collabContext';
 
-export default function CollabCardForTaskInProj({
-  taskId,
-  collab,
-  formInput,
-}) {
+export default function CollabCardForTaskInProj({ taskId, collab, formInput }) {
   const [expanded, setExpanded] = useState(false);
-
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
   const downIcon = (
@@ -84,3 +78,17 @@ export default function CollabCardForTaskInProj({
     </div>
   );
 }
+
+CollabCardForTaskInProj.propTypes = {
+  collab: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    collabId: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    notes: PropTypes.string.isRequired,
+  }).isRequired,
+  taskId: PropTypes.string.isRequired,
+  formInput: PropTypes.shape({
+    status: PropTypes.string.isRequired,
+  }).isRequired,
+};

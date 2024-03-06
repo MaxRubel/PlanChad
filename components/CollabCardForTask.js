@@ -1,23 +1,13 @@
-/* eslint-disable react/prop-types */
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { useState } from 'react';
-import { useSaveContext } from '../utils/context/saveManager';
+import PropTypes from 'prop-types';
 import { removeIcon } from '../public/icons';
 import { deleteTaskCollab } from '../api/taskCollab';
 import { useCollabContext } from '../utils/context/collabContext';
 import { removeFromTaskTT, viewCollabDeetsTT } from './toolTips';
 
-export default function CollabCardForTask({
-  taskId,
-  collab,
-}) {
+export default function CollabCardForTask({ taskId, collab }) {
   const [expanded, setExpanded] = useState(false);
-  const {
-    setTaskCollabs,
-    taskCollabs,
-    saveInput,
-  } = useSaveContext();
-
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
   const downIcon = (
@@ -99,3 +89,14 @@ export default function CollabCardForTask({
     </div>
   );
 }
+
+CollabCardForTask.propTypes = {
+  collab: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    collabId: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    notes: PropTypes.string.isRequired,
+  }).isRequired,
+  taskId: PropTypes.string.isRequired,
+};
