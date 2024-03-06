@@ -11,8 +11,12 @@ const ViewDirectorBasedOnUserAuthStatus = ({ component: Component, pageProps }) 
   const { isFetchingProjects } = useSaveContext();
   const { isFetchingCollabs } = useCollabContext();
 
+  console.log('userLoading: ', userLoading);
+  console.log('isFetching Collabs: ', isFetchingCollabs);
+  console.log('isFetchingProjects: ', isFetchingProjects);
+
   // if user state is null, then show loader
-  if (userLoading || isFetchingCollabs || isFetchingProjects) {
+  if (userLoading) {
     return <Loading />;
   }
 
