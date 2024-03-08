@@ -51,10 +51,20 @@ export const SaveContextProvider = ({ children }) => {
   }, [user, fetchUserData]);
 
   const clearSaveManager = () => {
+    setIsSaving(0);
     setSaveInput((prevVal) => initState);
     setMin((preVal) => 0);
     setSingleProjectRunning((preVal) => false);
   };
+
+  const cancelSaveAnimation = () => {
+    // console.log('reset save animation');
+    setIsSaving(0);
+  };
+
+  // useEffect(() => {
+  //   console.log('changed to: ', isSaving);
+  // }, [isSaving]);
 
   const loadProject = (projectId) => {
     clearSaveManager();
@@ -239,6 +249,7 @@ export const SaveContextProvider = ({ children }) => {
       hideCompletedTasks,
       isFetchingProjects,
       theBigDelete,
+      cancelSaveAnimation,
     }}
     >
       {children}

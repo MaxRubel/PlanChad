@@ -28,8 +28,8 @@ export default function MainProjectView({ projectId }) {
     singleProjectRunning,
     isSaving,
     hideCompletedTasks,
-    clearSaveManager,
     theBigDelete,
+    cancelSaveAnimation,
   } = useSaveContext();
 
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -43,6 +43,7 @@ export default function MainProjectView({ projectId }) {
 
   useEffect(() => { // on Mount
     if (projectId && projectsLoaded) {
+      cancelSaveAnimation();
       if (!singleProjectRunning) {
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
@@ -51,7 +52,6 @@ export default function MainProjectView({ projectId }) {
         setCheckpoints(checkpointsSorted);
       } else {
         setProject((preVal) => saveInput.project);
-
         setHideCompletedTasksChild((preVal) => saveInput.project.hideCompletedTasks);
         const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints((preVal) => checkpointsSorted);
@@ -84,9 +84,13 @@ export default function MainProjectView({ projectId }) {
   }, [min]);
 
   useEffect(() => { // save button color animation
+    // cancelSaveAnimation();
     let saveColorChange;
+    const saveButton = document.getElementById('saveButton');
+    if (!isSaving) {
+      saveButton.style.color = 'rgb(200, 200, 200)';
+    }
     if (isSaving) {
-      const saveButton = document.getElementById('saveButton');
       saveButton.style.color = 'rgb(16, 197, 234)';
       saveColorChange = setTimeout(() => {
         saveButton.style.color = 'rgb(200, 200, 200)';
