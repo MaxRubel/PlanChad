@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types';
 import { useAuth } from './context/authContext';
-import Loading from '../components/Loading';
-import Signin from '../components/Signin';
-import NavBar from '../components/NavBar';
+import Loading from '../components/util/Loading';
+import Signin from '../components/util/Signin';
+import NavBar from '../components/util/NavBar';
+import { useSaveContext } from './context/saveManager';
 
 const ViewDirectorBasedOnUserAuthStatus = ({ component: Component, pageProps }) => {
   const { user, userLoading } = useAuth();
-
+  const { isFetchingProjects } = useSaveContext();
+  console.log(isFetchingProjects);
   // if user state is null, then show loader
-  if (userLoading) {
+  if (userLoading || isFetchingProjects) {
     return <Loading />;
   }
 

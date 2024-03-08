@@ -1,10 +1,10 @@
 import { Collapse } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { Button, Checkbox, FormControlLabel } from '@mui/material';
-import { plusIcon } from '../public/icons';
-import { createNewCollab, updateCollab } from '../api/collabs';
-import { useAuth } from '../utils/context/authContext';
-import { useCollabContext } from '../utils/context/collabContext';
+import { plusIcon } from '../../public/icons';
+import { createNewCollab, updateCollab } from '../../api/collabs';
+import { useAuth } from '../../utils/context/authContext';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 const initialState = {
   name: '',

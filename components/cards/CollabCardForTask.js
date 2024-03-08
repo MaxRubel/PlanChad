@@ -1,10 +1,10 @@
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { removeIcon } from '../public/icons';
-import { deleteTaskCollab } from '../api/taskCollab';
-import { useCollabContext } from '../utils/context/collabContext';
-import { removeFromTaskTT, viewCollabDeetsTT } from './toolTips';
+import { removeIcon } from '../../public/icons';
+import { deleteTaskCollab } from '../../api/taskCollab';
+import { useCollabContext } from '../../utils/context/collabContext';
+import { removeFromTaskTT, viewCollabDeetsTT } from '../util/toolTips';
 
 export default function CollabCardForTask({ taskId, collab }) {
   const [expanded, setExpanded] = useState(false);

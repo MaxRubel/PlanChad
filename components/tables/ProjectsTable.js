@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Nav } from 'react-bootstrap';
-import { useAuth } from '../utils/context/authContext';
-import { useSaveContext } from '../utils/context/saveManager';
+import { useAuth } from '../../utils/context/authContext';
+import { useSaveContext } from '../../utils/context/saveManager';
 
 export default function ProjectsTable() {
   const [projectsArray, setProjectsArray] = useState([]);

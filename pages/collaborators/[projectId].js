@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import ViewAllCollabs from '../../components/ViewAllCollabs';
-import ViewProjCollabs from '../../components/ViewProjCollabs';
-import ViewTaskCollabs from '../../components/ViewTaskCollabs';
+import ViewAllCollabs from '../../components/views/ViewAllCollabs';
+import ViewProjCollabs from '../../components/views/ViewProjCollabs';
+import ViewTaskCollabs from '../../components/views/ViewTaskCollabs';
 import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/modals/AddCollabForm2';
@@ -65,7 +65,7 @@ export default function ManageCollaboratorsPage() {
           style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => { router.push(`/project/plan/${projectId}`); }}
         >
-          BACK TO PROJECT
+          Back to Project
         </button>
         <button
           id="showModal"
@@ -74,7 +74,7 @@ export default function ManageCollaboratorsPage() {
           style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => setModalShow(true)}
         >
-          ADD A COLLABORATOR
+          Add A Collaborator
         </button>
         <div
           id="inputControl"

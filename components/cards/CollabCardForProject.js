@@ -1,14 +1,14 @@
 import { Collapse, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { deleteProjCollab } from '../api/projCollab';
-import { useCollabContext } from '../utils/context/collabContext';
-import { useAuth } from '../utils/context/authContext';
-import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
-import { removeIcon } from '../public/icons';
-import { removeFromProjTT, viewCollabDeetsTT } from './toolTips';
-import { useSaveContext } from '../utils/context/saveManager';
-import DeleteProjCollabModal from './modals/DeleteProjCollab';
+import { deleteProjCollab } from '../../api/projCollab';
+import { useCollabContext } from '../../utils/context/collabContext';
+import { useAuth } from '../../utils/context/authContext';
+import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../../api/taskCollab';
+import { removeIcon } from '../../public/icons';
+import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
+import { useSaveContext } from '../../utils/context/saveManager';
+import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 
 export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);

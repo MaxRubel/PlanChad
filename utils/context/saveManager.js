@@ -1,7 +1,8 @@
 import React, {
   createContext, useContext, useEffect, useState,
 } from 'react';
-import { getUserProjects, updateProject } from '../../api/project';
+import { useRouter } from 'next/router';
+import { deleteProject, getUserProjects, updateProject } from '../../api/project';
 import { useAuth } from './authContext';
 
 // import { useCollabContext } from './collabContext';
@@ -18,18 +19,21 @@ export const SaveContextProvider = ({ children }) => {
   const [min, setMin] = useState(0);
   const [allProjects, setAllProjects] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
-  const [projectsLoaded, setProjectLoaded] = useState(false);
+  const [projectsLoaded, setProjectsLoaded] = useState(false);
   const { user } = useAuth();
   const [singleProjectRunning, setSingleProjectRunning] = useState(false);
   const [isSaving, setIsSaving] = useState(0);
   const [isFetchingProjects, setIsFetchingProjects] = useState(true);
+  const [fetchUserData, setFetchUserData] = useState(0);
+  const router = useRouter();
 
+  // load all user data:
   useEffect(() => {
-    if (user && !projectsLoaded) { // load in all user project data when page first loads
+    if (user && !projectsLoaded) {
       getUserProjects(user.uid)
         .then((data) => {
           setAllProjects(data);
-          setProjectLoaded((preVal) => true);
+          setProjectsLoaded((preVal) => true);
           const copy = [...data];
           const allTasksArr = [];
           for (let i = 0; i < copy.length; i++) {
@@ -44,7 +48,7 @@ export const SaveContextProvider = ({ children }) => {
           setIsFetchingProjects((preVal) => false);
         });
     }
-  }, [user]);
+  }, [user, fetchUserData]);
 
   const clearSaveManager = () => {
     setSaveInput((prevVal) => initState);
@@ -56,7 +60,6 @@ export const SaveContextProvider = ({ children }) => {
     clearSaveManager();
     const copy = [...allProjects];
     const project = copy.find((item) => item.projectId === projectId);
-
     let checkpoints = [];
     let tasks = [];
     if (project.checkpoints) {
@@ -67,14 +70,23 @@ export const SaveContextProvider = ({ children }) => {
       const tasksForm = JSON.parse(project.tasks);
       tasks = tasksForm;
     }
-
     const obj = { project, checkpoints, tasks };
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;
   };
 
-  const minAll = () => { // trigger minAll and animation
+  const theBigDelete = (projectId) => {
+    deleteProject(projectId).then(() => {
+      setIsFetchingProjects((preVal) => true);
+      clearSaveManager();
+      setProjectsLoaded((preVal) => false);
+      setFetchUserData((prev) => prev + 1);
+      router.push('/');
+    });
+  };
+
+  const minAll = () => {
     setMin((prevVal) => prevVal + 1);
     const copyCheck = [...saveInput.checkpoints];
     const copyTask = [...saveInput.tasks];
@@ -226,6 +238,7 @@ export const SaveContextProvider = ({ children }) => {
       isSaving,
       hideCompletedTasks,
       isFetchingProjects,
+      theBigDelete,
     }}
     >
       {children}

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useSaveContext } from '../utils/context/saveManager';
-import CollabCardForTask from './CollabCardForTask';
-import { useCollabContext } from '../utils/context/collabContext';
+import { useSaveContext } from '../../utils/context/saveManager';
+import CollabCardForTask from '../cards/CollabCardForTask';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
   const { saveInput, allTasks } = useSaveContext();

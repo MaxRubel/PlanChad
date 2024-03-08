@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import CollabCardForTaskInProj from './CollabCardForTaskInProj';
-import { useCollabContext } from '../utils/context/collabContext';
+import CollabCardForTaskInProj from '../cards/CollabCardForTaskInProj';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput }) {
   const { taskCollabJoins, allCollabs } = useCollabContext();

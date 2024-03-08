@@ -58,9 +58,22 @@ const updateProject = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+const deleteProject = (projectId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/projects/${projectId}.json`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => resolve(data))
+    .catch(reject);
+});
+
 export {
   createNewProject,
   updateProject,
   getUserProjects,
   getSingleProject,
+  deleteProject,
 };

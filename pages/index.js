@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import ProjectsTable from '../components/ProjectsTable';
+import ProjectsTable from '../components/tables/ProjectsTable';
 import { useSaveContext } from '../utils/context/saveManager';
 
 export default function Home() {
