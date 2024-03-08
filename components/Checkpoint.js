@@ -258,7 +258,7 @@ export default function Checkpoint({
           </div>
         </div>
         {/* --------------card------------------------ */}
-        <div className="card" style={{ margin: '3px 0px', minWidth: '565px' }}>
+        <div className="card" style={{ margin: '3px 0px', minWidth: '565px', border: '5px solid rgb(16, 197, 234, .2)' }}>
           <div className="card-header 2" style={{ minWidth: '516px', border: !formInput.expanded ? 'none' : '' }}>
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div className="verticalCenter">
@@ -267,7 +267,7 @@ export default function Checkpoint({
                   placement="top"
                   overlay={formInput.expanded ? collapseToolTip : expandTooltip}
                   trigger={['hover', 'focus']}
-                  delay={500}
+                  delay={750}
                 >
                   <button
                     type="button"
@@ -285,7 +285,7 @@ export default function Checkpoint({
                     {downIcon}
                   </button>
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={addTaskToolTip} delay={500}>
+                <OverlayTrigger placement="top" overlay={addTaskToolTip} delay={750}>
                   <button
                     type="button"
                     id={`addTask${checkP.localId}`}

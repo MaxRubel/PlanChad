@@ -77,7 +77,7 @@ export default function TaskDeets({
               id="whole-card"
               className="card"
               style={{
-                height: '293px',
+                height: '250px',
                 backgroundColor: formInput.status === 'closed' ? 'grey' : '',
                 border: 'none',
                 margin: '3px 0px',
@@ -102,7 +102,7 @@ export default function TaskDeets({
                       placement="top"
                       overlay={formInput.collabsExpanded ? hideCollabsToolTips : viewCollabsToolTips}
                       trigger={['hover', 'focus']}
-                      delay={500}
+                      delay={750}
                     >
                       <button
                         type="button"

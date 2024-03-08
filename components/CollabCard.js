@@ -140,7 +140,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
           }}
         >
           <div id="col1">
-            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={500}>
+            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={750}>
               <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
                 {downIcon}
               </button>
@@ -160,7 +160,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
             </div>
           ) : (
             <div id="col2" style={{ textAlign: 'right' }}>
-              <OverlayTrigger placement="top" overlay={addToProjTT} delay={500}>
+              <OverlayTrigger placement="top" overlay={addToProjTT} delay={750}>
                 <button
                   type="button"
                   className="clearButton"
@@ -170,7 +170,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
                   {plusIconSmol}
                 </button>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={editCollabTT} delay={500}>
+              <OverlayTrigger placement="top" overlay={editCollabTT} delay={750}>
                 <button
                   id="update-collab"
                   type="button"
@@ -181,7 +181,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
                   {editIcon}
                 </button>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={500}>
+              <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={750}>
                 <button
                   type="button"
                   className="clearButton"

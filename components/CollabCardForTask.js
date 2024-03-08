@@ -47,7 +47,7 @@ export default function CollabCardForTask({ taskId, collab }) {
       >
 
         <div id="col1">
-          <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={500}>
+          <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={750}>
             <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
               {downIcon}
             </button>
@@ -55,7 +55,7 @@ export default function CollabCardForTask({ taskId, collab }) {
           {collab.name}
         </div>
         <div id="col2" style={{ textAlign: 'right' }}>
-          <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={500}>
+          <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={750}>
             <button
               type="button"
               className="clearButton"

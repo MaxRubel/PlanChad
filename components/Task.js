@@ -193,6 +193,7 @@ export default function Task({
           className="card"
           style={{
             margin: '3px 0px',
+            border: '4px solid rgb(251, 157, 80, .2)',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
             transition: '1.5s all ease',
             minWidth: '516px',
@@ -219,7 +220,7 @@ export default function Task({
                   placement="top"
                   overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
                   trigger={['hover', 'focus']}
-                  delay={500}
+                  delay={750}
                 >
                   <button
                     type="button"
@@ -241,7 +242,7 @@ export default function Task({
                   placement="top"
                   overlay={viewTaskDeetsToolTip}
                   trigger={['hover', 'focus']}
-                  delay={500}
+                  delay={750}
                 >
                   <button
                     type="button"
@@ -266,7 +267,7 @@ export default function Task({
                   placement="top"
                   overlay={closeTaskToolTip}
                   trigger={['hover', 'focus']}
-                  delay={500}
+                  delay={750}
                 >
                   <Checkbox
                     id={`task-completed${task.localId}`}
@@ -279,7 +280,7 @@ export default function Task({
                 </OverlayTrigger>
               </div>
             </div>
-            <div className="fullCenter" style={{ textAlign: 'center' }}>
+            <div className="fullCenter" style={{ display: 'flex', justifyContent: 'left', marginLeft: '5%' }}>
               <input
                 className="form-control"
                 style={{
@@ -308,7 +309,7 @@ export default function Task({
                 placement="top"
                 overlay={deleteTaskToolTip}
                 trigger={['hover', 'focus']}
-                delay={500}
+                delay={750}
               >
                 <button
                   type="button"
