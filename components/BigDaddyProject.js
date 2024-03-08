@@ -1,28 +1,20 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-closing-bracket-location */
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { DragDropContext, Droppable } from '@hello-pangea/dnd';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
+import { Reorder } from 'framer-motion';
+import PropTypes from 'prop-types';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import AddAsigneeModal from './AddAsigneeModal';
 
 export default function BigDaddyProject({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
-  const [save, setSave] = useState(0);
   const [refresh, setRefresh] = useState(0);
-  const [isLoading, setIsloading] = useState(true);
   const [progressIsShowing, setProgressIsShowing] = useState(false);
-  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(false);
-  const [refreshTasks, setRefreshTasks] = useState(0);
+  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [checkPBeingDragged, setcheckPBeingDragged] = useState(null);
 
   const {
     addToSaveManager,
@@ -55,6 +47,8 @@ export default function BigDaddyProject({ projectId }) {
         setCheckpoints(checkpointsSorted);
       } else {
         setProject((preVal) => saveInput.project);
+
+        setHideCompletedTasksChild((preVal) => saveInput.project.hideCompletedTasks);
         const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints((preVal) => checkpointsSorted);
       }
@@ -94,6 +88,9 @@ export default function BigDaddyProject({ projectId }) {
         saveButton.style.color = 'rgb(200, 200, 200)';
       }, 1000);
     }
+    return () => {
+      clearTimeout(saveColorChange);
+    };
   }, [isSaving]);
 
   const addCheckpoint = () => {
@@ -115,43 +112,15 @@ export default function BigDaddyProject({ projectId }) {
     handleRefresh();
   };
 
-  const handleDragStart = (e) => {
-    const [, checkPId] = e.source.droppableId.split('--');
+  const handleDragStart = () => {
+    setCheckpoints(saveInput.checkpoints);
     setIsDragging((preVal) => true);
-    setcheckPBeingDragged((preVal) => checkPId);
   };
 
-  const handleDragEnd = (result) => {
-    setIsDragging((preVal) => false);
-    const { destination, source, draggableId } = result;
-    if (!destination) {
-      console.log('nope!');
-      return;
-    }
-    const sourceId = source.droppableId;
-    const destinationId = destination.droppableId;
-    if (source.droppableId !== destination.droppableId) {
-      console.log('nope!');
-    }
-    if (sourceId.includes('tasks') && sourceId === destinationId) {
-      const [, checkpointId] = destinationId.split('--');
-      const projectTasks = Array.from(saveInput.tasks);
-      const tasksOfCheckp = projectTasks.filter((item) => item.checkpointId === checkpointId);
-      const [reOrderedTask] = tasksOfCheckp.splice(source.index, 1);
-      tasksOfCheckp.splice(destination.index, 0, reOrderedTask);
-      const indexedArr = tasksOfCheckp.map((item, index) => ({ ...item, index }));
-      addToSaveManager(indexedArr, 'update', 'reorderedTasks');
-      setRefreshTasks((preVal) => preVal + 1);
-    }
-    if (sourceId === 'checkPDrop' && destinationId === 'checkPDrop') {
-      const reorderedChecks = Array.from(saveInput.checkpoints);
-      const [reorderedCheckp] = reorderedChecks.splice(source.index, 1);
-      reorderedChecks.splice(destination.index, 0, reorderedCheckp);
-      const indexedArr = reorderedChecks.map((item, index) => ({ ...item, index }));
-      const sortedArray = indexedArr.sort((a, b) => a.index - b.index);
-      addToSaveManager(sortedArray, 'update', 'reorderedCheckPs');
-      setCheckpoints(indexedArr);
-    }
+  const reOrderCheckPoints = (e) => {
+    const reordered = e.map((item, index) => ({ ...item, index }));
+    setCheckpoints((preVal) => reordered);
+    addToSaveManager(reordered, 'update', 'checkpointsArr');
   };
 
   const handleChange = (e) => {
@@ -169,19 +138,20 @@ export default function BigDaddyProject({ projectId }) {
 
   return (
     <>
-      <AddAsigneeModal />
       <div className="bigDad">
-        <div id="project-container">
+        <div id="project-container" style={{}}>
           <div id="project-top-bar" style={{ marginBottom: '3%' }}>
             <button
               id="saveButton"
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={sendToServer}>
+              onClick={sendToServer}
+            >
               SAVE
             </button>
             <Dropdown
+              style={{ outline: 'none' }}
               onSelect={handleChange}
             >
               <Dropdown.Toggle
@@ -201,19 +171,21 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { router.push(`/collaborators/${projectId}`); }}>
+              onClick={() => { router.push(`/collaborators/${projectId}`); }}
+            >
               MANAGE COLLABORATORS
             </button>
           </div>
-          <ProjectCard
-            save={save}
-            min={min}
-            minAll={minAll}
-            project={project}
-            progressIsShowing={progressIsShowing}
-            hideCompletedTasksChild={hideCompletedTasksChild}
-            tellProjectIfProgressShowing={tellProjectIfProgressShowing}
-          />
+          <div id="projectCard-container" className="fullCenter">
+            <ProjectCard
+              min={min}
+              minAll={minAll}
+              project={project}
+              progressIsShowing={progressIsShowing}
+              hideCompletedTasksChild={hideCompletedTasksChild}
+              tellProjectIfProgressShowing={tellProjectIfProgressShowing}
+            />
+          </div>
           <div
             id="add-checkpt-button"
             style={{
@@ -222,8 +194,8 @@ export default function BigDaddyProject({ projectId }) {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-            }}>
-
+            }}
+          >
             <button
               type="button"
               className="btn btn-outline-secondary"
@@ -232,40 +204,50 @@ export default function BigDaddyProject({ projectId }) {
                 margin: '1% 0%',
                 color: 'rgb(200, 200, 200)',
                 border: '1px solid rgb(100, 100, 100)',
-              }}>
-              Add A Checkpoint
+              }}
+            >
+              Add A Segment
             </button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragEnd={handleDragEnd} onDragStart={handleDragStart}>
-              <Droppable droppableId="checkPDrop">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    {checkpoints.map((checkP, index) => (
-                      <Checkpoint
-                        refreshTasks={refreshTasks}
-                        key={checkP.localId}
-                        checkP={checkP}
-                        handleRefresh={handleRefresh}
-                        save={save}
-                        minAll={minAll}
-                        min={min}
-                        index={index}
-                        refresh={refresh}
-                        isLoading={isLoading}
-                        progressIsShowing={progressIsShowing}
-                        isDragging={isDragging}
-                        checkPBeingDragged={checkPBeingDragged}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+
+            <Reorder.Group
+              as="div"
+              axis="y"
+              values={checkpoints}
+              onReorder={reOrderCheckPoints}
+            >
+              <div>
+                {checkpoints.map((checkP, index) => (
+                  <Reorder.Item
+                    as="div"
+                    key={checkP.localId}
+                    value={checkP}
+                    style={{ cursor: 'grab' }}
+                    onDragStart={handleDragStart}
+                  >
+                    <Checkpoint
+                      key={checkP.localId}
+                      checkP={checkP}
+                      handleRefresh={handleRefresh}
+                      minAll={minAll}
+                      min={min}
+                      index={index}
+                      refresh={refresh}
+                      progressIsShowing={progressIsShowing}
+                      isDragging={isDragging}
+                    />
+                  </Reorder.Item>
+                ))}
+              </div>
+            </Reorder.Group>
           </div>
         </div>
       </div>
     </>
   );
 }
+
+BigDaddyProject.propTypes = {
+  projectId: PropTypes.string.isRequired,
+};

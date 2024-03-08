@@ -1,15 +1,13 @@
-/* eslint-disable react/jsx-closing-bracket-location */
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Nav } from 'react-bootstrap';
-import { getUserProjects } from '../api/project';
 import { useAuth } from '../utils/context/authContext';
 import { useSaveContext } from '../utils/context/saveManager';
 
 export default function ProjectsTable() {
   const [projectsArray, setProjectsArray] = useState([]);
   const { user } = useAuth();
-  const { allProjects, loaded } = useSaveContext();
+  const { allProjects } = useSaveContext();
 
   useEffect(() => {
     setProjectsArray((preVal) => allProjects);

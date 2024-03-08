@@ -13,6 +13,7 @@ module.exports = {
   },
   plugins: ['react', 'prettier'],
   rules: {
+    'eslintno-dupe-keys': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
     'jsx-a11y/label-has-for': 'off',
     'react/no-unknown-property': 'warn',
@@ -71,7 +72,7 @@ module.exports = {
     'comma-dangle': ['warn'],
     'no-debugger': 1,
     'linebreak-style': 0,
-    'max-len': [1, 200, 2],
+    'max-len': [1, 250, 2],
     'no-plusplus': [
       2, { allowForLoopAfterthoughts: true },
     ],

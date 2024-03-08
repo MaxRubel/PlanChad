@@ -1,12 +1,6 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable jsx-a11y/label-has-for */
-/* eslint-disable semi */
-/* eslint-disable arrow-spacing */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/jsx-closing-bracket-location */
 import { useEffect, useState } from 'react';
 import { Collapse, Button } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { useSaveContext } from '../utils/context/saveManager';
 
 const initialState = {
@@ -25,34 +19,36 @@ export default function ProjectCard({
   project, min, progressIsShowing, tellProjectIfProgressShowing, hideCompletedTasksChild,
 }) {
   const [formInput, setFormInput] = useState(initialState);
-  const { addToSaveManager, saveInput } = useSaveContext();
+  const { addToSaveManager } = useSaveContext();
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
       xmlns="http://www.w3.org/2000/svg"
       height="16px"
-      viewBox="0 0 320 512">
+      viewBox="0 0 320 512"
+    >
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9
       0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5
       101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4
-      33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z" />
+      33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
+      />
     </svg>
   );
 
   useEffect(() => {
     if (project?.projectId) {
-      setFormInput(project)
-      tellProjectIfProgressShowing(project.progressIsShowing)
+      setFormInput(project);
+      tellProjectIfProgressShowing(project.progressIsShowing);
     }
-  }, [project])
+  }, [project]);
 
   useEffect(() => {
-    setFormInput((preVal) => ({ ...preVal, progressIsShowing, hideCompletedTasks: hideCompletedTasksChild }))
-  }, [progressIsShowing, hideCompletedTasksChild])
+    setFormInput((preVal) => ({ ...preVal, progressIsShowing, hideCompletedTasks: hideCompletedTasksChild }));
+  }, [progressIsShowing, hideCompletedTasksChild]);
 
   useEffect(() => {
-    addToSaveManager(formInput, 'update', 'project')
-  }, [formInput])
+    addToSaveManager(formInput, 'update', 'project');
+  }, [formInput]);
 
   const handleCollapse = () => {
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
@@ -71,10 +67,19 @@ export default function ProjectCard({
 
   return (
     // -----------------card--header----------------
-    <div className="card text-bg-info mb-3">
+    <div
+      className="card text-bg-info mb-3"
+      style={{ boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)', opacity: '.9', width: '100%' }}
+    >
       <div
         className="card-header"
-        style={{ minWidth: '409.6px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+        style={{
+          minWidth: '409.6px',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr',
+          borderBottom: 'none',
+        }}
+      >
         <Button
           onClick={handleCollapse}
           style={{
@@ -84,7 +89,8 @@ export default function ProjectCard({
             paddingLeft: '10%',
             textAlign: 'left',
             color: 'black',
-          }}>
+          }}
+        >
           {downIcon}
         </Button>
         <div>
@@ -111,7 +117,8 @@ export default function ProjectCard({
           <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
             <div
               id="row1"
-              className="cardRow">
+              className="cardRow"
+            >
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
                 <div className="verticalCenter">
                   <label htmlFor="client">Client:</label>
@@ -120,7 +127,8 @@ export default function ProjectCard({
               </div>
               <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-              }}>
+              }}
+              >
                 <input
                   id="client"
                   className="form-control"
@@ -128,13 +136,42 @@ export default function ProjectCard({
                   name="client"
                   value={formInput.client}
                   onChange={handleChange}
+                  style={{
+                    backgroundColor: 'rgb(13, 195, 240)',
+                    border: 'none',
+                  }}
+                />
+              </div>
+            </div>
+            <div
+              id="row2"
+              className="cardRow"
+            >
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                <div className="verticalCenter">
+                  <label htmlFor="deadline">Start Date:</label>
+                </div>
+                <div />
+              </div>
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+              }}
+              >
+                <input
+                  className="form-control"
+                  type="date"
+                  value={formInput.start_date}
+                  onChange={handleChange}
+                  name="start_date"
+                  id="start_date"
                   style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
                 />
               </div>
             </div>
             <div
               id="row2"
-              className="cardRow">
+              className="cardRow"
+            >
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
                 <div className="verticalCenter">
                   <label htmlFor="deadline">Deadline:</label>
@@ -143,7 +180,8 @@ export default function ProjectCard({
               </div>
               <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-              }}>
+              }}
+              >
                 <input
                   className="form-control"
                   type="date"
@@ -157,7 +195,8 @@ export default function ProjectCard({
             </div>
             <div
               id="row3"
-              className="cardRow">
+              className="cardRow"
+            >
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
                 <div className="verticalCenter">
                   <label htmlFor="budget">Budget:</label>
@@ -166,7 +205,8 @@ export default function ProjectCard({
               </div>
               <div
                 className="fullCenter"
-                style={{ paddingRight: '20%' }}>
+                style={{ paddingRight: '20%' }}
+              >
                 <input
                   id="budget"
                   className="form-control"
@@ -185,7 +225,8 @@ export default function ProjectCard({
             className="fullCenter"
             style={{
               borderTop: '1px solid rgb(11, 162, 192)', padding: '2% 10%', display: 'flex', flexDirection: 'column',
-            }}>
+            }}
+          >
             <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
               <label htmlFor="exampleFormControlTextarea1" className="form-label" style={{ textAlign: 'center' }}>
                 Project Description:
@@ -198,7 +239,8 @@ export default function ProjectCard({
               value={formInput.description}
               onChange={handleChange}
               name="description"
-              style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none', minWidth: '250px' }} />
+              style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none', minWidth: '250px' }}
+            />
           </div>
         </div>
       </Collapse>
@@ -206,3 +248,24 @@ export default function ProjectCard({
 
   );
 }
+
+ProjectCard.propTypes = {
+  project: PropTypes.shape({
+    projectId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.oneOf([undefined]),
+    ]),
+    progressIsShowing: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.oneOf([undefined]),
+    ]),
+  }).isRequired,
+  min: PropTypes.number.isRequired,
+  progressIsShowing: PropTypes.bool.isRequired,
+  tellProjectIfProgressShowing: PropTypes.func.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  hideCompletedTasksChild: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.oneOf([null]),
+  ]),
+};

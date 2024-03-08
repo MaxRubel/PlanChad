@@ -13,8 +13,10 @@
 body {
   // background-color: rgb(34, 37, 41);
   background-color: black;
-  height: 100vh;
-  width: 100vw;
+  // background: rgb(25, 0, 17);
+  // background: radial-gradient(circle, rgba(25, 0, 17, 1) 0%, rgba(0, 0, 0, 0.7693671218487395) 100%);
+  // height: 100vh;
+  // width: 100vw;
   transition: all var(--background1) ease;
   opacity: 1;
   font-family: Arial, Helvetica, sans-serif;
@@ -29,13 +31,30 @@ body {
   padding: 10% 4%;
 }
 
+#__next {
+  min-height: 100vh;
+  background-color: black;
+  // background: rgb(0, 20, 28);
+  // background: linear-gradient(90deg, rgba(0, 20, 28, 1) 0%, rgba(0, 0, 0, 1) 50%, rgb(23, 10, 0) 100%);
+  // background: rgb(0, 0, 0);
+  // background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgb(17, 11, 11) 100%);
+}
+
 .bigDad {
   // display: flex;
   // flex-direction: column;
   // align-items: center;
   // justify-content: center;
   // padding: 2% 10%;
+  // background: rgb(0, 17, 25);
+  // background: linear-gradient(90deg, rgba(0, 17, 25, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(46, 0, 21, 1) 100%);
+  min-width: 600px;
   padding-bottom: 50vh;
+}
+
+.card.text-bg-dark.mb-3 {
+  opacity: .9;
+  background-color: rgba(51, 51, 52, 0.3) !important;
 }
 
 .btn.btn-outline-dark.rounded-0 {
@@ -56,6 +75,7 @@ body {
 }
 
 .card.text-bg-info.mb-3 {
+  background-color: aqua;
   margin-bottom: 0px !important;
 }
 
@@ -104,6 +124,7 @@ body {
   min-width: 129.29px;
 }
 
+
 .icon-down {
   transform: rotate(90deg);
   transition: all ease .5s;
@@ -137,9 +158,13 @@ body {
 .clearButton {
   background-color: transparent;
   border: none;
-  color: white;
+  color: rgb(140, 140, 140);
   transition: all ease 1.5s;
 }
+
+// .clearButton:hover {
+//   background-color: #1f2226;
+// }
 
 .bottomRow {
   background-color: rgb(30, 30, 30);
@@ -150,40 +175,60 @@ body {
 .checkpoint {
   // position: relative;
   display: grid;
-  grid-template-columns: 84px 75% 100px;
+  // grid-template-columns: 84px 75% 100px;
+  grid-template-columns: 10% 1fr 10%;
   min-width: 500px;
 }
 
 .task {
   display: grid;
-  grid-template-columns: 84px 8% 67% 100px;
+  grid-template-columns: 10% 8% 1fr 10%;
   // gap: 1%;
   min-width: 500px;
 }
 
 .taskDeets {
   display: grid;
-  grid-template-columns: 84px 16% 59% 100px;
+  grid-template-columns: 10% 8% 72% 10%;
   min-width: 500px;
-  transition: all ease .2s;
+  // max-height: 400px;
+  transition: all 1s ease;
 }
 
 .taskDeetsExpand {
-  display: grid;
-  grid-template-columns: 84px 1fr 1fr 100px;
-  gap: 6px;
-  min-width: 500px;
-  transition: all ease .2s;
+  transition: all 1s ease;
+  grid-template-columns: 10% 40% 40% 10%;
 }
 
 .card {
-  background-color: rgb(225, 225, 225);
+  background-color: rgb(225, 225, 225, .95);
 }
 
 .card-header.\32 {
   position: relative;
   display: grid;
   grid-template-columns: 20% 60% 20%;
+  // justify-items: center;
+  align-items: center;
+}
+
+.btn.btn-close {
+  color: white
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  // background-color: lightgray;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgb(174, 174, 174);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(74, 196, 253);
 }
 
 .checkpoint-progress {
@@ -191,7 +236,16 @@ body {
   pointer-events: none;
   height: 100%;
   width: 100%;
-  background-color: rgb(16, 197, 234, .5);
+  background-color: rgb(16, 197, 234, .4);
+  // box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.2), 0 0 10px 5px rgba(255, 255, 255, 0.1), inset 0 0 5px 0px rgba(255, 255, 255, 0.5);
+}
+
+.gradient-text {
+  font-family: Helvetica, arial, sans-serif;
+  background: linear-gradient(45deg, #ee7752, #e73c7e, #23a6d5, #a8ffeb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .dropdown-item {
@@ -222,4 +276,18 @@ body {
 .grid3 {
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
+}
+
+.arrowOpen {
+  transition: all 1s ease;
+  transform: rotate(180deg);
+}
+
+.arrowClosed {
+  transition: all 1s ease;
+}
+
+.modal-content {
+  background-color: #1f2226;
+  color: white;
 }

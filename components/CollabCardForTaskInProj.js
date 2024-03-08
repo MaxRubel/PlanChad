@@ -1,22 +1,12 @@
-/* eslint-disable react/prop-types */
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
-import { useSaveContext } from '../utils/context/saveManager';
-import { plusIcon, removeIcon } from '../public/icons';
-import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
+import PropTypes from 'prop-types';
+import { removeIcon } from '../public/icons';
+import { deleteTaskCollab } from '../api/taskCollab';
 import { useCollabContext } from '../utils/context/collabContext';
 
-export default function CollabCardForTaskInProj({
-  taskId,
-  collab,
-}) {
+export default function CollabCardForTaskInProj({ taskId, collab, formInput }) {
   const [expanded, setExpanded] = useState(false);
-  //   const {
-  //     setTaskCollabs,
-  //     taskCollabs,
-  //     saveInput,
-  //   } = useSaveContext();
-
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
 
   const downIcon = (
@@ -47,9 +37,8 @@ export default function CollabCardForTaskInProj({
   };
 
   return (
-    <div className="card" style={{ margin: '1% 0%' }}>
+    <div className="card" style={{ margin: '1% 0%', backgroundColor: formInput.status === 'closed' ? 'grey' : 'white' }}>
       <div className="card-body" style={{ padding: '2%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-
         <div id="col1">
           <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
             {downIcon}
@@ -89,3 +78,17 @@ export default function CollabCardForTaskInProj({
     </div>
   );
 }
+
+CollabCardForTaskInProj.propTypes = {
+  collab: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    collabId: PropTypes.string.isRequired,
+    phone: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    notes: PropTypes.string.isRequired,
+  }).isRequired,
+  taskId: PropTypes.string.isRequired,
+  formInput: PropTypes.shape({
+    status: PropTypes.string.isRequired,
+  }).isRequired,
+};

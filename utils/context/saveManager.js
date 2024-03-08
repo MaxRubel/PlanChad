@@ -1,7 +1,6 @@
 import React, {
   createContext, useContext, useEffect, useState,
 } from 'react';
-import { getCheckpointsOfProject } from '../../api/checkpoint';
 import { getUserProjects, updateProject } from '../../api/project';
 import { useAuth } from './authContext';
 
@@ -16,17 +15,14 @@ export const SaveContextProvider = ({ children }) => {
   const initState = { project: {}, checkpoints: [], tasks: [] };
 
   const [saveInput, setSaveInput] = useState(initState);
-  const [serverRefresh, setServerRefresh] = useState(0);
   const [min, setMin] = useState(0);
-  const [asigneesIsOpen, setAssigneesIsOpen] = useState(false);
-  const [taskId, setTaskId] = useState(null);
   const [allProjects, setAllProjects] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
   const [projectsLoaded, setProjectLoaded] = useState(false);
   const { user } = useAuth();
   const [singleProjectRunning, setSingleProjectRunning] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [sendThisArray, setSendThisArray] = useState(null);
+  const [isSaving, setIsSaving] = useState(0);
+  const [isFetchingProjects, setIsFetchingProjects] = useState(true);
 
   useEffect(() => {
     if (user && !projectsLoaded) { // load in all user project data when page first loads
@@ -45,6 +41,7 @@ export const SaveContextProvider = ({ children }) => {
             }
           }
           setAllTasks((preVal) => allTasksArr);
+          setIsFetchingProjects((preVal) => false);
         });
     }
   }, [user]);
@@ -75,16 +72,6 @@ export const SaveContextProvider = ({ children }) => {
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;
-  };
-
-  // ---------for-modal-----------
-  const openAssigneesModal = (taskIdRecent) => {
-    setAssigneesIsOpen(true);
-    setTaskId((preVal) => taskIdRecent);
-  };
-
-  const closeAsigneesModal = () => {
-    setAssigneesIsOpen(false);
   };
 
   const minAll = () => { // trigger minAll and animation
@@ -165,7 +152,6 @@ export const SaveContextProvider = ({ children }) => {
       setSaveInput((prevVal) => ({ ...prevVal, tasks: [...prevVal.tasks, ...input] }));
     }
     if (type === 'reorderedTasks') {
-      setSendThisArray(input);
       setSaveInput((prevSaveInput) => {
         const copy = [...prevSaveInput.tasks];
         const filteredTasks = copy.filter((task) => !input.some((inputTask) => inputTask.checkpointId === task.checkpointId));
@@ -201,14 +187,8 @@ export const SaveContextProvider = ({ children }) => {
     }
   };
 
-  const fetchAll = (projectId) => new Promise((resolve, reject) => {
-    getCheckpointsOfProject(projectId)
-      .then((data) => (resolve(data)))
-      .catch(reject);
-  });
-
   const sendToServer = () => {
-    setIsSaving((preVal) => true);
+    setIsSaving((preVal) => preVal + 1);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
     const tasksFormatted = tasks.length > 0 ? JSON.stringify(tasks) : null;
@@ -221,11 +201,12 @@ export const SaveContextProvider = ({ children }) => {
       tasks: tasksFormatted,
     };
 
-    updateProject(payload).then(() => { setIsSaving((preVal) => false); });
-    const copy = [...allProjects];
-    const index = copy.findIndex((item) => item.projectId === payload.projectId);
-    copy[index] = payload;
-    setAllProjects((preVal) => copy);
+    updateProject(payload).then(() => {
+      const copy = [...allProjects];
+      const index = copy.findIndex((item) => item.projectId === payload.projectId);
+      copy[index] = payload;
+      setAllProjects((preVal) => copy);
+    });
   };
 
   return (
@@ -235,22 +216,16 @@ export const SaveContextProvider = ({ children }) => {
       saveInput,
       clearSaveManager,
       sendToServer,
-      fetchAll,
-      serverRefresh,
       min,
       minAll,
       allTasks,
-      openAssigneesModal,
-      closeAsigneesModal,
-      asigneesIsOpen,
-      taskId,
       allProjects,
       projectsLoaded,
       loadProject,
       singleProjectRunning,
       isSaving,
       hideCompletedTasks,
-      sendThisArray,
+      isFetchingProjects,
     }}
     >
       {children}

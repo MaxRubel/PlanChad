@@ -1,26 +1,17 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { useSaveContext } from '../utils/context/saveManager';
 import CollabCardForTask from './CollabCardForTask';
 import { useCollabContext } from '../utils/context/collabContext';
 
-// eslint-disable-next-line react/prop-types
-export default function ViewTaskCollabs({
-  projectId,
-  refreshProjCollabs,
-  projectToAssign,
-  setTaskToAssignChild,
-}) {
-  const {
-    saveInput,
-    allTasks,
-  } = useSaveContext();
-  const { taskCollabJoins, allCollabs } = useCollabContext();
+export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
+  const { saveInput, allTasks } = useSaveContext();
+  const { taskCollabJoins, allCollabs, searchInput } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [taskId, setTaskId] = useState(null);
+  const OGCollabsOfTask = useRef([]);
 
   useEffect(() => {
     setCollabsOfTask((preVal) => []);
@@ -31,6 +22,7 @@ export default function ViewTaskCollabs({
       theseCollabs.push(collab);
     }
     setCollabsOfTask((preVal) => theseCollabs);
+    OGCollabsOfTask.current = theseCollabs;
   }, [taskCollabJoins, allCollabs, taskId]);
 
   useEffect(() => {
@@ -38,6 +30,17 @@ export default function ViewTaskCollabs({
     setTaskToAssignChild(val);
     setTaskId(((preVal) => val));
   }, [tasks]);
+
+  useEffect(() => {
+    if (searchInput) {
+      const collabsCopy = [...OGCollabsOfTask.current];
+      const searchResult = collabsCopy
+        .filter((item) => item.name.toLowerCase().includes(searchInput.toLowerCase()));
+      setCollabsOfTask((preVal) => searchResult);
+    } else {
+      setCollabsOfTask((preVal) => OGCollabsOfTask.current);
+    }
+  }, [searchInput]);
 
   const handleChange = (e) => {
     const { value } = e.target;
@@ -63,20 +66,50 @@ export default function ViewTaskCollabs({
 
   return (
     <>
-      <div className="card text-bg-info mb-3" style={{ width: '47%' }}>
-        <div className="card-header" style={{ fontSize: '22px', textAlign: 'center', fontWeight: '600' }}>
-          <div> Assigned to Task:</div>
+      <div
+        className="card text-bg-dark mb-3"
+        style={{
+          width: '47%',
+        }}
+      >
+        <div
+          className="card-header"
+          style={{
+            color: 'rgb(200, 200, 200)',
+            fontSize: '22px',
+            textAlign: 'center',
+            fontWeight: '600',
+          }}
+        >
+          <div style={{ marginBottom: '2%' }}>Task</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
-            <Form.Select name="tasks" id="tasks" className="form-control" onChange={handleChange}>
-              {tasks.map((task, index) => (
-                <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}`}</option>
-              ))}
+            <Form.Select
+              style={{
+                backgroundColor: 'rgb(225, 225, 225)',
+              }}
+              name="tasks"
+              id="tasks"
+              className="form-control shadow-none"
+              onChange={handleChange}
+              onFocus={(e) => {
+                e.target.style.borderColor = 'none';
+              }}
+            >{tasks.length > 0 ? (tasks.map((task, index) => (
+              <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}`}</option>
+            ))) : (<option key={1} value={null}>No tasks have been created...</option>)}
+
             </Form.Select>
           </div>
         </div>
         <div className="card-body">
           <div className="card">
-            <div className="card-body">
+            <div
+              className="card-body"
+              style={{
+                height: '30vh',
+                overflow: 'auto',
+              }}
+            >
               {collabsOfTask.length === 0 ? (
                 'No one is assigned to this task...'
               ) : (
@@ -86,7 +119,6 @@ export default function ViewTaskCollabs({
                     taskId={taskId}
                     collab={collab}
                     ofProj
-                    refreshProjCollabs={refreshProjCollabs}
                     projectId={projectId}
                   />
                 ))
@@ -98,3 +130,9 @@ export default function ViewTaskCollabs({
     </>
   );
 }
+
+ViewTaskCollabs.propTypes = {
+  projectId: PropTypes.string.isRequired,
+  projectToAssign: PropTypes.string.isRequired,
+  setTaskToAssignChild: PropTypes.func.isRequired,
+};
