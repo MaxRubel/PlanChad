@@ -16,7 +16,7 @@ export default function ManageCollaboratorsPage() {
   const [projectToAssign, setProjectToAssign] = useState('');
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
-  const { sendToServer } = useSaveContext();
+  const { sendToServer, cancelSaveAnimation } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
 
   useEffect(() => {
@@ -63,7 +63,10 @@ export default function ManageCollaboratorsPage() {
           type="button"
           className="clearButton"
           style={{ color: 'rgb(200, 200, 200)' }}
-          onClick={() => { router.push(`/project/plan/${projectId}`); }}
+          onClick={() => {
+            cancelSaveAnimation();
+            router.push(`/project/plan/${projectId}`);
+          }}
         >
           Back to Project
         </button>
