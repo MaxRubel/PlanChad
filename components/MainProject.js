@@ -7,8 +7,9 @@ import PropTypes from 'prop-types';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
+import DeleteProjectModal from './modals/DeleteProject';
 
-export default function BigDaddyProject({ projectId }) {
+export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
@@ -27,8 +28,11 @@ export default function BigDaddyProject({ projectId }) {
     singleProjectRunning,
     isSaving,
     hideCompletedTasks,
+    clearSaveManager,
+    theBigDelete,
   } = useSaveContext();
 
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => { // refresh checkpoint from save manager
@@ -136,8 +140,16 @@ export default function BigDaddyProject({ projectId }) {
     }
   };
 
+  const handleOpenModal = () => {
+    setOpenDeleteModal((prevVal) => true);
+  };
+  const handleCloseModal = () => {
+    setOpenDeleteModal((prevVal) => false);
+  };
   return (
     <>
+      <DeleteProjectModal handleDelete={() => { theBigDelete(project.projectId); }} closeModal={handleCloseModal} show={openDeleteModal} />
+
       <div className="bigDad">
         <div id="project-container" style={{}}>
           <div id="project-top-bar" style={{ marginBottom: '3%' }}>
@@ -148,7 +160,7 @@ export default function BigDaddyProject({ projectId }) {
               style={{ color: 'rgb(200, 200, 200)' }}
               onClick={sendToServer}
             >
-              SAVE
+              Save
             </button>
             <Dropdown
               style={{ outline: 'none' }}
@@ -158,7 +170,7 @@ export default function BigDaddyProject({ projectId }) {
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'rgb(200, 200, 200)' }}
                 id="dropdown-view-options"
               >
-                VIEW OPTIONS
+                View Options
               </Dropdown.Toggle>
               <Dropdown.Menu style={{ backgroundColor: 'black', color: 'white' }}>
                 <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
@@ -173,7 +185,17 @@ export default function BigDaddyProject({ projectId }) {
               style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { router.push(`/collaborators/${projectId}`); }}
             >
-              MANAGE COLLABORATORS
+              Collaborators
+            </button>
+            <button
+              id="manageCollaborators"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              // onClick={() => setOpenDeleteModal(true)}
+              onClick={() => { setOpenDeleteModal((preVal) => true); }}
+            >
+              Delete This Project
             </button>
           </div>
           <div id="projectCard-container" className="fullCenter">
@@ -189,7 +211,6 @@ export default function BigDaddyProject({ projectId }) {
           <div
             id="add-checkpt-button"
             style={{
-              marginTop: '2%',
               paddingLeft: '0%',
               display: 'flex',
               justifyContent: 'space-between',
@@ -248,6 +269,6 @@ export default function BigDaddyProject({ projectId }) {
   );
 }
 
-BigDaddyProject.propTypes = {
+MainProjectView.propTypes = {
   projectId: PropTypes.string.isRequired,
 };

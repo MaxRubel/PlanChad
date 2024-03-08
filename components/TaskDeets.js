@@ -2,8 +2,8 @@ import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { peopleIcon } from '../public/icons';
-import ViewTaskCollabsInProj from './ViewTaskCollabsInProj';
-import { hideCollabsToolTips, viewCollabsToolTips } from './toolTips';
+import ViewTaskCollabsInProj from './views/ViewTaskCollabsInProj';
+import { hideCollabsToolTips, viewCollabsToolTips } from './util/toolTips';
 
 export default function TaskDeets({
   formInput, handleChange, taskId, saveCollabsExpand,
@@ -77,24 +77,35 @@ export default function TaskDeets({
               id="whole-card"
               className="card"
               style={{
+                // padding: '6%',
                 height: '250px',
                 backgroundColor: formInput.status === 'closed' ? 'grey' : '',
                 border: 'none',
                 margin: '3px 0px',
                 marginRight: collabsExpand ? '3px' : '',
-                display: 'flex', /* Add display:flex */
-                flexDirection: 'column', /* Set flex-direction to column */
+                display: 'flex',
+                flexDirection: 'column',
                 transition: 'all 1.5s ease',
               }}
             >
               <div
                 id="card-header"
                 style={{
-                  display: 'flex', flexDirection: 'column', height: '43.89px', padding: '10px 30px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  // height: '43.89px',
+                  padding: '10px 39px',
                 }}
               >
                 <div className="veritcalCenter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-                  <div className="veritcalCenter" style={{ fontSize: '18px', paddingTop: '1%', fontWeight: '600' }}>
+                  <div
+                    className="veritcalCenter"
+                    style={{
+                      fontSize: '18px',
+                      paddingTop: '1%',
+                      fontWeight: '600',
+                    }}
+                  >
                     <label htmlFor={`planning${taskId}`}>Planning:</label>
                   </div>
                   <div id="smallHeader" style={{ textAlign: 'right' }}>

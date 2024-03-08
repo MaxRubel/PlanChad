@@ -11,7 +11,7 @@ import {
   deleteTaskToolTip,
   expandTaskTooltip,
   viewTaskDeetsToolTip,
-} from './toolTips';
+} from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteTaskModal from './modals/DeleteTask';

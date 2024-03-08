@@ -8,7 +8,7 @@ import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
   expandTooltip, collapseToolTip, addTaskToolTip, deleteSegment,
-} from './toolTips';
+} from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';

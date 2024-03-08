@@ -149,8 +149,8 @@ body {
 #project-top-bar {
   color: white;
   border-bottom: 1px solid rgb(84, 84, 84);
-  margin-bottom: 4%;
-  margin: 1%;
+  // margin-bottom: 1%;
+  // margin: 1%;
   display: flex;
   gap: 7%
 }
@@ -290,4 +290,12 @@ body {
 .modal-content {
   background-color: #1f2226;
   color: white;
+}
+
+.navBarShowing {
+  display: block;
+}
+
+.navBarHidden {
+  display: none;
 }

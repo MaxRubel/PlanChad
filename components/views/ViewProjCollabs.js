@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useSaveContext } from '../utils/context/saveManager';
-import { useCollabContext } from '../utils/context/collabContext';
-import CollabCardforProject from './CollabCardForProject';
+import { useSaveContext } from '../../utils/context/saveManager';
+import { useCollabContext } from '../../utils/context/collabContext';
+import CollabCardforProject from '../cards/CollabCardForProject';
 
 export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToAssignChild }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);

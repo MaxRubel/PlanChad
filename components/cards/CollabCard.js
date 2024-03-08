@@ -1,19 +1,19 @@
 import { Collapse, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { deleteCollab } from '../api/collabs';
+import { deleteCollab } from '../../api/collabs';
 import {
   createNewProjCollab, deleteProjCollab, updateProjCollab,
-} from '../api/projCollab';
-import { useCollabContext } from '../utils/context/collabContext';
-import { useAuth } from '../utils/context/authContext';
+} from '../../api/projCollab';
+import { useCollabContext } from '../../utils/context/collabContext';
+import { useAuth } from '../../utils/context/authContext';
 import {
   plusIconSmol, editIcon, removeIcon, deleteIcon,
-} from '../public/icons';
-import { deleteTaskCollab } from '../api/taskCollab';
-import { deleteCollabTT, editCollabTT, viewCollabDeetsTT } from './toolTips';
-import { useSaveContext } from '../utils/context/saveManager';
-import DeleteCollabModal from './modals/DeleteCollab';
+} from '../../public/icons';
+import { deleteTaskCollab } from '../../api/taskCollab';
+import { deleteCollabTT, editCollabTT, viewCollabDeetsTT } from '../util/toolTips';
+import { useSaveContext } from '../../utils/context/saveManager';
+import DeleteCollabModal from '../modals/DeleteCollab';
 
 export default function CollabCard({ collab, ofProj, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import CollabCard from './CollabCard';
-import { useCollabContext } from '../utils/context/collabContext';
+import CollabCard from '../cards/CollabCard';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function ViewAllCollabs({ projectToAssign }) {
   const [collabs, setCollabs] = useState([]);
