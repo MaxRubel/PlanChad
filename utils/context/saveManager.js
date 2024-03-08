@@ -21,7 +21,7 @@ export const SaveContextProvider = ({ children }) => {
   const [projectsLoaded, setProjectLoaded] = useState(false);
   const { user } = useAuth();
   const [singleProjectRunning, setSingleProjectRunning] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, setIsSaving] = useState(0);
   const [isFetchingProjects, setIsFetchingProjects] = useState(true);
 
   useEffect(() => {
@@ -188,7 +188,7 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const sendToServer = () => {
-    setIsSaving((preVal) => true);
+    setIsSaving((preVal) => preVal + 1);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
     const tasksFormatted = tasks.length > 0 ? JSON.stringify(tasks) : null;
@@ -201,11 +201,12 @@ export const SaveContextProvider = ({ children }) => {
       tasks: tasksFormatted,
     };
 
-    updateProject(payload).then(() => { setIsSaving((preVal) => false); });
-    const copy = [...allProjects];
-    const index = copy.findIndex((item) => item.projectId === payload.projectId);
-    copy[index] = payload;
-    setAllProjects((preVal) => copy);
+    updateProject(payload).then(() => {
+      const copy = [...allProjects];
+      const index = copy.findIndex((item) => item.projectId === payload.projectId);
+      copy[index] = payload;
+      setAllProjects((preVal) => copy);
+    });
   };
 
   return (
