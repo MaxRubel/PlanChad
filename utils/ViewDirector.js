@@ -10,7 +10,7 @@ const ViewDirectorBasedOnUserAuthStatus = ({ component: Component, pageProps }) 
   const { isFetchingProjects } = useSaveContext();
   console.log(isFetchingProjects);
   // if user state is null, then show loader
-  if (userLoading || isFetchingProjects) {
+  if (userLoading) {
     return <Loading />;
   }
 
