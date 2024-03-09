@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import NewProjectForm from '../../components/NewProjectForm';
+import NewProjectForm from '../../components/forms/NewProjectForm';
 import { useSaveContext } from '../../utils/context/saveManager';
 
 export default function CreateNewProject() {

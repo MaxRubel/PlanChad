@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import ViewAllCollabs from '../../components/ViewAllCollabs';
-import ViewProjCollabs from '../../components/ViewProjCollabs';
-import ViewTaskCollabs from '../../components/ViewTaskCollabs';
+import ViewAllCollabs from '../../components/views/ViewAllCollabs';
+import ViewProjCollabs from '../../components/views/ViewProjCollabs';
+import ViewTaskCollabs from '../../components/views/ViewTaskCollabs';
 import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/modals/AddCollabForm2';
@@ -16,7 +16,7 @@ export default function ManageCollaboratorsPage() {
   const [projectToAssign, setProjectToAssign] = useState('');
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
-  const { sendToServer } = useSaveContext();
+  const { sendToServer, cancelSaveAnimation } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
 
   useEffect(() => {
@@ -57,15 +57,18 @@ export default function ManageCollaboratorsPage() {
 
   return (
     <>
-      <div id="project-top-bar" style={{ marginBottom: '2%' }}>
+      <div id="project-top-bar" style={{ marginBottom: '1%' }}>
         <button
           id="saveButton"
           type="button"
           className="clearButton"
           style={{ color: 'rgb(200, 200, 200)' }}
-          onClick={() => { router.push(`/project/plan/${projectId}`); }}
+          onClick={() => {
+            cancelSaveAnimation();
+            router.push(`/project/plan/${projectId}`);
+          }}
         >
-          BACK TO PROJECT
+          Back to Project
         </button>
         <button
           id="showModal"
@@ -74,12 +77,12 @@ export default function ManageCollaboratorsPage() {
           style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => setModalShow(true)}
         >
-          ADD A COLLABORATOR
+          Add A Collaborator
         </button>
         <div
           id="inputControl"
           style={{
-            flex: '1', marginBottom: '8px', marginTop: '-8px',
+            flex: '1', marginBottom: '8px',
           }}
         >
           <input
@@ -87,7 +90,10 @@ export default function ManageCollaboratorsPage() {
             id="collaborator-search-input"
             placeholder="Search collaborators..."
             onChange={handleSearch}
-            style={{ backgroundColor: 'rgb(225, 225, 225)' }}
+            style={{
+              border: '3.5px solid rgb(16, 197, 234)',
+              backgroundColor: 'rgb(225, 225, 225)',
+            }}
           />
         </div>
       </div>
@@ -120,7 +126,12 @@ export default function ManageCollaboratorsPage() {
       </div>
       <div
         id="twoTableRow"
-        style={{ display: 'flex', justifyContent: 'space-between', gap: '2%' }}
+        style={{
+          padding: '1% 0%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '1%',
+        }}
       >
         <ViewProjCollabs
           projectId={projectId}

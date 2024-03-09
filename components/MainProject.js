@@ -7,8 +7,9 @@ import PropTypes from 'prop-types';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
+import DeleteProjectModal from './modals/DeleteProject';
 
-export default function BigDaddyProject({ projectId }) {
+export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
@@ -27,8 +28,11 @@ export default function BigDaddyProject({ projectId }) {
     singleProjectRunning,
     isSaving,
     hideCompletedTasks,
+    theBigDelete,
+    cancelSaveAnimation,
   } = useSaveContext();
 
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
 
   useEffect(() => { // refresh checkpoint from save manager
@@ -39,6 +43,7 @@ export default function BigDaddyProject({ projectId }) {
 
   useEffect(() => { // on Mount
     if (projectId && projectsLoaded) {
+      cancelSaveAnimation();
       if (!singleProjectRunning) {
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
@@ -47,7 +52,6 @@ export default function BigDaddyProject({ projectId }) {
         setCheckpoints(checkpointsSorted);
       } else {
         setProject((preVal) => saveInput.project);
-
         setHideCompletedTasksChild((preVal) => saveInput.project.hideCompletedTasks);
         const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints((preVal) => checkpointsSorted);
@@ -80,9 +84,13 @@ export default function BigDaddyProject({ projectId }) {
   }, [min]);
 
   useEffect(() => { // save button color animation
+    // cancelSaveAnimation();
     let saveColorChange;
+    const saveButton = document.getElementById('saveButton');
+    if (!isSaving) {
+      saveButton.style.color = 'rgb(200, 200, 200)';
+    }
     if (isSaving) {
-      const saveButton = document.getElementById('saveButton');
       saveButton.style.color = 'rgb(16, 197, 234)';
       saveColorChange = setTimeout(() => {
         saveButton.style.color = 'rgb(200, 200, 200)';
@@ -136,11 +144,19 @@ export default function BigDaddyProject({ projectId }) {
     }
   };
 
+  const handleOpenModal = () => {
+    setOpenDeleteModal((prevVal) => true);
+  };
+  const handleCloseModal = () => {
+    setOpenDeleteModal((prevVal) => false);
+  };
   return (
     <>
+      <DeleteProjectModal handleDelete={() => { theBigDelete(project.projectId); }} closeModal={handleCloseModal} show={openDeleteModal} />
+
       <div className="bigDad">
-        <div id="project-container" style={{}}>
-          <div id="project-top-bar" style={{ marginBottom: '3%' }}>
+        <div id="project-container">
+          <div id="project-top-bar" style={{ marginBottom: '1%' }}>
             <button
               id="saveButton"
               type="button"
@@ -148,7 +164,25 @@ export default function BigDaddyProject({ projectId }) {
               style={{ color: 'rgb(200, 200, 200)' }}
               onClick={sendToServer}
             >
-              SAVE
+              Save
+            </button>
+            {/* <button
+              id="manageCollaborators"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { router.push(`/calendar/view/${projectId}`); }}
+            >
+              Calendar
+            </button> */}
+            <button
+              id="manageCollaborators"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { router.push(`/collaborators/${projectId}`); }}
+            >
+              Collaborators
             </button>
             <Dropdown
               style={{ outline: 'none' }}
@@ -158,9 +192,9 @@ export default function BigDaddyProject({ projectId }) {
                 style={{ backgroundColor: 'transparent', border: 'none', color: 'rgb(200, 200, 200)' }}
                 id="dropdown-view-options"
               >
-                VIEW OPTIONS
+                View Options
               </Dropdown.Toggle>
-              <Dropdown.Menu style={{ backgroundColor: 'black', color: 'white' }}>
+              <Dropdown.Menu style={{ backgroundColor: 'rgb(0,0,0, .85)', color: 'white' }}>
                 <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
                 <Dropdown.Item eventKey="showProgress">{progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
                 <Dropdown.Item eventKey="hideCompleted">{saveInput.project.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
@@ -171,9 +205,9 @@ export default function BigDaddyProject({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { router.push(`/collaborators/${projectId}`); }}
+              onClick={() => { setOpenDeleteModal((preVal) => true); }}
             >
-              MANAGE COLLABORATORS
+              Delete This Project
             </button>
           </div>
           <div id="projectCard-container" className="fullCenter">
@@ -189,7 +223,6 @@ export default function BigDaddyProject({ projectId }) {
           <div
             id="add-checkpt-button"
             style={{
-              marginTop: '2%',
               paddingLeft: '0%',
               display: 'flex',
               justifyContent: 'space-between',
@@ -248,6 +281,6 @@ export default function BigDaddyProject({ projectId }) {
   );
 }
 
-BigDaddyProject.propTypes = {
+MainProjectView.propTypes = {
   projectId: PropTypes.string.isRequired,
 };

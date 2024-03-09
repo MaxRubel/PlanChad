@@ -8,7 +8,7 @@ import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
   expandTooltip, collapseToolTip, addTaskToolTip, deleteSegment,
-} from './toolTips';
+} from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';
@@ -248,17 +248,24 @@ export default function Checkpoint({
           <div
             id="line"
             style={{
-              borderLeft: '2px solid rgb(16, 197, 234, .4)',
+              borderLeft: '2px solid rgb(16, 197, 234, .7)',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
             }}
           >
-            <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .4)' }} />
+            <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .7)' }} />
             <div />
           </div>
         </div>
         {/* --------------card------------------------ */}
-        <div className="card" style={{ margin: '3px 0px', minWidth: '565px', border: '5px solid rgb(16, 197, 234, .2)' }}>
+        <div
+          className="card"
+          style={{
+            margin: '3px 0px',
+            minWidth: '565px',
+            border: '4px solid rgb(16, 197, 234, .4)',
+          }}
+        >
           <div className="card-header 2" style={{ minWidth: '516px', border: !formInput.expanded ? 'none' : '' }}>
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div className="verticalCenter">
@@ -267,7 +274,7 @@ export default function Checkpoint({
                   placement="top"
                   overlay={formInput.expanded ? collapseToolTip : expandTooltip}
                   trigger={['hover', 'focus']}
-                  delay={750}
+                  delay={{ show: 750, hide: 0 }}
                 >
                   <button
                     type="button"
@@ -285,7 +292,7 @@ export default function Checkpoint({
                     {downIcon}
                   </button>
                 </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={addTaskToolTip} delay={750}>
+                <OverlayTrigger placement="top" overlay={addTaskToolTip} delay={{ show: 750, hide: 0 }}>
                   <button
                     type="button"
                     id={`addTask${checkP.localId}`}
@@ -331,7 +338,11 @@ export default function Checkpoint({
                 paddingRight: '8%',
               }}
             >
-              <OverlayTrigger placement="top" overlay={deleteSegment}>
+              <OverlayTrigger
+                placement="top"
+                overlay={deleteSegment}
+                delay={{ show: 750, hide: 0 }}
+              >
                 <button
                   type="button"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
@@ -351,32 +362,14 @@ export default function Checkpoint({
           {/* --------------card-body------------------------ */}
           <Collapse in={formInput.expanded}>
             <div id="whole-card">
-              <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '0% 0% !important' }}>
-                <div
-                  id="row2"
-                  className="cardRow"
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter">
-                      <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
-                    </div>
-                    <div />
-                  </div>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-                  }}
-                  >
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={formInput.deadline}
-                      onChange={handleChange}
-                      name="deadline"
-                      id={`deadline${checkP.localId}`}
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
-                    />
-                  </div>
-                </div>
+              <div
+                id="card-container"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '1% 0%',
+                }}
+              >
                 <div
                   id="row3"
                   className="cardRow"
@@ -403,18 +396,46 @@ export default function Checkpoint({
                     />
                   </div>
                 </div>
+                <div
+                  id="row2"
+                  className="cardRow"
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                    <div className="verticalCenter">
+                      <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
+                    </div>
+                    <div />
+                  </div>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+                  }}
+                  >
+                    <input
+                      className="form-control"
+                      type="date"
+                      value={formInput.deadline}
+                      onChange={handleChange}
+                      name="deadline"
+                      id={`deadline${checkP.localId}`}
+                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                    />
+                  </div>
+                </div>
+
               </div>
               <div
                 id="description-field"
                 className="fullCenter"
                 style={{
                   borderTop: '1px solid rgb(180, 180, 180)',
-                  padding: '1.4% 10%',
+                  padding: '1% 10%',
+                  paddingTop: '1%',
+                  paddingBottom: '1%',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
               >
-                <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
+                <div id="text-label" className="fullCenter">
                   <label htmlFor={`description${checkP.localId}`} className="form-label" style={{ textAlign: 'center' }}>
                     Description:
                   </label>

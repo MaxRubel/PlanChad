@@ -1,14 +1,14 @@
 import { Collapse, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { deleteProjCollab } from '../api/projCollab';
-import { useCollabContext } from '../utils/context/collabContext';
-import { useAuth } from '../utils/context/authContext';
-import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../api/taskCollab';
-import { removeIcon } from '../public/icons';
-import { removeFromProjTT, viewCollabDeetsTT } from './toolTips';
-import { useSaveContext } from '../utils/context/saveManager';
-import DeleteProjCollabModal from './modals/DeleteProjCollab';
+import { deleteProjCollab } from '../../api/projCollab';
+import { useCollabContext } from '../../utils/context/collabContext';
+import { useAuth } from '../../utils/context/authContext';
+import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../../api/taskCollab';
+import { removeIcon } from '../../public/icons';
+import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
+import { useSaveContext } from '../../utils/context/saveManager';
+import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 
 export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
@@ -135,7 +135,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
         <div className="card-body" style={{ padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 
           <div id="col1">
-            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={750}>
+            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
               <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
                 {downIcon}
               </button>
@@ -143,7 +143,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
             {collab.name}
           </div>
           <div style={{ textAlign: 'right' }}>
-            <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={750}>
+            <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
               <button
                 type="button"
                 className="clearButton"
@@ -153,7 +153,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
                 {removeIcon}
               </button>
             </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={assignToTaskTT} delay={750}>
+            <OverlayTrigger placement="top" overlay={assignToTaskTT} delay={{ show: 750, hide: 0 }}>
               <button
                 type="button"
                 className="clearButton"

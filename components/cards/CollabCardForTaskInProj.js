@@ -1,9 +1,9 @@
 import { Collapse } from 'react-bootstrap';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { removeIcon } from '../public/icons';
-import { deleteTaskCollab } from '../api/taskCollab';
-import { useCollabContext } from '../utils/context/collabContext';
+import { removeIcon } from '../../public/icons';
+import { deleteTaskCollab } from '../../api/taskCollab';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function CollabCardForTaskInProj({ taskId, collab, formInput }) {
   const [expanded, setExpanded] = useState(false);

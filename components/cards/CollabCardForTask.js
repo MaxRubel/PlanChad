@@ -1,10 +1,10 @@
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { removeIcon } from '../public/icons';
-import { deleteTaskCollab } from '../api/taskCollab';
-import { useCollabContext } from '../utils/context/collabContext';
-import { removeFromTaskTT, viewCollabDeetsTT } from './toolTips';
+import { removeIcon } from '../../public/icons';
+import { deleteTaskCollab } from '../../api/taskCollab';
+import { useCollabContext } from '../../utils/context/collabContext';
+import { removeFromTaskTT, viewCollabDeetsTT } from '../util/toolTips';
 
 export default function CollabCardForTask({ taskId, collab }) {
   const [expanded, setExpanded] = useState(false);
@@ -47,7 +47,7 @@ export default function CollabCardForTask({ taskId, collab }) {
       >
 
         <div id="col1">
-          <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={750}>
+          <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
             <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
               {downIcon}
             </button>
@@ -55,7 +55,7 @@ export default function CollabCardForTask({ taskId, collab }) {
           {collab.name}
         </div>
         <div id="col2" style={{ textAlign: 'right' }}>
-          <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={750}>
+          <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={{ show: 750, hide: 0 }}>
             <button
               type="button"
               className="clearButton"

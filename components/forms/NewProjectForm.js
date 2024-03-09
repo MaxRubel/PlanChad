@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useAuth } from '../utils/context/authContext';
-import { createNewProject, updateProject } from '../api/project';
-import { useSaveContext } from '../utils/context/saveManager';
+import { useAuth } from '../../utils/context/authContext';
+import { createNewProject, updateProject } from '../../api/project';
+import { useSaveContext } from '../../utils/context/saveManager';
 
 export default function NewProjectForm() {
   const [formInput, setFormInput] = useState({ name: '' });
@@ -59,7 +59,6 @@ export default function NewProjectForm() {
         style={{
           minWidth: '400px',
           maxWidth: '600px',
-          // backgroundColor: 'red',
         }}
       >
         <div style={{
@@ -81,6 +80,7 @@ export default function NewProjectForm() {
             name="name"
             onChange={handleChange}
             autoComplete="off"
+            style={{ backgroundColor: 'rgb(13, 195, 240)' }}
             required
           />
         </div>

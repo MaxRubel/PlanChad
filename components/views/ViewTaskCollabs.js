@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useSaveContext } from '../utils/context/saveManager';
-import CollabCardForTask from './CollabCardForTask';
-import { useCollabContext } from '../utils/context/collabContext';
+import { useSaveContext } from '../../utils/context/saveManager';
+import CollabCardForTask from '../cards/CollabCardForTask';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
   const { saveInput, allTasks } = useSaveContext();
@@ -67,21 +67,24 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
   return (
     <>
       <div
-        className="card text-bg-dark mb-3"
+        className="card"
         style={{
           width: '47%',
+          backgroundColor: 'lightgray',
         }}
       >
         <div
           className="card-header"
           style={{
-            color: 'rgb(200, 200, 200)',
             fontSize: '22px',
+            padding: '16px',
+            paddingTop: '1%',
             textAlign: 'center',
-            fontWeight: '600',
+            fontWeight: '500',
+            botderBottom: '1px solid rgb(84,84,84)',
           }}
         >
-          <div style={{ marginBottom: '2%' }}>Task</div>
+          <div style={{ padding: '3px', marginBottom: '1%' }}>Task</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
             <Form.Select
               style={{

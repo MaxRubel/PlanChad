@@ -104,7 +104,7 @@ export default function ProjectCard({
               fontSize: '20px',
               backgroundColor: 'transparent',
               border: 'none',
-              fontWeight: '700',
+              fontWeight: '600',
             }}
             onChange={handleChange}
             autoComplete="off"
@@ -138,7 +138,7 @@ export default function ProjectCard({
                   onChange={handleChange}
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
-                    border: 'none',
+                    border: '1px solid lightgrey',
                   }}
                 />
               </div>
@@ -164,7 +164,7 @@ export default function ProjectCard({
                   onChange={handleChange}
                   name="start_date"
                   id="start_date"
-                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
+                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey' }}
                 />
               </div>
             </div>
@@ -180,6 +180,7 @@ export default function ProjectCard({
               </div>
               <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+
               }}
               >
                 <input
@@ -189,7 +190,7 @@ export default function ProjectCard({
                   onChange={handleChange}
                   name="deadline"
                   id="deadline"
-                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
+                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey' }}
                 />
               </div>
             </div>
@@ -215,10 +216,11 @@ export default function ProjectCard({
                   placeholder="$$$"
                   onChange={handleChange}
                   name="budget"
-                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none' }}
+                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey' }}
                 />
               </div>
             </div>
+
           </div>
           <div
             id="description-field"
@@ -239,7 +241,7 @@ export default function ProjectCard({
               value={formInput.description}
               onChange={handleChange}
               name="description"
-              style={{ backgroundColor: 'rgb(13, 195, 240)', border: 'none', minWidth: '250px' }}
+              style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey', minWidth: '250px' }}
             />
           </div>
         </div>
