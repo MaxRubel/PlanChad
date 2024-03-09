@@ -32,13 +32,13 @@ export const addTaskToolTip = (
 
 export const viewTaskDeetsToolTip = (
   <Tooltip id="viewTaskDeetsToolTip">
-    View Planning Details
+    Plan
   </Tooltip>
 );
 
 export const closeTaskToolTip = (
   <Tooltip id="closeTaskToolTip">
-    Close This Task
+    Complete This Task
   </Tooltip>
 );
 

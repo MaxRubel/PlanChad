@@ -62,8 +62,8 @@ const homeIcon = (
 const rightArrowWhite = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="50"
-    height="50"
+    width="35"
+    height="35"
     fill="rgb(200,200,200, .8)"
     className="bi bi-arrow-right"
     viewBox="0 0 16 16"

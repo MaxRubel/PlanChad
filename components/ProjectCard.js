@@ -104,7 +104,7 @@ export default function ProjectCard({
               fontSize: '20px',
               backgroundColor: 'transparent',
               border: 'none',
-              fontWeight: '700',
+              fontWeight: '600',
             }}
             onChange={handleChange}
             autoComplete="off"
@@ -220,6 +220,7 @@ export default function ProjectCard({
                 />
               </div>
             </div>
+
           </div>
           <div
             id="description-field"

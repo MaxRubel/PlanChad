@@ -166,6 +166,15 @@ export default function MainProjectView({ projectId }) {
             >
               Save
             </button>
+            <button
+              id="manageCollaborators"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { router.push(`/collaborators/${projectId}`); }}
+            >
+              Collaborators
+            </button>
             <Dropdown
               style={{ outline: 'none' }}
               onSelect={handleChange}
@@ -176,21 +185,12 @@ export default function MainProjectView({ projectId }) {
               >
                 View Options
               </Dropdown.Toggle>
-              <Dropdown.Menu style={{ backgroundColor: 'black', color: 'white' }}>
+              <Dropdown.Menu style={{ backgroundColor: 'rgb(0,0,0, .85)', color: 'white' }}>
                 <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
                 <Dropdown.Item eventKey="showProgress">{progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
                 <Dropdown.Item eventKey="hideCompleted">{saveInput.project.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            <button
-              id="manageCollaborators"
-              type="button"
-              className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { router.push(`/collaborators/${projectId}`); }}
-            >
-              Collaborators
-            </button>
             <button
               id="manageCollaborators"
               type="button"

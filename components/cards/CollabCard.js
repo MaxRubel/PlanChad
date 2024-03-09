@@ -32,7 +32,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   useEffect(() => {
     const allProjCop = [...allProjects];
     const project = allProjCop.find((item) => item.projectId === projectToAssign);
-    projectName.current = project.name;
+    projectName.current = project?.name;
   }, [projectToAssign]);
 
   const downIcon = (
@@ -140,7 +140,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
           }}
         >
           <div id="col1">
-            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={750}>
+            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
               <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
                 {downIcon}
               </button>
@@ -160,7 +160,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
             </div>
           ) : (
             <div id="col2" style={{ textAlign: 'right' }}>
-              <OverlayTrigger placement="top" overlay={addToProjTT} delay={750}>
+              <OverlayTrigger placement="top" overlay={addToProjTT} delay={{ show: 750, hide: 0 }}>
                 <button
                   type="button"
                   className="clearButton"
@@ -170,7 +170,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
                   {plusIconSmol}
                 </button>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={editCollabTT} delay={750}>
+              <OverlayTrigger placement="top" overlay={editCollabTT} delay={{ show: 750, hide: 0 }}>
                 <button
                   id="update-collab"
                   type="button"
@@ -181,7 +181,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
                   {editIcon}
                 </button>
               </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={750}>
+              <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={{ show: 750, hide: 0 }}>
                 <button
                   type="button"
                   className="clearButton"

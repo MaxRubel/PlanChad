@@ -72,11 +72,11 @@ export const SaveContextProvider = ({ children }) => {
     const project = copy.find((item) => item.projectId === projectId);
     let checkpoints = [];
     let tasks = [];
-    if (project.checkpoints) {
+    if (project?.checkpoints) {
       const checkpointsForm = JSON.parse(project.checkpoints);
       checkpoints = checkpointsForm.sort((a, b) => a.index - b.index);
     }
-    if (project.tasks) {
+    if (project?.tasks) {
       const tasksForm = JSON.parse(project.tasks);
       tasks = tasksForm;
     }
@@ -89,10 +89,11 @@ export const SaveContextProvider = ({ children }) => {
   const theBigDelete = (projectId) => {
     deleteProject(projectId).then(() => {
       setIsFetchingProjects((preVal) => true);
-      clearSaveManager();
-      setProjectsLoaded((preVal) => false);
       setFetchUserData((prev) => prev + 1);
       router.push('/');
+      setIsFetchingProjects((preVal) => true);
+      clearSaveManager();
+      setProjectsLoaded((preVal) => false);
     });
   };
 

@@ -57,7 +57,7 @@ export default function ManageCollaboratorsPage() {
 
   return (
     <>
-      <div id="project-top-bar" style={{ marginBottom: '2%' }}>
+      <div id="project-top-bar" style={{ marginBottom: '1%' }}>
         <button
           id="saveButton"
           type="button"
@@ -82,7 +82,7 @@ export default function ManageCollaboratorsPage() {
         <div
           id="inputControl"
           style={{
-            flex: '1', marginBottom: '8px', marginTop: '-8px',
+            flex: '1', marginBottom: '8px',
           }}
         >
           <input
@@ -90,7 +90,10 @@ export default function ManageCollaboratorsPage() {
             id="collaborator-search-input"
             placeholder="Search collaborators..."
             onChange={handleSearch}
-            style={{ backgroundColor: 'rgb(225, 225, 225)' }}
+            style={{
+              border: '3.5px solid rgb(16, 197, 234)',
+              backgroundColor: 'rgb(225, 225, 225)',
+            }}
           />
         </div>
       </div>
@@ -123,7 +126,12 @@ export default function ManageCollaboratorsPage() {
       </div>
       <div
         id="twoTableRow"
-        style={{ display: 'flex', justifyContent: 'space-between', gap: '2%' }}
+        style={{
+          padding: '1% 0%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '1%',
+        }}
       >
         <ViewProjCollabs
           projectId={projectId}

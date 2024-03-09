@@ -12,7 +12,9 @@
 
 body {
   // background-color: rgb(34, 37, 41);
-  background-color: black;
+  // background-color: black;
+  // background-color: rgb(43, 27, 49);
+
   // background: rgb(25, 0, 17);
   // background: radial-gradient(circle, rgba(25, 0, 17, 1) 0%, rgba(0, 0, 0, 0.7693671218487395) 100%);
   // height: 100vh;
@@ -33,11 +35,10 @@ body {
 
 #__next {
   min-height: 100vh;
-  background-color: black;
-  // background: rgb(0, 20, 28);
-  // background: linear-gradient(90deg, rgba(0, 20, 28, 1) 0%, rgba(0, 0, 0, 1) 50%, rgb(23, 10, 0) 100%);
-  // background: rgb(0, 0, 0);
-  // background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgb(17, 11, 11) 100%);
+  background-color: black // background: rgb(0, 20, 28);
+    // background: linear-gradient(90deg, rgba(0, 20, 28, 1) 0%, rgba(0, 0, 0, 1) 50%, rgb(23, 10, 0) 100%);
+    // background: rgb(0, 0, 0);
+    // background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgb(17, 11, 11) 100%);
 }
 
 .bigDad {
@@ -104,7 +105,7 @@ body {
 }
 
 .btn.btn-outline-secondary:hover {
-  background-color: rgb(56, 56, 56);
+  background-color: rgb(36, 36, 36);
 }
 
 .fullCenter {
@@ -230,6 +231,17 @@ body {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(74, 196, 253);
 }
+
+// #allCollabsCard::-webkit-scrollbar-track {
+//   -webkit-box-shadow: inset 0 0 6px rgb(174, 174, 174) !important;
+//   border-radius: 10px;
+// }
+
+// #allCollabsCard::-webkit-scrollbar-thumb {
+//   border-radius: 10px;
+//   -webkit-box-shadow: inset 0 0 6px rgb(0, 0, 0) !important;
+// }
+
 
 .checkpoint-progress {
   position: absolute;
