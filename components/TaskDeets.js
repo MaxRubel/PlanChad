@@ -8,8 +8,6 @@ import { hideCollabsToolTips, viewCollabsToolTips } from './util/toolTips';
 export default function TaskDeets({
   formInput, handleChange, taskId, saveCollabsExpand,
 }) {
-  const [collabsExpand, setCollabsExpand] = useState(false);
-
   const arrowSmall = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -26,15 +24,9 @@ export default function TaskDeets({
       />
     </svg>
   );
-
   useEffect(() => {
-    setCollabsExpand((preVal) => formInput.collabsExpanded);
+    console.log(formInput.collabsExpanded);
   }, [formInput]);
-
-  const handleExpand = () => {
-    saveCollabsExpand(!collabsExpand);
-  };
-
   return (
     <>
       <Collapse
@@ -43,7 +35,7 @@ export default function TaskDeets({
         onEnter={() => { document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid'; }}
       >
         <div>
-          <div id={`taskDeets${formInput.localId}`} style={{ display: 'none' }} className={collabsExpand ? 'taskDeetsExpand' : 'taskDeets'}>
+          <div id={`taskDeets${formInput.localId}`} style={{ display: 'none' }} className={formInput.collabsExpanded ? 'taskDeetsExpand' : 'taskDeets'}>
             <div id="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
               <div id="empty" />
               <div
@@ -62,7 +54,7 @@ export default function TaskDeets({
                 />
               </div>
             </div>
-            <div id="marginL2" style={{ display: collabsExpand ? 'none' : 'grid', gridTemplateRows: '1fr 1fr' }}>
+            <div id="marginL2" style={{ display: formInput.collabsExpanded ? 'none' : 'grid', gridTemplateRows: '1fr 1fr' }}>
               <div
                 id="line"
                 style={{
@@ -81,13 +73,13 @@ export default function TaskDeets({
                 backgroundColor: formInput.status === 'closed' ? 'grey' : '',
                 border: 'none',
                 margin: '3px 0px',
-                marginRight: collabsExpand ? '3px' : '',
+                marginRight: formInput.collabsExpanded ? '3px' : '',
                 display: 'flex',
                 flexDirection: 'column',
                 transition: 'all 1.5s ease',
               }}
             >
-              <div id="text area" style={{ padding: '3% 5%', flex: '1' }}> {/* Set flex: 1 to fill remaining space */}
+              <div id="text area" style={{ padding: '3% 5%', flex: '1' }}>
                 <div id="plan" style={{ paddingBottom: '1%' }}><strong>Plan:</strong></div>
                 <textarea
                   className="form-control"
@@ -107,7 +99,7 @@ export default function TaskDeets({
               </div>
             </div>
             <div id="taskCollabs" style={{ marginLeft: '3px' }}>
-              <ViewTaskCollabsInProj formInput={formInput} taskId={taskId} collabsExpand={collabsExpand} saveCollabsExpand={saveCollabsExpand} />
+              <ViewTaskCollabsInProj formInput={formInput} taskId={taskId} collabsExpand={formInput.collabsExpanded} saveCollabsExpand={formInput.collabsExpanded} />
             </div>
           </div>
         </div>
