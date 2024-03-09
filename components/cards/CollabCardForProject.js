@@ -135,7 +135,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
         <div className="card-body" style={{ padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 
           <div id="col1">
-            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={750}>
+            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
               <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
                 {downIcon}
               </button>
@@ -143,7 +143,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
             {collab.name}
           </div>
           <div style={{ textAlign: 'right' }}>
-            <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={750}>
+            <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
               <button
                 type="button"
                 className="clearButton"
@@ -153,7 +153,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
                 {removeIcon}
               </button>
             </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={assignToTaskTT} delay={750}>
+            <OverlayTrigger placement="top" overlay={assignToTaskTT} delay={{ show: 750, hide: 0 }}>
               <button
                 type="button"
                 className="clearButton"

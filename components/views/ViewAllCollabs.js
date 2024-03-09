@@ -25,13 +25,16 @@ export default function ViewAllCollabs({ projectToAssign }) {
   }, [searchInput]);
 
   return (
+
     <div
-      className="card text-bg-dark mb-3"
+      className="card text-bg-info mb-3"
+      id="allCollabsCard"
       style={{
-        color: 'rgb(200, 200, 200)',
-        paddingBottom: '8px',
-        height: '45vh',
+        boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)',
+        opacity: '.9',
         width: '100%',
+
+        height: '45vh',
         margin: '0px !important',
         // boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)',
       }}
@@ -39,18 +42,37 @@ export default function ViewAllCollabs({ projectToAssign }) {
       <div
         className="card-header"
         style={{
-          color: 'rgb(200, 200, 200)',
           fontSize: '22px',
           textAlign: 'center',
-          fontWeight: '600',
+          fontWeight: '500',
           // borderBottom: '1px solid rgb(84, 84, 84)',
         }}
       >
         All Collaborators
       </div>
-      <div className="card-body" style={{ paddingTop: '0px', overflow: 'auto' }}>
-        <div className="card">
-          <div className="card-body" style={{ border: 'none' }}>
+      <div
+        className="card-body"
+        id="1"
+        style={{
+          paddingTop: '0%',
+          padding: '0% 1%',
+          backgroundColor: 'rgb(225,225,225)',
+          borderRadius: '5px',
+          overflow: 'auto',
+          margin: '1.75%',
+          // paddingTop: '1%',
+        }}
+      >
+        <div className="card" style={{ border: 'none' }}>
+          <div
+            className="card-body"
+            id="2"
+            style={{
+              paddingTop: '1%',
+              padding: '1%',
+              backgroundColor: 'rgb(225,225,225)',
+            }}
+          >
             {collabs.length === 0 ? (
               <div>There are no collaborators...</div>
             ) : (

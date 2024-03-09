@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
-import { trashIcon } from '../public/icons';
+import { peopleIcon, trashIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
@@ -10,6 +10,8 @@ import {
   collapseToolTaskTip,
   deleteTaskToolTip,
   expandTaskTooltip,
+  hideCollabsToolTips,
+  viewCollabsToolTips,
   viewTaskDeetsToolTip,
 } from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
@@ -162,7 +164,7 @@ export default function Task({
           <div
             id="line"
             style={{
-              borderLeft: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(241, 146, 54, .5)',
+              borderLeft: '2px solid rgb(255, 117, 26, .5)',
               transition: '1.5s all ease',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
@@ -172,7 +174,7 @@ export default function Task({
               id="empty"
               style={{
                 transition: '1.5s all ease',
-                borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+                borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
               }}
             />
             <div />
@@ -183,7 +185,7 @@ export default function Task({
             id="top-div"
             style={{
               transition: '1.5s all ease',
-              borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+              borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
             }}
           />
           <div id="bottom-div" />
@@ -220,7 +222,7 @@ export default function Task({
                   placement="top"
                   overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
                   trigger={['hover', 'focus']}
-                  delay={750}
+                  delay={{ show: 750, hide: 0 }}
                 >
                   <button
                     type="button"
@@ -242,7 +244,7 @@ export default function Task({
                   placement="top"
                   overlay={viewTaskDeetsToolTip}
                   trigger={['hover', 'focus']}
-                  delay={750}
+                  delay={{ show: 750, hide: 0 }}
                 >
                   <button
                     type="button"
@@ -267,7 +269,7 @@ export default function Task({
                   placement="top"
                   overlay={closeTaskToolTip}
                   trigger={['hover', 'focus']}
-                  delay={750}
+                  delay={{ show: 750, hide: 0 }}
                 >
                   <Checkbox
                     id={`task-completed${task.localId}`}
@@ -299,17 +301,31 @@ export default function Task({
             <div
               className="verticalCenter"
               style={{
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                justifyContent: 'center',
-                paddingRight: '8%',
+
+                gap: '12%',
+                justifyContent: 'right',
+                paddingRight: '10%',
               }}
             >
               <OverlayTrigger
                 placement="top"
+                overlay={formInput.collabsExpanded ? hideCollabsToolTips : viewCollabsToolTips}
+                trigger={['hover', 'focus']}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <button
+                  type="button"
+                  className="clearButton"
+                  style={{ color: 'black' }}
+                >
+                  {peopleIcon}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
                 overlay={deleteTaskToolTip}
                 trigger={['hover', 'focus']}
-                delay={750}
+                delay={{ show: 750, hide: 0 }}
               >
                 <button
                   type="button"
@@ -321,41 +337,13 @@ export default function Task({
                   {trashIcon}
                 </button>
               </OverlayTrigger>
+
             </div>
           </div>
           {/* --------------card-body------------------------ */}
           <Collapse in={formInput.expanded}>
             <div id="whole-card">
               <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
-                <div
-                  id="row2"
-                  className="cardRow"
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter">
-                      <label htmlFor="deadline">Deadline:</label>
-                    </div>
-                    <div />
-                  </div>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-                  }}
-                  >
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={formInput.deadline}
-                      onChange={handleChange}
-                      name="deadline"
-                      id="deadline"
-                      style={{
-                        backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
-                        border: 'none',
-                        transition: '1.5s all ease',
-                      }}
-                    />
-                  </div>
-                </div>
                 <div
                   id="row3"
                   className="cardRow"
@@ -385,18 +373,49 @@ export default function Task({
                     />
                   </div>
                 </div>
+                <div
+                  id="row2"
+                  className="cardRow"
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                    <div className="verticalCenter">
+                      <label htmlFor="deadline">Deadline:</label>
+                    </div>
+                    <div />
+                  </div>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+                  }}
+                  >
+                    <input
+                      className="form-control"
+                      type="date"
+                      value={formInput.deadline}
+                      onChange={handleChange}
+                      name="deadline"
+                      id="deadline"
+                      style={{
+                        backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                        border: 'none',
+                        transition: '1.5s all ease',
+                      }}
+                    />
+                  </div>
+                </div>
+
               </div>
               <div
                 id="description-field"
                 className="fullCenter"
                 style={{
                   borderTop: formInput.status === 'closed' ? 'none' : '1px solid rgb(180, 180, 180)',
-                  padding: '2% 10%',
+                  padding: '1% 10%',
+                  paddingBottom: '1%',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
               >
-                <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
+                <div id="text-label" className="fullCenter">
                   <label htmlFor={`description${task.localId}`} className="form-label" style={{ textAlign: 'center' }}>
                     Description:
                   </label>

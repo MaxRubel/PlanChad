@@ -17,13 +17,11 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
 
   useEffect(() => {
     // load in either the projectId from the router query or let the user choose from dropdown
-    if (projectId) {
-      const runningProject = allProjects.find((item) => item.projectId === projectId);
-      setThisProject((preVal) => runningProject);
-      setSelectInput((preVal) => projectId);
-      setProjectToAssignChild(projectId);
-      setProjectToAssign((preVal) => projectId);
-    }
+    const runningProject = allProjects.find((item) => item.projectId === projectId);
+    setThisProject((preVal) => runningProject);
+    setSelectInput((preVal) => projectId);
+    setProjectToAssignChild(projectId);
+    setProjectToAssign((preVal) => projectId);
   }, [projectId, allProjects]);
 
   useEffect(() => {
@@ -67,22 +65,24 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   };
   return (
     <div
-      className="card text-bg-dark mb-3"
+      className="card "
       style={{
         width: '47%',
+        backgroundColor: 'lightgrey',
       }}
     >
       <div
         className="card-header"
         style={{
           fontSize: '22px',
-          color: 'rgb(200, 200, 200)',
+          padding: '16px',
+          paddingTop: '1%',
           textAlign: 'center',
-          fontWeight: '600',
+          fontWeight: '500',
           botderBottom: '1px solid rgb(84,84,84)',
         }}
       >
-        <div style={{ marginBottom: '2%' }}>Project</div>
+        <div style={{ padding: '3px', marginBottom: '1%' }}>Project</div>
         <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
           <Form.Select
             name="projects"
@@ -103,11 +103,14 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
           </Form.Select>
         </div>
       </div>
-      <div className="card-body">
+      <div className="card-body" id="1">
         <div className="card">
           <div
+            id="2"
             className="card-body"
             style={{
+              paddingTop: '2%',
+              paddingBottom: '2%',
               height: '30vh',
               overflow: 'auto',
             }}

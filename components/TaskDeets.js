@@ -49,7 +49,7 @@ export default function TaskDeets({
               <div
                 id="line"
                 style={{
-                  borderLeft: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+                  borderLeft: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
                   display: 'grid',
                   gridTemplateRows: '1fr 1fr',
                   transition: '1.5s all ease',
@@ -57,7 +57,7 @@ export default function TaskDeets({
               >
                 <div style={{
                   transition: '1.5s all ease',
-                  borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+                  borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
                 }}
                 />
               </div>
@@ -67,7 +67,7 @@ export default function TaskDeets({
                 id="line"
                 style={{
                   transition: '1.5s border ease',
-                  borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(251, 157, 80, .5)',
+                  borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
                 }}
               />
               <div id="empty" />
@@ -77,7 +77,6 @@ export default function TaskDeets({
               id="whole-card"
               className="card"
               style={{
-                // padding: '6%',
                 height: '250px',
                 backgroundColor: formInput.status === 'closed' ? 'grey' : '',
                 border: 'none',
@@ -106,14 +105,14 @@ export default function TaskDeets({
                       fontWeight: '600',
                     }}
                   >
-                    <label htmlFor={`planning${taskId}`}>Planning:</label>
+                    <label htmlFor={`planning${taskId}`}>Plan:</label>
                   </div>
                   <div id="smallHeader" style={{ textAlign: 'right' }}>
-                    <OverlayTrigger
+                    {/* <OverlayTrigger
                       placement="top"
                       overlay={formInput.collabsExpanded ? hideCollabsToolTips : viewCollabsToolTips}
                       trigger={['hover', 'focus']}
-                      delay={750}
+                      delay={{ show: 750, hide: 0 }}
                     >
                       <button
                         type="button"
@@ -123,7 +122,7 @@ export default function TaskDeets({
                       >
                         {peopleIcon} {arrowSmall}
                       </button>
-                    </OverlayTrigger>
+                    </OverlayTrigger> */}
                   </div>
                 </div>
                 {/* -----------------header----------------------- */}
@@ -134,6 +133,7 @@ export default function TaskDeets({
                   style={{
                     height: '100%', /* Set height to 100% */
                     border: formInput.status === 'closed' ? 'grey' : '1px solid lightgrey',
+
                     backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                     transition: 'all 1.5s ease',
                   }}
