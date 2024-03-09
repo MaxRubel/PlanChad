@@ -55,8 +55,15 @@ export default function TaskDeets({ formInput, handleChange, taskId }) {
                 transition: 'all 1.5s ease',
               }}
             >
-              <div id="text area" style={{ padding: '3% 5%', flex: '1' }}>
-                <div id="plan" style={{ paddingBottom: '1%' }}><strong>Plan:</strong></div>
+              <div
+                id="text area"
+                style={{
+                  padding: '2% 5%',
+                  paddingTop: '6px',
+                  flex: '1',
+                }}
+              >
+                <div id="plan" style={{ paddingLeft: '6px', paddingBottom: '6px' }}><strong>Plan:</strong></div>
                 <textarea
                   className="form-control"
                   style={{
