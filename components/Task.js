@@ -120,8 +120,11 @@ export default function Task({
     }));
   };
 
-  const saveCollabsExpand = (value) => {
-    setFormInput((preVal) => ({ ...preVal, collabsExpanded: value }));
+  const handleExpandCollabs = () => {
+    setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
+    if (!formInput.expanded) {
+      setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: true }));
+    }
   };
 
   const handleDelete = () => {
@@ -317,6 +320,7 @@ export default function Task({
                   type="button"
                   className="clearButton"
                   style={{ color: 'black' }}
+                  onClick={handleExpandCollabs}
                 >
                   {peopleIcon}
                 </button>
@@ -446,7 +450,6 @@ export default function Task({
         formInput={formInput}
         handleChange={handleChange}
         taskId={task.localId}
-        saveCollabsExpand={saveCollabsExpand}
       />
     </>
   );
