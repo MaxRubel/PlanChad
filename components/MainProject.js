@@ -155,7 +155,7 @@ export default function MainProjectView({ projectId }) {
       <DeleteProjectModal handleDelete={() => { theBigDelete(project.projectId); }} closeModal={handleCloseModal} show={openDeleteModal} />
 
       <div className="bigDad">
-        <div id="project-container" style={{}}>
+        <div id="project-container">
           <div id="project-top-bar" style={{ marginBottom: '1%' }}>
             <button
               id="saveButton"
@@ -166,6 +166,15 @@ export default function MainProjectView({ projectId }) {
             >
               Save
             </button>
+            {/* <button
+              id="manageCollaborators"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { router.push(`/calendar/view/${projectId}`); }}
+            >
+              Calendar
+            </button> */}
             <button
               id="manageCollaborators"
               type="button"
@@ -196,7 +205,6 @@ export default function MainProjectView({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              // onClick={() => setOpenDeleteModal(true)}
               onClick={() => { setOpenDeleteModal((preVal) => true); }}
             >
               Delete This Project

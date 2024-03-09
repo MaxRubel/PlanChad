@@ -7,7 +7,6 @@ import { useSaveContext } from './context/saveManager';
 
 const ViewDirectorBasedOnUserAuthStatus = ({ component: Component, pageProps }) => {
   const { user, userLoading } = useAuth();
-  const { isFetchingProjects } = useSaveContext();
 
   // if user state is null, then show loader
   if (userLoading) {

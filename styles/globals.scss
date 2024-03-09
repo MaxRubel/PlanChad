@@ -205,6 +205,50 @@ body {
   background-color: rgb(225, 225, 225, .95);
 }
 
+#calendar-container{
+  width: 100%;
+  min-height: 89vh;
+  border: 1px solid rgb(84, 84, 84);
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+#calendar-header{
+  padding: 3%;
+  border-bottom: 1px solid rgb(84, 84, 84);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#day-header{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.day-label{
+  padding: 2%;
+  text-align: center;
+color: rgb(174, 174, 174);
+}
+
+#dates-container{
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+}
+
+.calendar-row{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid rgb(84, 84, 84);
+}
+
+.calendar-day{
+  padding: 8% 11%;
+  border-left: 1px solid rgb(84, 84, 84);;
+}
+
 .card-header.\32 {
   position: relative;
   display: grid;

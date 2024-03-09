@@ -20,7 +20,7 @@ export default function Home() {
   document.documentElement.style.setProperty('--background1', `
   linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(46, 45, 253, 1) 100%)
 `);
-  console.log(isFetchingProjects);
+
   if (isFetchingProjects) {
     return (<Loading />);
   }
