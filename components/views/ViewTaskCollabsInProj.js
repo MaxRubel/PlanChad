@@ -24,7 +24,7 @@ export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput
         className="card"
         style={{
           margin: '3px 1.5px',
-          height: '293px',
+          height: '250px',
           display: collabsExpand ? 'block' : 'none',
           border: formInput.status === 'closed' ? 'grey' : '1px solid lightgrey',
           backgroundColor: formInput.status === 'closed' ? 'grey' : '',
