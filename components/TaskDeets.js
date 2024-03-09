@@ -49,7 +49,7 @@ export default function TaskDeets({
               <div
                 id="line"
                 style={{
-                  borderLeft: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
+                  borderLeft: '2px solid rgb(255, 117, 26, .5)',
                   display: 'grid',
                   gridTemplateRows: '1fr 1fr',
                   transition: '1.5s all ease',
@@ -87,51 +87,12 @@ export default function TaskDeets({
                 transition: 'all 1.5s ease',
               }}
             >
-              <div
-                id="card-header"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  // height: '43.89px',
-                  padding: '10px 39px',
-                }}
-              >
-                <div className="veritcalCenter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-                  <div
-                    className="veritcalCenter"
-                    style={{
-                      fontSize: '18px',
-                      paddingTop: '1%',
-                      fontWeight: '600',
-                    }}
-                  >
-                    <label htmlFor={`planning${taskId}`}>Plan:</label>
-                  </div>
-                  <div id="smallHeader" style={{ textAlign: 'right' }}>
-                    {/* <OverlayTrigger
-                      placement="top"
-                      overlay={formInput.collabsExpanded ? hideCollabsToolTips : viewCollabsToolTips}
-                      trigger={['hover', 'focus']}
-                      delay={{ show: 750, hide: 0 }}
-                    >
-                      <button
-                        type="button"
-                        className="clearButton"
-                        style={{ color: 'black' }}
-                        onClick={handleExpand}
-                      >
-                        {peopleIcon} {arrowSmall}
-                      </button>
-                    </OverlayTrigger> */}
-                  </div>
-                </div>
-                {/* -----------------header----------------------- */}
-              </div>
-              <div id="text area" style={{ padding: '0% 5% 3% 5%', flex: '1' }}> {/* Set flex: 1 to fill remaining space */}
+              <div id="text area" style={{ padding: '3% 5%', flex: '1' }}> {/* Set flex: 1 to fill remaining space */}
+                <div id="plan" style={{ paddingBottom: '1%' }}><strong>Plan:</strong></div>
                 <textarea
                   className="form-control"
                   style={{
-                    height: '100%', /* Set height to 100% */
+                    height: '88%',
                     border: formInput.status === 'closed' ? 'grey' : '1px solid lightgrey',
 
                     backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
