@@ -1,32 +1,8 @@
-import { Collapse, OverlayTrigger } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { Collapse } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { peopleIcon } from '../public/icons';
 import ViewTaskCollabsInProj from './views/ViewTaskCollabsInProj';
-import { hideCollabsToolTips, viewCollabsToolTips } from './util/toolTips';
 
-export default function TaskDeets({
-  formInput, handleChange, taskId, saveCollabsExpand,
-}) {
-  const arrowSmall = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="22"
-      height="22"
-      fill="currentColor"
-      className={formInput.collabsExpanded ? 'arrowOpen' : 'arrowClosed'}
-      viewBox="0 0 16 16"
-    >
-      <path
-        fillRule="evenodd"
-        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0
-      1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"
-      />
-    </svg>
-  );
-  useEffect(() => {
-    console.log(formInput.collabsExpanded);
-  }, [formInput]);
+export default function TaskDeets({ formInput, handleChange, taskId }) {
   return (
     <>
       <Collapse
@@ -122,5 +98,4 @@ TaskDeets.propTypes = {
   }).isRequired,
   handleChange: PropTypes.func.isRequired,
   taskId: PropTypes.string.isRequired,
-  saveCollabsExpand: PropTypes.func.isRequired,
 };
