@@ -156,7 +156,7 @@ export default function MainProjectView({ projectId }) {
 
       <div className="bigDad">
         <div id="project-container" style={{}}>
-          <div id="project-top-bar" style={{ marginBottom: '3%' }}>
+          <div id="project-top-bar" style={{ marginBottom: '1%' }}>
             <button
               id="saveButton"
               type="button"
