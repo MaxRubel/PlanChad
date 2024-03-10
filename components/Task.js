@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
+import { motion, useDragControls } from 'framer-motion';
 import { peopleIcon, trashIcon } from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -298,6 +299,7 @@ export default function Task({
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}
+                onPointerDownCapture={(e) => e.stopPropagation()}
                 autoComplete="off"
               />
             </div>
@@ -374,6 +376,7 @@ export default function Task({
                         border: 'none',
                         transition: '1.5s all ease',
                       }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -403,6 +406,7 @@ export default function Task({
                         border: 'none',
                         transition: '1.5s all ease',
                       }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -438,8 +442,11 @@ export default function Task({
                     border: 'none',
                     minWidth: '250px',
                   }}
+                  onPointerDownCapture={(e) => e.stopPropagation()}
                 />
+                {/* </motion.div> */}
               </div>
+
             </div>
           </Collapse>
         </div>
