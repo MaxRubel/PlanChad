@@ -248,12 +248,12 @@ export default function Checkpoint({
           <div
             id="line"
             style={{
-              borderLeft: '2px solid rgb(16, 197, 234, .7)',
+              borderLeft: '2px solid rgb(35, 166, 213)',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
             }}
           >
-            <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .7)' }} />
+            <div id="empty" style={{ borderBottom: '2px solid rgb(35, 166, 213)' }} />
             <div />
           </div>
         </div>
@@ -263,7 +263,7 @@ export default function Checkpoint({
           style={{
             margin: '3px 0px',
             minWidth: '565px',
-            border: '4px solid rgb(16, 197, 234, .4)',
+            border: '4px solid rgb(16, 197, 234, .7)',
           }}
         >
           <div className="card-header 2" style={{ minWidth: '516px', border: !formInput.expanded ? 'none' : '' }}>
