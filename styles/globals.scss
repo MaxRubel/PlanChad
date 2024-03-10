@@ -205,48 +205,106 @@ body {
   background-color: rgb(225, 225, 225, .95);
 }
 
-#calendar-container{
+#calendar-container {
   width: 100%;
-  min-height: 89vh;
+  min-height: 100vh;
   border: 1px solid rgb(84, 84, 84);
   color: white;
   display: flex;
   flex-direction: column;
 }
 
-#calendar-header{
+#calendar-header {
   padding: 3%;
   border-bottom: 1px solid rgb(84, 84, 84);
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
 
-#day-header{
+#day-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
 
-.day-label{
+.day-label {
   padding: 2%;
   text-align: center;
-color: rgb(174, 174, 174);
+  color: rgb(174, 174, 174);
 }
 
-#dates-container{
+#dates-container {
   flex: 1;
   display: grid;
   grid-template-rows: repeat(6, 1fr);
+  text-overflow: ellipsis
 }
 
-.calendar-row{
+.project-start-box {
+  background-color: #23a6d5;
+  height: 15%;
+  margin: 0% -1px;
+  margin-left: 8%;
+  padding-left: 4%;
+  font-size: 12px;
+  color: black;
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
+  overflow: hidden;
+  display: flex;
+  // flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis
+}
+
+.project-deadline-box {
+  background-color: #23a6d5;
+  height: 15%;
+  margin: 0% -1px;
+  margin-right: 8%;
+  padding-right: 4%;
+  font-size: 12px;
+  color: black;
+  border-top-right-radius: 5%;
+  border-bottom-right-radius: 5%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: flex;
+  justify-content: right;
+}
+
+.project-div {
+  height: 15%;
+  margin: 0% -1px // background-color: #e73c7e !important
+}
+
+.checkP-div {
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: auto;
+  // background-color: #23a6d5
+}
+
+.calendar-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   border-bottom: 1px solid rgb(84, 84, 84);
 }
 
-.calendar-day{
-  padding: 8% 11%;
-  border-left: 1px solid rgb(84, 84, 84);;
+.date-number {
+  margin: 5% 0 5% 12%;
+}
+
+.calendar-day {
+  // padding: 8% 0%;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgb(84, 84, 84);
+  ;
 }
 
 .card-header.\32 {

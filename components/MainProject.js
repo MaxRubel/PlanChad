@@ -144,9 +144,6 @@ export default function MainProjectView({ projectId }) {
     }
   };
 
-  const handleOpenModal = () => {
-    setOpenDeleteModal((prevVal) => true);
-  };
   const handleCloseModal = () => {
     setOpenDeleteModal((prevVal) => false);
   };
@@ -166,7 +163,7 @@ export default function MainProjectView({ projectId }) {
             >
               Save
             </button>
-            {/* <button
+            <button
               id="manageCollaborators"
               type="button"
               className="clearButton"
@@ -174,7 +171,7 @@ export default function MainProjectView({ projectId }) {
               onClick={() => { router.push(`/calendar/view/${projectId}`); }}
             >
               Calendar
-            </button> */}
+            </button>
             <button
               id="manageCollaborators"
               type="button"
