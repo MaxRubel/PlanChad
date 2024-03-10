@@ -40,7 +40,7 @@ export default function CalendarPage() {
 
     const total = startingDay + lastDateOfMonth;
 
-    // print dates on cal:
+    // PRINT DATES ON CALENDAR
     for (let y = 0; y <= startingDay; y++) { // before month starts
       const dateNumberAssign = document.getElementById(`${y}Num`);
       if (dateNumberAssign) {
@@ -93,10 +93,11 @@ export default function CalendarPage() {
         projectDeadlineBox.current.style.backgroundColor = 'transparent';
         projectDeadlineBox.current = null;
       }
-      // ---------START-DAY----------
+      // ---------START-DAY-BOX---------
       const startElement = document.getElementById(`${projStartDayOnCal}Project`);
 
-      if (calendarData.month === Number(projStartMonth - 1)) { // Put start day in correct month
+      if (calendarData.month === Number(projStartMonth - 1)
+        && calendarData.year === Number(projStartYear)) { // Put start day in correct month & year
         startElement.style.backgroundColor = '#23a6d5';
         startElement.className = 'project-start-box';
         startElement.innerHTML = `${saveInput.project.name}`;
@@ -114,8 +115,10 @@ export default function CalendarPage() {
           }
         }
       }
-      // ---------DEADLINE----------
-      if (calendarData.month === Number(projDeadlineMonth - 1)) { //  Put deadline in correct month
+
+      // ---------DEADLINE-BOX---------
+      if (calendarData.month === Number(projDeadlineMonth) - 1
+        && calendarData.year === Number(projDeadlineYear)) { //  Put deadline in correct month & year
         const deadlineElement = document.getElementById(`${projDeadlineDayOnCal}Project`);
         projectDeadlineBox.current = deadlineElement;
         deadlineElement.style.backgroundColor = '#23a6d5';
@@ -129,16 +132,42 @@ export default function CalendarPage() {
         }
       }
 
-      // if projext carries through an entire month, fill the month
-      if (calendarData.month > Number(projStartMonth - 1)
-        && calendarData.month !== Number(projStartMonth - 1)
-        && calendarData.month < Number(projDeadlineMonth - 1)
-        && calendarData.month !== Number(projDeadlineMonth - 1)) {
+      const fillWholeMonth = () => {
         for (let i = 0; i <= 41; i++) {
           const element = document.getElementById(`${i}Project`);
           if (element) {
             element.style.backgroundColor = '#23a6d5';
           }
+        }
+      };
+
+      const projectYears = [Number(projStartYear)];
+      for (let i = Number(projStartYear); i < Number(projDeadlineYear); i++) {
+        const newYear = i + 1;
+        projectYears.push(newYear);
+      }
+
+      // --------FILL-WHOLE-MONTH--------
+      if (calendarData.year === Number(projStartYear)
+        && calendarData.year === Number(projDeadlineYear)) { // project starts and ends in the same year
+        if (calendarData.month > Number(projStartMonth - 1) // greater than start month
+          && calendarData.month < Number(projDeadlineMonth - 1) // less than deadline month
+        ) {
+          fillWholeMonth();
+        }
+      } else { // project does not start and end in the same year
+        if (calendarData.year === projectYears[0] // the start year of project
+          && calendarData.month > Number(projStartMonth - 1)) { // month is later than the starting month
+          fillWholeMonth();
+        }
+        if (calendarData.year === projectYears[projectYears.length - 1] // the last year of project
+          && calendarData.month < Number(projDeadlineMonth - 1)) { // month is earlier than the deadline month
+          fillWholeMonth();
+        }
+        if (projectYears.includes(calendarData.year) // selected year is in project
+          && calendarData.year !== Number(projStartYear) // it is not the start year
+          && calendarData.year !== Number(projDeadlineYear)) { // it is also not the end year
+          fillWholeMonth();
         }
       }
     }
@@ -149,11 +178,15 @@ export default function CalendarPage() {
     if (id === 'incrementMonth') {
       if (calendarData.month < 11) {
         setCalendarData((preVal) => ({ ...preVal, month: preVal.month + 1 }));
+      } else {
+        setCalendarData((preVal) => ({ ...preVal, month: 0, year: preVal.year + 1 }));
       }
     }
     if (id === 'decrementMonth') {
       if (calendarData.month > 0) {
         setCalendarData((preVal) => ({ ...preVal, month: preVal.month - 1 }));
+      } else {
+        setCalendarData((preVal) => ({ ...preVal, month: 11, year: preVal.year - 1 }));
       }
     }
   };
@@ -186,7 +219,7 @@ export default function CalendarPage() {
             <button type="button" id="decrementMonth" onClick={handleDateCounter} className="clearButton">
               {caretLeft}
             </button>
-            <div style={{ width: '80px', textAlign: 'center' }}>{chooseMonth(calendarData.month)}</div>
+            <div style={{ width: '150px', textAlign: 'center' }}>{chooseMonth(calendarData.month)} &nbsp;{calendarData.year}</div>
             <button type="button" id="incrementMonth" onClick={handleDateCounter} className="clearButton">
               {caretRight}
             </button>
