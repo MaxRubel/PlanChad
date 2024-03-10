@@ -393,6 +393,7 @@ export default function Checkpoint({
                       onChange={handleChange}
                       name="startDate"
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -418,6 +419,7 @@ export default function Checkpoint({
                       name="deadline"
                       id={`deadline${checkP.localId}`}
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -440,6 +442,7 @@ export default function Checkpoint({
                     Description:
                   </label>
                 </div>
+
                 <textarea
                   className="form-control"
                   placeholder="A description of your segment..."
@@ -449,7 +452,9 @@ export default function Checkpoint({
                   onChange={handleChange}
                   name="description"
                   style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }}
+                  onPointerDownCapture={(e) => e.stopPropagation()}
                 />
+
               </div>
             </div>
           </Collapse>
@@ -459,6 +464,7 @@ export default function Checkpoint({
       </div>
 
       <div>
+
         <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
           {tasks.map((task, indexT) => (
             <Reorder.Item
