@@ -78,6 +78,7 @@ export default function TaskDeets({ formInput, handleChange, taskId }) {
                   value={formInput.planning}
                   onChange={handleChange}
                   placeholder="Planning details..."
+                  onPointerDownCapture={(e) => e.stopPropagation()}
                 />
               </div>
             </div>

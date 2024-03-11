@@ -224,6 +224,7 @@ body {
 #day-header {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  height: 25%;
 }
 
 .day-label {
@@ -233,15 +234,15 @@ body {
 }
 
 #dates-container {
+
   flex: 1;
   display: grid;
   grid-template-rows: repeat(6, 1fr);
-  text-overflow: ellipsis
+  // text-overflow: ellipsis
 }
 
 .project-start-box {
   background-color: #23a6d5;
-  height: 15%;
   margin: 0% -1px;
   margin-left: 8%;
   padding-left: 4%;
@@ -257,9 +258,26 @@ body {
   text-overflow: ellipsis
 }
 
+.task-start-box {
+  z-index: 2;
+  min-height: 7px;
+  margin: 0% -1px;
+  margin-left: 15%;
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
+}
+
+.task-deadline-box {
+  z-index: 2;
+  min-height: 7px;
+  margin: 0% -1px;
+  margin-right: 15%;
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
+}
+
 .project-deadline-box {
   background-color: #23a6d5;
-  height: 15%;
   margin: 0% -1px;
   margin-right: 8%;
   padding-right: 4%;
@@ -276,19 +294,57 @@ body {
   justify-content: right;
 }
 
+.task-deadline-box {
+  margin: 0% -1px;
+  margin-right: 25%;
+  padding-right: 4%;
+  font-size: 12px;
+  color: black;
+  border-top-right-radius: 5%;
+  border-bottom-right-radius: 5%;
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  justify-content: right;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: auto;
+}
+
 .project-div {
-  height: 15%;
-  margin: 0% -1px // background-color: #e73c7e !important
+  // height: 25%;
+  margin: 0% -1px
 }
 
 .checkP-div {
+  // height: 25%;
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: auto;
   // background-color: #23a6d5
 }
 
+.task-container {
+  margin: 0% -1px;
+  display: grid;
+  // background-color: #ee7752;
+  // overflow: visible;
+  // height: 400px;
+  background-color: aqua;
+  gap: 2px;
+  // overflow
+  /* Prevent overflow */
+}
+
+.task-line {
+  min-height: 7px;
+}
+
 .calendar-row {
+  // height: 30vh;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   border-bottom: 1px solid rgb(84, 84, 84);
@@ -296,15 +352,20 @@ body {
 
 .date-number {
   margin: 5% 0 5% 12%;
+  // height: 25%
 }
 
 .calendar-day {
   // padding: 8% 0%;
+  // height: 30vh;
+  // background-color: #1f2226;
   background-color: transparent;
-  display: flex;
+  display: grid;
+  // grid-template-rows: repeat(4, minmax(auto, 1fr));
+  grid-template-rows: 40px 30px 40px 50px;
+  // grid-auto-flow: dense;
   flex-direction: column;
   border-left: 1px solid rgb(84, 84, 84);
-  ;
 }
 
 .card-header.\32 {
@@ -333,17 +394,6 @@ body {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(74, 196, 253);
 }
-
-// #allCollabsCard::-webkit-scrollbar-track {
-//   -webkit-box-shadow: inset 0 0 6px rgb(174, 174, 174) !important;
-//   border-radius: 10px;
-// }
-
-// #allCollabsCard::-webkit-scrollbar-thumb {
-//   border-radius: 10px;
-//   -webkit-box-shadow: inset 0 0 6px rgb(0, 0, 0) !important;
-// }
-
 
 .checkpoint-progress {
   position: absolute;

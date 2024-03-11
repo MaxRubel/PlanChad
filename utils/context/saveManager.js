@@ -14,7 +14,6 @@ export const useSaveContext = () => useContext(saveContext);
 // eslint-disable-next-line react/prop-types
 export const SaveContextProvider = ({ children }) => {
   const initState = { project: {}, checkpoints: [], tasks: [] };
-
   const [saveInput, setSaveInput] = useState(initState);
   const [min, setMin] = useState(0);
   const [allProjects, setAllProjects] = useState([]);
@@ -58,7 +57,6 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const cancelSaveAnimation = () => {
-    // console.log('reset save animation');
     setIsSaving(0);
   };
 

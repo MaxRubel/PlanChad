@@ -12,6 +12,7 @@ import {
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';
+import choseAColor from '../utils/chooseAcolor';
 
 export default function Checkpoint({
   checkP,
@@ -233,6 +234,7 @@ export default function Checkpoint({
       expanded: false,
       deetsExpanded: false,
       collabsExpanded: false,
+      lineColor: choseAColor(),
     };
     addToSaveManager(emptyTask, 'create', 'task');
     setCheckPrefresh((prevVal) => prevVal + 1);
@@ -263,7 +265,7 @@ export default function Checkpoint({
           style={{
             margin: '3px 0px',
             minWidth: '565px',
-            border: '4px solid rgb(16, 197, 234, .7)',
+            // border: '4px solid rgb(16, 197, 234, .7)',
           }}
         >
           <div className="card-header 2" style={{ minWidth: '516px', border: !formInput.expanded ? 'none' : '' }}>

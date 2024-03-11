@@ -26,6 +26,7 @@ export default function ProjectCard({
       xmlns="http://www.w3.org/2000/svg"
       height="16px"
       viewBox="0 0 320 512"
+      fill={formInput.expanded ? '' : 'white'}
     >
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9
       0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5 256 34.5
@@ -69,7 +70,12 @@ export default function ProjectCard({
     // -----------------card--header----------------
     <div
       className="card text-bg-info mb-3"
-      style={{ boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)', opacity: '.9', width: '100%' }}
+      style={{
+        boxShadow: formInput.expanded ? '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)' : 'none',
+        border: formInput.expanded ? '' : 'none',
+        opacity: '.9',
+        width: '100%',
+      }}
     >
       <div
         className="card-header"
@@ -78,6 +84,10 @@ export default function ProjectCard({
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr',
           borderBottom: 'none',
+          backgroundColor: formInput.expanded ? '' : '#1f2226',
+          border: formInput.expanded ? '' : 'none',
+          transition: 'all ease 1s',
+          // boxShadow: formInput.expanded ? '' : 'none',
         }}
       >
         <Button
@@ -105,6 +115,8 @@ export default function ProjectCard({
               backgroundColor: 'transparent',
               border: 'none',
               fontWeight: '600',
+              color: formInput.expanded ? '' : 'lightgray',
+              transition: 'all ease 1s',
             }}
             onChange={handleChange}
             autoComplete="off"
@@ -138,7 +150,8 @@ export default function ProjectCard({
                   onChange={handleChange}
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
-                    border: '1px solid lightgrey',
+                    border: 'none',
+                    // border: '1px solid lightgrey',
                   }}
                 />
               </div>
@@ -164,7 +177,11 @@ export default function ProjectCard({
                   onChange={handleChange}
                   name="start_date"
                   id="start_date"
-                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey' }}
+                  style={{
+                    backgroundColor: 'rgb(13, 195, 240)',
+                    border: 'none',
+                    // border: '1px solid lightgrey'
+                  }}
                 />
               </div>
             </div>
@@ -190,7 +207,11 @@ export default function ProjectCard({
                   onChange={handleChange}
                   name="deadline"
                   id="deadline"
-                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey' }}
+                  style={{
+                    backgroundColor: 'rgb(13, 195, 240)',
+                    border: 'none',
+                    // border: '1px solid lightgrey',
+                  }}
                 />
               </div>
             </div>
@@ -216,7 +237,11 @@ export default function ProjectCard({
                   placeholder="$$$"
                   onChange={handleChange}
                   name="budget"
-                  style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey' }}
+                  style={{
+                    backgroundColor: 'rgb(13, 195, 240)',
+                    border: 'none',
+                    //  border: '1px solid lightgrey'
+                  }}
                 />
               </div>
             </div>
@@ -241,7 +266,11 @@ export default function ProjectCard({
               value={formInput.description}
               onChange={handleChange}
               name="description"
-              style={{ backgroundColor: 'rgb(13, 195, 240)', border: '1px solid lightgrey', minWidth: '250px' }}
+              style={{
+                backgroundColor: 'rgb(13, 195, 240)',
+                border: 'none',
+                minWidth: '250px',
+              }}
             />
           </div>
         </div>
