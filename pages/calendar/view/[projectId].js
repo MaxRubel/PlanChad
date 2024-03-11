@@ -128,7 +128,7 @@ export default function CalendarPage() {
         const deadlineElement = document.getElementById(`${projDeadlineDayOnCal}Project`);
         projectDeadlineBox.current = deadlineElement;
         deadlineElement.style.backgroundColor = '#23a6d5';
-        deadlineElement.innerHTML = 'Deadline';
+        deadlineElement.innerHTML = `${saveInput.project.name} due`;
         deadlineElement.className = 'project-deadline-box';
         // If start date is not in current month fill all squares up to deadline
         if (calendarData.month !== Number(projStartMonth - 1)) {
@@ -218,13 +218,13 @@ export default function CalendarPage() {
           const taskStartDayOnCal = (calendarData.startingDay + Number(taskStartDay) - 1);
           const taskDeadlineOnCal = (calendarData.startingDay + Number(taskDeadlineDay) - 1);
           const taskStartBox = document.getElementById(`${taskStartDayOnCal}Task`);
-          // draw start of line
+          // draw start day:
           if (calendarData.month === Number(taskStartMonth - 1)
             && calendarData.year === Number(taskStartYear)
             && taskStartDayOnCal === i) {
             drawLine(i, y, 'task-start-box');
           }
-          // draw end of line
+          // draw deadline day:
           if (sortedTasks[y].deadline) {
             if (
               calendarData.month === Number(taskDeadlineMonth - 1)
@@ -233,7 +233,7 @@ export default function CalendarPage() {
               drawLine(i, y, 'task-deadline-box');
             }
 
-            // fill to deadline if start is in the same month as deadline
+            // fill to deadline if start is in the same month as deadline:
             if (
               calendarData.year === Number(taskDeadlineYear)
               && calendarData.year === Number(taskStartYear)
@@ -242,7 +242,7 @@ export default function CalendarPage() {
               && (Number(taskStartDay) + (calendarData.startingDay - 1)) < i
               && (Number(taskDeadlineDay) + (calendarData.startingDay - 1)) > i
             ) { drawLine(i, y, 'task-line'); }
-            // draw up to end of first month if deadline in different month
+            // draw to end of first month if deadline in different month:
             if (
               taskDeadlineMonth
               && calendarData.year === Number(taskStartYear)
@@ -250,24 +250,46 @@ export default function CalendarPage() {
               && i > taskStartDayOnCal
               && taskStartMonth !== taskDeadlineMonth
             ) { drawLine(i, y, 'task-line'); }
-            // draw up to end of deadline if deadline in different month
+            // draw to deadline if deadline in different month:
             if (
               taskDeadlineMonth
-              && (calendarData.year === Number(taskStartYear) || calendarData.year === Number(taskDeadlineYear))
+              && calendarData.year === Number(taskDeadlineYear)
+              //   // || calendarData.year === Number(taskDeadlineYear))
               && calendarData.month === Number(taskDeadlineMonth - 1)
               && i < taskDeadlineOnCal
               && taskStartMonth !== taskDeadlineMonth
 
-            ) {
-              drawLine(i, y, 'task-line');
-            }
-            // draw whole month if in the same year as deadline and between start and finish
+            ) { drawLine(i, y, 'task-line'); console.log('yo'); }
+            // draw whole month if in the same year as deadline and between start and finish:
             if (
               calendarData.year === Number(taskDeadlineYear)
               && calendarData.year === Number(taskStartYear)
               && calendarData.month > Number(taskStartMonth - 1)
               && calendarData.month < Number(taskDeadlineMonth - 1)
             ) { drawLine(i, y, 'task-line'); }
+            // if start and finish years are not the same
+            if (taskStartYear !== taskDeadlineYear) {
+              const taskyears = [];
+              for (let m = Number(taskStartYear); m <= Number(taskDeadlineYear); m++) {
+                taskyears.push(m);
+              }
+              // fill remaining start year:
+              if (
+                calendarData.year === taskyears[0]
+                && calendarData.month > Number(taskStartMonth - 1)
+              ) { drawLine(i, y, 'task-line'); }
+              // fill up to deadline of deadline year
+              if (
+                calendarData.year === taskyears[taskyears.length - 1]
+                && calendarData.month < Number(taskDeadlineMonth - 1)
+              ) { drawLine(i, y, 'task-line'); }
+              // fill entire year if in between start and end years
+              if (
+                // taskyears.includes(calendarData.year)
+                calendarData.year > taskyears[0]
+                && calendarData.year < taskyears[taskyears.length - 1]
+              ) { drawLine(i, y, 'task-line'); }
+            }
           }
         }
       }
