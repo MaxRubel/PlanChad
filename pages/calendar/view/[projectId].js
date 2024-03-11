@@ -261,7 +261,6 @@ export default function CalendarPage() {
             ) {
               drawLine(i, y, 'task-line');
             }
-
             // draw whole month if in the same year as deadline and between start and finish
             if (
               calendarData.year === Number(taskDeadlineYear)
