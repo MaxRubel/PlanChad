@@ -18,6 +18,7 @@ import {
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteTaskModal from './modals/DeleteTask';
+import choseAColor from '../utils/chooseAcolor';
 
 const initialState = {
   localId: '',
