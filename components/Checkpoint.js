@@ -268,7 +268,14 @@ export default function Checkpoint({
             // border: '4px solid rgb(16, 197, 234, .7)',
           }}
         >
-          <div className="card-header 2" style={{ minWidth: '516px', border: !formInput.expanded ? 'none' : '' }}>
+          <div
+            className="card-header 2"
+            style={{
+              minWidth: '516px',
+              height: '53px',
+              border: !formInput.expanded ? 'none' : '',
+            }}
+          >
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div className="verticalCenter">
               <div className="verticalCenter">

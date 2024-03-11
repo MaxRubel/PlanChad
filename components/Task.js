@@ -200,7 +200,7 @@ export default function Task({
           className="card"
           style={{
             margin: '3px 0px',
-            border: '4px solid rgb(251, 157, 80, .0)',
+            // border: '4px solid rgb(251, 157, 80, .0)',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
             transition: '1.5s all ease',
             minWidth: '516px',
