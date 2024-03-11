@@ -14,13 +14,13 @@ export const collapseToolTip = (
 
 export const collapseToolTaskTip = (
   <Tooltip id="collapseToolTaskTip">
-    Collapse This Task
+    Collapse Schedule
   </Tooltip>
 );
 
 export const expandTaskTooltip = (
   <Tooltip id="expandTaskTooltip">
-    Expand This Task
+    Open Schedule
   </Tooltip>
 );
 
@@ -32,7 +32,12 @@ export const addTaskToolTip = (
 
 export const viewTaskDeetsToolTip = (
   <Tooltip id="viewTaskDeetsToolTip">
-    Plan
+    Open Planning
+  </Tooltip>
+);
+export const viewTaskDeetsToolTipCollapse = (
+  <Tooltip id="viewTaskDeetsToolTip">
+    Collapse Planning
   </Tooltip>
 );
 

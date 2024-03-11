@@ -3,7 +3,9 @@ import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
 import { motion, useDragControls } from 'framer-motion';
-import { peopleIcon, trashIcon } from '../public/icons';
+import {
+  calendarIcon, editIcon, peopleIcon, trashIcon,
+} from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
@@ -221,6 +223,8 @@ export default function Task({
                 className="verticalCenter"
                 style={{
                   alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'space-between',
                 }}
               >
                 <OverlayTrigger
@@ -240,9 +244,13 @@ export default function Task({
                       color: 'black',
                       width: '35px',
                       height: '35px',
+                      // display: 'flex',
+                      // alignItems: 'center',
+                      // justifyContent: 'space-between',
                     }}
                   >
-                    {downIcon}
+                    {/* {downIcon}  */}
+                    {calendarIcon}
                   </button>
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -257,7 +265,6 @@ export default function Task({
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
-                      marginLeft: '7px',
                       padding: '0px !important',
                       paddingLeft: '0px !important',
                       paddingRight: '0px !important',
@@ -267,7 +274,7 @@ export default function Task({
                       height: '35px',
                     }}
                   >
-                    {magGlass}
+                    {editIcon}
                   </button>
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -282,7 +289,7 @@ export default function Task({
                     onChange={(e) => { handleCheck(e); }}
                     inputProps={{ 'aria-label': 'controlled' }}
                     size="medium"
-                    style={{ color: 'black', height: '35px', marginLeft: '7px' }}
+                    style={{ color: 'black', height: '35px' }}
                   />
                 </OverlayTrigger>
               </div>
