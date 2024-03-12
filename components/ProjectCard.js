@@ -12,7 +12,6 @@ const initialState = {
   start_date: '',
   progressIsShowing: false,
   expanded: false,
-  type: 'project',
 };
 
 export default function ProjectCard({

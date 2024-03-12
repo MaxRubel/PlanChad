@@ -7,7 +7,10 @@ import { trashIcon } from '../public/icons';
 import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
-  expandTooltip, collapseToolTip, addTaskToolTip, deleteSegment,
+  expandTooltip,
+  collapseToolTip,
+  addTaskToolTip,
+  deleteSegment,
 } from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
@@ -32,7 +35,6 @@ export default function Checkpoint({
   });
 
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
-
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [tasks, setTasks] = useState([]);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
@@ -72,6 +74,8 @@ export default function Checkpoint({
       const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
       const sorted = theseTasks.sort((a, b) => a.index - b.index);
       setTasks(sorted);
+    } else {
+      setFormInput(checkP);
     }
   }, [checkP]);
 
@@ -206,8 +210,10 @@ export default function Checkpoint({
         }
         deleteFromSaveManager(formInput, 'delete', 'checkpoint');
         handleRefresh();
+        setOpenDeleteModal((preVal) => false);
       });
   };
+
   const handleOpenModal = () => {
     setOpenDeleteModal((prevVal) => true);
   };
@@ -265,7 +271,6 @@ export default function Checkpoint({
           style={{
             margin: '3px 0px',
             minWidth: '565px',
-            // border: '4px solid rgb(16, 197, 234, .7)',
           }}
         >
           <div

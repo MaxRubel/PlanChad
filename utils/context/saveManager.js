@@ -88,9 +88,9 @@ export const SaveContextProvider = ({ children }) => {
     deleteProject(projectId).then(() => {
       setIsFetchingProjects((preVal) => true);
       setFetchUserData((prev) => prev + 1);
+      clearSaveManager();
       router.push('/');
       setIsFetchingProjects((preVal) => true);
-      clearSaveManager();
       setProjectsLoaded((preVal) => false);
     });
   };
@@ -184,6 +184,7 @@ export const SaveContextProvider = ({ children }) => {
   };
   // --------delete-----------------
   const deleteFromSaveManager = (input, action, type) => {
+    console.log(input);
     const checkPs = [...saveInput.checkpoints];
     const tasks = [...saveInput.tasks];
     if (type === 'checkpoint' && action === 'delete') {

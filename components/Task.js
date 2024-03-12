@@ -142,6 +142,7 @@ export default function Task({
     });
     deleteFromSaveManager(formInput, 'delete', 'task');
     refreshCheckP();
+    setOpenDeleteModal((prevVal) => false);
   };
 
   const handleOpenModal = () => {
@@ -283,6 +284,9 @@ export default function Task({
                   trigger={['hover', 'focus']}
                   delay={{ show: 750, hide: 0 }}
                 >
+                  {/* <div className="form-check">
+                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                  </div> */}
                   <Checkbox
                     id={`task-completed${task.localId}`}
                     checked={formInput.status === 'closed'}
