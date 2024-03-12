@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
-import { motion, useDragControls } from 'framer-motion';
 import {
   calendarIcon, editIcon, peopleIcon, trashIcon,
 } from '../public/icons';
@@ -20,7 +19,6 @@ import {
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteTaskModal from './modals/DeleteTask';
-import choseAColor from '../utils/chooseAcolor';
 
 const initialState = {
   localId: '',
@@ -161,6 +159,7 @@ export default function Task({
       <DeleteTaskModal show={openDeleteModal} handleDelete={handleDelete} closeModal={handleCloseModal} />
       <div className="task">
         {/* -------line-side------------- */}
+
         <div
           className="marginL"
           style={{
@@ -198,6 +197,7 @@ export default function Task({
           />
           <div id="bottom-div" />
         </div>
+
         {/* -----------card---------------------- */}
         <div
           className="card"
@@ -430,7 +430,7 @@ export default function Task({
                 style={{
                   borderTop: formInput.status === 'closed' ? 'none' : '1px solid rgb(180, 180, 180)',
                   padding: '1% 10%',
-                  paddingBottom: '1%',
+                  paddingBottom: '16px',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
@@ -476,6 +476,7 @@ export default function Task({
 
 Task.propTypes = {
   task: PropTypes.shape({
+    index: PropTypes.number.isRequired,
     localId: PropTypes.string.isRequired,
     progressIsShowing: PropTypes.oneOfType([
       PropTypes.bool,
