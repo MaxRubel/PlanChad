@@ -109,6 +109,7 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
             <div
               className="card-body"
               style={{
+                paddingTop: '2%',
                 height: '30vh',
                 overflow: 'auto',
               }}

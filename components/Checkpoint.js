@@ -446,7 +446,7 @@ export default function Checkpoint({
                   borderTop: '1px solid rgb(180, 180, 180)',
                   padding: '1% 10%',
                   paddingTop: '1%',
-                  paddingBottom: '1%',
+                  paddingBottom: '16px',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
@@ -468,17 +468,13 @@ export default function Checkpoint({
                   style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }}
                   onPointerDownCapture={(e) => e.stopPropagation()}
                 />
-
               </div>
             </div>
           </Collapse>
         </div>
-        {/* -----add-a-task------ */}
-        {/* <div className="marginR" /> */}
       </div>
-
+      {/* ----------tasks------------------ */}
       <div>
-
         <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
           {tasks.map((task, indexT) => (
             <Reorder.Item
