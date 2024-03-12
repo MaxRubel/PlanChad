@@ -37,6 +37,7 @@ export default function MainProjectView({ projectId }) {
 
   useEffect(() => { // refresh checkpoint from save manager
     const copy = [...saveInput.checkpoints];
+    console.log(copy);
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
   }, [refresh]);
@@ -47,12 +48,14 @@ export default function MainProjectView({ projectId }) {
       if (!singleProjectRunning) {
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
-        setHideCompletedTasksChild((preVal) => projectDetails.project.hideCompletedTasks);
+        if (projectDetails.project.projectId) {
+          setHideCompletedTasksChild((preVal) => projectDetails?.project.hideCompletedTasks);
+        }
         const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints(checkpointsSorted);
       } else {
         setProject((preVal) => saveInput.project);
-        setHideCompletedTasksChild((preVal) => saveInput.project.hideCompletedTasks);
+        setHideCompletedTasksChild((preVal) => saveInput.project?.hideCompletedTasks);
         const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints((preVal) => checkpointsSorted);
       }
@@ -113,9 +116,9 @@ export default function MainProjectView({ projectId }) {
       index: checkpoints.length,
       expanded: false,
       fresh: true,
-      checkpointId: null,
       dragId: uniqid(),
     };
+    console.log(emptyChckP);
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
   };
@@ -194,7 +197,7 @@ export default function MainProjectView({ projectId }) {
               <Dropdown.Menu style={{ backgroundColor: 'rgb(0,0,0, .85)', color: 'white' }}>
                 <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
                 <Dropdown.Item eventKey="showProgress">{progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
-                <Dropdown.Item eventKey="hideCompleted">{saveInput.project.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
+                <Dropdown.Item eventKey="hideCompleted">{saveInput.project?.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
             <button

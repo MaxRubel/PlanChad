@@ -330,13 +330,8 @@ body {
 .task-container {
   margin: 0% -1px;
   display: grid;
-  // background-color: #ee7752;
-  // overflow: visible;
-  // height: 400px;
   background-color: aqua;
   gap: 2px;
-  // overflow
-  /* Prevent overflow */
 }
 
 .task-line {
@@ -344,7 +339,6 @@ body {
 }
 
 .calendar-row {
-  // height: 30vh;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   border-bottom: 1px solid rgb(84, 84, 84);
@@ -352,18 +346,12 @@ body {
 
 .date-number {
   margin: 5% 0 5% 12%;
-  // height: 25%
 }
 
 .calendar-day {
-  // padding: 8% 0%;
-  // height: 30vh;
-  // background-color: #1f2226;
   background-color: transparent;
   display: grid;
-  // grid-template-rows: repeat(4, minmax(auto, 1fr));
   grid-template-rows: 40px 30px 40px 50px;
-  // grid-auto-flow: dense;
   flex-direction: column;
   border-left: 1px solid rgb(84, 84, 84);
 }
@@ -372,7 +360,6 @@ body {
   position: relative;
   display: grid;
   grid-template-columns: 20% 60% 20%;
-  // justify-items: center;
   align-items: center;
 }
 
@@ -462,4 +449,32 @@ body {
 
 .navBarHidden {
   display: none;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  width:100%;
+  cursor:default;
+}
+
+.tooltip-content {
+  display: none;
+  position: absolute;
+  background-color: black;
+  color: lightgrey;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.tooltip-trigger{
+  display: inline-block;
+  height: 4px;
+  width: 100%;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: block;
 }
