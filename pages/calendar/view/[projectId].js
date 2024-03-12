@@ -217,13 +217,14 @@ export default function CalendarPage() {
           const [taskDeadlineYear, taskDeadlineMonth, taskDeadlineDay] = (sortedTasks[y].deadline ?? '').split('-');
           const taskStartDayOnCal = (calendarData.startingDay + Number(taskStartDay) - 1);
           const taskDeadlineOnCal = (calendarData.startingDay + Number(taskDeadlineDay) - 1);
-          const taskStartBox = document.getElementById(`${taskStartDayOnCal}Task`);
+
           // draw start day:
           if (calendarData.month === Number(taskStartMonth - 1)
             && calendarData.year === Number(taskStartYear)
             && taskStartDayOnCal === i) {
             drawLine(i, y, 'task-start-box');
           }
+
           // draw deadline day:
           if (sortedTasks[y].deadline) {
             if (
@@ -242,6 +243,7 @@ export default function CalendarPage() {
               && (Number(taskStartDay) + (calendarData.startingDay - 1)) < i
               && (Number(taskDeadlineDay) + (calendarData.startingDay - 1)) > i
             ) { drawLine(i, y, 'task-line'); }
+
             // draw to end of first month if deadline in different month:
             if (
               taskDeadlineMonth
@@ -250,16 +252,17 @@ export default function CalendarPage() {
               && i > taskStartDayOnCal
               && taskStartMonth !== taskDeadlineMonth
             ) { drawLine(i, y, 'task-line'); }
+
             // draw to deadline if deadline in different month:
             if (
               taskDeadlineMonth
               && calendarData.year === Number(taskDeadlineYear)
-              //   // || calendarData.year === Number(taskDeadlineYear))
               && calendarData.month === Number(taskDeadlineMonth - 1)
               && i < taskDeadlineOnCal
               && taskStartMonth !== taskDeadlineMonth
 
-            ) { drawLine(i, y, 'task-line'); console.log('yo'); }
+            ) { drawLine(i, y, 'task-line'); }
+
             // draw whole month if in the same year as deadline and between start and finish:
             if (
               calendarData.year === Number(taskDeadlineYear)
@@ -267,13 +270,14 @@ export default function CalendarPage() {
               && calendarData.month > Number(taskStartMonth - 1)
               && calendarData.month < Number(taskDeadlineMonth - 1)
             ) { drawLine(i, y, 'task-line'); }
-            // if start and finish years are not the same
+
+            // if start and finish years are not the same!
             if (taskStartYear !== taskDeadlineYear) {
               const taskyears = [];
               for (let m = Number(taskStartYear); m <= Number(taskDeadlineYear); m++) {
                 taskyears.push(m);
               }
-              // fill remaining start year:
+              // fill remaining months of start year:
               if (
                 calendarData.year === taskyears[0]
                 && calendarData.month > Number(taskStartMonth - 1)
@@ -285,16 +289,30 @@ export default function CalendarPage() {
               ) { drawLine(i, y, 'task-line'); }
               // fill entire year if in between start and end years
               if (
-                // taskyears.includes(calendarData.year)
                 calendarData.year > taskyears[0]
                 && calendarData.year < taskyears[taskyears.length - 1]
+              ) { drawLine(i, y, 'task-line'); }
+              // draw to end of first month if deadline in different month:
+              if (
+                taskDeadlineMonth
+              && calendarData.year === Number(taskStartYear)
+              && taskStartMonth === taskDeadlineMonth
+              && calendarData.month === Number(taskStartMonth - 1)
+              && i > taskStartDayOnCal
+              ) { drawLine(i, y, 'task-line'); }
+              if (
+                taskDeadlineMonth
+              && calendarData.year === Number(taskDeadlineYear)
+              && taskStartMonth === taskDeadlineMonth
+              && calendarData.month === Number(taskDeadlineMonth - 1)
+              && i < taskDeadlineOnCal
               ) { drawLine(i, y, 'task-line'); }
             }
           }
         }
       }
     }
-  }, [calendarData.startingDay, sortedTasks]);
+  }, [calendarData]);
 
   const handleDateCounter = (e) => {
     const { id } = e.target;
@@ -348,7 +366,7 @@ export default function CalendarPage() {
             </button>
           </div>
           <div id="col2" style={{ textAlign: 'right' }}>
-            <button type="button" className="clearButton" style={{ color: 'white', padding: '8px', border: '1px solid lightgrey' }} onClick={handleToday}>
+            <button type="button" className="clearButton" style={{ color: 'white', padding: '8px', border: '1px solid rgb(84, 84, 84)' }} onClick={handleToday}>
               Today
             </button>
           </div>
