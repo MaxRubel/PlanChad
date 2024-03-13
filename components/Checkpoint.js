@@ -7,11 +7,15 @@ import { trashIcon } from '../public/icons';
 import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
-  expandTooltip, collapseToolTip, addTaskToolTip, deleteSegment,
+  expandTooltip,
+  collapseToolTip,
+  addTaskToolTip,
+  deleteSegment,
 } from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';
+import choseAColor from '../utils/chooseAcolor';
 
 export default function Checkpoint({
   checkP,
@@ -31,7 +35,6 @@ export default function Checkpoint({
   });
 
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
-
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [tasks, setTasks] = useState([]);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
@@ -66,13 +69,15 @@ export default function Checkpoint({
 
   useEffect(() => { // grab and sort the tasks from save manager
     if (!isDragging) {
-      setFormInput(checkP);
       const copy = [...saveInput.tasks];
       const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
       const sorted = theseTasks.sort((a, b) => a.index - b.index);
       setTasks(sorted);
+      setFormInput(checkP);
+    } else {
+      setFormInput(checkP);
     }
-  }, [checkP]);
+  }, [checkP, isDragging]);
 
   useEffect(() => { // send to save manager
     addToSaveManager(formInput, 'update', 'checkpoint');
@@ -205,8 +210,10 @@ export default function Checkpoint({
         }
         deleteFromSaveManager(formInput, 'delete', 'checkpoint');
         handleRefresh();
+        setOpenDeleteModal((preVal) => false);
       });
   };
+
   const handleOpenModal = () => {
     setOpenDeleteModal((prevVal) => true);
   };
@@ -233,6 +240,7 @@ export default function Checkpoint({
       expanded: false,
       deetsExpanded: false,
       collabsExpanded: false,
+      lineColor: choseAColor(),
     };
     addToSaveManager(emptyTask, 'create', 'task');
     setCheckPrefresh((prevVal) => prevVal + 1);
@@ -248,12 +256,12 @@ export default function Checkpoint({
           <div
             id="line"
             style={{
-              borderLeft: '2px solid rgb(16, 197, 234, .7)',
+              borderLeft: '2px solid rgb(35, 166, 213)',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
             }}
           >
-            <div id="empty" style={{ borderBottom: '2px solid rgb(16, 197, 234, .7)' }} />
+            <div id="empty" style={{ borderBottom: '2px solid rgb(35, 166, 213)' }} />
             <div />
           </div>
         </div>
@@ -263,10 +271,16 @@ export default function Checkpoint({
           style={{
             margin: '3px 0px',
             minWidth: '565px',
-            border: '4px solid rgb(16, 197, 234, .4)',
           }}
         >
-          <div className="card-header 2" style={{ minWidth: '516px', border: !formInput.expanded ? 'none' : '' }}>
+          <div
+            className="card-header 2"
+            style={{
+              minWidth: '516px',
+              height: '53px',
+              border: !formInput.expanded ? 'none' : '',
+            }}
+          >
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div className="verticalCenter">
               <div className="verticalCenter">
@@ -393,6 +407,7 @@ export default function Checkpoint({
                       onChange={handleChange}
                       name="startDate"
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -418,6 +433,7 @@ export default function Checkpoint({
                       name="deadline"
                       id={`deadline${checkP.localId}`}
                       style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -430,7 +446,7 @@ export default function Checkpoint({
                   borderTop: '1px solid rgb(180, 180, 180)',
                   padding: '1% 10%',
                   paddingTop: '1%',
-                  paddingBottom: '1%',
+                  paddingBottom: '16px',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
@@ -440,6 +456,7 @@ export default function Checkpoint({
                     Description:
                   </label>
                 </div>
+
                 <textarea
                   className="form-control"
                   placeholder="A description of your segment..."
@@ -449,15 +466,14 @@ export default function Checkpoint({
                   onChange={handleChange}
                   name="description"
                   style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }}
+                  onPointerDownCapture={(e) => e.stopPropagation()}
                 />
               </div>
             </div>
           </Collapse>
         </div>
-        {/* -----add-a-task------ */}
-        {/* <div className="marginR" /> */}
       </div>
-
+      {/* ----------tasks------------------ */}
       <div>
         <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
           {tasks.map((task, indexT) => (

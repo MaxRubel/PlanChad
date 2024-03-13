@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
-import { peopleIcon, trashIcon } from '../public/icons';
+import {
+  calendarIcon, editIcon, peopleIcon, trashIcon,
+} from '../public/icons';
 import TaskDeets from './TaskDeets';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
@@ -44,6 +46,7 @@ export default function Task({
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
+  const userExpandedChoice = useRef();
 
   const downIcon = (
     <svg
@@ -100,6 +103,8 @@ export default function Task({
 
   const handleCollapse2 = () => { // collapse extra details
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
+    userExpandedChoice.current = !formInput.deetsExpanded;
+    console.log(userExpandedChoice.current);
   };
 
   const handleChange = (e) => {
@@ -121,9 +126,16 @@ export default function Task({
   };
 
   const handleExpandCollabs = () => {
-    setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
-    if (!formInput.expanded) {
-      setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: true }));
+    if (userExpandedChoice && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
+    }
+    if (!userExpandedChoice.current && !formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: true }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: true }));
+    }
+    if (!userExpandedChoice.current && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: false }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: false }));
     }
   };
 
@@ -138,6 +150,7 @@ export default function Task({
     });
     deleteFromSaveManager(formInput, 'delete', 'task');
     refreshCheckP();
+    setOpenDeleteModal((prevVal) => false);
   };
 
   const handleOpenModal = () => {
@@ -151,11 +164,13 @@ export default function Task({
   if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
     return (<div style={{ display: 'none' }} />);
   }
+
   return (
     <>
       <DeleteTaskModal show={openDeleteModal} handleDelete={handleDelete} closeModal={handleCloseModal} />
       <div className="task">
         {/* -------line-side------------- */}
+
         <div
           className="marginL"
           style={{
@@ -193,12 +208,13 @@ export default function Task({
           />
           <div id="bottom-div" />
         </div>
+
         {/* -----------card---------------------- */}
         <div
           className="card"
           style={{
             margin: '3px 0px',
-            border: '4px solid rgb(251, 157, 80, .0)',
+            // border: '4px solid rgb(251, 157, 80, .0)',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
             transition: '1.5s all ease',
             minWidth: '516px',
@@ -219,6 +235,8 @@ export default function Task({
                 className="verticalCenter"
                 style={{
                   alignItems: 'center',
+                  display: 'flex',
+                  justifyContent: 'space-between',
                 }}
               >
                 <OverlayTrigger
@@ -238,9 +256,13 @@ export default function Task({
                       color: 'black',
                       width: '35px',
                       height: '35px',
+                      // display: 'flex',
+                      // alignItems: 'center',
+                      // justifyContent: 'space-between',
                     }}
                   >
-                    {downIcon}
+                    {/* {downIcon}  */}
+                    {calendarIcon}
                   </button>
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -255,7 +277,6 @@ export default function Task({
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
-                      marginLeft: '7px',
                       padding: '0px !important',
                       paddingLeft: '0px !important',
                       paddingRight: '0px !important',
@@ -265,7 +286,7 @@ export default function Task({
                       height: '35px',
                     }}
                   >
-                    {magGlass}
+                    {editIcon}
                   </button>
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -274,13 +295,16 @@ export default function Task({
                   trigger={['hover', 'focus']}
                   delay={{ show: 750, hide: 0 }}
                 >
+                  {/* <div className="form-check">
+                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                  </div> */}
                   <Checkbox
                     id={`task-completed${task.localId}`}
                     checked={formInput.status === 'closed'}
                     onChange={(e) => { handleCheck(e); }}
                     inputProps={{ 'aria-label': 'controlled' }}
                     size="medium"
-                    style={{ color: 'black', height: '35px', marginLeft: '7px' }}
+                    style={{ color: 'black', height: '35px' }}
                   />
                 </OverlayTrigger>
               </div>
@@ -298,6 +322,7 @@ export default function Task({
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}
+                onPointerDownCapture={(e) => e.stopPropagation()}
                 autoComplete="off"
               />
             </div>
@@ -374,6 +399,7 @@ export default function Task({
                         border: 'none',
                         transition: '1.5s all ease',
                       }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -403,6 +429,7 @@ export default function Task({
                         border: 'none',
                         transition: '1.5s all ease',
                       }}
+                      onPointerDownCapture={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
@@ -414,7 +441,7 @@ export default function Task({
                 style={{
                   borderTop: formInput.status === 'closed' ? 'none' : '1px solid rgb(180, 180, 180)',
                   padding: '1% 10%',
-                  paddingBottom: '1%',
+                  paddingBottom: '16px',
                   display: 'flex',
                   flexDirection: 'column',
                 }}
@@ -438,8 +465,11 @@ export default function Task({
                     border: 'none',
                     minWidth: '250px',
                   }}
+                  onPointerDownCapture={(e) => e.stopPropagation()}
                 />
+                {/* </motion.div> */}
               </div>
+
             </div>
           </Collapse>
         </div>
@@ -457,6 +487,7 @@ export default function Task({
 
 Task.propTypes = {
   task: PropTypes.shape({
+    index: PropTypes.number.isRequired,
     localId: PropTypes.string.isRequired,
     progressIsShowing: PropTypes.oneOfType([
       PropTypes.bool,

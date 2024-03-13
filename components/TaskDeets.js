@@ -2,7 +2,9 @@ import { Collapse } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ViewTaskCollabsInProj from './views/ViewTaskCollabsInProj';
 
-export default function TaskDeets({ formInput, handleChange, taskId }) {
+export default function TaskDeets({
+  formInput, handleChange, taskId,
+}) {
   return (
     <>
       <Collapse
@@ -12,6 +14,7 @@ export default function TaskDeets({ formInput, handleChange, taskId }) {
       >
         <div>
           <div id={`taskDeets${formInput.localId}`} style={{ display: 'none' }} className={formInput.collabsExpanded ? 'taskDeetsExpand' : 'taskDeets'}>
+
             <div id="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
               <div id="empty" />
               <div
@@ -78,6 +81,7 @@ export default function TaskDeets({ formInput, handleChange, taskId }) {
                   value={formInput.planning}
                   onChange={handleChange}
                   placeholder="Planning details..."
+                  onPointerDownCapture={(e) => e.stopPropagation()}
                 />
               </div>
             </div>

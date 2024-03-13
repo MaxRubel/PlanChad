@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import CollabCardForTaskInProj from '../cards/CollabCardForTaskInProj';
 import { useCollabContext } from '../../utils/context/collabContext';
+import CollabCardForTaskInCal from './CollabCardForTaskInCal';
 
-export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput }) {
+export default function ViewTaskCollabsForCal({ taskId, formInput }) {
   const { taskCollabJoins, allCollabs } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
 
@@ -25,37 +26,34 @@ export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput
         style={{
           margin: '3px 1.5px',
           height: '250px',
-          display: collabsExpand ? 'block' : 'none',
-          border: formInput.status === 'closed' ? 'grey' : '1px solid lightgrey',
+          minWidth: '300px',
+          border: formInput.status === 'closed' ? 'grey' : '',
           backgroundColor: formInput.status === 'closed' ? 'grey' : '',
-          transition: 'all 1.5s ease',
         }}
       >
         <div className="card-header" style={{ fontSize: '18px', textAlign: 'center' }}>
           <div> Assigned to This Task:</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }} />
         </div>
-        <div className="card-body" style={{ padding: '12px' }}>
+        <div className="card-body" style={{ paddingLeft: '5%', paddingRight: '5%' }}>
           <div
             className="card"
             style={{
-              transition: 'all 1.5s ease',
-              border: formInput.status === 'closed' ? 'grey' : '',
+              border: formInput.status === 'closed' ? 'grey' : 'none',
             }}
           >
             <div
               className="card-body"
               style={{
-                transition: 'all 1.5s ease',
-                padding: '8px',
                 backgroundColor: formInput.status === 'closed' ? 'grey' : '',
+                padding: '4px 2%',
               }}
             >
               {collabsOfTask.length === 0 ? (
                 'No one is assigned to this task...'
               ) : (
                 collabsOfTask.map((collab) => (
-                  <CollabCardForTaskInProj
+                  <CollabCardForTaskInCal
                     key={collab.collabId}
                     collab={collab}
                     taskId={taskId}
@@ -71,8 +69,7 @@ export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput
   );
 }
 
-ViewTaskCollabsInProj.propTypes = {
-  collabsExpand: PropTypes.bool.isRequired,
+ViewTaskCollabsForCal.propTypes = {
   taskId: PropTypes.string.isRequired,
   formInput: PropTypes.shape({
     status: PropTypes.string.isRequired,
