@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -46,6 +46,7 @@ export default function Task({
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
+  const userExpandedChoice = useRef();
 
   const downIcon = (
     <svg
@@ -102,6 +103,8 @@ export default function Task({
 
   const handleCollapse2 = () => { // collapse extra details
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
+    userExpandedChoice.current = !formInput.deetsExpanded;
+    console.log(userExpandedChoice.current);
   };
 
   const handleChange = (e) => {
@@ -123,9 +126,16 @@ export default function Task({
   };
 
   const handleExpandCollabs = () => {
-    setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
-    if (!formInput.expanded) {
-      setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: true }));
+    if (userExpandedChoice && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
+    }
+    if (!userExpandedChoice.current && !formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: true }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: true }));
+    }
+    if (!userExpandedChoice.current && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: false }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: false }));
     }
   };
 
@@ -154,6 +164,7 @@ export default function Task({
   if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
     return (<div style={{ display: 'none' }} />);
   }
+
   return (
     <>
       <DeleteTaskModal show={openDeleteModal} handleDelete={handleDelete} closeModal={handleCloseModal} />

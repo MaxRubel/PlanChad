@@ -19,6 +19,7 @@ export default function CalendarPage() {
   const [sortedTasks, setSortedTasks] = useState([]);
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [taskToView, setTaskToView] = useState(null);
+  const [weeksArrays, setWeeksArrays] = useState([[], [], [], [], [], []]);
   const [calendarData, setCalendarData] = useState(
     {
       month: null,
@@ -108,8 +109,6 @@ export default function CalendarPage() {
         calendarData.month === Number(projStartMonth - 1)
         && calendarData.year === Number(projStartYear)) {
         startElement.style.backgroundColor = '#23a6d5';
-        // startElement.className = 'project-start-box';
-        // startElement.innerHTML = `${saveInput.project.name}`;
         projectStartBox.current = startElement;
         // If deadline day is in current month fill to deadline
         if (
@@ -188,7 +187,6 @@ export default function CalendarPage() {
   useEffect(() => { // sort tasks
     const tasks = [...saveInput.tasks];
     const filteredTasks = tasks.filter((item) => item.startDate || item.deadline);
-    // const sortedByIndex = filteredTasks.sort((a, b) => a.index - b.index);
     const sortedbyDate = filteredTasks.sort((a, b) => {
       const startDateA = a.startDate;
       const startDateB = b.startDate;
@@ -198,88 +196,189 @@ export default function CalendarPage() {
   }, [saveInput]);
 
   // CACLULATE TASK LINES
+  // useLayoutEffect(() => {
+
+  // }, [weeksArrays]);
   useLayoutEffect(() => {
-    const drawLine = (i, y, string, task) => {
-      const element = document.getElementById(`${i}Task`);
-      const newDiv = document.createElement('div');
-      // ${task.name ? task.name : `Task ${task.index}`}
-      // ${task.description ? task.description : ''}
-      newDiv.innerHTML = `
-        <div id="openTask--${task.localId}" class="tooltip-container">
-          <div class="tooltip-trigger"></div>
-          <div class="tooltip-content">
-            <div>
-            ${task.name ? task.name : `Task ${task.index}`}
-            </div>
-            <div>
-   ${task.description ? task.description : ''}
+    const addToWeeksArray = (day, taskObj) => {
+      const weeksArrayCopy = [...weeksArrays];
+      if (day >= 0 && day <= 6) {
+        const isObjectInArray = weeksArrayCopy[0].some((obj) => obj.localId === taskObj.localId);
+        if (!isObjectInArray) {
+          weeksArrayCopy[0].push(taskObj);
+        }
+      }
+      if (day >= 7 && day <= 13) {
+        const isObjectInArray = weeksArrayCopy[1].some((obj) => obj.localId === taskObj.localId);
+        if (!isObjectInArray) {
+          weeksArrayCopy[1].push(taskObj);
+        }
+      }
+      if (day >= 14 && day <= 20) {
+        const isObjectInArray = weeksArrayCopy[2].some((obj) => obj.localId === taskObj.localId);
+        if (!isObjectInArray) {
+          weeksArrayCopy[2].push(taskObj);
+        }
+      }
+      if (day >= 21 && day <= 28) {
+        const isObjectInArray = weeksArrayCopy[3].some((obj) => obj.localId === taskObj.localId);
+        if (!isObjectInArray) {
+          weeksArrayCopy[3].push(taskObj);
+        }
+      }
+      if (day >= 28 && day <= 35) {
+        const isObjectInArray = weeksArrayCopy[4].some((obj) => obj.localId === taskObj.localId);
+        if (!isObjectInArray) {
+          weeksArrayCopy[4].push(taskObj);
+        }
+      }
+      if (day >= 35 && day <= 41) {
+        const isObjectInArray = weeksArrayCopy[5].some((obj) => obj.localId === taskObj.localId);
+        if (!isObjectInArray) {
+          weeksArrayCopy[5].push(taskObj);
+        }
+      }
+      setWeeksArrays((preVal) => weeksArrayCopy);
+    };
+    let moreTasksMessagePrinted = false;
+    const viewMoreMessage = document.createElement('div');
+    const drawLine = (day, taskI, string, task) => {
+      const element = document.getElementById(`${day}Task`);
+      if (day >= 0 && day <= 6 && element) {
+        element.style.height = '100%';
+        const lineDiv = document.createElement('div');
+        const thisIndex = weeksArrays[0].findIndex((item) => item.localId === task.localId);
+
+        if (thisIndex < 6) {
+          element.appendChild(lineDiv);
+          lineDiv.style.backgroundColor = task.lineColor;
+          lineDiv.setAttribute('id', `${task.name}-row${taskI}`);
+          lineDiv.className = string;
+          lineDiv.style.gridRow = `${thisIndex + 1} / span 1`;
+          lineDiv.innerHTML = `
+          <div id="openTask--${task.localId}" class="tooltip-container">
+            <div class="tooltip-trigger"></div>
+            <div class="tooltip-content">
+              <div>
+                ${task.name ? task.name : `Task ${task.index}`}
+              </div>
+              <div>
+                ${task.description ? task.description : ''}
+              </div>
             </div>
           </div>
-      </div>
         `;
-      newDiv.setAttribute('id', `${task.name}-row${y}`);
-      newDiv.className = (string);
-      newDiv.style.gridRow = `${y + 1} / span 1`;
-      element.appendChild(newDiv);
-      newDiv.style.backgroundColor = task.lineColor;
+        } else if (thisIndex === 6) {
+          viewMoreMessage.innerHTML = `+${weeksArrays[0].length - 6 === 1 ? '1 more task...' : `${weeksArrays[0].length - 6} more tasks...`}`;
+          if (!moreTasksMessagePrinted) {
+            const messageBox = document.getElementById('0Task');
+            viewMoreMessage.setAttribute('id', `viewMore--${0}}`);
+            viewMoreMessage.style.fontSize = '12px';
+            viewMoreMessage.style.textAlign = 'center';
+            messageBox.appendChild(viewMoreMessage);
+            moreTasksMessagePrinted = true;
+          }
+        }
+      }
+      // if (day >= 7 && day <= 13 && element) {
+      //   element.style.height = '100%';
+      //   // element.style.gridTemplateRows = `repeat(${weeksArrays[0].length}, minmax(auto, 7px));`;
+      //   // element.style.gridAutoRows = '9px';
+
+      //   const lineDiv = document.createElement('div');
+      //   const thisIndex = weeksArrays[1].findIndex((item) => item.localId === task.localId);
+
+      //   element.appendChild(lineDiv);
+      //   lineDiv.style.backgroundColor = task.lineColor;
+      //   lineDiv.setAttribute('id', `${task.name}-row${taskI}`);
+      //   lineDiv.className = string;
+      //   lineDiv.style.gridRow = `${thisIndex + 1} / span 1`;
+
+      //   lineDiv.innerHTML = `
+      //   <div id="openTask--${task.localId}" class="tooltip-container">
+      //     <div class="tooltip-trigger"></div>
+      //     <div class="tooltip-content">
+      //       <div>
+      //         ${task.name ? task.name : `Task ${task.index}`}
+      //       </div>
+      //       <div>
+      //         ${task.description ? task.description : ''}
+      //       </div>
+      //     </div>
+      //   </div>
+      // `;
+      // }
     };
+
     if (!openTaskModal) {
-      for (let i = 0; i < 43; i++) { // loop through each date box
-        const element = document.getElementById(`${i}Task`);
+      for (let day = 0; day < 43; day++) { // loop through each date box
+        const element = document.getElementById(`${day}Task`);
         if (element) {
           element.innerHTML = '';
-          element.style.backgroundColor = 'transparent';
-          element.style.gridTemplateRows = `repeat(${sortedTasks.length}, 8px)`;
+          element.style.height = '100%';
+          element.style.gridTemplateRows = `repeat(${sortedTasks.length}, minmax(auto, 7px));`;
+          element.style.gridAutoRows = '9px';
           element.style.height = `${sortedTasks.length * 1}px`;
 
           // loop through each task of task array and row
-          for (let y = 0; y < sortedTasks.length; y++) {
-            const [taskStartYear, taskStartMonth, taskStartDay] = (sortedTasks[y].startDate ?? '').split('-');
-            const [taskDeadlineYear, taskDeadlineMonth, taskDeadlineDay] = (sortedTasks[y].deadline ?? '').split('-');
+          for (let task = 0; task < sortedTasks.length; task++) {
+            const [taskStartYear, taskStartMonth, taskStartDay] = (sortedTasks[task].startDate ?? '').split('-');
+            const [taskDeadlineYear, taskDeadlineMonth, taskDeadlineDay] = (sortedTasks[task].deadline ?? '').split('-');
             const taskStartDayOnCal = (calendarData.startingDay + Number(taskStartDay) - 1);
             const taskDeadlineOnCal = (calendarData.startingDay + Number(taskDeadlineDay) - 1);
-
             // draw start day:
             if (calendarData.month === Number(taskStartMonth - 1)
               && calendarData.year === Number(taskStartYear)
-              && taskStartDayOnCal === i
-            ) { drawLine(i, y, 'task-start-box', sortedTasks[y]); }
-
+              && taskStartDayOnCal === day
+            ) {
+              addToWeeksArray(day, sortedTasks[task]);
+              drawLine(day, task, 'task-start-box', sortedTasks[task]);
+            }
             // draw deadline day:
-            if (sortedTasks[y].deadline) {
+            if (sortedTasks[task].deadline) {
               if (
                 calendarData.month === Number(taskDeadlineMonth - 1)
                 && calendarData.year === Number(taskDeadlineYear)
-                && taskDeadlineOnCal === i
-              ) { drawLine(i, y, 'task-deadline-box', sortedTasks[y]); }
-
+                && taskDeadlineOnCal === day
+              ) {
+                addToWeeksArray(day, sortedTasks[task]);
+                drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
+              }
               // fill to deadline if start is in the same month as deadline:
               if (
                 calendarData.year === Number(taskDeadlineYear)
                 && calendarData.year === Number(taskStartYear)
                 && calendarData.month === Number(taskStartMonth - 1)
                 && calendarData.month === Number(taskDeadlineMonth - 1)
-                && (Number(taskStartDay) + (calendarData.startingDay - 1)) < i
-                && (Number(taskDeadlineDay) + (calendarData.startingDay - 1)) > i
-              ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
-
+                && (Number(taskStartDay) + (calendarData.startingDay - 1)) < day
+                && (Number(taskDeadlineDay) + (calendarData.startingDay - 1)) > day
+              ) {
+                addToWeeksArray(day, sortedTasks[task]);
+                drawLine(day, task, 'task-line', sortedTasks[task]);
+              }
               // draw to end of first month if deadline in different month:
               if (
                 taskDeadlineMonth
                 && calendarData.year === Number(taskStartYear)
                 && calendarData.month === Number(taskStartMonth - 1)
-                && i > taskStartDayOnCal
+                && day > taskStartDayOnCal
                 && taskStartMonth !== taskDeadlineMonth
-              ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+              ) {
+                addToWeeksArray(day, sortedTasks[task]);
+                drawLine(day, task, 'task-line', sortedTasks[task]);
+              }
 
               // draw to deadline if deadline in different month:
               if (
                 taskDeadlineMonth
                 && calendarData.year === Number(taskDeadlineYear)
                 && calendarData.month === Number(taskDeadlineMonth - 1)
-                && i < taskDeadlineOnCal
+                && day < taskDeadlineOnCal
                 && taskStartMonth !== taskDeadlineMonth
-              ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+              ) {
+                addToWeeksArray(day, sortedTasks[task]);
+                drawLine(day, task, 'task-line', sortedTasks[task]);
+              }
 
               // draw whole month if in the same year as deadline and between start and finish:
               if (
@@ -287,7 +386,10 @@ export default function CalendarPage() {
                 && calendarData.year === Number(taskStartYear)
                 && calendarData.month > Number(taskStartMonth - 1)
                 && calendarData.month < Number(taskDeadlineMonth - 1)
-              ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+              ) {
+                addToWeeksArray(day, sortedTasks[task]);
+                drawLine(day, task, 'task-line', sortedTasks[task]);
+              }
 
               // if start and finish years are not the same!
               if (taskStartYear !== taskDeadlineYear) {
@@ -299,32 +401,47 @@ export default function CalendarPage() {
                 if (
                   calendarData.year === taskyears[0]
                   && calendarData.month > Number(taskStartMonth - 1)
-                ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+                ) {
+                  addToWeeksArray(day, sortedTasks[task]);
+                  drawLine(day, task, 'task-line', sortedTasks[task]);
+                }
                 // fill up to deadline of deadline year
                 if (
                   calendarData.year === taskyears[taskyears.length - 1]
                   && calendarData.month < Number(taskDeadlineMonth - 1)
-                ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+                ) {
+                  addToWeeksArray(day, sortedTasks[task]);
+                  drawLine(day, task, 'task-line', sortedTasks[task]);
+                }
                 // fill entire year if in between start and end years
                 if (
                   calendarData.year > taskyears[0]
                   && calendarData.year < taskyears[taskyears.length - 1]
-                ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+                ) {
+                  addToWeeksArray(day, sortedTasks[task]);
+                  drawLine(day, task, 'task-line', sortedTasks[task]);
+                }
                 // draw to end of first month if deadline in different month:
                 if (
                   taskDeadlineMonth
                   && calendarData.year === Number(taskStartYear)
                   && taskStartMonth === taskDeadlineMonth
                   && calendarData.month === Number(taskStartMonth - 1)
-                  && i > taskStartDayOnCal
-                ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+                  && day > taskStartDayOnCal
+                ) {
+                  addToWeeksArray(day, sortedTasks[task]);
+                  drawLine(day, task, 'task-line', sortedTasks[task]);
+                }
                 if (
                   taskDeadlineMonth
                   && calendarData.year === Number(taskDeadlineYear)
                   && taskStartMonth === taskDeadlineMonth
                   && calendarData.month === Number(taskDeadlineMonth - 1)
-                  && i < taskDeadlineOnCal
-                ) { drawLine(i, y, 'task-line', sortedTasks[y]); }
+                  && day < taskDeadlineOnCal
+                ) {
+                  addToWeeksArray(day, sortedTasks[task]);
+                  drawLine(day, task, 'task-line', sortedTasks[task]);
+                }
               }
             }
           }
@@ -362,7 +479,6 @@ export default function CalendarPage() {
       const taskObj = saveInput.tasks.find((item) => item.localId === taskId);
       setOpenTaskModal((preVal) => true);
       setTaskToView((preVal) => taskObj);
-      console.log(openTaskModal);
     }
   };
 
@@ -435,6 +551,7 @@ export default function CalendarPage() {
               <div className="calendar-day" id="1">
                 <div id="1BackG"><div id="1Num" className="date-number" /></div>
                 <div id="1CheckP" className="checkP-div" />
+                {/* <div id="1Task" className="task-container" /> */}
                 <div id="1Task" className="task-container" />
               </div>
               <div className="calendar-day" id="2">

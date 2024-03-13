@@ -69,15 +69,15 @@ export default function Checkpoint({
 
   useEffect(() => { // grab and sort the tasks from save manager
     if (!isDragging) {
-      setFormInput(checkP);
       const copy = [...saveInput.tasks];
       const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
       const sorted = theseTasks.sort((a, b) => a.index - b.index);
       setTasks(sorted);
+      setFormInput(checkP);
     } else {
       setFormInput(checkP);
     }
-  }, [checkP]);
+  }, [checkP, isDragging]);
 
   useEffect(() => { // send to save manager
     addToSaveManager(formInput, 'update', 'checkpoint');
