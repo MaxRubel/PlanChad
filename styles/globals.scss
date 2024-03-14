@@ -212,7 +212,10 @@ body {
   color: white;
   display: flex;
   flex-direction: column;
-  // height: 100%;
+}
+
+.no-line {
+  display: none
 }
 
 #calendar-header {
@@ -321,14 +324,16 @@ body {
 
 .task-container {
   // background-color: #23a6d5;
-  margin: 0% -1px;
+  // margin: 0% -px;
   display: grid;
-height: 100%;
+  height: 100%;
   gap: 2px;
+  padding: 2% 4%;
 }
 
 .task-line {
   min-height: 7px;
+  border-radius: 3%;
 }
 
 
