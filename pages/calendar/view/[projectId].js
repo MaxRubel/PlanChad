@@ -429,14 +429,16 @@ export default function CalendarPage() {
           if (bothInSameMonth()) {
             drawLine(day, task, 'task-line', sortedTasks[task]);
           }
-          if (inStartMonth() && !monthsAreTouching()) {
-            if (day > taskStartDayOnCal) {
-              drawLine(day, task, 'task-line', sortedTasks[task]);
+          if (taskDeadlineMonth !== taskStartMonth) {
+            if (inStartMonth() && !monthsAreTouching()) {
+              if (day > taskStartDayOnCal) {
+                drawLine(day, task, 'task-line', sortedTasks[task]);
+              }
             }
-          }
-          if (inEndMonth() && !monthsAreTouching()) {
-            if (day < taskDeadlineOnCal) {
-              drawLine(day, task, 'task-line', sortedTasks[task]);
+            if (inEndMonth() && !monthsAreTouching()) {
+              if (day < taskDeadlineOnCal) {
+                drawLine(day, task, 'task-line', sortedTasks[task]);
+              }
             }
           }
           if (monthsAreTouching()) {
@@ -466,7 +468,6 @@ export default function CalendarPage() {
               && !isMonthBeforeEnd()
               && !inEndMonth()
               && calendarIsBetweenTheTwoDates()
-              // && !monthsAreTouching()
             ) {
               drawLine(day, task, 'task-line', sortedTasks[task]);
             }
