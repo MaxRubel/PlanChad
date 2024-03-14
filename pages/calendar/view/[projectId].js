@@ -205,7 +205,6 @@ export default function CalendarPage() {
           weeksArrayCopy[i].push(taskToAdd);
           break;
         }
-        console.log(weeksArrayCopy[i]);
       }
     }
     weeksArrays.current = weeksArrayCopy;
