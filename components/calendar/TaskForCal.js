@@ -1,21 +1,10 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
-import { Collapse, OverlayTrigger } from 'react-bootstrap';
-import { Checkbox } from '@mui/material';
-import PropTypes from 'prop-types';
-import {
-  calendarIcon, editIcon, peopleIcon, trashIcon,
-} from '../../public/icons';
-import TaskDeets from '../TaskDeets';
+import { OverlayTrigger } from 'react-bootstrap';
+import { trashIcon } from '../../public/icons';
+
 import { useSaveContext } from '../../utils/context/saveManager';
-import {
-  closeTaskToolTip,
-  collapseToolTaskTip,
-  deleteTaskToolTip,
-  expandTaskTooltip,
-  hideCollabsToolTips,
-  viewCollabsToolTips,
-  viewTaskDeetsToolTip,
-} from '../util/toolTips';
+import { deleteTaskToolTip } from '../util/toolTips';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { deleteTaskCollab } from '../../api/taskCollab';
 import DeleteTaskModal from '../modals/DeleteTask';
@@ -41,42 +30,11 @@ const initialState = {
   planning: '',
 };
 
-export default function TaskForCal({
-  task, min, refreshCheckP, indexT,
-}) {
+export default function TaskForCal({ task, min }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
-
-  const downIcon = (
-    <svg
-      className={formInput.expanded ? 'icon-up' : 'icon-down'}
-      xmlns="http://www.w3.org/2000/svg"
-      height="16px"
-      viewBox="0 0 320 512"
-    >
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5
-      0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9
-      0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
-      />
-    </svg>
-  );
-
-  const magGlass = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      className="bi bi-search"
-      viewBox="0 0 16 16"
-    >
-      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85
-      3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-      />
-    </svg>
-  );
 
   useEffect(() => {
     setFormInput((preVal) => task);
@@ -98,14 +56,6 @@ export default function TaskForCal({
     }
   }, [min]);
 
-  const handleCollapse = () => { // collapse main details
-    setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
-  };
-
-  const handleCollapse2 = () => { // collapse extra details
-    setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
-  };
-
   const handleChange = (e) => {
     handleFresh();
     const { name, value } = e.target;
@@ -113,22 +63,6 @@ export default function TaskForCal({
       ...prevVal,
       [name]: value,
     }));
-  };
-
-  const handleCheck = (e) => {
-    handleFresh();
-    const { checked } = e.target;
-    setFormInput((prevVal) => ({
-      ...prevVal,
-      status: checked ? 'closed' : 'open',
-    }));
-  };
-
-  const handleExpandCollabs = () => {
-    setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
-    if (!formInput.expanded) {
-      setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: true }));
-    }
   };
 
   const handleDelete = () => {
@@ -141,7 +75,6 @@ export default function TaskForCal({
       }
     });
     deleteFromSaveManager(formInput, 'delete', 'task');
-    refreshCheckP();
     setOpenDeleteModal((prevVal) => false);
   };
 
@@ -167,13 +100,12 @@ export default function TaskForCal({
           style={{
             margin: '3px 0px',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
-            minWidth: '516px',
+            minWidth: '300px',
           }}
         >
           <div
             className="card-header 2"
             style={{
-              minWidth: '516px',
               alignContent: 'center',
               height: '53px',
               border: !formInput.expanded ? 'none' : '',
@@ -187,7 +119,7 @@ export default function TaskForCal({
                   textAlign: 'center',
                   border: 'none',
                   backgroundColor: 'transparent',
-                  width: '75%',
+                  // width: '75%',
                 }}
                 placeholder={`Task ${task.index + 1}`}
                 value={formInput.name}
@@ -335,16 +267,14 @@ export default function TaskForCal({
   );
 }
 
-TaskForCal.propTypes = {
-  task: PropTypes.shape({
-    index: PropTypes.number.isRequired,
-    localId: PropTypes.string.isRequired,
-    progressIsShowing: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.oneOf([undefined]),
-    ]),
-  }).isRequired,
-  min: PropTypes.number.isRequired,
-  refreshCheckP: PropTypes.func.isRequired,
-  indexT: PropTypes.number.isRequired,
-};
+// TaskForCal.propTypes = {
+//   task: PropTypes.shape({
+//     index: PropTypes.number.isRequired,
+//     localId: PropTypes.string.isRequired,
+//     progressIsShowing: PropTypes.oneOfType([
+//       PropTypes.bool,
+//       PropTypes.oneOf([undefined]),
+//     ]),
+//   }).isRequired,
+//   min: PropTypes.number.isRequired,
+// };

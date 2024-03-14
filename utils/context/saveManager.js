@@ -79,6 +79,7 @@ export const SaveContextProvider = ({ children }) => {
       tasks = tasksForm;
     }
     const obj = { project, checkpoints, tasks };
+    console.log(obj);
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;

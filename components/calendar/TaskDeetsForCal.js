@@ -22,6 +22,7 @@ export default function TaskDeetsForCalendar({
             marginRight: formInput.collabsExpanded ? '3px' : '',
             display: 'flex',
             flexDirection: 'column',
+            minWidth: '300px',
           }}
         >
           <div

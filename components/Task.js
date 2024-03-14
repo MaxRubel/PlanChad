@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -46,12 +46,26 @@ export default function Task({
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
+  const userExpandedChoice = useRef();
 
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
       xmlns="http://www.w3.org/2000/svg"
-      height="16px"
+      height="10px"
+      viewBox="0 0 320 512"
+    >
+      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5
+      0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9
+      0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
+      />
+    </svg>
+  );
+  const downIcon2 = (
+    <svg
+      className={formInput.deetsExpanded ? 'icon-up' : 'icon-down'}
+      xmlns="http://www.w3.org/2000/svg"
+      height="8px"
       viewBox="0 0 320 512"
     >
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5
@@ -102,6 +116,7 @@ export default function Task({
 
   const handleCollapse2 = () => { // collapse extra details
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
+    userExpandedChoice.current = !formInput.deetsExpanded;
   };
 
   const handleChange = (e) => {
@@ -123,9 +138,16 @@ export default function Task({
   };
 
   const handleExpandCollabs = () => {
-    setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
-    if (!formInput.expanded) {
-      setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: true }));
+    if (userExpandedChoice && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
+    }
+    if (!userExpandedChoice.current && !formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: true }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: true }));
+    }
+    if (!userExpandedChoice.current && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: false }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: false }));
     }
   };
 
@@ -154,6 +176,7 @@ export default function Task({
   if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
     return (<div style={{ display: 'none' }} />);
   }
+
   return (
     <>
       <DeleteTaskModal show={openDeleteModal} handleDelete={handleDelete} closeModal={handleCloseModal} />
@@ -213,6 +236,7 @@ export default function Task({
             className="card-header 2"
             style={{
               minWidth: '516px',
+              // backgroundColor: 'red',
               alignContent: 'center',
               height: '53px',
               border: !formInput.expanded ? 'none' : '',
@@ -223,6 +247,7 @@ export default function Task({
                 id="button-row"
                 className="verticalCenter"
                 style={{
+                  minWidth: '125px',
                   alignItems: 'center',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -237,6 +262,7 @@ export default function Task({
                   <button
                     type="button"
                     onClick={handleCollapse}
+                    className="verticalCenter"
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
@@ -245,13 +271,9 @@ export default function Task({
                       color: 'black',
                       width: '35px',
                       height: '35px',
-                      // display: 'flex',
-                      // alignItems: 'center',
-                      // justifyContent: 'space-between',
                     }}
                   >
-                    {/* {downIcon}  */}
-                    {calendarIcon}
+                    {downIcon}&nbsp;&nbsp;{calendarIcon}
                   </button>
                 </OverlayTrigger>
                 <OverlayTrigger
@@ -263,16 +285,17 @@ export default function Task({
                   <button
                     type="button"
                     onClick={handleCollapse2}
+                    className="verticalCenter"
                     style={{
+                      marginLeft: '5px',
                       backgroundColor: 'transparent',
                       border: 'none',
-                      padding: '0px !important',
-                      paddingLeft: '0px !important',
-                      paddingRight: '0px !important',
+                      padding: '0px',
                       textAlign: 'center',
                       color: 'black',
                       width: '35px',
                       height: '35px',
+                      justifyContent: 'center',
                     }}
                   >
                     {editIcon}
@@ -293,7 +316,13 @@ export default function Task({
                     onChange={(e) => { handleCheck(e); }}
                     inputProps={{ 'aria-label': 'controlled' }}
                     size="medium"
-                    style={{ color: 'black', height: '35px' }}
+                    sx={{
+                      '& .MuiSvgIcon-root': {
+                        fontSize: 23,
+                        color: 'black',
+                        // strokeWidth: '.00000',
+                      },
+                    }}
                   />
                 </OverlayTrigger>
               </div>
@@ -332,7 +361,7 @@ export default function Task({
               >
                 <button
                   type="button"
-                  className="clearButton"
+                  className="clearButton verticalCenter"
                   style={{ color: 'black' }}
                   onClick={handleExpandCollabs}
                 >
@@ -347,6 +376,7 @@ export default function Task({
               >
                 <button
                   type="button"
+                  className="veritcalCenter"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
                   style={{
                     paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',

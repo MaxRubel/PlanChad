@@ -26,6 +26,7 @@ export default function ViewTaskCollabsForCal({ taskId, formInput }) {
         style={{
           margin: '3px 1.5px',
           height: '250px',
+          minWidth: '300px',
           border: formInput.status === 'closed' ? 'grey' : '',
           backgroundColor: formInput.status === 'closed' ? 'grey' : '',
         }}
