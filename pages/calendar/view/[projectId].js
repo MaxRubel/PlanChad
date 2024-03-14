@@ -19,8 +19,10 @@ export default function CalendarPage() {
   const [sortedTasks, setSortedTasks] = useState([]);
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [taskToView, setTaskToView] = useState(null);
-  const [weeksArrays, setWeeksArrays] = useState([[], [], [], [], [], []]);
-  const [weeksArrayWithHeights, setWeeksArrayWithHeights] = useState([[], [], [], [], [], []]);
+  const weeksArrays = useRef([[], [], [], [], [], []]);
+  const weeksArraysWithHeights = useRef([[], [], [], [], [], []]);
+  // const [weeksArrays, setWeeksArrays] = useState([[], [], [], [], [], []]);
+  // const [weeksArrayWithHeights, setWeeksArrayWithHeights] = useState([[], [], [], [], [], []]);
   const [calendarData, setCalendarData] = useState(
     {
       month: null,
@@ -187,35 +189,10 @@ export default function CalendarPage() {
     }
   }, [calendarData.startingDay, saveInput, calendarData.month]);
 
-  // ADD HEIGHT INDEXES TO WEEKS ARRAY
-  useLayoutEffect(() => {
-    for (let i = 0; i < weeksArrays.length; i++) {
-      let previousEndDate = null;
-      let currentIndex = -1;
-      const tasksArrayCopy = [...weeksArrays[i]];
-      const heightIndexedTasks = tasksArrayCopy.map((entry) => {
-        const copy = { ...entry };
-        if (!previousEndDate || new Date(copy.startDate) > previousEndDate) {
-          previousEndDate = new Date(copy.deadline);
-          currentIndex = 0;
-        } else {
-          currentIndex += 1;
-        }
-        return { ...copy, heightIndex: currentIndex };
-      });
-      setWeeksArrayWithHeights((preVal) => {
-        const updatedArrays = [...preVal];
-        updatedArrays[i] = heightIndexedTasks;
-        return updatedArrays;
-      });
-    }
-  }, [weeksArrays]);
-
   // SORT ENTRIES INTO CALENDAR ROWS
-  const addToWeeksArray = (day, taskObj) => {
-    const weeksArrayCopy = [...weeksArrays];
+  const findHeightIndex = (day, taskObj) => {
+    const weeksArrayCopy = [...weeksArrays.current];
     const sortedTasksCopy = [...sortedTasks];
-
     for (let i = 0; i < weeksArrayCopy.length; i++) {
       if (day >= i * 7 && day <= (i + 1) * 7 - 1) {
         const isObjectInArray = weeksArrayCopy[i].some((obj) => obj.localId === taskObj.localId);
@@ -226,19 +203,24 @@ export default function CalendarPage() {
         }
       }
     }
-
-    setWeeksArrays(weeksArrayCopy);
+    weeksArrays.current = weeksArrayCopy;
+    for (let i = 0; i < weeksArrays.current.length; i++) {
+      let previousEndDate = null;
+      let currentIndex = -1;
+      const tasksArrayCopy = [...weeksArrays.current[i]];
+      const heightIndexedTasks = tasksArrayCopy.map((entry) => {
+        const copy = { ...entry };
+        if (!previousEndDate || new Date(copy.startDate) > previousEndDate) {
+          previousEndDate = new Date(copy.deadline);
+          currentIndex = 0;
+        } else {
+          currentIndex += 1;
+        }
+        return { ...copy, heightIndex: currentIndex };
+      });
+      weeksArraysWithHeights.current[i] = heightIndexedTasks;
+    }
   };
-
-  function getFirstBoxDate(year, month, startingDay = 0) {
-    const date = new Date(year, month, 1);
-    const dayOfWeek = date.getDay();
-    const firstBoxDate = new Date(date);
-    firstBoxDate.setDate(1 + startingDay - dayOfWeek);
-    return firstBoxDate;
-  }
-  const firstBoxDate = getFirstBoxDate(calendarData.year, calendarData.month, 0);
-  const dateNumber = firstBoxDate.getDate();
 
   useLayoutEffect(() => {
     const viewMoreMessage = document.createElement('div');
@@ -246,7 +228,7 @@ export default function CalendarPage() {
     // PRINT TASK LINES
     if (openTaskModal) return;
     const drawLine = (day, taskI, string, task) => {
-      addToWeeksArray(day, task);
+      findHeightIndex(day, task);
       const element = document.getElementById(`${day}Task`);
 
       if (!element || day < 0 || day > 41) return;
@@ -254,7 +236,7 @@ export default function CalendarPage() {
       const lineDiv = document.createElement('div');
       const weekIndex = Math.floor(day / 7);
 
-      const weekTasks = weeksArrayWithHeights[weekIndex];
+      const weekTasks = weeksArraysWithHeights.current[weekIndex];
       if (weekTasks.length === 0) return;
 
       const thisTask = weekTasks.find((item) => item.localId === task.localId);
@@ -501,7 +483,8 @@ export default function CalendarPage() {
         }
       }
     }
-  }, [calendarData, saveInput, sortedTasks]);
+    console.log('has changed');
+  }, [calendarData, saveInput, sortedTasks, openTaskModal]);
 
   const handleDateCounter = (e) => {
     const { id } = e.target;
