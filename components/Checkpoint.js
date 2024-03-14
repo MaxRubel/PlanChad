@@ -3,6 +3,7 @@ import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
 import { Reorder } from 'framer-motion';
 import PropTypes from 'prop-types';
+import randomColor from 'randomcolor';
 import { trashIcon } from '../public/icons';
 import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
@@ -15,7 +16,6 @@ import {
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';
-import choseAColor from '../utils/chooseAcolor';
 
 export default function Checkpoint({
   checkP,
@@ -240,7 +240,7 @@ export default function Checkpoint({
       expanded: false,
       deetsExpanded: false,
       collabsExpanded: false,
-      lineColor: choseAColor(),
+      lineColor: randomColor(),
     };
     addToSaveManager(emptyTask, 'create', 'task');
     setCheckPrefresh((prevVal) => prevVal + 1);
