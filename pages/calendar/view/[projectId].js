@@ -13,7 +13,9 @@ export default function CalendarPage() {
   const router = useRouter();
   const { projectId } = router.query;
   const { cancelSaveAnimation } = useSaveContext();
-  const { saveInput } = useSaveContext();
+  const {
+    saveInput, singleProjectRunning, loadProject, projectsLoaded,
+  } = useSaveContext();
   const projectStartBox = useRef(null);
   const projectDeadlineBox = useRef(null);
   const [sortedTasks, setSortedTasks] = useState([]);
@@ -38,7 +40,10 @@ export default function CalendarPage() {
       .filter((item) => item.startDate || item.deadline)
       .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
     setSortedTasks(filteredTasks);
-  }, [saveInput]);
+    if (!singleProjectRunning && projectsLoaded) { // load the project if page refreshed
+      loadProject(projectId);
+    }
+  }, [saveInput, projectsLoaded]);
 
   // LAYOUT CALENDAR
   useLayoutEffect(() => {
@@ -89,11 +94,11 @@ export default function CalendarPage() {
       }
     }
     setCalendarData(((preVal) => ({ ...preVal, totalDays: total })));
-  }, [calendarData.month, calendarData.totalDays]);
+  }, [calendarData.month, calendarData.totalDays, sortedTasks]);
 
   // CALCULATE PROJECT LINE
   useEffect(() => {
-    if (calendarData.startingDay && saveInput.project.projectId) {
+    if (calendarData.startingDay && saveInput.project?.projectId) {
       const [projStartYear, projStartMonth, projStartDay] = (saveInput.project.start_date ?? '').split('-');
       const [projDeadlineYear, projDeadlineMonth, projDeadlineDay] = (saveInput.project.deadline ?? '').split('-');
       const startingDay = new Date(calendarData.year, calendarData.month, 1).getDay();
@@ -187,7 +192,7 @@ export default function CalendarPage() {
         }
       }
     }
-  }, [calendarData.startingDay, saveInput, calendarData.month]);
+  }, [calendarData.startingDay, sortedTasks, calendarData.month]);
 
   // SORT ENTRIES INTO CALENDAR ROWS
   const findHeightIndex = (day, taskObj) => {
@@ -483,7 +488,6 @@ export default function CalendarPage() {
         }
       }
     }
-    console.log('has changed');
   }, [calendarData, saveInput, sortedTasks, openTaskModal]);
 
   const handleDateCounter = (e) => {
