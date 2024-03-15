@@ -46,10 +46,9 @@ export default function MainProjectView({ projectId }) {
     if (projectId && projectsLoaded) {
       cancelSaveAnimation();
       if (!singleProjectRunning) {
-        console.log(projectId);
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
-        if (projectDetails.project.projectId) {
+        if (projectDetails?.project.projectId) {
           setHideCompletedTasksChild((preVal) => projectDetails?.project.hideCompletedTasks);
         }
         const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
