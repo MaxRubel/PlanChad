@@ -60,10 +60,6 @@ export const SaveContextProvider = ({ children }) => {
     setIsSaving(0);
   };
 
-  // useEffect(() => {
-  //   console.log('changed to: ', isSaving);
-  // }, [isSaving]);
-
   const loadProject = (projectId) => {
     clearSaveManager();
     const copy = [...allProjects];
@@ -79,7 +75,6 @@ export const SaveContextProvider = ({ children }) => {
       tasks = tasksForm;
     }
     const obj = { project, checkpoints, tasks };
-    console.log(obj);
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;
@@ -185,7 +180,6 @@ export const SaveContextProvider = ({ children }) => {
   };
   // --------delete-----------------
   const deleteFromSaveManager = (input, action, type) => {
-    console.log(input);
     const checkPs = [...saveInput.checkpoints];
     const tasks = [...saveInput.tasks];
     if (type === 'checkpoint' && action === 'delete') {

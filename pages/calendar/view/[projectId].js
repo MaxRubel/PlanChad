@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useRouter } from 'next/router';
 import {
-  useEffect, useLayoutEffect, useRef, useState,
+  useEffect, useRef, useState,
 } from 'react';
 import { useSaveContext } from '../../../utils/context/saveManager';
 import { caretLeft, caretRight } from '../../../public/icons';
@@ -10,6 +10,7 @@ import chooseMonth from '../../../utils/chooseMonth';
 import TaskModalForCalendar from '../../../components/modals/TaskModalForCal';
 
 export default function CalendarPage() {
+  const initialState = ([[], [], [], [], [], []]);
   const router = useRouter();
   const { projectId } = router.query;
   const { cancelSaveAnimation } = useSaveContext();
@@ -21,8 +22,10 @@ export default function CalendarPage() {
   const [sortedTasks, setSortedTasks] = useState([]);
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [taskToView, setTaskToView] = useState(null);
-  const weeksArrays = useRef([[], [], [], [], [], []]);
-  const weeksArraysWithHeights = useRef([[], [], [], [], [], []]);
+  const weeksArrays = useRef(initialState);
+  const [layingOut, setLayingOut] = useState(true);
+
+  // const weeksArraysWithHeights = useRef([[], [], [], [], [], []]);
 
   const [calendarData, setCalendarData] = useState(
     {
@@ -45,7 +48,9 @@ export default function CalendarPage() {
   }, [saveInput, projectsLoaded]);
 
   // LAYOUT CALENDAR
-  useLayoutEffect(() => {
+  useEffect(() => {
+    console.log('switched month');
+    weeksArrays.current = initialState;
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
@@ -190,62 +195,71 @@ export default function CalendarPage() {
           fillWholeMonth();
         }
       }
+      setLayingOut((preVal) => false);
     }
-  }, [calendarData.startingDay, sortedTasks, calendarData.month]);
+  }, [sortedTasks, calendarData.month]);
 
   // SORT ENTRIES INTO CALENDAR ROWS
-  const findHeightIndex = (day, taskObj) => {
-    const weeksArrayCopy = [...weeksArrays.current];
-    const sortedTasksCopy = [...sortedTasks];
+  useEffect(() => {
+    weeksArrays.current = initialState;
+    const findHeightIndex = (day, taskObj) => {
+      const weeksArrayCopy = [...weeksArrays.current];
+      const sortedTasksCopy = [...sortedTasks];
 
-    // sort into weeks arrays:
-    for (let i = 0; i < weeksArrayCopy.length; i++) {
-      if (day >= i * 7 && day <= (i + 1) * 7 - 1) {
-        const isObjectInArray = weeksArrayCopy[i].some((obj) => obj.localId === taskObj.localId);
-        if (!isObjectInArray) {
+      // loop through each week array
+      for (let i = 0; i < weeksArrayCopy.length; i++) {
+        const loopThroughEachDayOfTheMonth = () => {
+          if (day >= i * 7 && day <= (i + 1) * 7 - 1) {
+            return true;
+          }
+          return false;
+        };
+        if (loopThroughEachDayOfTheMonth()) {
+          const isObjectInArray = weeksArrayCopy[i].some((obj) => obj.localId === taskObj.localId);
           const taskToAdd = sortedTasksCopy.find((obj) => obj.localId === taskObj.localId);
-          weeksArrayCopy[i].push(taskToAdd);
-          break;
+          if (!isObjectInArray) {
+            const filtered = weeksArrayCopy[i].filter((item) => {
+              const entryStartDate = new Date(`${taskToAdd.startDate}T12:00:00`);
+              const entryEndDate = new Date(`${taskToAdd.deadline}T12:00:00`);
+              const itemStartDate = new Date(`${item.startDate}T12:00:00`);
+              const itemEndDate = new Date(`${item.deadline}T12:00:00`);
+              return (
+                (itemStartDate <= entryEndDate
+                  && itemEndDate >= entryStartDate
+                  && item.localId !== taskObj.localId)
+                // || (itemStartDate <= entryEndDate
+                //   || itemEndDate >= entryStartDate
+                //   || item.localId !== taskObj.localId)
+              );
+            });
+            const heightIndices = filtered.map((item) => item.heightIndex);
+            console.log(heightIndices);
+            let lowestAvailableIndex = 0;
+            while (heightIndices.includes(lowestAvailableIndex)) {
+              lowestAvailableIndex += 1;
+            }
+
+            taskToAdd.heightIndex = lowestAvailableIndex;
+            weeksArrayCopy[i].push(taskToAdd);
+            // taskToAdd.heightIndex = filtered.length;
+            // weeksArrayCopy[i].push(taskToAdd);
+
+            break;
+          }
         }
       }
-    }
-    weeksArrays.current = weeksArrayCopy;
 
-    // find height indeces:
-    // USE .filter() to find how many objects have an
-    // ending point that is less than or equal to this one's starting point
-    // or a starting point that is less than or equal to this one's ending point
-    // the length of that .filter array is the index
-    // both starting and ending point comparisons are either the actual day
-    // or the starting or ending day of the week if the task
-    // starts before or after week
+      // .filter((item) => {
+      //   const itemStartDate = new Date(`${item.startDate}T12:00:00`);
+      //   const itemEndDate = new Date(`${item.deadline}T12:00:00`);
+      //   const entryStartDate = new Date(`${taskToAdd.startDate}T12:00:00`);
+      //   const entryEndDate = new Date(`${taskToAdd.deadline}T12:00:00`);
+      //   return (itemStartDate <= entryEndDate && itemEndDate >= entryStartDate && item.localId !== taskObj.localId);
+      // });
+      // taskToAdd.heightIndex = filtered.length
 
-    for (let i = 0; i < weeksArrays.current.length; i++) {
-      let previousEndDate = null;
-      let currentIndex = -1;
-      const tasksArrayCopy = [...weeksArrays.current[i]];
-      const heightIndexedTasks = tasksArrayCopy.map((entry) => {
-        const copy = { ...entry };
-        if (!previousEndDate || new Date(copy.startDate) > previousEndDate) {
-          const currentWeekStart = new Date(weeksArrayCopy[i][0].startDate);
-          if (new Date(copy.startDate) < currentWeekStart) {
-            previousEndDate = currentWeekStart;
-            currentIndex = 0; // Reset index to 0 if the task starts before the current week
-          } else {
-            previousEndDate = new Date(copy.deadline);
-            currentIndex += 1; // Move to the next index
-          }
-        } else {
-          currentIndex += 1; // Move to the next index
-        }
-
-        return { ...copy, heightIndex: currentIndex };
-      });
-      weeksArraysWithHeights.current[i] = heightIndexedTasks;
-    }
-  };
-
-  useLayoutEffect(() => {
+      weeksArrays.current = weeksArrayCopy;
+    };
     const viewMoreMessage = document.createElement('div');
 
     // PRINT TASK LINES
@@ -258,11 +272,11 @@ export default function CalendarPage() {
       element.style.height = '100%';
       const lineDiv = document.createElement('div');
       const weekIndex = Math.floor(day / 7);
-      const weekTasks = weeksArraysWithHeights.current[weekIndex];
+      const weekTasks = [...weeksArrays.current[weekIndex]];
       if (weekTasks.length === 0) return;
       const thisTask = weekTasks.find((item) => item.localId === task.localId);
       if (!thisTask) return;
-      if (thisTask.heightIndex < 7) {
+      if (thisTask.heightIndex < 10) {
         lineDiv.style.backgroundColor = task.lineColor;
         lineDiv.innerHTML = '';
         lineDiv.setAttribute('id', `${task.name}-row${taskI}`);
@@ -438,10 +452,15 @@ export default function CalendarPage() {
           if (!sortedTasks[task].startDate) break;
 
           // if (!sortedTasks[task].deadline) break;
+          if (onStartDay() && onEndDay()) {
+            drawLine(day, task, 'task-line', sortedTasks[task]);
+            break;
+          }
           if (onStartDay()) {
             drawLine(day, task, 'task-start-box', sortedTasks[task]);
           }
-          if (onEndDay()) {
+          if (!sortedTasks[task].deadline) break;
+          if (onEndDay() && !onStartDay()) {
             drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
           }
           if (!startAndEndinDifferentYears()) {
@@ -502,7 +521,6 @@ export default function CalendarPage() {
               }
             }
             if (isMonthBeforeEnd() && !inStartMonth() && !isMonthAfterStart()) {
-              console.log('yes');
               if (taskDeadlineIfOneMonthPlus === day) {
                 drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
               }
@@ -537,8 +555,8 @@ export default function CalendarPage() {
         }
       }
     }
-  }, [calendarData, saveInput, sortedTasks, openTaskModal]);
-
+  }, [calendarData, saveInput, sortedTasks, openTaskModal, layingOut]);
+  // weeksArrays.current = initialState;
   const handleDateCounter = (e) => {
     const { id } = e.target;
     if (id === 'incrementMonth') {
@@ -563,7 +581,6 @@ export default function CalendarPage() {
 
   const handleClick = (e) => {
     const { id } = e.target;
-    console.log(id);
     if (id.includes('openTask')) {
       const [, taskId] = id.split('--');
       const taskObj = saveInput.tasks.find((item) => item.localId === taskId);

@@ -37,7 +37,6 @@ export default function MainProjectView({ projectId }) {
 
   useEffect(() => { // refresh checkpoint from save manager
     const copy = [...saveInput.checkpoints];
-    console.log(copy);
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
   }, [refresh]);
@@ -118,7 +117,6 @@ export default function MainProjectView({ projectId }) {
       fresh: true,
       dragId: uniqid(),
     };
-    console.log(emptyChckP);
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
   };
