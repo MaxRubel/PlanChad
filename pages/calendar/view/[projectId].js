@@ -197,6 +197,8 @@ export default function CalendarPage() {
   const findHeightIndex = (day, taskObj) => {
     const weeksArrayCopy = [...weeksArrays.current];
     const sortedTasksCopy = [...sortedTasks];
+
+    // sort into weeks arrays:
     for (let i = 0; i < weeksArrayCopy.length; i++) {
       if (day >= i * 7 && day <= (i + 1) * 7 - 1) {
         const isObjectInArray = weeksArrayCopy[i].some((obj) => obj.localId === taskObj.localId);
@@ -208,6 +210,16 @@ export default function CalendarPage() {
       }
     }
     weeksArrays.current = weeksArrayCopy;
+
+    // find height indeces:
+    // USE .filter() to find how many objects have an
+    // ending point that is less than or equal to this one's starting point
+    // or a starting point that is less than or equal to this one's ending point
+    // the length of that .filter array is the index
+    // both starting and ending point comparisons are either the actual day
+    // or the starting or ending day of the week if the task
+    // starts before or after week
+
     for (let i = 0; i < weeksArrays.current.length; i++) {
       let previousEndDate = null;
       let currentIndex = -1;
@@ -215,11 +227,18 @@ export default function CalendarPage() {
       const heightIndexedTasks = tasksArrayCopy.map((entry) => {
         const copy = { ...entry };
         if (!previousEndDate || new Date(copy.startDate) > previousEndDate) {
-          previousEndDate = new Date(copy.deadline);
-          currentIndex = 0;
+          const currentWeekStart = new Date(weeksArrayCopy[i][0].startDate);
+          if (new Date(copy.startDate) < currentWeekStart) {
+            previousEndDate = currentWeekStart;
+            currentIndex = 0; // Reset index to 0 if the task starts before the current week
+          } else {
+            previousEndDate = new Date(copy.deadline);
+            currentIndex += 1; // Move to the next index
+          }
         } else {
-          currentIndex += 1;
+          currentIndex += 1; // Move to the next index
         }
+
         return { ...copy, heightIndex: currentIndex };
       });
       weeksArraysWithHeights.current[i] = heightIndexedTasks;
@@ -243,7 +262,7 @@ export default function CalendarPage() {
       if (weekTasks.length === 0) return;
       const thisTask = weekTasks.find((item) => item.localId === task.localId);
       if (!thisTask) return;
-      if (thisTask.heightIndex < 4) {
+      if (thisTask.heightIndex < 7) {
         lineDiv.style.backgroundColor = task.lineColor;
         lineDiv.innerHTML = '';
         lineDiv.setAttribute('id', `${task.name}-row${taskI}`);
@@ -340,25 +359,6 @@ export default function CalendarPage() {
             }
             return false;
           };
-          const drawEndlineOverMonthBoundary = () => {
-            if (taskDeadlineIfOneMonthPlus === day) {
-              drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
-            }
-            if (taskDeadlineIfOneMonthPlus > day && taskStartDayOnCal < day
-            ) {
-              drawLine(day, task, 'task-line', sortedTasks[task]);
-            }
-          };
-          const drawStartlineOverMonthBoundary = () => {
-            const adjustedStartDay = taskStartDay - calendarData.firstBoxNumber;
-            if (day === adjustedStartDay) {
-              drawLine(day, task, 'task-start-box', sortedTasks[task]);
-            }
-            if (day > adjustedStartDay && day < taskDeadlineOnCal
-            ) {
-              drawLine(day, task, 'task-line', sortedTasks[task]);
-            }
-          };
           const monthsAreTouching = () => {
             const date1 = new Date(Number(taskStartYear), Number(taskStartMonth - 1), Number(taskStartDay));
             const date2 = new Date(Number(taskDeadlineYear), Number(taskDeadlineMonth - 1), Number(taskDeadlineDay));
@@ -414,6 +414,25 @@ export default function CalendarPage() {
               }
             }
             return false;
+          };
+          const drawEndlineOverMonthBoundary = () => {
+            if (taskDeadlineIfOneMonthPlus === day) {
+              drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
+            }
+            if (taskDeadlineIfOneMonthPlus > day && taskStartDayOnCal < day
+            ) {
+              drawLine(day, task, 'task-line', sortedTasks[task]);
+            }
+          };
+          const drawStartlineOverMonthBoundary = () => {
+            const adjustedStartDay = taskStartDay - calendarData.firstBoxNumber;
+            if (day === adjustedStartDay) {
+              drawLine(day, task, 'task-start-box', sortedTasks[task]);
+            }
+            if (day > adjustedStartDay && day < taskDeadlineOnCal
+            ) {
+              drawLine(day, task, 'task-line', sortedTasks[task]);
+            }
           };
 
           if (!sortedTasks[task].startDate) break;
@@ -544,6 +563,7 @@ export default function CalendarPage() {
 
   const handleClick = (e) => {
     const { id } = e.target;
+    console.log(id);
     if (id.includes('openTask')) {
       const [, taskId] = id.split('--');
       const taskObj = saveInput.tasks.find((item) => item.localId === taskId);
