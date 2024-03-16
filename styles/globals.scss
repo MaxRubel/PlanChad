@@ -370,10 +370,19 @@ body {
 
 .task-container {
   display: grid;
+  grid-template-rows: repeat(6, 15px);
+  /* Adjust the minimum height as needed */
   height: 100%;
   gap: 2px;
   padding: 2% 10%;
   color: white;
+}
+
+.viewMore {
+  font-size: 12px;
+  grid-row: 5;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 

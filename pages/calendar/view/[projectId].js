@@ -227,63 +227,75 @@ export default function CalendarPage() {
                 (itemStartDate <= entryEndDate
                   && itemEndDate >= entryStartDate
                   && item.localId !== taskObj.localId)
-                // || (itemStartDate <= entryEndDate
-                //   || itemEndDate >= entryStartDate
-                //   || item.localId !== taskObj.localId)
               );
             });
             const heightIndices = filtered.map((item) => item.heightIndex);
-            console.log(heightIndices);
             let lowestAvailableIndex = 0;
             while (heightIndices.includes(lowestAvailableIndex)) {
               lowestAvailableIndex += 1;
             }
-
+            // add this task to this week with correct height index:
             taskToAdd.heightIndex = lowestAvailableIndex;
             weeksArrayCopy[i].push(taskToAdd);
-            // taskToAdd.heightIndex = filtered.length;
-            // weeksArrayCopy[i].push(taskToAdd);
-
             break;
           }
         }
       }
 
-      // .filter((item) => {
-      //   const itemStartDate = new Date(`${item.startDate}T12:00:00`);
-      //   const itemEndDate = new Date(`${item.deadline}T12:00:00`);
-      //   const entryStartDate = new Date(`${taskToAdd.startDate}T12:00:00`);
-      //   const entryEndDate = new Date(`${taskToAdd.deadline}T12:00:00`);
-      //   return (itemStartDate <= entryEndDate && itemEndDate >= entryStartDate && item.localId !== taskObj.localId);
-      // });
-      // taskToAdd.heightIndex = filtered.length
-
       weeksArrays.current = weeksArrayCopy;
     };
-    const viewMoreMessage = document.createElement('div');
+
+    const findHighestIndexOfDay = (day, week, task) => {
+      // if (day !== 19) {
+      //   return;
+      // }
+      const highestIndexInADay = week.filter((item) => {
+        const itemStartDate = new Date(`${item.startDate}T12:00:00`);
+        const itemEndDate = new Date(`${item.deadline}T12:00:00`);
+        const dayDate = new Date(calendarData.year, calendarData.month, day - calendarData.startingDay + 1, 12, 0, 0);
+        return (
+          ((dayDate >= itemStartDate && dayDate <= itemEndDate) && item.localId !== task.localId)
+        );
+      });
+
+      highestIndexInADay.push(task);
+      const sortHighestIndex = highestIndexInADay.sort((a, b) => b.heightIndex - a.heightIndex);
+      const highestIndex = sortHighestIndex[0].heightIndex;
+      // if (highestIndex > 3) {
+      //   console.log((day + 1 - calendarData.startingDay), 'is ', highestIndex - 3, 'over');
+      // } else {
+      //   console.log((day + 1 - calendarData.startingDay), 'has ', highestIndex + 1, ' tasks');
+      // }
+      return (highestIndex);
+    };
 
     // PRINT TASK LINES
     if (openTaskModal) return;
     const drawLine = (day, taskI, string, task) => {
       findHeightIndex(day, task);
       const element = document.getElementById(`${day}Task`);
-
       if (!element || day < 0 || day > 41) return;
       element.style.height = '100%';
       const lineDiv = document.createElement('div');
       const weekIndex = Math.floor(day / 7);
-      const weekTasks = [...weeksArrays.current[weekIndex]];
-      if (weekTasks.length === 0) return;
-      const thisTask = weekTasks.find((item) => item.localId === task.localId);
+      const thisWeek = [...weeksArrays.current[weekIndex]];
+      if (thisWeek.length === 0) return;
+      const thisTask = thisWeek.find((item) => item.localId === task.localId);
       if (!thisTask) return;
-      if (thisTask.heightIndex < 10) {
+
+      const heightIndex = findHighestIndexOfDay(day, thisWeek, thisTask);
+
+      if (day === 19) {
+        console.log(heightIndex);
+      }
+      // if (findHighestIndexOfDay(day, thisWeek, task) < 4) {
+      if (thisTask.heightIndex < 4) {
         lineDiv.style.backgroundColor = task.lineColor;
         lineDiv.innerHTML = '';
         lineDiv.setAttribute('id', `${task.name}-row${taskI}`);
         lineDiv.className = string;
-        lineDiv.style.gridRow = `${thisTask.heightIndex + 1} / span 1`;
+        lineDiv.style.gridRow = `${String(thisTask.heightIndex)} / span 1`;
         element.appendChild(lineDiv);
-
         lineDiv.innerHTML = `
         ${task.name}
             <div id="openTask--${task.localId}" 
@@ -296,17 +308,21 @@ export default function CalendarPage() {
             </div>
           `;
       } else {
-        // const moreTasksCount = weekTasks.length - 5;
-        // viewMoreMessage.innerHTML = `
-        // hello
-        // `;
-        // +${moreTasksCount === 1 ? '1 more task...' : `${moreTasksCount} more tasks...`}
-        // viewMoreMessage.setAttribute('id', `viewMore--${day}`);
-        // viewMoreMessage.style.fontSize = '12px';
-        // viewMoreMessage.style.textAlign = 'center';
-        // viewMoreMessage.style.gridRow = 5;
-        // const messageBox = document.getElementById(`${day}Task`);
-        // messageBox.appendChild(viewMoreMessage);
+        const newDiv = document.createElement('div');
+        const moreTasksCount = heightIndex - 3;
+        const viewMoreMessage = `
+        +${moreTasksCount === 1 ? '1 more task...' : `${moreTasksCount} more tasks...`}
+        `;
+        newDiv.innerHTML = viewMoreMessage;
+        newDiv.setAttribute('id', `viewMore--${day}`);
+        newDiv.className = 'viewMore';
+
+        if (element.children.length === 4) {
+          element.appendChild(newDiv);
+        }
+        if (element.children.length === 5) {
+          document.getElementById(`viewMore--${day}`).innerHTML = viewMoreMessage;
+        }
       }
     };
     for (let day = 0; day < 42; day++) { // loop through each date box
@@ -315,7 +331,7 @@ export default function CalendarPage() {
         element.innerHTML = '';
         element.style.height = '100%';
         element.style.gridTemplateRows = `repeat(${sortedTasks.length}, minmax(auto,15px));`;
-        element.style.gridAutoRows = '15px';
+        // element.style.gridAutoRows = '15px';
         element.style.height = `${sortedTasks.length * 1}px`;
 
         // loop through each task of task array and row
