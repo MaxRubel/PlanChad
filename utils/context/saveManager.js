@@ -209,6 +209,7 @@ export const SaveContextProvider = ({ children }) => {
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
     const tasksFormatted = tasks.length > 0 ? JSON.stringify(tasks) : null;
+    if (!saveInput.project) { return; }
     const { projectId, userId } = saveInput.project;
     const payload = {
       ...project,
