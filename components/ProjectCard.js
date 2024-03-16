@@ -289,7 +289,7 @@ ProjectCard.propTypes = {
       PropTypes.bool,
       PropTypes.oneOf([undefined]),
     ]),
-  }).isRequired,
+  }),
   min: PropTypes.number.isRequired,
   progressIsShowing: PropTypes.bool.isRequired,
   tellProjectIfProgressShowing: PropTypes.func.isRequired,
@@ -298,4 +298,8 @@ ProjectCard.propTypes = {
     PropTypes.bool,
     PropTypes.oneOf([null]),
   ]),
+};
+
+ProjectCard.defaultProps = {
+  project: undefined,
 };
