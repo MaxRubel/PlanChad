@@ -11,22 +11,16 @@ import TaskModalForCalendar from '../../../components/modals/TaskModalForCal';
 
 export default function CalendarPage() {
   const initialState = ([[], [], [], [], [], []]);
-  const initialArray = Array.from({ length: 41 }, () => ([]));
   const router = useRouter();
   const { projectId } = router.query;
   const { cancelSaveAnimation } = useSaveContext();
   const {
     saveInput, singleProjectRunning, loadProject, projectsLoaded,
   } = useSaveContext();
-  const projectStartBox = useRef(null);
-  const projectDeadlineBox = useRef(null);
   const [sortedTasks, setSortedTasks] = useState([]);
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [taskToView, setTaskToView] = useState(null);
   const weeksArrays = useRef(initialState);
-  const [layingOut, setLayingOut] = useState(true);
-  const [displayArray, setDisplayArray] = useState(initialArray);
-
   const [calendarData, setCalendarData] = useState(
     {
       month: null,
@@ -50,184 +44,108 @@ export default function CalendarPage() {
   // LAYOUT CALENDAR
   useEffect(() => {
     weeksArrays.current = initialState;
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
+    const userViewingDate = new Date();
+    const currentYear = userViewingDate.getFullYear();
+    const currentMonth = userViewingDate.getMonth();
     if (calendarData.month === null) { // set calendar to todays date if null
       setCalendarData((preVal) => ({ ...preVal, month: currentMonth }));
     }
     if (calendarData.year === null) {
       setCalendarData((preVal) => ({ ...preVal, year: currentYear }));
     }
+
     const startingDay = new Date(calendarData.year, calendarData.month, 1).getDay();
     const lastDateOfMonth = new Date(calendarData.year, calendarData.month + 1, 0).getDate();
     const lastDateOfPreviousMonth = new Date(calendarData.year, calendarData.month, 0).getDate();
-    const startingDayOfPrevMonth = (lastDateOfPreviousMonth - startingDay + 1);
-
     const date = new Date(calendarData.year, calendarData.month, 1);
     const firstBoxDate = new Date(date);
     firstBoxDate.setDate(1 - startingDay);
     const firstBoxNumber = firstBoxDate.getDate();
+    const lastBox = new Date(calendarData.firstBoxDate);
+    lastBox.setDate(firstBoxDate.getDate() + calendarData.totalBoxes);
 
     setCalendarData((preVal) => ({
-      ...preVal, startingDay, lastDateOfMonth, lastDateOfPreviousMonth, firstBoxNumber,
+      ...preVal, startingDay, lastDateOfMonth, lastDateOfPreviousMonth, firstBoxNumber, firstBoxDate, lastBox,
     }));
 
     const total = startingDay + lastDateOfMonth;
+    const thisDaysDate = new Date(calendarData.firstBoxDate);
+    const totalBoxes = total >= 36 ? 41 : 34;
+    setCalendarData(((preVal) => ({ ...preVal, totalDays: total, totalBoxes })));
 
-    // PRINT DATES ON CALENDAR
-    for (let y = 0; y <= startingDay; y++) { // before month starts
-      const dateNumberAssign = document.getElementById(`${y}Num`);
-      if (dateNumberAssign) {
-        dateNumberAssign.innerHTML = startingDayOfPrevMonth + y;
-      }
+    // Print Date Numbers on Calendar
+    for (let box = 0; box <= totalBoxes; box++) {
+      const dateNumberAssign = document.getElementById(`${box}Num`);
+      if (!dateNumberAssign) { return; }
+      const boxDate = new Date(thisDaysDate);
+      boxDate.setDate(boxDate.getDate() + box);
+      dateNumberAssign.innerHTML = boxDate.getDate();
     }
-    for (let i = startingDay; i < lastDateOfMonth + startingDay; i++) { // during month
-      const dateNumberAssign = document.getElementById(`${i}Num`);
-      if (dateNumberAssign) {
-        dateNumberAssign.innerHTML = i - startingDay + 1;
-      }
-    }
-    let x = 1;
-    for (let z = lastDateOfMonth + startingDay; z <= 41; z++) { // after month ends
-      const dateNumberAssign = document.getElementById(`${z}Num`);
-      if (dateNumberAssign) {
-        dateNumberAssign.innerHTML = x;
-        x += 1;
-      }
-    }
-    setCalendarData(((preVal) => ({ ...preVal, totalDays: total })));
   }, [calendarData.month, calendarData.totalDays, sortedTasks]);
 
-  // Calculate PROJECT LINE
+  // Print Project Line
   useEffect(() => {
     if (calendarData.startingDay && saveInput.project?.projectId) {
       const [projStartYear, projStartMonth, projStartDay] = (saveInput.project.start_date ?? '').split('-');
-      const projStartDate2 = new Date(saveInput.project.startDate);
-      const projEndDate = new Date(saveInput.project.endDate);
-      const [projDeadlineYear, projDeadlineMonth, projDeadlineDay] = (saveInput.project.deadline ?? '').split('-');
-      const startingDay = new Date(calendarData.year, calendarData.month, 1).getDay();
-      const projStartDayOnCal = (startingDay + Number(projStartDay) - 1);
-      const projDeadlineDayOnCal = (startingDay + Number(projDeadlineDay) - 1);
-      let firstBox = new Date(calendarData.year, calendarData.month, 1 - calendarData.startingDay);
-      if (calendarData.startingDay === 0) {
-        firstBox = new Date(calendarData.year, calendarData.month, 1);
-        firstBox.setHours(12, 0, 0, 0);
-      }
-      console.log('month:', calendarData.month);
-      console.log('starting day: ', calendarData.startingDay);
-      firstBox.setHours(12, 0, 0, 0);
-      console.log('first box:', firstBox);
-      const lastBox = new Date(firstBox);
-      lastBox.setDate(firstBox.getDate() + 41);
-      // console.log(lastBox);
+      const [projEndYear, projEndMonth, projEndDay] = (saveInput.project.deadline ?? '').split('-');
+      const projStartDate = saveInput.project.start_date ? new Date(projStartYear, projStartMonth - 1, projStartDay) : null;
+      const projEndDate = saveInput.project.deadline ? new Date(projEndYear, projEndMonth - 1, projEndDay) : null;
+      const thisDaysDate = new Date(calendarData.firstBoxDate);
 
-      for (let i = 0; i < 41; i++) { // clear old colors
-        const projectDiv = document.getElementById(`${i}BackG`);
-        if (projectDiv) {
-          projectDiv.style.backgroundColor = 'transparent';
-        }
-      }
+      for (let box = 0; box <= calendarData.totalBoxes; box++) {
+        const projectDiv = document.getElementById(`${box}BackG`);
+        if (!projectDiv) { return; }
+        if (!projEndDate && !projEndDate) { projectDiv.style.backgroundColor = 'transparent'; }
 
-      // --------PROJECT-LINE-START--------
-      const startElement = document.getElementById(`${projStartDayOnCal}BackG`);
-      if (
-        calendarData.month === Number(projStartMonth - 1)
-        && calendarData.year === Number(projStartYear)) {
-        startElement.style.backgroundColor = '#23a6d5';
-        projectStartBox.current = startElement;
-        // If deadline day is in current month fill to deadline
-        if (
-          calendarData.month === Number(projDeadlineMonth - 1)) {
-          for (let i = projStartDayOnCal; i < projDeadlineDayOnCal; i++) {
-            document.getElementById(`${i}BackG`).style.backgroundColor = '#23a6d5';
+        const currentDate = new Date(thisDaysDate);
+        currentDate.setDate(currentDate.getDate() + box);
+
+        if (projStartDate && projEndDate) {
+          if (currentDate >= projStartDate && currentDate <= projEndDate) {
+            projectDiv.style.backgroundColor = '#23a6d5';
+          } else {
+            projectDiv.style.backgroundColor = 'transparent';
           }
-          // Deadline is not in current month so just fill to the end of month
-        } else if (saveInput.project.deadline) {
-          for (let i = projStartDayOnCal; i <= 43; i++) {
-            const element = document.getElementById(`${i}BackG`);
-            if (element) {
-              element.style.backgroundColor = '#23a6d5';
-            }
+        }
+        if (projStartDate && !projEndDate) {
+          if (projStartDate.getTime() === currentDate.getTime()) {
+            projectDiv.style.backgroundColor = '#23a6d5';
+          } else {
+            projectDiv.style.backgroundColor = 'transparent';
+          }
+        }
+        if (!projStartDate && projEndDate) {
+          if (projEndDate.getTime() === currentDate.getTime()) {
+            projectDiv.style.backgroundColor = '#23a6d5';
+          } else {
+            projectDiv.style.backgroundColor = 'transparent';
           }
         }
       }
-
-      // ---------PROJECT-LINE-END-------
-      if (calendarData.month === Number(projDeadlineMonth) - 1
-        && calendarData.year === Number(projDeadlineYear)) { //  Put deadline in correct month & year
-        const deadlineElement = document.getElementById(`${projDeadlineDayOnCal}BackG`);
-        projectDeadlineBox.current = deadlineElement;
-        deadlineElement.style.backgroundColor = '#23a6d5';
-        if (calendarData.month !== Number(projStartMonth - 1)) {
-          for (let i = 0; i < projDeadlineDayOnCal; i++) {
-            document.getElementById(`${i}BackG`).style.backgroundColor = '#23a6d5';
-          }
-        }
-      }
-
-      const fillWholeMonth = () => {
-        for (let i = 0; i <= 41; i++) {
-          const element = document.getElementById(`${i}BackG`);
-          if (element) {
-            element.style.backgroundColor = '#23a6d5';
-          }
-        }
-      };
-
-      const projectYears = [Number(projStartYear)];
-      for (let i = Number(projStartYear); i < Number(projDeadlineYear); i++) {
-        const newYear = i + 1;
-        projectYears.push(newYear);
-      }
-
-      // --------FILL-WHOLE-MONTH--------
-      if (calendarData.year === Number(projStartYear)
-        && calendarData.year === Number(projDeadlineYear)) { // project starts and ends in the same year
-        if (calendarData.month > Number(projStartMonth - 1) // greater than start month
-          && calendarData.month < Number(projDeadlineMonth - 1) // less than deadline month
-        ) {
-          fillWholeMonth();
-        }
-      } else if (saveInput.project.deadline) { // project does not start and end in the same year
-        if (calendarData.year === projectYears[0] // the start year of project
-          && calendarData.month > Number(projStartMonth - 1)) { // month is later than the starting month
-          fillWholeMonth();
-        }
-        if (calendarData.year === projectYears[projectYears.length - 1] // the last year of project
-          && calendarData.month < Number(projDeadlineMonth - 1)) { // month is earlier than the deadline month
-          fillWholeMonth();
-        }
-        if (projectYears.includes(calendarData.year) // selected year is in project
-          && calendarData.year !== Number(projStartYear) // it is not the start year
-          && calendarData.year !== Number(projDeadlineYear)) { // it is also not the end year
-          fillWholeMonth();
-        }
-      }
-      setLayingOut((preVal) => false);
     }
-  }, [sortedTasks, calendarData]);
+  }, [sortedTasks, calendarData.month, calendarData.firstBoxDate, calendarData.totalDays, calendarData.totalBoxes]);
 
-  // Calculate TASK LINES
+  // Print Task Lines----------------------
   useEffect(() => {
     weeksArrays.current = initialState;
+    if (openTaskModal) return;
     const findHeightIndex = (day, taskObj) => {
       const weeksArrayCopy = [...weeksArrays.current];
       const sortedTasksCopy = [...sortedTasks];
 
       // loop through each week array
-      for (let i = 0; i < weeksArrayCopy.length; i++) {
+      for (let week = 0; week < weeksArrayCopy.length; week++) {
         const loopThroughEachDayOfTheMonth = () => {
-          if (day >= i * 7 && day <= (i + 1) * 7 - 1) {
+          if (day >= week * 7 && day <= (week + 1) * 7 - 1) {
             return true;
           }
           return false;
         };
         if (loopThroughEachDayOfTheMonth()) {
-          const isObjectInArray = weeksArrayCopy[i].some((obj) => obj.localId === taskObj.localId);
+          const isObjectInArray = weeksArrayCopy[week].some((obj) => obj.localId === taskObj.localId);
           const taskToAdd = sortedTasksCopy.find((obj) => obj.localId === taskObj.localId);
           if (!isObjectInArray) {
-            const filtered = weeksArrayCopy[i].filter((item) => {
+            const filtered = weeksArrayCopy[week].filter((item) => {
               const entryStartDate = taskToAdd.startDate
                 ? new Date(`${taskToAdd.startDate}T12:00:00`)
                 : new Date(`${taskToAdd.deadline}T12:00:00`);
@@ -247,6 +165,7 @@ export default function CalendarPage() {
                   && item.localId !== taskObj.localId)
               );
             });
+            const sorted = filtered.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
             const heightIndices = filtered.map((item) => item.heightIndex);
             let lowestAvailableIndex = 0;
             while (heightIndices.includes(lowestAvailableIndex)) {
@@ -254,7 +173,7 @@ export default function CalendarPage() {
             }
 
             taskToAdd.heightIndex = lowestAvailableIndex;
-            weeksArrayCopy[i].push(taskToAdd);
+            weeksArrayCopy[week].push(taskToAdd);
             break;
           }
         }
@@ -262,54 +181,47 @@ export default function CalendarPage() {
       weeksArrays.current = weeksArrayCopy;
     };
 
-    const findLowestIndexOfDay = (day, week, task) => {
-      const highestIndexInADay = sortedTasks.filter((item) => {
-        const itemStartDate = new Date(`${item.startDate}T12:00:00`);
-        const itemEndDate = new Date(`${item.deadline}T12:00:00`);
-        const dayDate = new Date(calendarData.year, calendarData.month, day - calendarData.startingDay + 1, 12, 0, 0);
-        return (
-          ((dayDate >= itemStartDate && dayDate <= itemEndDate) && item.localId !== task.localId)
-        );
-      });
-      highestIndexInADay.push(task);
-      const sortHighestIndex = highestIndexInADay.sort((a, b) => b.heightIndex - a.heightIndex);
-      const highestIndex = sortHighestIndex[0].heightIndex;
-      return (highestIndex);
+    const findHowManyInBox = (box) => {
+      const copy = [...sortedTasks];
+      const filteredArray = [];
+      const thisDaysDate = new Date(calendarData.firstBoxDate);
+      const boxDate = new Date(thisDaysDate);
+      boxDate.setDate(boxDate.getDate() + box);
+      const boxDateF = boxDate.getTime();
+      for (let i = 0; i < copy.length; i++) {
+        const thisTask = sortedTasks[i];
+        const [taskStartYear, taskStartMonth, taskStartDay] = thisTask.startDate.split('-');
+        const [taskEndYear, taskEndMonth, taskEndDay] = thisTask.deadline.split('-');
+        const taskStartDate = thisTask.startDate ? new Date(taskStartYear, taskStartMonth - 1, taskStartDay).getTime() : null;
+        const taskEndDate = thisTask.deadline ? new Date(taskEndYear, taskEndMonth - 1, taskEndDay).getTime() : null;
+        if (taskStartDate && taskEndDate) {
+          if (taskStartDate >= boxDateF && taskEndDate <= boxDateF) {
+            filteredArray.push(thisTask);
+          }
+        } else if (taskStartDate && taskStartDate === boxDateF) {
+          filteredArray.push(thisTask);
+        } else if (taskEndDate && taskEndDate === boxDateF) {
+          filteredArray.push(thisTask);
+        }
+      }
+      return filteredArray.length;
     };
+
     // Draw Lines
-    if (openTaskModal) return;
-    setDisplayArray(initialArray);
-    const drawLine = (day, taskI, string, task) => {
-      findHeightIndex(day, task);
-      const element = document.getElementById(`${day}Task`);
-      if (!element || day < 0 || day > 41) return;
+    const drawLine = (box, string, task) => {
+      findHeightIndex(box, task);
+      const element = document.getElementById(`${box}Task`);
+      if (!element || box < 0 || box > 41) return;
       element.style.height = '100%';
       const lineDiv = document.createElement('div');
-      const weekIndex = Math.floor(day / 7);
+      const weekIndex = Math.floor(box / 7);
       const thisWeek = [...weeksArrays.current[weekIndex]];
 
       if (thisWeek.length === 0) return;
       const thisTask = thisWeek.find((item) => item.localId === task.localId);
       if (!thisTask) return;
 
-      const lowestHeightIndex = findLowestIndexOfDay(day, thisWeek, thisTask);
-      setDisplayArray((prevArray) => {
-        if (lowestHeightIndex < 4) {
-          return prevArray.map((nestedArray, index) => {
-            if (index === day) {
-              return [
-                ...nestedArray,
-                {
-                  ...thisTask,
-                  heightIndex: thisTask.heightIndex,
-                },
-              ];
-            }
-            return nestedArray;
-          });
-        }
-        return prevArray;
-      });
+      const howManyInThisBox = findHowManyInBox(box);
 
       if (thisTask.heightIndex < 4) {
         lineDiv.style.backgroundColor = task.lineColor;
@@ -330,267 +242,71 @@ export default function CalendarPage() {
           `;
       } else {
         const newDiv = document.createElement('div');
-        const moreTasksCount = lowestHeightIndex - 3;
+        const moreTasksCount = howManyInThisBox - 3;
         const viewMoreMessage = `
         +${moreTasksCount === 1 ? '1 more task...' : `${moreTasksCount} more tasks...`}
         `;
         newDiv.innerHTML = viewMoreMessage;
-        newDiv.setAttribute('id', `viewMore--${day}`);
+        newDiv.setAttribute('id', `viewMore--${box}`);
         newDiv.className = 'viewMore';
 
         if (element.children.length === 4) {
           element.appendChild(newDiv);
         }
         if (element.children.length === 5) {
-          document.getElementById(`viewMore--${day}`).innerHTML = viewMoreMessage;
+          document.getElementById(`viewMore--${box}`).innerHTML = viewMoreMessage;
         }
       }
     };
-    for (let day = 0; day < 42; day++) { // loop through each date box
-      const element = document.getElementById(`${day}Task`);
+    const thisDaysDate = new Date(calendarData.firstBoxDate);
+
+    for (let box = 0; box < 42; box++) {
+      const element = document.getElementById(`${box}Task`);
+      const boxDate = new Date(thisDaysDate);
+      boxDate.setDate(boxDate.getDate() + box);
+      const boxDateF = boxDate.getTime();
+
       if (element) {
         element.innerHTML = '';
         element.style.height = '100%';
         element.style.gridTemplateRows = `repeat(${sortedTasks.length}, minmax(auto,15px));`;
-        // element.style.gridAutoRows = '15px';
         element.style.height = `${sortedTasks.length * 1}px`;
 
-        for (let task = 0; task < sortedTasks.length; task++) {
-          const [taskStartYear, taskStartMonth, taskStartDay] = (sortedTasks[task].startDate ?? '').split('-');
-          const [taskDeadlineYear, taskDeadlineMonth, taskDeadlineDay] = (sortedTasks[task].deadline ?? '').split('-');
-          const taskStartDayOnCal = (calendarData.startingDay + Number(taskStartDay) - 1);
-          const taskDeadlineOnCal = (calendarData.startingDay + Number(taskDeadlineDay) - 1);
-          const taskDeadlineIfOneMonthPlus = Number(calendarData.lastDateOfMonth) + Number(taskDeadlineDay) + Number(calendarData.startingDay - 1);
-          const taskyears = [];
-          for (let m = Number(taskStartYear); m <= Number(taskDeadlineYear); m++) {
-            taskyears.push(m);
-          }
-          const startDayOnCal = (Number(taskStartDay) + (calendarData.startingDay - 1));
-          const endDayOnCal = (Number(taskDeadlineDay) + (calendarData.startingDay - 1));
+        for (let i = 0; i < sortedTasks.length; i++) {
+          const thisTask = sortedTasks[i];
+          if (!thisTask) { return; }
 
-          const inStartYear = () => {
-            if (calendarData.year === Number(taskStartYear)) { return true; }
-            return false;
-          };
-          const inEndYear = () => {
-            if (calendarData.year === Number(taskDeadlineYear)) { return true; }
-            return false;
-          };
-          const inStartMonth = () => {
+          const [taskStartYear, taskStartMonth, taskStartDay] = thisTask.startDate.split('-');
+          const [taskEndYear, taskEndMonth, taskEndDay] = thisTask.deadline.split('-');
+          const taskStartDate = thisTask.startDate ? new Date(taskStartYear, taskStartMonth - 1, taskStartDay).getTime() : null;
+          const taskEndDate = thisTask.deadline ? new Date(taskEndYear, taskEndMonth - 1, taskEndDay).getTime() : null;
+
+          if (taskStartDate && taskEndDate) {
+            if (taskStartDate === boxDateF) {
+              drawLine(box, 'task-start-box', thisTask);
+            }
+            if (taskEndDate === boxDateF) {
+              drawLine(box, 'task-deadline-box', thisTask);
+            }
             if (
-              calendarData.month === Number(taskStartMonth - 1)
-              && inStartYear()
+              boxDateF > taskStartDate
+              && boxDateF < taskEndDate
             ) {
-              return true;
+              drawLine(box, 'task-line', thisTask);
             }
-            return false;
-          };
-          const inEndMonth = () => {
-            if (calendarData.month === Number(taskDeadlineMonth - 1) && inEndYear()) {
-              return true;
+          } else if (taskStartDate) {
+            if (taskStartDate === boxDateF) {
+              drawLine(box, 'task-line', thisTask);
             }
-            return false;
-          };
-          const onStartDay = () => {
-            if (taskStartDayOnCal === day && inStartMonth() && inStartYear()) { return true; }
-            return false;
-          };
-          const onEndDay = () => {
-            if (taskDeadlineOnCal === day && inEndYear() && inEndMonth()) { return true; }
-            return false;
-          };
-          const bothInSameMonth = () => {
-            if (inEndMonth()
-              && inStartMonth()
-              && startDayOnCal < day
-              && endDayOnCal > day) {
-              return true;
-            }
-            return false;
-          };
-          const monthsAreTouching = () => {
-            const date1 = new Date(Number(taskStartYear), Number(taskStartMonth - 1), Number(taskStartDay));
-            const date2 = new Date(Number(taskDeadlineYear), Number(taskDeadlineMonth - 1), Number(taskDeadlineDay));
-            const yearDiff = Math.abs(date1.getFullYear() - date2.getFullYear());
-            const monthDiff = Math.abs(date1.getMonth() - date2.getMonth());
-            return (
-              yearDiff === 1 && monthDiff === 11)
-              || (yearDiff === 0 && monthDiff === 1);
-          };
-          const isMonthAfterStart = () => {
-            const eventDate = new Date(Number(taskStartYear), Number(taskStartMonth) - 1, 1);
-            const currentDate = new Date(calendarData.year, calendarData.month, 1);
-            const prevMonth = currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1;
-            const prevYear = currentDate.getMonth() === 0 ? currentDate.getFullYear() - 1 : currentDate.getFullYear();
-            const prevMonthFirstDay = new Date(prevYear, prevMonth, 1);
-
-            if (eventDate >= prevMonthFirstDay && eventDate < currentDate) {
-              return true;
-            }
-            return false;
-          };
-          const isMonthBeforeEnd = () => {
-            const currentDate = new Date(calendarData.year, calendarData.month, 1);// First day of the
-            const eventDate = new Date(Number(taskDeadlineYear), Number(taskDeadlineMonth) - 1, 1);
-
-            // Get the next month and year
-            const nextMonth = currentDate.getMonth() === 11 ? 0 : currentDate.getMonth() + 1;
-            const nextYear = currentDate.getMonth() === 11 ? currentDate.getFullYear() + 1 : currentDate.getFullYear();
-
-            const nextMonthFirstDay = new Date(nextYear, nextMonth, 1);
-            const nextMonthLastDay = new Date(nextYear, nextMonth + 1, 0);
-
-            if (eventDate >= nextMonthFirstDay && eventDate <= nextMonthLastDay) {
-              return true;
-            }
-
-            return false;
-          };
-          const startAndEndinDifferentYears = () => {
-            if (Number(taskStartYear) !== Number(taskDeadlineYear)) {
-              return true;
-            }
-            return false;
-          };
-          const calendarIsBetweenTheTwoDates = () => {
-            const startDate = new Date(Number(taskStartYear), Number(taskStartMonth) - 1, 1);
-            const endDate = new Date(Number(taskDeadlineYear), Number(taskDeadlineMonth) - 1, 1);
-            const currentDate = new Date(Number(calendarData.year), Number(calendarData.month), 1);
-            if (currentDate >= startDate) {
-              // Check if the current month is before the end month
-              if (currentDate < endDate) {
-                return true; // Current month is between start and end months
-              }
-            }
-            return false;
-          };
-          const drawEndlineOverMonthBoundary = () => {
-            if (taskDeadlineIfOneMonthPlus === day) {
-              drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
-            }
-            if (taskDeadlineIfOneMonthPlus > day && taskStartDayOnCal < day
-            ) {
-              drawLine(day, task, 'task-line', sortedTasks[task]);
-            }
-          };
-          const drawStartlineOverMonthBoundary = () => {
-            const adjustedStartDay = taskStartDay - calendarData.firstBoxNumber;
-            if (day === adjustedStartDay) {
-              drawLine(day, task, 'task-start-box', sortedTasks[task]);
-            }
-            if (day > adjustedStartDay && day < taskDeadlineOnCal
-            ) {
-              drawLine(day, task, 'task-line', sortedTasks[task]);
-            }
-          };
-          if (onEndDay() && !sortedTasks[task].startDate) {
-            drawLine(day, task, 'task-line', sortedTasks[task]);
-          }
-          if (onStartDay() && !sortedTasks[task].deadline) {
-            drawLine(day, task, 'task-line', sortedTasks[task]);
-          }
-          if (sortedTasks[task].startDate && sortedTasks[task].deadline) {
-            if (onStartDay() && onEndDay()) {
-              drawLine(day, task, 'task-line', sortedTasks[task]);
-            }
-            if (onStartDay() && !onEndDay()) {
-              drawLine(day, task, 'task-start-box', sortedTasks[task]);
-            }
-            if (onEndDay() && !onStartDay()) {
-              drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
-            }
-            if (!startAndEndinDifferentYears()) {
-              if (bothInSameMonth()) {
-                drawLine(day, task, 'task-line', sortedTasks[task]);
-              }
-              if (taskDeadlineMonth !== taskStartMonth) {
-                if (inStartMonth() && !monthsAreTouching()) {
-                  if (day > taskStartDayOnCal) {
-                    drawLine(day, task, 'task-line', sortedTasks[task]);
-                  }
-                }
-                if (inEndMonth() && !monthsAreTouching()) {
-                  if (day < taskDeadlineOnCal) {
-                    drawLine(day, task, 'task-line', sortedTasks[task]);
-                  }
-                }
-              }
-              if (monthsAreTouching()) {
-                if (inStartMonth()) {
-                  drawEndlineOverMonthBoundary();
-                }
-                if (inEndMonth()) {
-                  drawStartlineOverMonthBoundary();
-                }
-              }
-              if (isMonthAfterStart() && isMonthBeforeEnd()) { // special edge case
-                const adjustedStartDay = taskStartDay - calendarData.firstBoxNumber;
-                if (day > adjustedStartDay && day < taskDeadlineIfOneMonthPlus) {
-                  drawLine(day, task, 'task-line', sortedTasks[task]);
-                }
-                if (day === adjustedStartDay) {
-                  drawLine(day, task, 'task-start-box', sortedTasks[task]);
-                }
-                if (day === taskDeadlineIfOneMonthPlus) {
-                  drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
-                }
-              }
-            }
-            if (startAndEndinDifferentYears()) {
-              if (
-                !inStartMonth()
-                && !isMonthAfterStart()
-                && !isMonthBeforeEnd()
-                && !inEndMonth()
-                && calendarIsBetweenTheTwoDates()
-              ) {
-                drawLine(day, task, 'task-line', sortedTasks[task]);
-              }
-              if (isMonthAfterStart() && !inEndMonth() && !isMonthBeforeEnd()) {
-                if (day > taskStartDay - calendarData.firstBoxNumber) {
-                  drawLine(day, task, 'task-line', sortedTasks[task]);
-                }
-                if (day === taskStartDay - calendarData.firstBoxNumber) {
-                  drawLine(day, task, 'task-start-box', sortedTasks[task]);
-                }
-              }
-              if (isMonthBeforeEnd() && !inStartMonth() && !isMonthAfterStart()) {
-                if (taskDeadlineIfOneMonthPlus === day) {
-                  drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
-                }
-                if (taskDeadlineIfOneMonthPlus > day
-                ) {
-                  drawLine(day, task, 'task-line', sortedTasks[task]);
-                }
-              }
-              if (isMonthAfterStart() && isMonthBeforeEnd()) { // special edge case
-                const adjustedStartDay = taskStartDay - calendarData.firstBoxNumber;
-                if (day > adjustedStartDay && day < taskDeadlineIfOneMonthPlus) {
-                  drawLine(day, task, 'task-line', sortedTasks[task]);
-                }
-                if (day === adjustedStartDay) {
-                  drawLine(day, task, 'task-start-box', sortedTasks[task]);
-                }
-                if (day === taskDeadlineIfOneMonthPlus) {
-                  drawLine(day, task, 'task-deadline-box', sortedTasks[task]);
-                }
-              }
-              if (inEndMonth() && !isMonthAfterStart()) {
-                if (day < taskDeadlineOnCal) {
-                  drawLine(day, task, 'task-line', sortedTasks[task]);
-                }
-              }
-              if (inStartMonth() && !isMonthBeforeEnd()) {
-                if (day > taskStartDayOnCal) {
-                  drawLine(day, task, 'task-line', sortedTasks[task]);
-                }
-              }
+          } else if (taskEndDate) {
+            if (taskEndDate === boxDateF) {
+              drawLine(box, 'task-line', thisTask);
             }
           }
         }
       }
     }
-  }, [calendarData, saveInput, sortedTasks, openTaskModal, layingOut]);
+  }, [calendarData, saveInput, sortedTasks, openTaskModal]);
 
   const handleDateCounter = (e) => {
     const { id } = e.target;
