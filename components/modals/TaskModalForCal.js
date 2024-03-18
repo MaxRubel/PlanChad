@@ -3,9 +3,7 @@ import { Modal } from 'react-bootstrap';
 import TaskForCal from '../calendar/TaskForCal';
 import { closeIcon } from '../../public/icons';
 
-export default function TaskModalForCalendar({
-  show, task, closeModal,
-}) {
+export default function TaskModalForCalendar({ show, task, closeModal }) {
   return (
     <>
       <Modal
@@ -35,7 +33,7 @@ export default function TaskModalForCalendar({
           paddingTop: '0px',
         }}
         >
-          <TaskForCal task={task} />
+          <TaskForCal task={task} closeModal={closeModal} />
         </Modal.Body>
       </Modal>
     </>

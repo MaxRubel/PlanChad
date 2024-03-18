@@ -30,7 +30,7 @@ const initialState = {
   planning: '',
 };
 
-export default function TaskForCal({ task, min }) {
+export default function TaskForCal({ task, min, closeModal }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
@@ -66,6 +66,7 @@ export default function TaskForCal({ task, min }) {
   };
 
   const handleDelete = () => {
+    setOpenDeleteModal((prevVal) => false);
     const joinsCopy = [...taskCollabJoins];
     const filteredCopy = joinsCopy.filter((item) => item.taskId === task.localId);
     const promiseArray = filteredCopy.map((item) => deleteTaskCollab(item.taskCollabId));
@@ -73,9 +74,9 @@ export default function TaskForCal({ task, min }) {
       for (let i = 0; i < filteredCopy.length; i++) {
         deleteFromCollabManager(filteredCopy[i].taskCollabId, 'taskCollabJoin');
       }
+      deleteFromSaveManager(formInput, 'delete', 'task');
+      closeModal();
     });
-    deleteFromSaveManager(formInput, 'delete', 'task');
-    setOpenDeleteModal((prevVal) => false);
   };
 
   const handleOpenModal = () => {

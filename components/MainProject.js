@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
-import { Reorder } from 'framer-motion';
+import {
+  AnimatePresence, Reorder, motion, LayoutGroup,
+} from 'framer-motion';
 import PropTypes from 'prop-types';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
@@ -16,6 +18,7 @@ export default function MainProjectView({ projectId }) {
   const [progressIsShowing, setProgressIsShowing] = useState(false);
   const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const {
     addToSaveManager,
@@ -35,7 +38,7 @@ export default function MainProjectView({ projectId }) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
 
-  useEffect(() => { // refresh checkpoint from save manager
+  useEffect(() => {
     const copy = [...saveInput.checkpoints];
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
@@ -58,6 +61,7 @@ export default function MainProjectView({ projectId }) {
         const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints((preVal) => checkpointsSorted);
       }
+      setIsMounted((preVal) => true);
     }
   }, [projectId, projectsLoaded]);
 
@@ -241,37 +245,49 @@ export default function MainProjectView({ projectId }) {
             </button>
           </div>
           <div id="dnd-container">
-
-            <Reorder.Group
-              as="div"
-              axis="y"
-              values={checkpoints}
-              onReorder={reOrderCheckPoints}
-            >
-              <div>
-                {checkpoints.map((checkP, index) => (
-                  <Reorder.Item
-                    as="div"
-                    key={checkP.localId}
-                    value={checkP}
-                    style={{ cursor: 'grab' }}
-                    onDragStart={handleDragStart}
-                  >
-                    <Checkpoint
-                      key={checkP.localId}
-                      checkP={checkP}
-                      handleRefresh={handleRefresh}
-                      minAll={minAll}
-                      min={min}
-                      index={index}
-                      refresh={refresh}
-                      progressIsShowing={progressIsShowing}
-                      isDragging={isDragging}
-                    />
-                  </Reorder.Item>
-                ))}
-              </div>
-            </Reorder.Group>
+            <AnimatePresence initial>
+              <motion.div
+                initial={false}
+                animate={false}
+                exit={{ opacity: 0 }}
+              >
+                <Reorder.Group
+                  as="div"
+                  axis="y"
+                  values={checkpoints}
+                  onReorder={reOrderCheckPoints}
+                  positiontransition
+                >
+                  <div>
+                    {checkpoints.map((checkP, index) => (
+                      <Reorder.Item
+                        as={motion.div}
+                        key={checkP.localId}
+                        value={checkP}
+                        style={{ cursor: 'grab' }}
+                        onDragStart={handleDragStart}
+                        layoutId={`checkpoint-${checkP.localId}`}
+                        initial={false}
+                        animate={false}
+                      >
+                        <Checkpoint
+                          key={checkP.localId}
+                          checkP={checkP}
+                          handleRefresh={handleRefresh}
+                          minAll={minAll}
+                          min={min}
+                          index={index}
+                          refresh={refresh}
+                          progressIsShowing={progressIsShowing}
+                          isDragging={isDragging}
+                          layoutId={`checkpoint-${checkP.localId}`}
+                        />
+                      </Reorder.Item>
+                    ))}
+                  </div>
+                </Reorder.Group>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>
