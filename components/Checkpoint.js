@@ -477,11 +477,11 @@ export default function Checkpoint({
       <div>
         <AnimatePresence initial={false}>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={false}
+            animate={false}
             exit={{ opacity: 0 }}
           >
-            <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
+            <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
               {tasks.map((task, indexT) => (
                 <Reorder.Item
                   key={task.localId}
