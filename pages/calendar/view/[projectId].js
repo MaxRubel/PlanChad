@@ -102,21 +102,21 @@ export default function CalendarPage() {
 
         if (projStartDate && projEndDate) {
           if (currentDate >= projStartDate && currentDate <= projEndDate) {
-            projectDiv.style.backgroundColor = '#23a6d5';
+            projectDiv.style.backgroundColor = 'rgb(35, 166, 213, .6)';
           } else {
             projectDiv.style.backgroundColor = 'transparent';
           }
         }
         if (projStartDate && !projEndDate) {
           if (projStartDate.getTime() === currentDate.getTime()) {
-            projectDiv.style.backgroundColor = '#23a6d5';
+            projectDiv.style.backgroundColor = 'rgb(35, 166, 213, .6)';
           } else {
             projectDiv.style.backgroundColor = 'transparent';
           }
         }
         if (!projStartDate && projEndDate) {
           if (projEndDate.getTime() === currentDate.getTime()) {
-            projectDiv.style.backgroundColor = '#23a6d5';
+            projectDiv.style.backgroundColor = 'rgb(35, 166, 213, .6)';
           } else {
             projectDiv.style.backgroundColor = 'transparent';
           }
@@ -129,14 +129,15 @@ export default function CalendarPage() {
   useEffect(() => {
     weeksArrays.current = initialState;
     if (openTaskModal) return;
-    const findHeightIndex = (day, taskObj) => {
+
+    const findHeightIndex = (box, taskObj) => {
       const weeksArrayCopy = [...weeksArrays.current];
       const sortedTasksCopy = [...sortedTasks];
 
       // loop through each week array
       for (let week = 0; week < weeksArrayCopy.length; week++) {
         const loopThroughEachDayOfTheMonth = () => {
-          if (day >= week * 7 && day <= (week + 1) * 7 - 1) {
+          if (box >= week * 7 && box <= (week + 1) * 7 - 1) {
             return true;
           }
           return false;
@@ -165,13 +166,11 @@ export default function CalendarPage() {
                   && item.localId !== taskObj.localId)
               );
             });
-            const sorted = filtered.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
             const heightIndices = filtered.map((item) => item.heightIndex);
             let lowestAvailableIndex = 0;
             while (heightIndices.includes(lowestAvailableIndex)) {
               lowestAvailableIndex += 1;
             }
-
             taskToAdd.heightIndex = lowestAvailableIndex;
             weeksArrayCopy[week].push(taskToAdd);
             break;
@@ -229,7 +228,7 @@ export default function CalendarPage() {
         lineDiv.style.backgroundColor = task.lineColor;
         lineDiv.setAttribute('id', `openTask--${task.localId}`);
         lineDiv.className = string;
-        lineDiv.style.gridRow = `${String(thisTask.heightIndex)} / span 1`;
+        lineDiv.style.gridRow = `${String(thisTask.heightIndex + 1)} / span 1`;
         taskContainer.appendChild(lineDiv);
         lineDiv.innerHTML = `
             <div id="openTask--${task.localId}"
@@ -248,13 +247,6 @@ export default function CalendarPage() {
         `;
         viewMoreDiv.innerHTML = viewMoreMessage;
         viewMoreDiv.className = 'viewMore';
-
-        // if (element.children.length === 4) {
-        //   element.appendChild(newDiv);
-        // }
-        // if (element.children.length === 5) {
-        //   document.getElementById(`viewMore--${box}`).innerHTML = viewMoreMessage;
-        // }
       }
     };
     const thisDaysDate = new Date(calendarData.firstBoxDate);
@@ -262,7 +254,6 @@ export default function CalendarPage() {
     for (let box = 0; box < 42; box++) {
       const viewMoreDiv = document.getElementById(`${box}ViewMoreMessage`);
       const element = document.getElementById(`${box}Task`);
-      // console.log()
       const boxDate = new Date(thisDaysDate);
       boxDate.setDate(boxDate.getDate() + box);
       const boxDateF = boxDate.getTime();
@@ -295,14 +286,10 @@ export default function CalendarPage() {
           ) {
             drawLine(box, 'task-line', thisTask);
           }
-        } else if (taskStartDate) {
-          if (taskStartDate === boxDateF) {
-            drawLine(box, 'task-line', thisTask);
-          }
-        } else if (taskEndDate) {
-          if (taskEndDate === boxDateF) {
-            drawLine(box, 'task-line', thisTask);
-          }
+        } else if (taskStartDate && taskStartDate === boxDateF) {
+          drawLine(box, 'task-line', thisTask);
+        } else if (taskEndDate && taskEndDate === boxDateF) {
+          drawLine(box, 'task-line', thisTask);
         }
       }
     }
@@ -370,9 +357,7 @@ export default function CalendarPage() {
 
           {/* ----------------header---------------------- */}
           <div id="calendar-header" className="verticalCenter">
-            <div id="col1" style={{ display: 'flex' }}>
-              year
-            </div>
+            <div id="col1" style={{ display: 'flex' }} />
             <div id="col2" style={{ display: 'flex', justifyContent: 'center' }}>
               <button type="button" id="decrementMonth" onClick={handleDateCounter} className="clearButton">
                 {caretLeft}

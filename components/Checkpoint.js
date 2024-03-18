@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
-import { Reorder } from 'framer-motion';
+import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import { trashIcon } from '../public/icons';
@@ -475,26 +475,34 @@ export default function Checkpoint({
       </div>
       {/* ----------tasks------------------ */}
       <div>
-        <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
-          {tasks.map((task, indexT) => (
-            <Reorder.Item
-              key={task.localId}
-              value={task}
-              as="div"
-              style={{ cursor: 'grab' }}
-              onDragStart={handleDragStart}
-            >
-              <Task
-                key={task.localId}
-                task={task}
-                min={min}
-                handleRefresh={handleRefresh}
-                indexT={indexT}
-                refreshCheckP={refreshCheckP}
-              />
-            </Reorder.Item>
-          ))}
-        </Reorder.Group>
+        <AnimatePresence initial={false}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <Reorder.Group axis="y" values={tasks} onReorder={handleReorder} as="div">
+              {tasks.map((task, indexT) => (
+                <Reorder.Item
+                  key={task.localId}
+                  value={task}
+                  as="div"
+                  style={{ cursor: 'grab' }}
+                  onDragStart={handleDragStart}
+                >
+                  <Task
+                    key={task.localId}
+                    task={task}
+                    min={min}
+                    handleRefresh={handleRefresh}
+                    indexT={indexT}
+                    refreshCheckP={refreshCheckP}
+                  />
+                </Reorder.Item>
+              ))}
+            </Reorder.Group>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
     </>
