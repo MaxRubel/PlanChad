@@ -1,0 +1,137 @@
+#calendar-container {
+  width: 100%;
+  min-height: 100vh;
+  // height: 90vh;
+  border: 1px solid rgb(84, 84, 84);
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+#calendar-header {
+  padding: 1.5% 3%;
+  border-bottom: 1px solid rgb(84, 84, 84);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.date-number {
+  margin: 2% 10%
+}
+
+.calendar-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid rgb(84, 84, 84);
+  grid-auto-rows: minmax(0, 1fr);
+  // height: 100%;
+}
+
+.calendar-day {
+  background-color: transparent;
+  display: grid;
+  grid-template-rows: 30px 30px 75px;
+  flex-direction: column;
+  border-left: 1px solid rgb(84, 84, 84);
+}
+
+#day-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 25%;
+}
+
+.day-label {
+  padding: 2%;
+  text-align: center;
+  color: rgb(174, 174, 174);
+}
+
+#dates-container {
+  // height: 100%;
+  flex: 1;
+  display: grid;
+  grid-template-rows: repeat(6, minmax(0, auto));
+  // grid-template-rows: repeat(6, 1fr);
+  // text-overflow: ellipsis
+}
+
+.project-start-box {
+  background-color: #23a6d5;
+  margin: 0% -1px;
+  margin-left: 8%;
+  padding-left: 4%;
+  font-size: 12px;
+  color: black;
+  border-top-left-radius: 5%;
+  border-bottom-left-radius: 5%;
+  overflow: hidden;
+  display: flex;
+  // flex-direction: column;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis
+}
+
+.task-start-box {
+  position: relative;
+  display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding-left: 5%;
+  align-items: center;
+  min-height: 15px;
+  border-radius: 3%;
+  font-size: 12px;
+  color: black;
+  margin-left: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.task-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  // position: relative;
+  max-height: 30px;
+  justify-content: left;
+  padding-left: 5%;
+  align-items: center;
+  min-height: 15px;
+  border-radius: 3%;
+  font-size: 12px;
+  color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+
+.task-deadline-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  display: flex;
+  justify-content: left;
+  padding-left: 5%;
+  align-items: center;
+  min-height: 15px;
+  border-radius: 3%;
+  font-size: 12px;
+  color: black;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.viewMore {
+  font-size: 12px;
+  grid-row: 5;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
