@@ -3,7 +3,7 @@ import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
 import {
-  AnimatePresence, Reorder, motion, LayoutGroup,
+  AnimatePresence, Reorder, motion, LayoutGroup, useAnimationControls,
 } from 'framer-motion';
 import PropTypes from 'prop-types';
 import ProjectCard from './ProjectCard';
@@ -19,7 +19,8 @@ export default function MainProjectView({ projectId }) {
   const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-
+  const controls = useAnimationControls();
+  controls.stop();
   const {
     addToSaveManager,
     saveInput,
@@ -44,7 +45,8 @@ export default function MainProjectView({ projectId }) {
     setCheckpoints(sortedArr);
   }, [refresh]);
 
-  useEffect(() => { // on Mount
+  useEffect(() => {
+    setIsMounted((preVal) => false);
     if (projectId && projectsLoaded) {
       cancelSaveAnimation();
       if (!singleProjectRunning) {
@@ -245,10 +247,10 @@ export default function MainProjectView({ projectId }) {
             </button>
           </div>
           <div id="dnd-container">
-            <AnimatePresence initial>
+            <AnimatePresence animate={controls}>
               <motion.div
                 initial={false}
-                animate={false}
+                animate={controls}
                 exit={{ opacity: 0 }}
               >
                 <Reorder.Group
@@ -256,7 +258,8 @@ export default function MainProjectView({ projectId }) {
                   axis="y"
                   values={checkpoints}
                   onReorder={reOrderCheckPoints}
-                  positiontransition
+                  positiontransition="true"
+                  key={checkpoints}
                 >
                   <div>
                     {checkpoints.map((checkP, index) => (
