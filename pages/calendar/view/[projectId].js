@@ -195,7 +195,7 @@ export default function CalendarPage() {
         const taskStartDate = thisTask.startDate ? new Date(taskStartYear, taskStartMonth - 1, taskStartDay).getTime() : null;
         const taskEndDate = thisTask.deadline ? new Date(taskEndYear, taskEndMonth - 1, taskEndDay).getTime() : null;
         if (taskStartDate && taskEndDate) {
-          if (taskStartDate >= boxDateF && taskEndDate <= boxDateF) {
+          if (boxDateF >= taskStartDate && boxDateF <= taskEndDate) {
             filteredArray.push(thisTask);
           }
         } else if (taskStartDate && taskStartDate === boxDateF) {
@@ -210,9 +210,11 @@ export default function CalendarPage() {
     // Draw Lines
     const drawLine = (box, string, task) => {
       findHeightIndex(box, task);
-      const element = document.getElementById(`${box}Task`);
-      if (!element || box < 0 || box > 41) return;
-      element.style.height = '100%';
+      const taskContainer = document.getElementById(`${box}Task`);
+      const viewMoreDiv = document.getElementById(`${box}ViewMoreMessage`);
+      if (!viewMoreDiv) { return; }
+      if (!taskContainer || !viewMoreDiv) return;
+
       const lineDiv = document.createElement('div');
       const weekIndex = Math.floor(box / 7);
       const thisWeek = [...weeksArrays.current[weekIndex]];
@@ -223,15 +225,14 @@ export default function CalendarPage() {
 
       const howManyInThisBox = findHowManyInBox(box);
 
-      if (thisTask.heightIndex < 4) {
+      if (thisTask.heightIndex < 5) {
         lineDiv.style.backgroundColor = task.lineColor;
         lineDiv.setAttribute('id', `openTask--${task.localId}`);
         lineDiv.className = string;
         lineDiv.style.gridRow = `${String(thisTask.heightIndex)} / span 1`;
-        element.appendChild(lineDiv);
+        taskContainer.appendChild(lineDiv);
         lineDiv.innerHTML = `
-        ${task.name}
-            <div id="openTask--${task.localId}" 
+            <div id="openTask--${task.localId}"
             class="tooltip-container">
               <div class="tooltip-trigger"></div>
               <div class="tooltip-content">
@@ -241,67 +242,66 @@ export default function CalendarPage() {
             </div>
           `;
       } else {
-        const newDiv = document.createElement('div');
-        const moreTasksCount = howManyInThisBox - 3;
+        const moreTasksCount = howManyInThisBox - 5;
         const viewMoreMessage = `
         +${moreTasksCount === 1 ? '1 more task...' : `${moreTasksCount} more tasks...`}
         `;
-        newDiv.innerHTML = viewMoreMessage;
-        newDiv.setAttribute('id', `viewMore--${box}`);
-        newDiv.className = 'viewMore';
+        viewMoreDiv.innerHTML = viewMoreMessage;
+        viewMoreDiv.className = 'viewMore';
 
-        if (element.children.length === 4) {
-          element.appendChild(newDiv);
-        }
-        if (element.children.length === 5) {
-          document.getElementById(`viewMore--${box}`).innerHTML = viewMoreMessage;
-        }
+        // if (element.children.length === 4) {
+        //   element.appendChild(newDiv);
+        // }
+        // if (element.children.length === 5) {
+        //   document.getElementById(`viewMore--${box}`).innerHTML = viewMoreMessage;
+        // }
       }
     };
     const thisDaysDate = new Date(calendarData.firstBoxDate);
 
     for (let box = 0; box < 42; box++) {
+      const viewMoreDiv = document.getElementById(`${box}ViewMoreMessage`);
       const element = document.getElementById(`${box}Task`);
+      // console.log()
       const boxDate = new Date(thisDaysDate);
       boxDate.setDate(boxDate.getDate() + box);
       const boxDateF = boxDate.getTime();
 
-      if (element) {
-        element.innerHTML = '';
-        element.style.height = '100%';
-        element.style.gridTemplateRows = `repeat(${sortedTasks.length}, minmax(auto,15px));`;
-        element.style.height = `${sortedTasks.length * 1}px`;
+      if (!element || !viewMoreDiv) { return; }
+      viewMoreDiv.innerHTML = '';
+      element.innerHTML = '';
+      element.style.gridTemplateRows = `repeat(${sortedTasks.length}, minmax(auto,15px));`;
+      element.style.height = '100%';
 
-        for (let i = 0; i < sortedTasks.length; i++) {
-          const thisTask = sortedTasks[i];
-          if (!thisTask) { return; }
+      for (let i = 0; i < sortedTasks.length; i++) {
+        const thisTask = sortedTasks[i];
+        if (!thisTask) { return; }
 
-          const [taskStartYear, taskStartMonth, taskStartDay] = thisTask.startDate.split('-');
-          const [taskEndYear, taskEndMonth, taskEndDay] = thisTask.deadline.split('-');
-          const taskStartDate = thisTask.startDate ? new Date(taskStartYear, taskStartMonth - 1, taskStartDay).getTime() : null;
-          const taskEndDate = thisTask.deadline ? new Date(taskEndYear, taskEndMonth - 1, taskEndDay).getTime() : null;
+        const [taskStartYear, taskStartMonth, taskStartDay] = thisTask.startDate.split('-');
+        const [taskEndYear, taskEndMonth, taskEndDay] = thisTask.deadline.split('-');
+        const taskStartDate = thisTask.startDate ? new Date(taskStartYear, taskStartMonth - 1, taskStartDay).getTime() : null;
+        const taskEndDate = thisTask.deadline ? new Date(taskEndYear, taskEndMonth - 1, taskEndDay).getTime() : null;
 
-          if (taskStartDate && taskEndDate) {
-            if (taskStartDate === boxDateF) {
-              drawLine(box, 'task-start-box', thisTask);
-            }
-            if (taskEndDate === boxDateF) {
-              drawLine(box, 'task-deadline-box', thisTask);
-            }
-            if (
-              boxDateF > taskStartDate
-              && boxDateF < taskEndDate
-            ) {
-              drawLine(box, 'task-line', thisTask);
-            }
-          } else if (taskStartDate) {
-            if (taskStartDate === boxDateF) {
-              drawLine(box, 'task-line', thisTask);
-            }
-          } else if (taskEndDate) {
-            if (taskEndDate === boxDateF) {
-              drawLine(box, 'task-line', thisTask);
-            }
+        if (taskStartDate && taskEndDate) {
+          if (taskStartDate === taskEndDate && taskStartDate === boxDateF) {
+            drawLine(box, 'task-line', thisTask);
+          } else if (taskStartDate === boxDateF) {
+            drawLine(box, 'task-start-box', thisTask);
+          } else if (taskEndDate === boxDateF) {
+            drawLine(box, 'task-deadline-box', thisTask);
+          } else if (
+            boxDateF > taskStartDate
+            && boxDateF < taskEndDate
+          ) {
+            drawLine(box, 'task-line', thisTask);
+          }
+        } else if (taskStartDate) {
+          if (taskStartDate === boxDateF) {
+            drawLine(box, 'task-line', thisTask);
+          }
+        } else if (taskEndDate) {
+          if (taskEndDate === boxDateF) {
+            drawLine(box, 'task-line', thisTask);
           }
         }
       }
@@ -371,6 +371,9 @@ export default function CalendarPage() {
           {/* ----------------header---------------------- */}
           <div id="calendar-header" className="verticalCenter">
             <div id="col1" style={{ display: 'flex' }}>
+              year
+            </div>
+            <div id="col2" style={{ display: 'flex', justifyContent: 'center' }}>
               <button type="button" id="decrementMonth" onClick={handleDateCounter} className="clearButton">
                 {caretLeft}
               </button>
@@ -379,7 +382,7 @@ export default function CalendarPage() {
                 {caretRight}
               </button>
             </div>
-            <div id="col2" style={{ textAlign: 'right' }}>
+            <div id="col3" style={{ textAlign: 'right' }}>
               <button type="button" className="clearButton" style={{ color: 'white', padding: '8px', border: '1px solid rgb(84, 84, 84)' }} onClick={handleToday}>
                 Today
               </button>
@@ -403,225 +406,224 @@ export default function CalendarPage() {
             <div id="week0" className="calendar-row" style={{ borderTop: '1px solid rgb(84, 84, 84)' }}>
               <div className="calendar-day" id="0" style={{ borderLeft: 'none' }}>
                 <div id="0BackG"><div id="0Num" className="date-number" /></div>
-                <div id="0CheckP" className="checkP-div" />
                 <div id="0Task" className="task-container" />
+                <div id="0ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="1">
                 <div id="1BackG"><div id="1Num" className="date-number" /></div>
-                <div id="1CheckP" className="checkP-div" />
-                {/* <div id="1Task" className="task-container" /> */}
                 <div id="1Task" className="task-container" />
+                <div id="1ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="2">
                 <div id="2BackG"><div id="2Num" className="date-number" /></div>
-                <div id="2CheckP" className="checkP-div" />
                 <div id="2Task" className="task-container" />
+                <div id="2ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="3">
                 <div id="3BackG"><div id="3Num" className="date-number" /></div>
-                <div id="3CheckP" className="checkP-div" />
                 <div id="3Task" className="task-container" />
+                <div id="3ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="4">
                 <div id="4BackG"><div id="4Num" className="date-number" /></div>
-                <div id="4CheckP" className="checkP-div" />
                 <div id="4Task" className="task-container" />
+                <div id="4ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="5">
                 <div id="5BackG"><div id="5Num" className="date-number" /></div>
-                <div id="5CheckP" className="checkP-div" />
                 <div id="5Task" className="task-container" />
+                <div id="5ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="6">
                 <div id="6BackG"><div id="6Num" className="date-number" /></div>
-                <div id="6CheckP" className="checkP-div" />
                 <div id="6Task" className="task-container" />
+                <div id="6ViewMoreMessage" className="viewMore" />
               </div>
             </div>
             <div id="week1" className="calendar-row">
               <div className="calendar-day" id="7" style={{ borderLeft: 'none' }}>
                 <div id="7BackG"><div id="7Num" className="date-number" /></div>
-                <div id="7CheckP" className="checkP-div" />
                 <div id="7Task" className="task-container" />
+                <div id="7ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="8">
                 <div id="8BackG"><div id="8Num" className="date-number" /></div>
-                <div id="8CheckP" className="checkP-div" />
                 <div id="8Task" className="task-container" />
+                <div id="8ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="9">
                 <div id="9BackG"><div id="9Num" className="date-number" /></div>
-                <div id="9CheckP" className="checkP-div" />
                 <div id="9Task" className="task-container" />
+                <div id="9ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="10">
                 <div id="10BackG"><div id="10Num" className="date-number" /></div>
-                <div id="10CheckP" className="checkP-div" />
                 <div id="10Task" className="task-container" />
+                <div id="10ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="11">
                 <div id="11BackG"><div id="11Num" className="date-number" /></div>
-                <div id="11CheckP" className="checkP-div" />
                 <div id="11Task" className="task-container" />
+                <div id="11ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="12">
                 <div id="12BackG"><div id="12Num" className="date-number" /></div>
-                <div id="12CheckP" className="checkP-div" />
                 <div id="12Task" className="task-container" />
+                <div id="12ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="13">
                 <div id="13BackG"><div id="13Num" className="date-number" /></div>
-                <div id="13CheckP" className="checkP-div" />
                 <div id="13Task" className="task-container" />
+                <div id="13ViewMoreMessage" className="viewMore" />
               </div>
             </div>
             <div id="week2" className="calendar-row">
               <div className="calendar-day" id="14" style={{ borderLeft: 'none' }}>
                 <div id="14BackG"><div id="14Num" className="date-number" /></div>
-                <div id="14CheckP" className="checkP-div" />
                 <div id="14Task" className="task-container" />
+                <div id="14ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="15">
                 <div id="15BackG"><div id="15Num" className="date-number" /></div>
-                <div id="15CheckP" className="checkP-div" />
                 <div id="15Task" className="task-container" />
+                <div id="15ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="16">
                 <div id="16BackG"><div id="16Num" className="date-number" /></div>
-                <div id="16CheckP" className="checkP-div" />
                 <div id="16Task" className="task-container" />
+                <div id="16ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="17">
                 <div id="17BackG"><div id="17Num" className="date-number" /></div>
-                <div id="17CheckP" className="checkP-div" />
                 <div id="17Task" className="task-container" />
+                <div id="17ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="18">
                 <div id="18BackG"><div id="18Num" className="date-number" /></div>
-                <div id="18CheckP" className="checkP-div" />
                 <div id="18Task" className="task-container" />
+                <div id="18ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="19">
                 <div id="19BackG"><div id="19Num" className="date-number" /></div>
-                <div id="19CheckP" className="checkP-div" />
                 <div id="19Task" className="task-container" />
+                <div id="19ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="20">
                 <div id="20BackG"><div id="20Num" className="date-number" /></div>
-                <div id="20CheckP" className="checkP-div" />
                 <div id="20Task" className="task-container" />
+                <div id="20ViewMoreMessage" className="viewMore" />
               </div>
             </div>
             <div id="week3" className="calendar-row">
               <div className="calendar-day" id="21" style={{ borderLeft: 'none' }}>
                 <div id="21BackG"><div id="21Num" className="date-number" /></div>
-                <div id="21CheckP" className="checkP-div" />
                 <div id="21Task" className="task-container" />
+                <div id="21ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="22">
                 <div id="22BackG"><div id="22Num" className="date-number" /></div>
-                <div id="22CheckP" className="checkP-div" />
                 <div id="22Task" className="task-container" />
+                <div id="22ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="23">
                 <div id="23BackG"><div id="23Num" className="date-number" /></div>
-                <div id="23CheckP" className="checkP-div" />
                 <div id="23Task" className="task-container" />
+                <div id="23ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="24">
                 <div id="24BackG"><div id="24Num" className="date-number" /></div>
-                <div id="24CheckP" className="checkP-div" />
                 <div id="24Task" className="task-container" />
+                <div id="24ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="25">
                 <div id="25BackG"><div id="25Num" className="date-number" /></div>
-                <div id="25CheckP" className="checkP-div" />
                 <div id="25Task" className="task-container" />
+                <div id="25ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="26">
                 <div id="26BackG"><div id="26Num" className="date-number" /></div>
-                <div id="26CheckP" className="checkP-div" />
                 <div id="26Task" className="task-container" />
+                <div id="26ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="27">
                 <div id="27BackG"><div id="27Num" className="date-number" /></div>
-                <div id="27CheckP" className="checkP-div" />
                 <div id="27Task" className="task-container" />
+                <div id="27ViewMoreMessage" className="viewMore" />
               </div>
             </div>
             <div id="week4" className="calendar-row">
               <div className="calendar-day" id="28" style={{ borderLeft: 'none' }}>
                 <div id="28BackG"><div id="28Num" className="date-number" /></div>
-                <div id="28CheckP" className="checkP-div" />
                 <div id="28Task" className="task-container" />
+                <div id="28ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="29">
                 <div id="29BackG"><div id="29Num" className="date-number" /></div>
-                <div id="29CheckP" className="checkP-div" />
                 <div id="29Task" className="task-container" />
+                <div id="29ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="30">
                 <div id="30BackG"><div id="30Num" className="date-number" /></div>
-                <div id="30CheckP" className="checkP-div" />
                 <div id="30Task" className="task-container" />
+                <div id="30ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="31">
                 <div id="31BackG"><div id="31Num" className="date-number" /></div>
-                <div id="31CheckP" className="checkP-div" />
                 <div id="31Task" className="task-container" />
+                <div id="31ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="32">
                 <div id="32BackG"><div id="32Num" className="date-number" /></div>
-                <div id="32CheckP" className="checkP-div" />
                 <div id="32Task" className="task-container" />
+                <div id="32ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="33">
                 <div id="33BackG"><div id="33Num" className="date-number" /></div>
-                <div id="33CheckP" className="checkP-div" />
                 <div id="33Task" className="task-container" />
+                <div id="33ViewMoreMessage" className="viewMore" />
               </div>
               <div className="calendar-day" id="34">
                 <div id="34BackG"><div id="34Num" className="date-number" /></div>
-                <div id="34CheckP" className="checkP-div" />
                 <div id="34Task" className="task-container" />
+                <div id="34ViewMoreMessage" className="viewMore" />
               </div>
             </div>
             {calendarData.totalDays >= 36 && (
               <div id="week5" className="calendar-row" style={{ borderBottom: 'none' }}>
                 <div className="calendar-day" id="35" style={{ borderLeft: 'none' }}>
                   <div id="35BackG"><div id="35Num" className="date-number" /></div>
-                  <div id="35CheckP" className="checkP-div" />
                   <div id="35Task" className="task-container" />
+                  <div id="35ViewMoreMessage" className="viewMore" />
                 </div>
                 <div className="calendar-day" id="36">
                   <div id="36BackG"><div id="36Num" className="date-number" /></div>
-                  <div id="36CheckP" className="checkP-div" />
                   <div id="36Task" className="task-container" />
+                  <div id="36ViewMoreMessage" className="viewMore" />
                 </div>
                 <div className="calendar-day" id="37">
                   <div id="37BackG"><div id="37Num" className="date-number" /></div>
-                  <div id="37CheckP" className="checkP-div" />
                   <div id="37Task" className="task-container" />
+                  <div id="37ViewMoreMessage" className="viewMore" />
                 </div>
                 <div className="calendar-day" id="38">
                   <div id="38BackG"><div id="38Num" className="date-number" /></div>
-                  <div id="38CheckP" className="checkP-div" />
                   <div id="38Task" className="task-container" />
+                  <div id="38ViewMoreMessage" className="viewMore" />
                 </div>
                 <div className="calendar-day" id="39">
                   <div id="39BackG"><div id="39Num" className="date-number" /></div>
-                  <div id="39CheckP" className="checkP-div" />
                   <div id="39Task" className="task-container" />
+                  <div id="39ViewMoreMessage" className="viewMore" />
                 </div>
                 <div className="calendar-day" id="40">
                   <div id="40BackG"><div id="40Num" className="date-number" /></div>
-                  <div id="40CheckP" className="checkP-div" />
                   <div id="40Task" className="task-container" />
+                  <div id="40ViewMoreMessage" className="viewMore" />
                 </div>
                 <div className="calendar-day" id="41">
                   <div id="41BackG"><div id="41Num" className="date-number" /></div>
-                  <div id="41CheckP" className="checkP-div" />
                   <div id="41Task" className="task-container" />
+                  <div id="41ViewMoreMessage" className="viewMore" />
                 </div>
               </div>
             )}
