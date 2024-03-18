@@ -37,7 +37,6 @@ export default function MainProjectView({ projectId }) {
 
   useEffect(() => { // refresh checkpoint from save manager
     const copy = [...saveInput.checkpoints];
-    console.log(copy);
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
   }, [refresh]);
@@ -46,10 +45,9 @@ export default function MainProjectView({ projectId }) {
     if (projectId && projectsLoaded) {
       cancelSaveAnimation();
       if (!singleProjectRunning) {
-        console.log(projectId);
         const projectDetails = loadProject(projectId);
         setProject((preVal) => projectDetails.project);
-        if (projectDetails.project.projectId) {
+        if (projectDetails?.project?.projectId) {
           setHideCompletedTasksChild((preVal) => projectDetails?.project.hideCompletedTasks);
         }
         const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
@@ -119,7 +117,6 @@ export default function MainProjectView({ projectId }) {
       fresh: true,
       dragId: uniqid(),
     };
-    console.log(emptyChckP);
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
   };
