@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import {
+  useState, useEffect, useMemo, useCallback,
+} from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
-import { AnimatePresence, Reorder, motion } from 'framer-motion';
+import { Reorder } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import { calendarIcon, trashIcon } from '../public/icons';
-import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
   expandTooltip,
@@ -18,6 +19,7 @@ import {
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';
+import MemoizedTask from './Task';
 
 export default function Checkpoint({
   checkP,
@@ -195,7 +197,6 @@ export default function Checkpoint({
   };
 
   const handleCollapse = () => {
-    console.log('running');
     if (formInput.expanded) {
       setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
     } else {
@@ -276,9 +277,19 @@ export default function Checkpoint({
     setCheckPrefresh((prevVal) => prevVal + 1);
   };
 
+  const memoizedProps = useMemo(
+    () => ({
+      checkPHasLoaded: hasLoaded,
+      min,
+      handleRefresh,
+      refreshCheckP,
+    }),
+    [hasLoaded, min, handleRefresh, refreshCheckP],
+  );
+
   return (
     <>
-      <DeleteCheckpointModal handleDelete={handleDelete} closeModal={handleCloseModal} show={openDeleteModal} />
+      {openDeleteModal && <DeleteCheckpointModal handleDelete={handleDelete} closeModal={handleCloseModal} show={openDeleteModal} />}
       <div className="checkpoint">
         {/* -------line-side------------- */}
         <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
@@ -529,34 +540,32 @@ export default function Checkpoint({
       {/* ----------tasks------------------ */}
       <Collapse in={formInput.expanded}>
         <div>
-          <AnimatePresence initial={false}>
-            <motion.div
+          {/* <AnimatePresence initial={false}> */}
+          {/* <motion.div
               initial={false}
               animate={false}
               exit={{ opacity: 0 }}
-            >
-              <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
-                {tasks.map((task, indexT) => (
-                  <Reorder.Item
-                    key={task.localId}
-                    value={task}
-                    as="div"
-                    style={{ cursor: 'grab' }}
-                    onDragStart={handleDragStart}
-                  >
-                    <Task
-                      key={task.localId}
-                      task={task}
-                      min={min}
-                      handleRefresh={handleRefresh}
-                      indexT={indexT}
-                      refreshCheckP={refreshCheckP}
-                    />
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
-            </motion.div>
-          </AnimatePresence>
+            > */}
+          <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
+            {tasks.map((task, indexT) => (
+              <Reorder.Item
+                key={task.localId}
+                value={task}
+                as="div"
+                style={{ cursor: 'grab' }}
+                onDragStart={handleDragStart}
+              >
+                <MemoizedTask
+                  {...memoizedProps}
+                  key={task.localId}
+                  task={task}
+                  indexT={indexT}
+                />
+              </Reorder.Item>
+            ))}
+          </Reorder.Group>
+          {/* </motion.div>
+          </AnimatePresence> */}
         </div>
       </Collapse>
 

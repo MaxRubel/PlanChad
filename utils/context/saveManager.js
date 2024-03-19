@@ -1,5 +1,5 @@
 import React, {
-  createContext, useContext, useEffect, useState,
+  createContext, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { useRouter } from 'next/router';
 import { deleteProject, getUserProjects, updateProject } from '../../api/project';
@@ -204,7 +204,6 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const sendToServer = () => {
-    console.log('saving...');
     setIsSaving((preVal) => preVal + 1);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
@@ -227,26 +226,48 @@ export const SaveContextProvider = ({ children }) => {
     });
   };
 
+  const memoizedValues = useMemo(() => ({
+    addToSaveManager,
+    deleteFromSaveManager,
+    saveInput,
+    clearSaveManager,
+    sendToServer,
+    min,
+    minAll,
+    allTasks,
+    allProjects,
+    projectsLoaded,
+    loadProject,
+    singleProjectRunning,
+    isSaving,
+    hideCompletedTasks,
+    isFetchingProjects,
+    theBigDelete,
+    cancelSaveAnimation,
+  }), [
+    addToSaveManager,
+    deleteFromSaveManager,
+    saveInput,
+    clearSaveManager,
+    sendToServer,
+    min,
+    minAll,
+    allTasks,
+    allProjects,
+    projectsLoaded,
+    loadProject,
+    singleProjectRunning,
+    isSaving,
+    hideCompletedTasks,
+    isFetchingProjects,
+    theBigDelete,
+    cancelSaveAnimation,
+  ]);
+
   return (
-    <saveContext.Provider value={{
-      addToSaveManager,
-      deleteFromSaveManager,
-      saveInput,
-      clearSaveManager,
-      sendToServer,
-      min,
-      minAll,
-      allTasks,
-      allProjects,
-      projectsLoaded,
-      loadProject,
-      singleProjectRunning,
-      isSaving,
-      hideCompletedTasks,
-      isFetchingProjects,
-      theBigDelete,
-      cancelSaveAnimation,
-    }}
+    <saveContext.Provider value={
+      memoizedValues
+    }
     >
       {children}
     </saveContext.Provider>

@@ -16,7 +16,7 @@ export default function CalendarPage() {
   const { projectId } = router.query;
   const { cancelSaveAnimation } = useSaveContext();
   const {
-    saveInput, singleProjectRunning, loadProject, projectsLoaded,
+    saveInput, singleProjectRunning, loadProject, projectsLoaded, sendToServer,
   } = useSaveContext();
   const [sortedTasks, setSortedTasks] = useState([]);
   const [sortedSegments, setSortedSegments] = useState([]);
@@ -37,6 +37,7 @@ export default function CalendarPage() {
     if (!singleProjectRunning && projectsLoaded) { // load the project if page refreshed
       loadProject(projectId);
     }
+    sendToServer();
     const tasks = [...saveInput.tasks];
     const segments = [...saveInput.checkpoints];
     const filteredTasks = tasks

@@ -37,6 +37,7 @@ export default function MainProjectView({ projectId }) {
     theBigDelete,
     cancelSaveAnimation,
   } = useSaveContext();
+
   const { deleteAllProjCollabs } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
@@ -94,7 +95,6 @@ export default function MainProjectView({ projectId }) {
   }, [min]);
 
   useEffect(() => { // save button color animation
-    // cancelSaveAnimation();
     let saveColorChange;
     const saveButton = document.getElementById('saveButton');
     if (!isSaving) {
@@ -153,7 +153,6 @@ export default function MainProjectView({ projectId }) {
       setHideCompletedTasksChild((preVal) => !preVal);
     }
   };
-  console.log(saveInput.project);
   const handleCloseModal = () => {
     setOpenDeleteModal((prevVal) => false);
   };
@@ -259,49 +258,42 @@ export default function MainProjectView({ projectId }) {
           </div>
           <div id="dnd-container">
             <AnimatePresence initial={false}>
-              <motion.div
-                key="checkpoints"
-                initial={false}
-                animate={controls}
-                exit={{ opacity: 0 }}
+              <Reorder.Group
+                as="div"
+                axis="y"
+                values={checkpoints}
+                onReorder={reOrderCheckPoints}
+                positiontransition="true"
+                key="checkpointsReorder"
+                animate={false}
               >
-                <Reorder.Group
-                  as="div"
-                  axis="y"
-                  values={checkpoints}
-                  onReorder={reOrderCheckPoints}
-                  positiontransition="true"
-                  key="checkpointsReorder"
-                >
-                  <div>
-                    {checkpoints.map((checkP, index) => (
-                      <Reorder.Item
-                        as={motion.div}
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {checkpoints.map((checkP, index) => (
+                    <Reorder.Item
+                      as={motion.div}
+                      key={checkP.localId}
+                      value={checkP}
+                      style={{ cursor: 'grab' }}
+                      onDragStart={handleDragStart}
+                      initial={false}
+                      animate={false}
+                    >
+                      <Checkpoint
                         key={checkP.localId}
-                        value={checkP}
-                        style={{ cursor: 'grab' }}
-                        onDragStart={handleDragStart}
-                        layoutId={`checkpoint-${checkP.localId}`}
-                        initial={false}
-                        animate={false}
-                      >
-                        <Checkpoint
-                          key={checkP.localId}
-                          checkP={checkP}
-                          handleRefresh={handleRefresh}
-                          minAll={minAll}
-                          min={min}
-                          index={index}
-                          refresh={refresh}
-                          progressIsShowing={progressIsShowing}
-                          isDragging={isDragging}
-                          layoutId={`checkpoint-${checkP.localId}`}
-                        />
-                      </Reorder.Item>
-                    ))}
-                  </div>
-                </Reorder.Group>
-              </motion.div>
+                        checkP={checkP}
+                        handleRefresh={handleRefresh}
+                        minAll={minAll}
+                        min={min}
+                        index={index}
+                        refresh={refresh}
+                        progressIsShowing={progressIsShowing}
+                        isDragging={isDragging}
+                        layoutId={null}
+                      />
+                    </Reorder.Item>
+                  ))}
+                </div>
+              </Reorder.Group>
             </AnimatePresence>
           </div>
         </div>
