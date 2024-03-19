@@ -390,105 +390,107 @@ export default function Task({
           </div>
           {/* --------------card-body------------------------ */}
           <Collapse in={formInput.expanded}>
-            <div id="whole-card">
-              <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
-                <div
-                  id="row3"
-                  className="cardRow"
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
-                      <label htmlFor="startDate">Start Date:</label>
+            <div>
+              <div id="whole-card">
+                <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
+                  <div
+                    id="row3"
+                    className="cardRow"
+                  >
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                      <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
+                        <label htmlFor="startDate">Start Date:</label>
+                      </div>
+                      <div />
                     </div>
-                    <div />
+                    <div
+                      className="fullCenter"
+                      style={{ paddingRight: '20%' }}
+                    >
+                      <input
+                        id="startDate"
+                        className="form-control"
+                        type="date"
+                        value={formInput.startDate}
+                        onChange={handleChange}
+                        name="startDate"
+                        style={{
+                          backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                          border: 'none',
+                          transition: '1.5s all ease',
+                        }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                      />
+                    </div>
                   </div>
                   <div
-                    className="fullCenter"
-                    style={{ paddingRight: '20%' }}
+                    id="row2"
+                    className="cardRow"
                   >
-                    <input
-                      id="startDate"
-                      className="form-control"
-                      type="date"
-                      value={formInput.startDate}
-                      onChange={handleChange}
-                      name="startDate"
-                      style={{
-                        backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
-                        border: 'none',
-                        transition: '1.5s all ease',
-                      }}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                    />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                      <div className="verticalCenter">
+                        <label htmlFor="deadline">Deadline:</label>
+                      </div>
+                      <div />
+                    </div>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+                    }}
+                    >
+                      <input
+                        className="form-control"
+                        type="date"
+                        value={formInput.deadline}
+                        onChange={handleChange}
+                        name="deadline"
+                        id="deadline"
+                        style={{
+                          backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                          border: 'none',
+                          transition: '1.5s all ease',
+                        }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                      />
+                    </div>
                   </div>
+
                 </div>
                 <div
-                  id="row2"
-                  className="cardRow"
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter">
-                      <label htmlFor="deadline">Deadline:</label>
-                    </div>
-                    <div />
-                  </div>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-                  }}
-                  >
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={formInput.deadline}
-                      onChange={handleChange}
-                      name="deadline"
-                      id="deadline"
-                      style={{
-                        backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
-                        border: 'none',
-                        transition: '1.5s all ease',
-                      }}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                </div>
-
-              </div>
-              <div
-                id="description-field"
-                className="fullCenter"
-                style={{
-                  borderTop: formInput.status === 'closed' ? 'none' : '1px solid rgb(180, 180, 180)',
-                  padding: '1% 10%',
-                  paddingBottom: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                <div id="text-label" className="fullCenter">
-                  <label htmlFor={`description${task.localId}`} className="form-label" style={{ textAlign: 'center' }}>
-                    Description:
-                  </label>
-                </div>
-                <textarea
-                  className="form-control"
-                  placeholder="A description of your task..."
-                  id={`description${task.localId}`}
-                  rows="3"
-                  value={formInput.description}
-                  onChange={handleChange}
-                  name="description"
+                  id="description-field"
+                  className="fullCenter"
                   style={{
-                    backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
-                    transition: '1.5s all ease',
-                    border: 'none',
-                    minWidth: '250px',
+                    borderTop: formInput.status === 'closed' ? 'none' : '1px solid rgb(180, 180, 180)',
+                    padding: '1% 10%',
+                    paddingBottom: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
-                  onPointerDownCapture={(e) => e.stopPropagation()}
-                />
-                {/* </motion.div> */}
-              </div>
+                >
+                  <div id="text-label" className="fullCenter">
+                    <label htmlFor={`description${task.localId}`} className="form-label" style={{ textAlign: 'center' }}>
+                      Description:
+                    </label>
+                  </div>
+                  <textarea
+                    className="form-control"
+                    placeholder="A description of your task..."
+                    id={`description${task.localId}`}
+                    rows="3"
+                    value={formInput.description}
+                    onChange={handleChange}
+                    name="description"
+                    style={{
+                      backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                      transition: '1.5s all ease',
+                      border: 'none',
+                      minWidth: '250px',
+                    }}
+                    onPointerDownCapture={(e) => e.stopPropagation()}
+                  />
+                  {/* </motion.div> */}
+                </div>
 
+              </div>
             </div>
           </Collapse>
         </div>

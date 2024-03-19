@@ -204,6 +204,7 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const sendToServer = () => {
+    console.log('saving...');
     setIsSaving((preVal) => preVal + 1);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
