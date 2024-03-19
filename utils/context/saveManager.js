@@ -4,8 +4,7 @@ import React, {
 import { useRouter } from 'next/router';
 import { deleteProject, getUserProjects, updateProject } from '../../api/project';
 import { useAuth } from './authContext';
-
-// import { useCollabContext } from './collabContext';
+import { useCollabContext } from './collabContext';
 
 const saveContext = createContext(null);
 
@@ -82,7 +81,7 @@ export const SaveContextProvider = ({ children }) => {
 
   const theBigDelete = (projectId) => {
     deleteProject(projectId).then(() => {
-      setIsFetchingProjects((preVal) => true);
+      const projectCollabs = setIsFetchingProjects((preVal) => true);
       setFetchUserData((prev) => prev + 1);
       clearSaveManager();
       router.push('/');

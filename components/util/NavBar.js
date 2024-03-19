@@ -8,7 +8,6 @@ import { useSaveContext } from '../../utils/context/saveManager';
 
 export default function NavBar() {
   const { singleProjectRunning } = useSaveContext();
-  // console.log(singleProjectRunning);
 
   if (singleProjectRunning) {
     return (

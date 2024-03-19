@@ -336,7 +336,7 @@ export default function Checkpoint({
                   backgroundColor: 'transparent',
                   width: '75%',
                 }}
-                placeholder={`Segment ${index}`}
+                placeholder={`Segment ${index + 1}`}
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}
