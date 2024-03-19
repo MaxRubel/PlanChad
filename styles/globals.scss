@@ -366,3 +366,11 @@ body {
 .navBarHidden {
   display: none;
 }
+
+.modal-dialog {
+  width: 90%;
+}
+ .modal-content {
+  background-color: rgb(31, 31, 31, .9);
+  padding-bottom: 40px;
+}

@@ -6,10 +6,12 @@ import {
   AnimatePresence, Reorder, motion, LayoutGroup, useAnimationControls,
 } from 'framer-motion';
 import PropTypes from 'prop-types';
+import randomColor from 'randomcolor';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
 import DeleteProjectModal from './modals/DeleteProject';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
@@ -35,7 +37,7 @@ export default function MainProjectView({ projectId }) {
     theBigDelete,
     cancelSaveAnimation,
   } = useSaveContext();
-
+  const { deleteAllProjCollabs } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
 
@@ -122,6 +124,7 @@ export default function MainProjectView({ projectId }) {
       expanded: false,
       fresh: true,
       dragId: uniqid(),
+      lineColor: randomColor(),
     };
     addToSaveManager(emptyChckP, 'create', 'checkpoint');
     handleRefresh();
@@ -156,7 +159,14 @@ export default function MainProjectView({ projectId }) {
   };
   return (
     <>
-      <DeleteProjectModal handleDelete={() => { theBigDelete(project.projectId); }} closeModal={handleCloseModal} show={openDeleteModal} />
+      <DeleteProjectModal
+        handleDelete={() => {
+          deleteAllProjCollabs(project.projectId);
+          theBigDelete(project.projectId);
+        }}
+        closeModal={handleCloseModal}
+        show={openDeleteModal}
+      />
 
       <div className="bigDad">
         <div id="project-container">
@@ -247,8 +257,9 @@ export default function MainProjectView({ projectId }) {
             </button>
           </div>
           <div id="dnd-container">
-            <AnimatePresence animate={controls}>
+            <AnimatePresence initial={false}>
               <motion.div
+                key="checkpoints"
                 initial={false}
                 animate={controls}
                 exit={{ opacity: 0 }}
@@ -259,7 +270,7 @@ export default function MainProjectView({ projectId }) {
                   values={checkpoints}
                   onReorder={reOrderCheckPoints}
                   positiontransition="true"
-                  key={checkpoints}
+                  key="checkpointsReorder"
                 >
                   <div>
                     {checkpoints.map((checkP, index) => (
