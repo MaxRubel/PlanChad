@@ -153,7 +153,7 @@ export default function MainProjectView({ projectId }) {
       setHideCompletedTasksChild((preVal) => !preVal);
     }
   };
-
+  console.log(saveInput.project);
   const handleCloseModal = () => {
     setOpenDeleteModal((prevVal) => false);
   };
@@ -237,10 +237,9 @@ export default function MainProjectView({ projectId }) {
           <div
             id="add-checkpt-button"
             style={{
-              paddingLeft: '0%',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              padding: '1% 0%',
+              display: 'grid',
+              gridTemplateColumns: '15% 42.5% 42.5%',
             }}
           >
             <button
@@ -253,8 +252,10 @@ export default function MainProjectView({ projectId }) {
                 border: '1px solid rgb(100, 100, 100)',
               }}
             >
-              Add A Segment
+              Add A Phase
             </button>
+            <div />
+            <div className="verticalCenter" style={{ justifyContent: 'right', color: 'lightgrey', fontSize: '12px' }}>{saveInput.project.hideCompletedTasks && '(Completed Tasks are Hidden)'}</div>
           </div>
           <div id="dnd-container">
             <AnimatePresence initial={false}>

@@ -307,7 +307,7 @@ export default function CalendarPage() {
         tooltipDiv.className = 'tooltiptext';
         tooltipDiv.innerHTML = `
         <div>
-          <div>${thisSegment.name ? thisSegment.name : `Segment ${thisSegment.index + 1}`}</div>
+          <div>${thisSegment.name ? thisSegment.name : `Phase ${thisSegment.index + 1}`}</div>
           <div>${thisSegment.description}</div>
         </div>
         `;

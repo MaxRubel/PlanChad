@@ -4,7 +4,7 @@ import uniqid from 'uniqid';
 import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
-import { trashIcon } from '../public/icons';
+import { calendarIcon, trashIcon } from '../public/icons';
 import Task from './Task';
 import { useSaveContext } from '../utils/context/saveManager';
 import {
@@ -12,6 +12,8 @@ import {
   collapseToolTip,
   addTaskToolTip,
   deleteSegment,
+  expandTaskTooltip,
+  collapseToolTaskTip,
 } from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
@@ -32,6 +34,8 @@ export default function Checkpoint({
     deadline: '',
     index: '',
     fresh: true,
+    expandedCal: false,
+    expanded: true,
   });
 
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
@@ -39,12 +43,27 @@ export default function Checkpoint({
   const [tasks, setTasks] = useState([]);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [hasLoaded, setHasloaded] = useState(false);
 
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
       xmlns="http://www.w3.org/2000/svg"
       height="16px"
+      viewBox="0 0 320 512"
+    >
+      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
+      9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5
+      256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4
+      24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
+      />
+    </svg>
+  );
+  const downIconSm = (
+    <svg
+      className={formInput.expanded ? 'icon-up' : 'icon-down'}
+      xmlns="http://www.w3.org/2000/svg"
+      height="10px"
       viewBox="0 0 320 512"
     >
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
@@ -77,6 +96,7 @@ export default function Checkpoint({
     } else {
       setFormInput(checkP);
     }
+    setHasloaded((preVal) => true);
   }, [checkP, isDragging]);
 
   useEffect(() => { // send to save manager
@@ -94,7 +114,7 @@ export default function Checkpoint({
   }, [checkPrefresh]);
 
   useEffect(() => { // minimize
-    setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
+    if (hasLoaded) { setFormInput((prevVal) => ({ ...prevVal, expandedCal: false })); }
   }, [min]);
 
   useEffect(() => { // show progress bar animation
@@ -175,10 +195,19 @@ export default function Checkpoint({
   };
 
   const handleCollapse = () => {
+    console.log('running');
     if (formInput.expanded) {
       setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
     } else {
       setFormInput((prevVal) => ({ ...prevVal, expanded: true }));
+    }
+  };
+
+  const handleCollapseCal = () => {
+    if (formInput.expandedCal) {
+      setFormInput((prevVal) => ({ ...prevVal, expandedCal: false }));
+    } else {
+      setFormInput((prevVal) => ({ ...prevVal, expandedCal: true }));
     }
   };
 
@@ -224,6 +253,7 @@ export default function Checkpoint({
   const addTask = () => {
     dance();
     handleFresh();
+    setFormInput((preVal) => ({ ...preVal, expanded: true }));
     const emptyTask = {
       checkpointId: checkP.localId,
       projectId: checkP.projectId,
@@ -306,6 +336,29 @@ export default function Checkpoint({
                     {downIcon}
                   </button>
                 </OverlayTrigger>
+
+                <OverlayTrigger
+                  placement="top"
+                  overlay={formInput.expandedCal ? collapseToolTaskTip : expandTaskTooltip}
+                  trigger={['hover', 'focus']}
+                  delay={{ show: 750, hide: 0 }}
+                >
+                  <button
+                    type="button"
+                    onClick={handleCollapseCal}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '0px',
+                      textAlign: 'center',
+                      color: 'black',
+                      width: '35px',
+                      height: '35px',
+                    }}
+                  >
+                    {calendarIcon}
+                  </button>
+                </OverlayTrigger>
                 <OverlayTrigger placement="top" overlay={addTaskToolTip} delay={{ show: 750, hide: 0 }}>
                   <button
                     type="button"
@@ -315,7 +368,6 @@ export default function Checkpoint({
                       backgroundColor: 'transparent',
                       border: 'none',
                       padding: '0px',
-                      marginLeft: '10%',
                       textAlign: 'center',
                       color: 'black',
                       width: '35px',
@@ -336,7 +388,7 @@ export default function Checkpoint({
                   backgroundColor: 'transparent',
                   width: '75%',
                 }}
-                placeholder={`Segment ${index + 1}`}
+                placeholder={`Phase ${index + 1}`}
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}
@@ -374,136 +426,139 @@ export default function Checkpoint({
             </div>
           </div>
           {/* --------------card-body------------------------ */}
-          <Collapse in={formInput.expanded}>
-            <div id="whole-card">
-              <div
-                id="card-container"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '1% 0%',
-                }}
-              >
+          <Collapse in={formInput.expandedCal}>
+            <div>
+              <div id="whole-card">
                 <div
-                  id="row3"
-                  className="cardRow"
+                  id="card-container"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '1% 0%',
+                  }}
                 >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
-                      <label htmlFor={`budget${checkP.localId}`}>Start Date:</label>
+                  <div
+                    id="row3"
+                    className="cardRow"
+                  >
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                      <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
+                        <label htmlFor={`budget${checkP.localId}`}>Start Date:</label>
+                      </div>
+                      <div />
                     </div>
-                    <div />
+                    <div
+                      className="fullCenter"
+                      style={{ paddingRight: '20%' }}
+                    >
+                      <input
+                        id={`budget${checkP.localId}`}
+                        className="form-control"
+                        type="date"
+                        value={formInput.startDate}
+                        placeholder="$$$"
+                        onChange={handleChange}
+                        name="startDate"
+                        style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                      />
+                    </div>
                   </div>
                   <div
-                    className="fullCenter"
-                    style={{ paddingRight: '20%' }}
+                    id="row2"
+                    className="cardRow"
                   >
-                    <input
-                      id={`budget${checkP.localId}`}
-                      className="form-control"
-                      type="date"
-                      value={formInput.startDate}
-                      placeholder="$$$"
-                      onChange={handleChange}
-                      name="startDate"
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                    />
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+                      <div className="verticalCenter">
+                        <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
+                      </div>
+                      <div />
+                    </div>
+                    <div style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+                    }}
+                    >
+                      <input
+                        className="form-control"
+                        type="date"
+                        value={formInput.deadline}
+                        onChange={handleChange}
+                        name="deadline"
+                        id={`deadline${checkP.localId}`}
+                        style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div
-                  id="row2"
-                  className="cardRow"
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter">
-                      <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
-                    </div>
-                    <div />
-                  </div>
-                  <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
+                  id="description-field"
+                  className="fullCenter"
+                  style={{
+                    borderTop: '1px solid rgb(180, 180, 180)',
+                    padding: '1% 10%',
+                    paddingTop: '1%',
+                    paddingBottom: '16px',
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
-                  >
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={formInput.deadline}
-                      onChange={handleChange}
-                      name="deadline"
-                      id={`deadline${checkP.localId}`}
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                    />
+                >
+                  <div id="text-label" className="fullCenter">
+                    <label htmlFor={`description${checkP.localId}`} className="form-label" style={{ textAlign: 'center' }}>
+                      Description:
+                    </label>
                   </div>
-                </div>
 
-              </div>
-              <div
-                id="description-field"
-                className="fullCenter"
-                style={{
-                  borderTop: '1px solid rgb(180, 180, 180)',
-                  padding: '1% 10%',
-                  paddingTop: '1%',
-                  paddingBottom: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                <div id="text-label" className="fullCenter">
-                  <label htmlFor={`description${checkP.localId}`} className="form-label" style={{ textAlign: 'center' }}>
-                    Description:
-                  </label>
+                  <textarea
+                    className="form-control"
+                    placeholder="A description of your segment..."
+                    id={`description${checkP.localId}`}
+                    rows="3"
+                    value={formInput.description}
+                    onChange={handleChange}
+                    name="description"
+                    style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }}
+                    onPointerDownCapture={(e) => e.stopPropagation()}
+                  />
                 </div>
-
-                <textarea
-                  className="form-control"
-                  placeholder="A description of your segment..."
-                  id={`description${checkP.localId}`}
-                  rows="3"
-                  value={formInput.description}
-                  onChange={handleChange}
-                  name="description"
-                  style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none', minWidth: '250px' }}
-                  onPointerDownCapture={(e) => e.stopPropagation()}
-                />
               </div>
             </div>
           </Collapse>
         </div>
       </div>
       {/* ----------tasks------------------ */}
-      <div>
-        <AnimatePresence initial={false}>
-          <motion.div
-            initial={false}
-            animate={false}
-            exit={{ opacity: 0 }}
-          >
-            <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
-              {tasks.map((task, indexT) => (
-                <Reorder.Item
-                  key={task.localId}
-                  value={task}
-                  as="div"
-                  style={{ cursor: 'grab' }}
-                  onDragStart={handleDragStart}
-                >
-                  <Task
+      <Collapse in={formInput.expanded}>
+        <div>
+          <AnimatePresence initial={false}>
+            <motion.div
+              initial={false}
+              animate={false}
+              exit={{ opacity: 0 }}
+            >
+              <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
+                {tasks.map((task, indexT) => (
+                  <Reorder.Item
                     key={task.localId}
-                    task={task}
-                    min={min}
-                    handleRefresh={handleRefresh}
-                    indexT={indexT}
-                    refreshCheckP={refreshCheckP}
-                  />
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+                    value={task}
+                    as="div"
+                    style={{ cursor: 'grab' }}
+                    onDragStart={handleDragStart}
+                  >
+                    <Task
+                      key={task.localId}
+                      task={task}
+                      min={min}
+                      handleRefresh={handleRefresh}
+                      indexT={indexT}
+                      refreshCheckP={refreshCheckP}
+                    />
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </Collapse>
 
     </>
 
