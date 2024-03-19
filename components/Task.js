@@ -1,4 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import {
+  useState, useEffect, useRef, useCallback, useMemo,
+  memo,
+} from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -39,8 +42,8 @@ const initialState = {
   planning: '',
 };
 
-export default function Task({
-  task, min, refreshCheckP, indexT,
+function Task({
+  task, min, refreshCheckP, indexT, checkPHasLoaded,
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -61,41 +64,17 @@ export default function Task({
       />
     </svg>
   );
-  const downIcon2 = (
-    <svg
-      className={formInput.deetsExpanded ? 'icon-up' : 'icon-down'}
-      xmlns="http://www.w3.org/2000/svg"
-      height="8px"
-      viewBox="0 0 320 512"
-    >
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5
-      0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9
-      0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
-      />
-    </svg>
-  );
-
-  const magGlass = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="currentColor"
-      className="bi bi-search"
-      viewBox="0 0 16 16"
-    >
-      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85
-      3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
-      />
-    </svg>
-  );
+  console.log('rerender');
+  useEffect(() => {
+    if (checkPHasLoaded) {
+      setFormInput((preVal) => task);
+    }
+  }, [task, checkPHasLoaded]);
 
   useEffect(() => {
-    setFormInput((preVal) => task);
-  }, [task]);
-
-  useEffect(() => {
-    addToSaveManager(formInput, 'update', 'task');
+    if (checkPHasLoaded) {
+      addToSaveManager(formInput, 'update', 'task');
+    }
   }, [formInput]);
 
   const handleFresh = () => {
@@ -103,7 +82,7 @@ export default function Task({
   };
 
   useEffect(() => { // minimze task
-    if (formInput.expanded || formInput.deetsExpanded) {
+    if ((formInput.expanded || formInput.deetsExpanded) && checkPHasLoaded) {
       setFormInput((prevVal) => ({
         ...prevVal, expanded: false, deetsExpanded: false,
       }));
@@ -165,13 +144,13 @@ export default function Task({
     setOpenDeleteModal((prevVal) => false);
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = useCallback(() => {
     setOpenDeleteModal((preVal) => true);
-  };
+  }, []);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setOpenDeleteModal((prevVal) => false);
-  };
+  }, []);
 
   if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
     return (<div style={{ display: 'none' }} />);
@@ -179,7 +158,13 @@ export default function Task({
 
   return (
     <>
-      <DeleteTaskModal show={openDeleteModal} handleDelete={handleDelete} closeModal={handleCloseModal} />
+      {openDeleteModal && (
+        <DeleteTaskModal
+          show={openDeleteModal}
+          handleDelete={handleDelete}
+          closeModal={handleCloseModal}
+        />
+      )}
       <div className="task">
         {/* -------line-side------------- */}
 
@@ -518,4 +503,9 @@ Task.propTypes = {
   min: PropTypes.number.isRequired,
   refreshCheckP: PropTypes.func.isRequired,
   indexT: PropTypes.number.isRequired,
+  checkPHasLoaded: PropTypes.bool.isRequired,
 };
+
+const MemoizedTask = memo(Task);
+
+export default MemoizedTask;

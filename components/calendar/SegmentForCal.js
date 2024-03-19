@@ -102,7 +102,7 @@ export default function SegmentForCal({ checkP, closeModal }) {
                   backgroundColor: 'transparent',
                   width: '75%',
                 }}
-                placeholder={`Segment ${formInput.index + 1}`}
+                placeholder={`Phase ${formInput.index + 1}`}
                 value={formInput.name}
                 name="name"
                 onChange={handleChange}
