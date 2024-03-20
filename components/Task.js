@@ -232,7 +232,7 @@ function Task({
                 id="button-row"
                 className="verticalCenter"
                 style={{
-                  minWidth: '125px',
+                  minWidth: '115px',
                   alignItems: 'center',
                   display: 'flex',
                   justifyContent: 'space-between',
