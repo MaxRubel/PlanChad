@@ -50,7 +50,7 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
 
   useEffect(() => {
     if (projectToAssign === projectId) {
-      if (!saveInput.project.projectId) {
+      if (!saveInput?.project?.projectId) {
         const copy = [...allTasks];
         const thisProjectsTasks = copy.filter((item) => item.projectId === projectToAssign);
         setTasks((preVal) => thisProjectsTasks);

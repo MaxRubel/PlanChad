@@ -92,9 +92,6 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
             onChange={changeProject}
             style={{
               backgroundColor: 'rgb(225, 225, 225)',
-              // backgroundColor: 'rgb(31, 31, 31)',
-              // color: 'rgb(204,204,204)',
-              // border: '1px solid rgb(204,204,204, .3)',
             }}
           >
             {allProjects.map((project) => (

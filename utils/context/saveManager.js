@@ -30,8 +30,6 @@ export const SaveContextProvider = ({ children }) => {
     if (user && !projectsLoaded) {
       getUserProjects(user.uid)
         .then((data) => {
-          setAllProjects(data);
-          setProjectsLoaded((preVal) => true);
           const copy = [...data];
           const allTasksArr = [];
           for (let i = 0; i < copy.length; i++) {
@@ -42,6 +40,8 @@ export const SaveContextProvider = ({ children }) => {
               }
             }
           }
+          setAllProjects((preVal) => data);
+          setProjectsLoaded((preVal) => true);
           setAllTasks((preVal) => allTasksArr);
           setIsFetchingProjects((preVal) => false);
         });
@@ -114,6 +114,7 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const addToSaveManager = (input, action, type) => {
+    if (allProjects.length === 0) { return; }
     if (type === 'project') {
       if (action === 'create') {
         const copy = [...allProjects];
@@ -204,6 +205,7 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const sendToServer = () => {
+    if (allProjects.length === 0) { return; }
     setIsSaving((preVal) => preVal + 1);
     const { checkpoints, tasks, project } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;

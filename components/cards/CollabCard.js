@@ -57,6 +57,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   };
 
   const handleDelete = () => {
+    console.log('delete');
     const projCollabJoinsCopy = [...projCollabJoins];
     const taskCollabJoinsCopy = [...taskCollabJoins];
 

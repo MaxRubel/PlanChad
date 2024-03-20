@@ -1,6 +1,5 @@
 import {
-  useState, useEffect, useRef, useCallback, useMemo,
-  memo,
+  useState, useEffect, useRef, useCallback, memo,
 } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import { Checkbox } from '@mui/material';
@@ -212,7 +211,6 @@ function Task({
           />
           <div id="bottom-div" />
         </div>
-
         {/* -----------card---------------------- */}
         <div
           className="card"
@@ -370,7 +368,6 @@ function Task({
                   {trashIcon}
                 </button>
               </OverlayTrigger>
-
             </div>
           </div>
           {/* --------------card-body------------------------ */}
@@ -438,7 +435,6 @@ function Task({
                       />
                     </div>
                   </div>
-
                 </div>
                 <div
                   id="description-field"
@@ -472,7 +468,6 @@ function Task({
                     }}
                     onPointerDownCapture={(e) => e.stopPropagation()}
                   />
-                  {/* </motion.div> */}
                 </div>
 
               </div>

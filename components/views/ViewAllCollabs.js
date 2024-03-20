@@ -33,10 +33,8 @@ export default function ViewAllCollabs({ projectToAssign }) {
         boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)',
         opacity: '.9',
         width: '100%',
-
         height: '45vh',
         margin: '0px !important',
-        // boxShadow: '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)',
       }}
     >
       <div
@@ -45,7 +43,6 @@ export default function ViewAllCollabs({ projectToAssign }) {
           fontSize: '22px',
           textAlign: 'center',
           fontWeight: '500',
-          // borderBottom: '1px solid rgb(84, 84, 84)',
         }}
       >
         All Collaborators
@@ -60,7 +57,6 @@ export default function ViewAllCollabs({ projectToAssign }) {
           borderRadius: '5px',
           overflow: 'auto',
           margin: '1.75%',
-          // paddingTop: '1%',
         }}
       >
         <div className="card" style={{ border: 'none' }}>
@@ -78,7 +74,7 @@ export default function ViewAllCollabs({ projectToAssign }) {
             ) : (
               collabs.map((collab) => (
                 <CollabCard
-                  key={collab.collabId}
+                  key={collab.localId}
                   collab={collab}
                   projectToAssign={projectToAssign}
                 />
