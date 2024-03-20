@@ -120,6 +120,8 @@ export default function ProjectCard({
               fontWeight: '600',
               color: formInput.expanded ? '' : 'lightgray',
               transition: 'all ease 1s',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
             onChange={handleChange}
             autoComplete="off"
