@@ -2,9 +2,7 @@ import { Collapse, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { deleteCollab } from '../../api/collabs';
-import {
-  createNewProjCollab, deleteProjCollab, updateProjCollab,
-} from '../../api/projCollab';
+import { createNewProjCollab, deleteProjCollab, updateProjCollab } from '../../api/projCollab';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { useAuth } from '../../utils/context/authContext';
 import {
@@ -109,7 +107,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
       }
     }
     if (!isAlreadyIn) {
-      createNewProjCollab(payload).then(({ name }) => { // JOIN TABLE
+      createNewProjCollab(payload).then(({ name }) => { // Join Table
         const payload2 = { projCollabId: name };
         updateProjCollab(payload2);
         addToCollabManager({ ...payload, ...payload2 }, 'projCollabJoins', 'create');
@@ -193,7 +191,6 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
               </OverlayTrigger>
             </div>
           )}
-
           <Collapse in={expanded}>
             <div>
               <div className="grid3">

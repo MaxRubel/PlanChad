@@ -18,6 +18,7 @@ export default function ProjectCard({
   project, min, progressIsShowing, tellProjectIfProgressShowing, hideCompletedTasksChild,
 }) {
   const [formInput, setFormInput] = useState(initialState);
+  const [hasMounted, setHasMounted] = useState(false);
   const { addToSaveManager } = useSaveContext();
   const downIcon = (
     <svg
@@ -36,10 +37,15 @@ export default function ProjectCard({
   );
 
   useEffect(() => {
+    let timeout;
     if (project?.projectId) {
       setFormInput(project);
       tellProjectIfProgressShowing(project.progressIsShowing);
+      timeout = setTimeout(() => { setHasMounted((preVal) => true); }, 1000);
     }
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [project]);
 
   useEffect(() => {
@@ -122,8 +128,9 @@ export default function ProjectCard({
           />
         </div>
       </div>
+
       {/* --------------card-body------------------------ */}
-      <Collapse in={formInput.expanded}>
+      <Collapse in={formInput.expanded} style={{ transition: hasMounted ? '' : 'none' }}>
         <div id="whole-card">
           <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
             <div

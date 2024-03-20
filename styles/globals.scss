@@ -35,8 +35,7 @@ body {
 
 #__next {
   min-height: 100vh;
-  background: black
-    // background: linear-gradient(90deg, rgba(0, 20, 28, 1) 0%, rgba(0, 0, 0, 1) 50%, rgb(23, 10, 0) 100%);
+  background: black // background: linear-gradient(90deg, rgba(0, 20, 28, 1) 0%, rgba(0, 0, 0, 1) 50%, rgb(23, 10, 0) 100%);
     // background: rgb(0, 0, 0);
     // background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgb(17, 11, 11) 100%);
 }
@@ -193,11 +192,11 @@ body {
   grid-template-columns: 10% 8% 72% 10%;
   min-width: 500px;
   // max-height: 400px;
-  transition: all 1s ease;
+  // transition: all 1s ease;
 }
 
 .taskDeetsExpand {
-  transition: all 1s ease;
+  // transition: all 1s ease;
   grid-template-columns: 10% 40% 40% 10%;
 }
 
@@ -271,6 +270,11 @@ body {
   // background-color: #23a6d5
 }
 
+tr:hover {
+  transition: all .5s ease;
+  background-color: #00b5d1ae;
+  /* Change this color to your desired hover color */
+}
 
 .card-header.\32 {
   position: relative;
@@ -355,8 +359,8 @@ body {
 }
 
 .modal-content {
-  background-color: #1f2226;
   color: white;
+  background-color: rgb(31, 31, 31, .9);
 }
 
 .navBarShowing {
@@ -369,8 +373,4 @@ body {
 
 .modal-dialog {
   width: 90%;
-}
- .modal-content {
-  background-color: rgb(31, 31, 31, .9);
-  padding-bottom: 40px;
 }

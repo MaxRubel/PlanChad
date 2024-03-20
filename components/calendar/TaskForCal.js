@@ -220,7 +220,6 @@ export default function TaskForCal({ task, min, closeModal }) {
                   />
                 </div>
               </div>
-
             </div>
             <div
               id="description-field"
@@ -267,15 +266,3 @@ export default function TaskForCal({ task, min, closeModal }) {
     </>
   );
 }
-
-// TaskForCal.propTypes = {
-//   task: PropTypes.shape({
-//     index: PropTypes.number.isRequired,
-//     localId: PropTypes.string.isRequired,
-//     progressIsShowing: PropTypes.oneOfType([
-//       PropTypes.bool,
-//       PropTypes.oneOf([undefined]),
-//     ]),
-//   }).isRequired,
-//   min: PropTypes.number.isRequired,
-// };

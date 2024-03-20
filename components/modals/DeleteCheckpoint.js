@@ -7,15 +7,15 @@ export default function DeleteCheckpointModal({ show, closeModal, handleDelete }
     <>
       <Modal show={show} onHide={closeModal}>
         <Modal.Header>
-          <Modal.Title>Delete Segment</Modal.Title>
+          <Modal.Title>Delete Phase</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete this Segment?  This action cannot be undone.</Modal.Body>
+        <Modal.Body>Are you sure you want to delete this Phase?  This action cannot be undone.</Modal.Body>
         <Modal.Footer>
           <Button
             variant="danger"
             onClick={() => { handleDelete(); }}
           >
-            Delete This Segment
+            Delete This Phase
           </Button>
           <Button variant="dark" onClick={closeModal}>
             Cancel

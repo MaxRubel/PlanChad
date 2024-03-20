@@ -27,7 +27,7 @@ export default function NewProjectForm() {
       client: '',
       budget: '',
       description: '',
-      expanded: true,
+      expanded: false,
       checkpoints: null,
       tasks: null,
       progressIsShowing: false,

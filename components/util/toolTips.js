@@ -2,13 +2,13 @@ import { Tooltip } from 'react-bootstrap';
 
 export const expandTooltip = (
   <Tooltip id="expandTooltip">
-    Expand This Segment
+    View Tasks
   </Tooltip>
 );
 
 export const collapseToolTip = (
   <Tooltip id="collapseToolTip">
-    Collapse This Segment
+    Hide Tasks
   </Tooltip>
 );
 
@@ -37,7 +37,7 @@ export const viewTaskDeetsToolTip = (
 );
 export const viewTaskDeetsToolTipCollapse = (
   <Tooltip id="viewTaskDeetsToolTip">
-    Collapse Planning
+    Hide Planning
   </Tooltip>
 );
 
