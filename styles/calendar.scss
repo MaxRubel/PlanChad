@@ -36,15 +36,14 @@
   border-left: 1px solid rgb(84, 84, 84);
 }
 
-.segment-container{
-padding-top: 2px;
-display: grid;
-grid-template-rows: repeat(3, 8px);
-gap: 2px
-
+.segment-container {
+  padding-top: 2px;
+  display: grid;
+  grid-template-rows: repeat(3, 8px);
+  gap: 2px
 }
 
-.number-header{
+.number-header {
   display: grid;
   padding: 2% 10%;
   grid-template-columns: 1fr 1fr;
@@ -172,8 +171,8 @@ gap: 2px
   display: inline-block;
   height: 7px;
   cursor: pointer
-
 }
+
 .segment-line .tooltiptext {
   visibility: hidden;
   width: 120px;
@@ -181,7 +180,7 @@ gap: 2px
   color: white;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
+  padding: 5px 5px;
   position: absolute;
   z-index: 1;
   bottom: 125%;
@@ -191,6 +190,7 @@ gap: 2px
   transition: opacity 2s ease-in;
   font-size: 12px;
 }
+
 .segment-line:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
@@ -206,17 +206,18 @@ gap: 2px
   cursor: pointer;
   color: black;
   font-size: 12px;
-
-
+  white-space: nowrap;
 }
+
+
 .task-line .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  // width: 120px;
   background-color: black;
   color: white;
   text-align: center;
   border-radius: 6px;
-  padding: 5px 0;
+  padding: 5px 5px;
   position: absolute;
   z-index: 1;
   bottom: 125%;
@@ -226,6 +227,7 @@ gap: 2px
   opacity: 0;
   transition: opacity 2s ease-in;
 }
+
 .task-line:hover .tooltiptext {
   visibility: visible;
   opacity: 1;

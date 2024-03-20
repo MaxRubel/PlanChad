@@ -179,13 +179,20 @@ export default function CalendarPage() {
       const thisDay = thisBoxArray(box);
 
       const thisTask = thisDay.find((item) => item.localId === task.localId);
+      const thisTaskCopy = { ...thisTask };
       if (!thisTask) return;
-      if (thisTask.heightIndex < 5) {
-        lineDiv.style.backgroundColor = thisTask.lineColor;
-        lineDiv.setAttribute('id', `openTask--${thisTask.localId}`);
+      if (thisTaskCopy.heightIndex < 5) {
+        lineDiv.style.backgroundColor = thisTaskCopy.lineColor;
+        lineDiv.setAttribute('id', `openTask--${thisTaskCopy.localId}`);
         lineDiv.className = 'task-line';
-        lineDiv.style.gridRow = `${String(thisTask.heightIndex + 1)}`;
-        lineDiv.innerText = `${thisTask.name ? thisTask.name : `Task: ${thisTask.index + 1}`}`;
+        lineDiv.style.gridRow = `${String(thisTaskCopy.heightIndex + 1)}`;
+        if (thisTaskCopy.name.length > 14) {
+          const shortenedName = `${thisTaskCopy.name.substring(0, 14)}...`;
+          lineDiv.innerText = `${thisTask.name ? shortenedName : `Task: ${thisTask.index + 1}`}`;
+        } else {
+          lineDiv.innerText = `${thisTask.name ? thisTask.name : `Task: ${thisTask.index + 1}`}`;
+        }
+
         taskContainer.appendChild(lineDiv);
         const tooltipDiv = document.createElement('div');
         tooltipDiv.className = 'tooltiptext';

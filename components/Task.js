@@ -346,8 +346,8 @@ function Task({
               >
                 <button
                   type="button"
-                  className="clearButton verticalCenter"
-                  style={{ color: 'black' }}
+                  className="verticalCenter"
+                  style={{ color: 'black', backgroundColor: 'transparent', border: 'none' }}
                   onClick={handleExpandCollabs}
                 >
                   {peopleIcon}
