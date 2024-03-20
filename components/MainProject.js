@@ -20,9 +20,8 @@ export default function MainProjectView({ projectId }) {
   const [progressIsShowing, setProgressIsShowing] = useState(false);
   const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const controls = useAnimationControls();
-  controls.stop();
+  const [hasMounted, setHasMounted] = useState(false);
+
   const {
     addToSaveManager,
     saveInput,
@@ -41,15 +40,18 @@ export default function MainProjectView({ projectId }) {
   const { deleteAllProjCollabs } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
-
+  let timeout;
   useEffect(() => {
+    setHasMounted((preVal) => false);
     const copy = [...saveInput.checkpoints];
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
+    timeout = setTimeout(() => {
+      setHasMounted((preVal) => true);
+    }, 1000);
   }, [refresh]);
 
   useEffect(() => {
-    setIsMounted((preVal) => false);
     if (projectId && projectsLoaded) {
       cancelSaveAnimation();
       if (!singleProjectRunning) {
@@ -66,8 +68,8 @@ export default function MainProjectView({ projectId }) {
         const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
         setCheckpoints((preVal) => checkpointsSorted);
       }
-      setIsMounted((preVal) => true);
     }
+    return () => { clearTimeout(timeout); };
   }, [projectId, projectsLoaded]);
 
   const tellProjectIfProgressShowing = (value) => {
@@ -255,7 +257,7 @@ export default function MainProjectView({ projectId }) {
               Add A Phase
             </button>
             <div />
-            <div className="verticalCenter" style={{ justifyContent: 'right', color: 'lightgrey', fontSize: '12px' }}>{saveInput.project.hideCompletedTasks && '(Completed Tasks are Hidden)'}</div>
+            <div className="verticalCenter" style={{ justifyContent: 'right', color: 'lightgrey', fontSize: '12px' }}>{saveInput?.project?.hideCompletedTasks && '(Completed Tasks are Hidden)'}</div>
           </div>
           <div id="dnd-container">
             <AnimatePresence initial={false}>
@@ -281,7 +283,7 @@ export default function MainProjectView({ projectId }) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 1 }}
-                        transition={{ duration: 0.4 }}
+                        transition={{ duration: hasMounted ? 0.4 : 0 }}
                       >
                         <Checkpoint
                           key={checkP.localId}

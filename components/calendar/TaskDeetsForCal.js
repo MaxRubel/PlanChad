@@ -1,7 +1,4 @@
-import { Collapse } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import ViewTaskCollabsInProj from '../views/ViewTaskCollabsInProj';
-import ViewTaskCollabsForCal from './ViewTaskCollabsForCal';
 
 export default function TaskDeetsForCalendar({
   formInput, handleChange, taskId,

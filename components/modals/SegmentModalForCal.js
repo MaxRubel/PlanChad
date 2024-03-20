@@ -13,7 +13,6 @@ export default function SegmentModalForCal({ show, segment, closeModal }) {
         aria-labelledby="contained-modal-title-vcenter"
       >
         <Modal.Header style={{
-          // backgroundColor: 'black',
           height: '40px',
           display: 'flex',
           justifyContent: 'right',

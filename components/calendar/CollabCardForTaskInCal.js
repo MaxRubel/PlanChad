@@ -45,7 +45,6 @@ export default function CollabCardForTaskInCal({ taskId, collab, formInput }) {
           padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr',
         }}
       >
-
         <div id="col1">
           <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
             <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>

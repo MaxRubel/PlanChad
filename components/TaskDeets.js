@@ -9,6 +9,7 @@ export default function TaskDeets({
     <>
       <Collapse
         in={formInput.deetsExpanded}
+        style={{ transition: 'none' }}
         onExited={() => { document.getElementById(`taskDeets${formInput.localId}`).style.display = 'none'; }}
         onEnter={() => { document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid'; }}
       >

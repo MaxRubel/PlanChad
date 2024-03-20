@@ -1,9 +1,7 @@
-import {
-  useState, useEffect, useMemo, useCallback,
-} from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
-import { AnimatePresence, Reorder, motion } from 'framer-motion';
+import { Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import { calendarIcon, trashIcon } from '../public/icons';
@@ -46,26 +44,14 @@ export default function Checkpoint({
   const [checkPrefresh, setCheckPrefresh] = useState(0);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [hasLoaded, setHasloaded] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  const [pauseReorder, setPauseReorder] = useState(true);
 
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
       xmlns="http://www.w3.org/2000/svg"
       height="16px"
-      viewBox="0 0 320 512"
-    >
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
-      9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5
-      256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4
-      24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
-      />
-    </svg>
-  );
-  const downIconSm = (
-    <svg
-      className={formInput.expanded ? 'icon-up' : 'icon-down'}
-      xmlns="http://www.w3.org/2000/svg"
-      height="10px"
       viewBox="0 0 320 512"
     >
       <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
@@ -88,7 +74,16 @@ export default function Checkpoint({
     </svg>
   );
 
-  useEffect(() => { // grab and sort the tasks from save manager
+  let timeout;
+
+  const pauseAnimations = () => {
+    setPauseReorder((preVal) => false);
+    timeout = setInterval(() => {
+      setPauseReorder((preVal) => true);
+    }, 1000);
+  };
+
+  useEffect(() => {
     if (!isDragging) {
       const copy = [...saveInput.tasks];
       const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
@@ -99,9 +94,15 @@ export default function Checkpoint({
       setFormInput(checkP);
     }
     setHasloaded((preVal) => true);
+    timeout = setInterval(() => {
+      setHasMounted((preVal) => true);
+    }, 1000);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [checkP, isDragging]);
 
-  useEffect(() => { // send to save manager
+  useEffect(() => { // send to save context
     addToSaveManager(formInput, 'update', 'checkpoint');
   }, [formInput]);
 
@@ -109,14 +110,14 @@ export default function Checkpoint({
     setFormInput((prevVal) => ({ ...prevVal, index }));
   }, [index]);
 
-  useEffect(() => { // refresh tasks from save manager
+  useEffect(() => {
     const copy = [...saveInput.tasks];
     const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
     setTasks((preVal) => theseTasks);
   }, [checkPrefresh]);
 
   useEffect(() => { // minimize
-    if (hasLoaded) { setFormInput((prevVal) => ({ ...prevVal, expandedCal: false })); }
+    if (hasLoaded) { setFormInput((prevVal) => ({ ...prevVal, expandedCal: false, expanded: false })); }
   }, [min]);
 
   useEffect(() => { // show progress bar animation
@@ -152,7 +153,7 @@ export default function Checkpoint({
     };
   }, [progressIsShowing]);
 
-  useEffect(() => { // show progress bar on change of task
+  useEffect(() => { // show progress bar
     if (progressIsShowing) {
       const tasksCopy = [...saveInput.tasks];
       const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
@@ -197,6 +198,7 @@ export default function Checkpoint({
   };
 
   const handleCollapse = () => {
+    pauseAnimations();
     if (formInput.expanded) {
       setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
     } else {
@@ -205,6 +207,7 @@ export default function Checkpoint({
   };
 
   const handleCollapseCal = () => {
+    pauseAnimations();
     if (formInput.expandedCal) {
       setFormInput((prevVal) => ({ ...prevVal, expandedCal: false }));
     } else {
@@ -253,6 +256,7 @@ export default function Checkpoint({
 
   const addTask = () => {
     dance();
+    pauseAnimations();
     handleFresh();
     setFormInput((preVal) => ({ ...preVal, expanded: true }));
     const emptyTask = {
@@ -347,7 +351,6 @@ export default function Checkpoint({
                     {downIcon}
                   </button>
                 </OverlayTrigger>
-
                 <OverlayTrigger
                   placement="top"
                   overlay={formInput.expandedCal ? collapseToolTaskTip : expandTaskTooltip}
@@ -437,7 +440,10 @@ export default function Checkpoint({
             </div>
           </div>
           {/* --------------card-body------------------------ */}
-          <Collapse in={formInput.expandedCal}>
+          <Collapse
+            in={formInput.expandedCal}
+            style={{ transition: hasMounted ? '' : 'none' }}
+          >
             <div>
               <div id="whole-card">
                 <div
@@ -537,35 +543,34 @@ export default function Checkpoint({
         </div>
       </div>
       {/* ----------tasks------------------ */}
-      <Collapse in={formInput.expanded}>
+      <Collapse in={formInput.expanded} style={{ transition: hasMounted ? '' : 'none' }}>
         <div>
-          <AnimatePresence>
-            <motion.div>
-              <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div" layoutId={null}>
-                {tasks.map((task, indexT) => (
-                  <Reorder.Item
+          <motion.div>
+            <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div" layoutId={null}>
+              {tasks.map((task, indexT) => (
+                <Reorder.Item
+                  key={task.localId}
+                  value={task}
+                  as={motion.div}
+                  style={{ cursor: 'grab' }}
+                  onDragStart={handleDragStart}
+                  layoutId={task.localId}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: pauseReorder ? 0.4 : 0 }}
+                >
+                  <MemoizedTask
+                    {...memoizedProps}
                     key={task.localId}
-                    value={task}
-                    as={motion.div}
-                    style={{ cursor: 'grab' }}
-                    onDragStart={handleDragStart}
-                    layoutId={task.localId}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <MemoizedTask
-                      {...memoizedProps}
-                      key={task.localId}
-                      task={task}
-                      indexT={indexT}
-                    />
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
-            </motion.div>
-          </AnimatePresence>
+                    task={task}
+                    indexT={indexT}
+                    pauseAnimations={pauseAnimations}
+                  />
+                </Reorder.Item>
+              ))}
+            </Reorder.Group>
+          </motion.div>
         </div>
       </Collapse>
     </>

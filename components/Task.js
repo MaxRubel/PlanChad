@@ -43,12 +43,13 @@ const initialState = {
 };
 
 function Task({
-  task, min, refreshCheckP, indexT, checkPHasLoaded,
+  task, min, refreshCheckP, indexT, checkPHasLoaded, pauseAnimations,
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
+  const [hasMounted, setHasMounted] = useState(false);
   const userExpandedChoice = useRef();
 
   const downIcon = (
@@ -64,11 +65,16 @@ function Task({
       />
     </svg>
   );
-  // console.log('rerender');
+
   useEffect(() => {
+    let timeout;
     if (checkPHasLoaded) {
       setFormInput((preVal) => task);
+      timeout = setTimeout(() => {
+        setHasMounted((preVal) => true);
+      }, 1000);
     }
+    return () => { clearTimeout(timeout); };
   }, [task, checkPHasLoaded]);
 
   useEffect(() => {
@@ -131,6 +137,7 @@ function Task({
   };
 
   const handleDelete = () => {
+    // pauseAnimations();
     const joinsCopy = [...taskCollabJoins];
     const filteredCopy = joinsCopy.filter((item) => item.taskId === task.localId);
     const promiseArray = filteredCopy.map((item) => deleteTaskCollab(item.taskCollabId));
@@ -374,7 +381,7 @@ function Task({
             </div>
           </div>
           {/* --------------card-body------------------------ */}
-          <Collapse in={formInput.expanded}>
+          <Collapse in={formInput.expanded} style={{ transition: hasMounted ? '' : 'none' }}>
             <div>
               <div id="whole-card">
                 <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
@@ -504,6 +511,7 @@ Task.propTypes = {
   refreshCheckP: PropTypes.func.isRequired,
   indexT: PropTypes.number.isRequired,
   checkPHasLoaded: PropTypes.bool.isRequired,
+  pauseAnimations: PropTypes.func.isRequired,
 };
 
 const MemoizedTask = memo(Task);

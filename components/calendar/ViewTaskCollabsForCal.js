@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import CollabCardForTaskInProj from '../cards/CollabCardForTaskInProj';
 import { useCollabContext } from '../../utils/context/collabContext';
 import CollabCardForTaskInCal from './CollabCardForTaskInCal';
 
