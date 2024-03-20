@@ -117,7 +117,10 @@ export default function Checkpoint({
   }, [checkPrefresh]);
 
   useEffect(() => { // minimize
-    if (hasLoaded) { setFormInput((prevVal) => ({ ...prevVal, expandedCal: false, expanded: false })); }
+    if (hasLoaded) {
+      pauseAnimations();
+      setFormInput((prevVal) => ({ ...prevVal, expandedCal: false, expanded: false }));
+    }
   }, [min]);
 
   useEffect(() => { // show progress bar animation

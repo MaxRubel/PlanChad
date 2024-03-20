@@ -18,6 +18,7 @@ import {
   hideCollabsToolTips,
   viewCollabsToolTips,
   viewTaskDeetsToolTip,
+  viewTaskDeetsToolTipCollapse,
 } from './util/toolTips';
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
@@ -137,7 +138,6 @@ function Task({
   };
 
   const handleDelete = () => {
-    // pauseAnimations();
     const joinsCopy = [...taskCollabJoins];
     const filteredCopy = joinsCopy.filter((item) => item.taskId === task.localId);
     const promiseArray = filteredCopy.map((item) => deleteTaskCollab(item.taskCollabId));
@@ -218,7 +218,6 @@ function Task({
           className="card"
           style={{
             margin: '3px 0px',
-            // border: '4px solid rgb(251, 157, 80, .0)',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
             transition: '1.5s all ease',
             minWidth: '516px',
@@ -228,7 +227,6 @@ function Task({
             className="card-header 2"
             style={{
               minWidth: '516px',
-              // backgroundColor: 'red',
               alignContent: 'center',
               height: '53px',
               border: !formInput.expanded ? 'none' : '',
@@ -254,7 +252,7 @@ function Task({
                   <button
                     type="button"
                     onClick={handleCollapse}
-                    className="verticalCenter"
+                    className="fullCenter"
                     style={{
                       backgroundColor: 'transparent',
                       border: 'none',
@@ -265,21 +263,20 @@ function Task({
                       height: '35px',
                     }}
                   >
-                    {downIcon}&nbsp;&nbsp;{calendarIcon}
+                    {calendarIcon}
                   </button>
                 </OverlayTrigger>
                 <OverlayTrigger
                   placement="top"
-                  overlay={viewTaskDeetsToolTip}
+                  overlay={formInput.deetsExpanded ? viewTaskDeetsToolTipCollapse : viewTaskDeetsToolTip}
                   trigger={['hover', 'focus']}
                   delay={{ show: 750, hide: 0 }}
                 >
                   <button
                     type="button"
                     onClick={handleCollapse2}
-                    className="verticalCenter"
+                    className="fullCenter"
                     style={{
-                      marginLeft: '5px',
                       backgroundColor: 'transparent',
                       border: 'none',
                       padding: '0px',
@@ -299,9 +296,6 @@ function Task({
                   trigger={['hover', 'focus']}
                   delay={{ show: 750, hide: 0 }}
                 >
-                  {/* <div className="form-check">
-                    <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                  </div> */}
                   <Checkbox
                     id={`task-completed${task.localId}`}
                     checked={formInput.status === 'closed'}
@@ -312,7 +306,6 @@ function Task({
                       '& .MuiSvgIcon-root': {
                         fontSize: 23,
                         color: 'black',
-                        // strokeWidth: '.00000',
                       },
                     }}
                   />
