@@ -64,7 +64,7 @@ function Task({
       />
     </svg>
   );
-  console.log('rerender');
+  // console.log('rerender');
   useEffect(() => {
     if (checkPHasLoaded) {
       setFormInput((preVal) => task);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Nav } from 'react-bootstrap';
+import { useRouter } from 'next/router';
 import { useAuth } from '../../utils/context/authContext';
 import { useSaveContext } from '../../utils/context/saveManager';
 
@@ -8,6 +9,7 @@ export default function ProjectsTable() {
   const [projectsArray, setProjectsArray] = useState([]);
   const { user } = useAuth();
   const { allProjects } = useSaveContext();
+  const router = useRouter();
 
   useEffect(() => {
     setProjectsArray((preVal) => allProjects);
@@ -43,13 +45,15 @@ export default function ProjectsTable() {
       </thead>
       <tbody>
         {projectsArray.map((project) => (
-          <tr key={project.projectId} style={{ border: '1px solid black' }}>
-            <td style={{ paddingLeft: '1.5%', minWidth: '200px' }}>
-              <Link passHref href={`/project/plan/${project.projectId}`}>
-                <Nav.Link>
-                  {project.name}
-                </Nav.Link>
-              </Link>
+          <tr
+            key={project.projectId}
+            style={{ border: '1px solid black', cursor: 'pointer' }}
+            onClick={
+            () => { router.push(`/project/plan/${project.projectId}`); }
+          }
+          >
+            <td style={{ paddingLeft: '1.5%', minWidth: '300px' }}>
+              {project.name}
             </td>
             <td style={{ paddingLeft: '1.5%' }}>
               {project.client}
