@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Nav } from 'react-bootstrap';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../utils/context/authContext';
 import { useSaveContext } from '../../utils/context/saveManager';
@@ -49,8 +47,8 @@ export default function ProjectsTable() {
             key={project.projectId}
             style={{ border: '1px solid black', cursor: 'pointer' }}
             onClick={
-            () => { router.push(`/project/plan/${project.projectId}`); }
-          }
+              () => { router.push(`/project/plan/${project.projectId}`); }
+            }
           >
             <td style={{ paddingLeft: '1.5%', minWidth: '300px' }}>
               {project.name}

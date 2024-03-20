@@ -15,7 +15,6 @@ export default function TaskDeets({
       >
         <div>
           <div id={`taskDeets${formInput.localId}`} style={{ display: 'none' }} className={formInput.collabsExpanded ? 'taskDeetsExpand' : 'taskDeets'}>
-
             <div id="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
               <div id="empty" />
               <div

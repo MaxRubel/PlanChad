@@ -76,7 +76,6 @@ export default function ProjectCard({
     <div
       className="card text-bg-info mb-3"
       style={{
-        // boxShadow: formInput.expanded ? '0 0 10px 5px rgba(255, 255, 255, 0.2), 0 0 40px 20px rgba(255, 255, 255, 0.1), inset 0 0 20px 0px rgba(255, 255, 255, 0.5)' : 'none',
         border: formInput.expanded ? '' : 'none',
         opacity: '.9',
         width: '100%',
@@ -92,7 +91,6 @@ export default function ProjectCard({
           backgroundColor: formInput.expanded ? '' : '#1f2226',
           border: formInput.expanded ? '' : 'none',
           transition: 'all ease 1s',
-          // boxShadow: formInput.expanded ? '' : 'none',
         }}
       >
         <Button
@@ -157,7 +155,6 @@ export default function ProjectCard({
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
                     border: 'none',
-                    // border: '1px solid lightgrey',
                   }}
                 />
               </div>
@@ -186,7 +183,6 @@ export default function ProjectCard({
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
                     border: 'none',
-                    // border: '1px solid lightgrey'
                   }}
                 />
               </div>
@@ -216,7 +212,6 @@ export default function ProjectCard({
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
                     border: 'none',
-                    // border: '1px solid lightgrey',
                   }}
                 />
               </div>
@@ -246,7 +241,6 @@ export default function ProjectCard({
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
                     border: 'none',
-                    //  border: '1px solid lightgrey'
                   }}
                 />
               </div>

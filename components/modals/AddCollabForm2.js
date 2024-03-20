@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
+import uniqid from 'uniqid';
 import { useAuth } from '../../utils/context/authContext';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { createNewCollab, updateCollab } from '../../api/collabs';
@@ -40,12 +41,19 @@ export default function AddCollabForm2(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (updateCollaborator) { // update collaborator
-      const payload = { ...formInput, collabId: updateCollaborator.collabId };
+      const payload = {
+        ...formInput,
+        collabId: updateCollaborator.collabId,
+      };
       updateCollab(payload);
       setForminput(initialState);
       addToCollabManager(payload, 'allCollabs', 'update');
     } else { // create collaborator
-      const payload = { ...formInput, userId: user.uid };
+      const payload = {
+        ...formInput,
+        userId: user.uid,
+        localId: uniqid(),
+      };
       createNewCollab(payload).then(({ name }) => {
         updateCollab({ collabId: name });
         setAddtoProj((prevVal) => false);

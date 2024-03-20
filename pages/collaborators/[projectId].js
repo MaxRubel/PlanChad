@@ -16,12 +16,24 @@ export default function ManageCollaboratorsPage() {
   const [projectToAssign, setProjectToAssign] = useState('');
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
-  const { sendToServer, cancelSaveAnimation } = useSaveContext();
+  const {
+    sendToServer,
+    cancelSaveAnimation,
+    projectsLoaded,
+    singleProjectRunning,
+    loadProject,
+    allProjects,
+  } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
-
   useEffect(() => {
     sendToServer();
   }, []);
+
+  useEffect(() => {
+    if (!singleProjectRunning && projectsLoaded) {
+      loadProject(projectId);
+    }
+  }, [projectsLoaded, allProjects]);
 
   useEffect(() => {
     if (updateCollaborator) {

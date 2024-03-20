@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
-import {
-  AnimatePresence, Reorder, motion, LayoutGroup, useAnimationControls,
-} from 'framer-motion';
+import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import ProjectCard from './ProjectCard';

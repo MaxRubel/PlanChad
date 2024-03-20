@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { Modal } from 'react-bootstrap';
-import TaskForCal from '../calendar/TaskForCal';
 import { closeIcon } from '../../public/icons';
 import SegmentForCal from '../calendar/SegmentForCal';
 
