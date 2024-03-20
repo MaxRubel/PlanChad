@@ -75,7 +75,6 @@ body {
 }
 
 .card.text-bg-info.mb-3 {
-  background-color: aqua;
   margin-bottom: 0px !important;
 }
 
@@ -149,8 +148,6 @@ body {
 #project-top-bar {
   color: white;
   border-bottom: 1px solid rgb(84, 84, 84);
-  // margin-bottom: 1%;
-  // margin: 1%;
   display: flex;
   gap: 7%
 }
@@ -158,13 +155,13 @@ body {
 .clearButton {
   background-color: transparent;
   border: none;
-  color: rgb(140, 140, 140);
-  transition: all ease 1.5s;
+  color: rgb(149, 149, 149);
+  transition: all ease 1s;
 }
 
-// .clearButton:hover {
-//   background-color: #1f2226;
-// }
+.clearButton:hover {
+  color: #a0a0a0 !important
+}
 
 .bottomRow {
   background-color: rgb(30, 30, 30);
@@ -173,9 +170,7 @@ body {
 }
 
 .checkpoint {
-  // position: relative;
   display: grid;
-  // grid-template-columns: 84px 75% 100px;
   grid-template-columns: 10% 1fr 10%;
   min-width: 500px;
 }
@@ -183,7 +178,6 @@ body {
 .task {
   display: grid;
   grid-template-columns: 10% 8% 1fr 10%;
-  // gap: 1%;
   min-width: 500px;
 }
 
@@ -191,12 +185,9 @@ body {
   display: grid;
   grid-template-columns: 10% 8% 72% 10%;
   min-width: 500px;
-  // max-height: 400px;
-  // transition: all 1s ease;
 }
 
 .taskDeetsExpand {
-  // transition: all 1s ease;
   grid-template-columns: 10% 40% 40% 10%;
 }
 
@@ -263,17 +254,14 @@ body {
 }
 
 .checkP-div {
-  // height: 25%;
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: auto;
-  // background-color: #23a6d5
 }
 
 tr:hover {
   transition: all .5s ease;
   background-color: #00b5d1ae;
-  /* Change this color to your desired hover color */
 }
 
 .card-header.\32 {
@@ -285,6 +273,15 @@ tr:hover {
 
 .btn.btn-close {
   color: white
+}
+
+.btn.btn-primary {
+  transition: all 1s ease;
+}
+
+.btn.btn-primary:hover {
+  color: rgb(149, 149, 149) !important;
+  transition: all 1s ease;
 }
 
 ::-webkit-scrollbar {
@@ -369,6 +366,15 @@ tr:hover {
 
 .navBarHidden {
   display: none;
+}
+
+.navbar-brand {
+  transition: all 1s ease;
+}
+
+.navbar-brand:hover {
+  color: rgb(149, 149, 149);
+  transition: all 1s ease;
 }
 
 .modal-dialog {
