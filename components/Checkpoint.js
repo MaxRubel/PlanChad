@@ -3,7 +3,7 @@ import {
 } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
-import { Reorder } from 'framer-motion';
+import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import { calendarIcon, trashIcon } from '../public/icons';
@@ -37,7 +37,7 @@ export default function Checkpoint({
     index: '',
     fresh: true,
     expandedCal: false,
-    expanded: true,
+    expanded: false,
   });
 
   const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
@@ -319,7 +319,7 @@ export default function Checkpoint({
             style={{
               minWidth: '516px',
               height: '53px',
-              border: !formInput.expanded ? 'none' : '',
+              border: !formInput.expandedCal ? 'none' : '',
             }}
           >
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
@@ -519,7 +519,6 @@ export default function Checkpoint({
                       Description:
                     </label>
                   </div>
-
                   <textarea
                     className="form-control"
                     placeholder="A description of your segment..."
@@ -540,35 +539,35 @@ export default function Checkpoint({
       {/* ----------tasks------------------ */}
       <Collapse in={formInput.expanded}>
         <div>
-          {/* <AnimatePresence initial={false}> */}
-          {/* <motion.div
-              initial={false}
-              animate={false}
-              exit={{ opacity: 0 }}
-            > */}
-          <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
-            {tasks.map((task, indexT) => (
-              <Reorder.Item
-                key={task.localId}
-                value={task}
-                as="div"
-                style={{ cursor: 'grab' }}
-                onDragStart={handleDragStart}
-              >
-                <MemoizedTask
-                  {...memoizedProps}
-                  key={task.localId}
-                  task={task}
-                  indexT={indexT}
-                />
-              </Reorder.Item>
-            ))}
-          </Reorder.Group>
-          {/* </motion.div>
-          </AnimatePresence> */}
+          <AnimatePresence>
+            <motion.div>
+              <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div" layoutId={null}>
+                {tasks.map((task, indexT) => (
+                  <Reorder.Item
+                    key={task.localId}
+                    value={task}
+                    as={motion.div}
+                    style={{ cursor: 'grab' }}
+                    onDragStart={handleDragStart}
+                    layoutId={task.localId}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    <MemoizedTask
+                      {...memoizedProps}
+                      key={task.localId}
+                      task={task}
+                      indexT={indexT}
+                    />
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </Collapse>
-
     </>
 
   );

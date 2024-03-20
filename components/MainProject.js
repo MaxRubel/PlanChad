@@ -238,7 +238,7 @@ export default function MainProjectView({ projectId }) {
             style={{
               padding: '1% 0%',
               display: 'grid',
-              gridTemplateColumns: '15% 42.5% 42.5%',
+              gridTemplateColumns: '30% 27.5% 42.5%',
             }}
           >
             <button
@@ -246,6 +246,7 @@ export default function MainProjectView({ projectId }) {
               className="btn btn-outline-secondary"
               onClick={() => { addCheckpoint(); }}
               style={{
+                maxWidth: '200px',
                 margin: '1% 0%',
                 color: 'rgb(200, 200, 200)',
                 border: '1px solid rgb(100, 100, 100)',
@@ -258,42 +259,47 @@ export default function MainProjectView({ projectId }) {
           </div>
           <div id="dnd-container">
             <AnimatePresence initial={false}>
-              <Reorder.Group
-                as="div"
-                axis="y"
-                values={checkpoints}
-                onReorder={reOrderCheckPoints}
-                positiontransition="true"
-                key="checkpointsReorder"
-                animate={false}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {checkpoints.map((checkP, index) => (
-                    <Reorder.Item
-                      as={motion.div}
-                      key={checkP.localId}
-                      value={checkP}
-                      style={{ cursor: 'grab' }}
-                      onDragStart={handleDragStart}
-                      initial={false}
-                      animate={false}
-                    >
-                      <Checkpoint
+              <motion.div>
+                <Reorder.Group
+                  as="div"
+                  axis="y"
+                  values={checkpoints}
+                  onReorder={reOrderCheckPoints}
+                  positiontransition="true"
+                  key="checkpointsReorder"
+                  animate={false}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {checkpoints.map((checkP, index) => (
+                      <Reorder.Item
+                        as={motion.div}
                         key={checkP.localId}
-                        checkP={checkP}
-                        handleRefresh={handleRefresh}
-                        minAll={minAll}
-                        min={min}
-                        index={index}
-                        refresh={refresh}
-                        progressIsShowing={progressIsShowing}
-                        isDragging={isDragging}
+                        value={checkP}
+                        style={{ cursor: 'grab' }}
+                        onDragStart={handleDragStart}
                         layoutId={null}
-                      />
-                    </Reorder.Item>
-                  ))}
-                </div>
-              </Reorder.Group>
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 1 }}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <Checkpoint
+                          key={checkP.localId}
+                          checkP={checkP}
+                          handleRefresh={handleRefresh}
+                          minAll={minAll}
+                          min={min}
+                          index={index}
+                          refresh={refresh}
+                          progressIsShowing={progressIsShowing}
+                          isDragging={isDragging}
+                          layoutId={null}
+                        />
+                      </Reorder.Item>
+                    ))}
+                  </div>
+                </Reorder.Group>
+              </motion.div>
             </AnimatePresence>
           </div>
         </div>
