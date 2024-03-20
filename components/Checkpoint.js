@@ -38,7 +38,9 @@ export default function Checkpoint({
     expanded: false,
   });
 
-  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
+  const {
+    addToSaveManager, deleteFromSaveManager, saveInput, hideCompletedTasks,
+  } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [tasks, setTasks] = useState([]);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
@@ -176,6 +178,10 @@ export default function Checkpoint({
       document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
     }
   }, [saveInput.tasks]);
+
+  useEffect(() => { // when hiding tasks
+    pauseAnimations();
+  }, [hideCompletedTasks]);
 
   const dance = () => {
     document.getElementById(`addTask${checkP.localId}`).animate(

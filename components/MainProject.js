@@ -18,7 +18,7 @@ export default function MainProjectView({ projectId }) {
   const [progressIsShowing, setProgressIsShowing] = useState(false);
   const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [hasMounted, setHasMounted] = useState(false);
+  const [animationPaused, setAnimationPaused] = useState(true);
 
   const {
     addToSaveManager,
@@ -39,13 +39,19 @@ export default function MainProjectView({ projectId }) {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
   let timeout;
+
+  const pauseAnimation = () => {
+    setAnimationPaused(((preVal) => true));
+    timeout = setTimeout(() => { setAnimationPaused(((preVal) => false)); }, 500);
+  };
+
   useEffect(() => {
-    setHasMounted((preVal) => false);
+    setAnimationPaused((preVal) => true);
     const copy = [...saveInput.checkpoints];
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
     timeout = setTimeout(() => {
-      setHasMounted((preVal) => true);
+      setAnimationPaused((preVal) => false);
     }, 1000);
   }, [refresh]);
 
@@ -149,10 +155,12 @@ export default function MainProjectView({ projectId }) {
       setProgressIsShowing((preVal) => !preVal);
     }
     if (e === 'hideCompleted') {
+      pauseAnimation();
       hideCompletedTasks();
       setHideCompletedTasksChild((preVal) => !preVal);
     }
   };
+  console.log(animationPaused);
   const handleCloseModal = () => {
     setOpenDeleteModal((prevVal) => false);
   };
@@ -281,7 +289,7 @@ export default function MainProjectView({ projectId }) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 1 }}
-                        transition={{ duration: hasMounted ? 0.4 : 0 }}
+                        transition={{ duration: animationPaused ? 0 : 0.4 }}
                       >
                         <Checkpoint
                           key={checkP.localId}

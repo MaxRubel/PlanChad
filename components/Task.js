@@ -47,7 +47,9 @@ function Task({
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
+  const {
+    addToSaveManager, deleteFromSaveManager, saveInput, hideCompletedTasks,
+  } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [hasMounted, setHasMounted] = useState(false);
   const userExpandedChoice = useRef();
@@ -150,6 +152,10 @@ function Task({
     setOpenDeleteModal((prevVal) => false);
   };
 
+  useEffect(() => { // when hiding tasks
+    pauseAnimations();
+  }, [hideCompletedTasks]);
+
   const handleOpenModal = useCallback(() => {
     setOpenDeleteModal((preVal) => true);
   }, []);
@@ -159,7 +165,7 @@ function Task({
   }, []);
 
   if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
-    return (<div style={{ display: 'none' }} />);
+    return (<div style={{ display: 'none', transition: '1s all ease' }} />);
   }
 
   return (
