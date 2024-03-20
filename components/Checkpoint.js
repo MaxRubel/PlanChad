@@ -421,12 +421,15 @@ export default function Checkpoint({
             <div
               className="verticalCenter"
               style={{
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                justifyContent: 'center',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 paddingRight: '8%',
               }}
             >
+              <div style={{ fontSize: '13px', color: 'grey' }}>
+                {tasks.length > 0 && formInput.expanded ? '' : `(${tasks.length} tasks)`}
+              </div>
               <OverlayTrigger
                 placement="top"
                 overlay={deleteSegment}

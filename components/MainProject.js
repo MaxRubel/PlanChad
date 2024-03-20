@@ -46,16 +46,14 @@ export default function MainProjectView({ projectId }) {
   };
 
   useEffect(() => {
-    setAnimationPaused((preVal) => true);
+    pauseAnimation();
     const copy = [...saveInput.checkpoints];
     const sortedArr = copy.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
-    timeout = setTimeout(() => {
-      setAnimationPaused((preVal) => false);
-    }, 1000);
   }, [refresh]);
 
   useEffect(() => {
+    pauseAnimation();
     if (projectId && projectsLoaded) {
       cancelSaveAnimation();
       if (!singleProjectRunning) {
@@ -160,7 +158,7 @@ export default function MainProjectView({ projectId }) {
       setHideCompletedTasksChild((preVal) => !preVal);
     }
   };
-  console.log(animationPaused);
+
   const handleCloseModal = () => {
     setOpenDeleteModal((prevVal) => false);
   };
