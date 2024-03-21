@@ -30,6 +30,12 @@ export const addTaskToolTip = (
   </Tooltip>
 );
 
+export const sendInvite = (
+  <Tooltip id="sendInvite">
+    Invite this Collaborator to This Project
+  </Tooltip>
+);
+
 export const viewTaskDeetsToolTip = (
   <Tooltip id="viewTaskDeetsToolTip">
     Open Planning

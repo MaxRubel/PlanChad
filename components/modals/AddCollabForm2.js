@@ -7,6 +7,7 @@ import uniqid from 'uniqid';
 import { useAuth } from '../../utils/context/authContext';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { createNewCollab, updateCollab } from '../../api/collabs';
+import { getProjCollabsOfCollab, updateProjCollab } from '../../api/projCollab';
 
 const initialState = {
   name: '',
@@ -38,6 +39,19 @@ export default function AddCollabForm2(props) {
     }
   };
 
+  // const updateAllJoins = (payload) => {
+  //   getProjCollabsOfCollab(payload.collabId).then((data) => {
+  //     const IDs = data.map((item) => item.projCollabId);
+  //     const promiseArray = IDs.map((id) => {
+  //       const payload2 = {
+  //         projCollabId: id,
+  //         email: payload.email,
+  //       };
+  //       return updateProjCollab(payload2);
+  //     });
+  //   });
+  // };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (updateCollaborator) { // update collaborator
@@ -48,6 +62,7 @@ export default function AddCollabForm2(props) {
       updateCollab(payload);
       setForminput(initialState);
       addToCollabManager(payload, 'allCollabs', 'update');
+      // updateAllJoins(payload);
     } else { // create collaborator
       const payload = {
         ...formInput,
@@ -86,6 +101,18 @@ export default function AddCollabForm2(props) {
               />
             </Form.Group>
             <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                style={{ backgroundColor: 'rgb(225, 225, 225)' }}
+                value={formInput.email}
+                onChange={handleChange}
+                name="email"
+                id="email"
+                autoComplete="off"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
               <Form.Label>Phone</Form.Label>
               <Form.Control
                 type="phone"
@@ -94,18 +121,6 @@ export default function AddCollabForm2(props) {
                 onChange={handleChange}
                 name="phone"
                 id="phone"
-                autoComplete="off"
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control
-                type="email"
-                style={{ backgroundColor: 'rgb(225, 225, 225)' }}
-                value={formInput.email}
-                onChange={handleChange}
-                name="email"
-                id="email"
                 autoComplete="off"
               />
             </Form.Group>

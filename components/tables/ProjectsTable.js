@@ -44,23 +44,23 @@ export default function ProjectsTable() {
       <tbody>
         {projectsArray.map((project) => (
           <tr
-            key={project.projectId}
+            key={project?.projectId}
             style={{ border: '1px solid black', cursor: 'pointer' }}
             onClick={
               () => { router.push(`/project/plan/${project.projectId}`); }
             }
           >
             <td style={{ paddingLeft: '1.5%', minWidth: '300px' }}>
-              {project.name}
+              {project?.name}
             </td>
             <td style={{ paddingLeft: '1.5%' }}>
-              {project.client}
+              {project?.client}
             </td>
             <td style={{ paddingLeft: '1.5%' }}>
-              {project.deadline}
+              {project?.deadline}
             </td>
             <td style={{ paddingLeft: '1.5%' }}>
-              {project.start_date}
+              {project?.start_date}
             </td>
           </tr>
         ))}

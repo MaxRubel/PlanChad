@@ -3,11 +3,14 @@ import { useRouter } from 'next/router';
 import { useAuth } from '../../utils/context/authContext';
 import { createNewProject, updateProject } from '../../api/project';
 import { useSaveContext } from '../../utils/context/saveManager';
+import { createNewProjCollab, updateProjCollab } from '../../api/projCollab';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function NewProjectForm() {
   const [formInput, setFormInput] = useState({ name: '' });
   const { user } = useAuth();
   const { addToSaveManager } = useSaveContext();
+  const { addToCollabManager } = useCollabContext();
   const router = useRouter();
 
   function handleChange(e) {
@@ -37,10 +40,23 @@ export default function NewProjectForm() {
     createNewProject(payload)
       .then(({ name }) => {
         const payload2 = { projectId: name };
-        updateProject(payload2).then(() => {
-          addToSaveManager({ ...payload, ...payload2 }, 'create', 'project');
-          router.push(`/project/plan/${name}`);
-        });
+        updateProject(payload2)
+          .then(() => {
+            addToSaveManager({ ...payload, ...payload2 }, 'create', 'project');
+            const payload3 = {
+              projectId: name,
+              userId: user.uid,
+              email: user.email,
+              teamLeader: true,
+            };
+            createNewProjCollab(payload3).then((data) => { // Join Table
+              const payload4 = { projCollabId: data.name };
+              updateProjCollab(payload4).then(() => {
+                addToCollabManager({ ...payload3, ...payload4 }, 'projCollabJoins', 'create');
+                router.push(`/project/plan/${name}`);
+              });
+            });
+          });
       });
   }
 

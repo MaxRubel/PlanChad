@@ -10,6 +10,8 @@ import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
 import DeleteProjectModal from './modals/DeleteProject';
 import { useCollabContext } from '../utils/context/collabContext';
+import ShareLinkModal from './modals/ShareLinkModal';
+import { deleteAllInvitesOfProject } from '../api/invites';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
@@ -19,6 +21,7 @@ export default function MainProjectView({ projectId }) {
   const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [animationPaused, setAnimationPaused] = useState(true);
+  const [shareLinkModalOpen, setShareLinkModalOpen] = useState(false);
 
   const {
     addToSaveManager,
@@ -164,15 +167,16 @@ export default function MainProjectView({ projectId }) {
   };
   return (
     <>
+      <ShareLinkModal show={shareLinkModalOpen} />
       <DeleteProjectModal
         handleDelete={() => {
           deleteAllProjCollabs(project.projectId);
+          deleteAllInvitesOfProject(project.projectId);
           theBigDelete(project.projectId);
         }}
         closeModal={handleCloseModal}
         show={openDeleteModal}
       />
-
       <div className="bigDad">
         <div id="project-container">
           <div id="project-top-bar" style={{ marginBottom: '1%' }}>
@@ -219,6 +223,15 @@ export default function MainProjectView({ projectId }) {
                 <Dropdown.Item eventKey="hideCompleted">{saveInput.project?.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
+            {/* <button
+              id="manageCollaborators"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => { setShareLinkModalOpen(true); }}
+            >
+              Share Link
+            </button> */}
             <button
               id="manageCollaborators"
               type="button"

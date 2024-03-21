@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useSaveContext } from '../../utils/context/saveManager';
 import { useCollabContext } from '../../utils/context/collabContext';
 import CollabCardforProject from '../cards/CollabCardForProject';
+import { useAuth } from '../../utils/context/authContext';
 
 export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToAssignChild }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
@@ -14,6 +15,7 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   const { allProjects } = useSaveContext();
   const { allCollabs, projCollabJoins, searchInput } = useCollabContext();
   const originalProjCollabs = useRef([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     // load in either the projectId from the router query or let the user choose from dropdown
@@ -35,8 +37,9 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
           thisProjCollabs.push(allCollabs[i]);
         }
       }
-      setCollabsOfProj((preVal) => thisProjCollabs);
-      originalProjCollabs.current = thisProjCollabs;
+      const removedThisUser = thisProjCollabs.filter((item) => item.email !== user.email);
+      setCollabsOfProj((preVal) => removedThisUser);
+      originalProjCollabs.current = removedThisUser;
     }
   }, [projCollabJoins, projectId, selectInput, allCollabs, thisProject]);
 

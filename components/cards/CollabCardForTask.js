@@ -51,7 +51,7 @@ export default function CollabCardForTask({ taskId, collab }) {
               {downIcon}
             </button>
           </OverlayTrigger>
-          {collab.name}
+          {collab?.name}
         </div>
         <div id="col2" style={{ textAlign: 'right' }}>
           <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={{ show: 750, hide: 0 }}>
@@ -70,17 +70,17 @@ export default function CollabCardForTask({ taskId, collab }) {
             <div className="grid3">
               <div />
               <div>Phone:</div>
-              {collab.phone}
+              {collab?.phone}
             </div>
             <div className="grid3">
               <div />
               <div>Email:</div>
-              {collab.email}
+              {collab?.email}
             </div>
             <div className="grid3">
               <div />
               <div>Notes:</div>
-              {collab.notes}
+              {collab?.notes}
             </div>
           </div>
         </Collapse>

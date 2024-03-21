@@ -5,9 +5,11 @@ import { Navbar, Container, Nav } from 'react-bootstrap';
 import { homeIcon } from '../../public/icons';
 import { signOut } from '../../utils/auth';
 import { useSaveContext } from '../../utils/context/saveManager';
+import { useCollabContext } from '../../utils/context/collabContext';
 
 export default function NavBar() {
-  const { singleProjectRunning } = useSaveContext();
+  const { singleProjectRunning, clearAllLocalData } = useSaveContext();
+  const { clearCollabManager } = useCollabContext();
 
   if (singleProjectRunning) {
     return (
@@ -31,23 +33,23 @@ export default function NavBar() {
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              {/* CLOSE NAVBAR ON LINK SELECTION: https://stackoverflow.com/questions/72813635/collapse-on-select-react-bootstrap-navbar-with-nextjs-not-working */}
               <Link passHref href="/">
                 <Nav.Link>Home</Nav.Link>
               </Link>
               <Link passHref href="/project/new">
                 <Nav.Link>Create New Project</Nav.Link>
               </Link>
-              {/* <Link passHref href="/404">
-              <Nav.Link>Collaborators</Nav.Link>
-            </Link> */}
               <button
                 type="button"
                 className="clearButton"
                 style={{
                   color: 'rgb(155, 157, 158)',
                 }}
-                onClick={signOut}
+                onClick={() => {
+                  signOut();
+                  clearAllLocalData();
+                  clearCollabManager();
+                }}
               >Sign Out
               </button>
             </Nav>
