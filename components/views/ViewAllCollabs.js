@@ -2,15 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import CollabCard from '../cards/CollabCard';
 import { useCollabContext } from '../../utils/context/collabContext';
+import { useAuth } from '../../utils/context/authContext';
 
 export default function ViewAllCollabs({ projectToAssign }) {
   const [collabs, setCollabs] = useState([]);
   const { allCollabs, searchInput } = useCollabContext();
   const originalCollabs = useRef([]);
+  const { user } = useAuth();
 
   useEffect(() => {
-    setCollabs(allCollabs);
-    originalCollabs.current = allCollabs;
+    const allCollabsCopy = [...allCollabs];
+    const filtered = allCollabsCopy.filter((item) => item.email !== user.email);
+    setCollabs(filtered);
+    originalCollabs.current = filtered;
   }, [allCollabs]);
 
   useEffect(() => {

@@ -2,9 +2,13 @@ import React, {
   createContext, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { useRouter } from 'next/router';
-import { deleteProject, getUserProjects, updateProject } from '../../api/project';
+import {
+  deleteProject, getSingleProject, getUserProjects, updateProject,
+} from '../../api/project';
 import { useAuth } from './authContext';
 import { useCollabContext } from './collabContext';
+import { getCollabsOfProject, getProjCollabByEmail } from '../../api/projCollab';
+import { getInvitesByEmail } from '../../api/invites';
 
 const saveContext = createContext(null);
 
@@ -24,26 +28,51 @@ export const SaveContextProvider = ({ children }) => {
   const [isFetchingProjects, setIsFetchingProjects] = useState(true);
   const [fetchUserData, setFetchUserData] = useState(0);
   const router = useRouter();
+  const { addNonUserData } = useCollabContext();
 
-  // load all user data:
   useEffect(() => {
+    const projectsArray = [];
+    const allTasksArr = [];
     if (user && !projectsLoaded) {
+      // load user data:
       getUserProjects(user.uid)
         .then((data) => {
           const copy = [...data];
-          const allTasksArr = [];
+          projectsArray.push(...copy);
           for (let i = 0; i < copy.length; i++) {
-            if (data[i].tasks) {
-              const theseTasks = JSON.parse(data[i].tasks);
+            if (copy[i].tasks) {
+              const theseTasks = JSON.parse(copy[i].tasks);
               for (let x = 0; x < theseTasks.length; x++) {
                 allTasksArr.push(theseTasks[x]);
               }
             }
           }
-          setAllProjects((preVal) => data);
-          setProjectsLoaded((preVal) => true);
-          setAllTasks((preVal) => allTasksArr);
-          setIsFetchingProjects((preVal) => false);
+          // non-user-data:
+          getInvitesByEmail(user.email).then((data2) => {
+            const invitedProjectIDs = data2.map((item) => item.projectId);
+            const promiseArray = invitedProjectIDs.map((projectId) => getSingleProject(projectId));
+            Promise.all(promiseArray).then((data3) => {
+              const projectsData = [...data3];
+              for (let y = 0; y < projectsData.length; y++) {
+                if (!projectsArray.some((item) => item?.projectId === projectsData[y]?.projectId)) {
+                  projectsArray.push(projectsData[y]);
+                }
+              }
+              for (let i = 0; i < projectsData.length; i++) {
+                if (projectsData[i]?.tasks) {
+                  const theseTasks = JSON.parse(projectsData[i].tasks);
+                  for (let x = 0; x < theseTasks.length; x++) {
+                    allTasksArr.push(theseTasks[x]);
+                  }
+                }
+              }
+              addNonUserData(projectsData);
+              setAllProjects((preVal) => projectsArray);
+              setProjectsLoaded((preVal) => true);
+              setAllTasks((preVal) => allTasksArr);
+              setIsFetchingProjects((preVal) => false);
+            });
+          });
         });
     }
   }, [user, fetchUserData]);
@@ -53,6 +82,14 @@ export const SaveContextProvider = ({ children }) => {
     setSaveInput((prevVal) => initState);
     setMin((preVal) => 0);
     setSingleProjectRunning((preVal) => false);
+  };
+
+  const clearAllLocalData = () => {
+    clearSaveManager();
+    setAllProjects([]);
+    setAllTasks([]);
+    setProjectsLoaded(false);
+    setSingleProjectRunning(false);
   };
 
   const cancelSaveAnimation = () => {
@@ -81,12 +118,12 @@ export const SaveContextProvider = ({ children }) => {
 
   const theBigDelete = (projectId) => {
     deleteProject(projectId).then(() => {
-      const projectCollabs = setIsFetchingProjects((preVal) => true);
+      setIsFetchingProjects((preVal) => true);
       setFetchUserData((prev) => prev + 1);
-      clearSaveManager();
       router.push('/');
       setIsFetchingProjects((preVal) => true);
       setProjectsLoaded((preVal) => false);
+      clearSaveManager();
     });
   };
 
@@ -114,7 +151,6 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const addToSaveManager = (input, action, type) => {
-    if (allProjects.length === 0) { return; }
     if (type === 'project') {
       if (action === 'create') {
         const copy = [...allProjects];
@@ -246,6 +282,7 @@ export const SaveContextProvider = ({ children }) => {
     isFetchingProjects,
     theBigDelete,
     cancelSaveAnimation,
+    clearAllLocalData,
   }), [
     addToSaveManager,
     deleteFromSaveManager,
@@ -264,6 +301,7 @@ export const SaveContextProvider = ({ children }) => {
     isFetchingProjects,
     theBigDelete,
     cancelSaveAnimation,
+    clearAllLocalData,
   ]);
 
   return (

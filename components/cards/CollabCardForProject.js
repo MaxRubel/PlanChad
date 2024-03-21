@@ -5,10 +5,12 @@ import { deleteProjCollab } from '../../api/projCollab';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { useAuth } from '../../utils/context/authContext';
 import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../../api/taskCollab';
-import { removeIcon } from '../../public/icons';
+import { removeIcon, shareIcon } from '../../public/icons';
 import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
 import { useSaveContext } from '../../utils/context/saveManager';
 import DeleteProjCollabModal from '../modals/DeleteProjCollab';
+import { createNewInvite, updateInvite } from '../../api/invites';
+import sendInviteTT from '../util/toolTips2';
 
 export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
@@ -128,6 +130,19 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
     setOpenDeleteModal((prevVal) => false);
   };
 
+  const handleInvite = () => {
+    const payload = {
+      projectId: projectToAssign,
+      email: collab.email,
+      collabId: collab.collabId,
+      userId: user.uid,
+      teamLeader: false,
+    };
+    createNewInvite(payload).then(({ name }) => {
+      updateInvite({ inviteId: name });
+    });
+  };
+
   return (
     <>
       <DeleteProjCollabModal show={openDeleteModal} closeModal={handleCloseModal} handleDelete={handleRemove} />
@@ -143,6 +158,16 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
             {collab.name}
           </div>
           <div style={{ textAlign: 'right' }}>
+            <OverlayTrigger placement="top" overlay={sendInviteTT} delay={{ show: 750, hide: 0 }}>
+              <button
+                type="button"
+                className="clearButton"
+                style={{ color: 'black' }}
+                onClick={handleInvite}
+              >
+                {shareIcon}
+              </button>
+            </OverlayTrigger>
             <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
               <button
                 type="button"
