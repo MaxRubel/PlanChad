@@ -53,30 +53,34 @@ const CollabContextProvider = ({ children }) => {
   }, [user, fetchUserData]);
 
   // fetch non-user collaborators
-  // useEffect(() => {
-  //   if (nonUserProjects.current && hasFetched) {
-  //     const allCollabsCopy = [...allCollabs];
-  //     if (allCollabsCopy.length === 0) { return; }
-  //     const promiseArray = nonUserProjects.current.map((item) => getCollabsOfProject(item.projectId));
-  //     Promise.all(promiseArray).then((data) => {
-  //       const flatArray = [...data.flat()];
-  //       setProjCollabJoins((preVal) => [...preVal, ...flatArray]);
-  //       const getNonUserCollabs = flatArray.map((item) => getSingleCollab(item.collabId));
-  //       Promise.all(getNonUserCollabs).then((data2) => {
-  //         const filtered2 = data2.filter((item) => item.email !== user.email);
-  //         for (let i = 0; i < filtered2.length; i++) {
-  //           if (!allCollabsCopy.some((item) => item.collabId === filtered2.collabId)) {
-  //             allCollabsCopy.push(filtered2[i]);
-  //           }
-  //         }
-  //         const noDuplicates = allCollabsCopy.filter(
-  //           (obj, index, self) => index === self.findIndex((t) => t.email === obj.email),
-  //         );
-  //         setAllCollabs((preVal) => ([...noDuplicates]));
-  //       });
-  //     });
-  //   }
-  // }, [nonUserProjects.current, hasFetched]);
+  useEffect(() => {
+    if (nonUserProjects.current && hasFetched) {
+      const allCollabsCopy = [...allCollabs];
+      const promiseArray = nonUserProjects.current.map((item) => getCollabsOfProject(item.projectId));
+      Promise.all(promiseArray).then((data) => {
+        const flatArray = [...data.flat()];
+        setProjCollabJoins((preVal) => [...preVal, ...flatArray]);
+        const getNonUserCollabs = flatArray.map((item) => {
+          if (item.collabId) {
+            return getSingleCollab(item.collabId);
+          }
+          return false;
+        }).filter(Boolean);
+        Promise.all(getNonUserCollabs).then((data2) => {
+          const filtered2 = data2.filter((item) => item.email !== user.email);
+          for (let i = 0; i < filtered2.length; i++) {
+            if (!allCollabsCopy.some((item) => item.collabId === filtered2.collabId)) {
+              allCollabsCopy.push(filtered2[i]);
+            }
+          }
+          const noDuplicates = allCollabsCopy.filter(
+            (obj, index, self) => index === self.findIndex((t) => t.email === obj.email),
+          );
+          setAllCollabs((preVal) => ([...noDuplicates]));
+        });
+      });
+    }
+  }, [nonUserProjects.current, hasFetched]);
 
   const setUpdateCollab = (collabObj) => {
     setUpdateCollaborator(collabObj);

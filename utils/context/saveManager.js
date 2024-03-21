@@ -7,7 +7,6 @@ import {
 } from '../../api/project';
 import { useAuth } from './authContext';
 import { useCollabContext } from './collabContext';
-import { getCollabsOfProject, getProjCollabByEmail } from '../../api/projCollab';
 import { getInvitesByEmail } from '../../api/invites';
 
 const saveContext = createContext(null);
@@ -48,18 +47,20 @@ export const SaveContextProvider = ({ children }) => {
             }
           }
           // non-user-data:
-          getInvitesByEmail(user.email).then((data2) => {
-            const invitedProjectIDs = data2.map((item) => item.projectId);
+          getInvitesByEmail(user.email).then((userInvites) => {
+            // console.log('inviteProjectsData: ', inviteProjectsData);
+            const invitedProjectIDs = userInvites.map((item) => item.projectId);
             const promiseArray = invitedProjectIDs.map((projectId) => getSingleProject(projectId));
-            Promise.all(promiseArray).then((data3) => {
-              const projectsData = [...data3];
+            Promise.all(promiseArray).then((invitedProjects) => {
+              const projectsData = [...invitedProjects];
+              //
               for (let y = 0; y < projectsData.length; y++) {
                 if (!projectsArray.some((item) => item?.projectId === projectsData[y]?.projectId)) {
                   projectsArray.push(projectsData[y]);
                 }
               }
               for (let i = 0; i < projectsData.length; i++) {
-                if (projectsData[i]?.tasks) {
+                if (projectsData[i].tasks) {
                   const theseTasks = JSON.parse(projectsData[i].tasks);
                   for (let x = 0; x < theseTasks.length; x++) {
                     allTasksArr.push(theseTasks[x]);
