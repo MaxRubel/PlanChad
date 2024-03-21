@@ -56,6 +56,24 @@ const getProjCollabsOfUser = (userId) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+const getProjCollabByEmail = (email) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/projCollabs.json?orderBy="email"&equalTo="${email}"`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
 const createNewProjCollab = (payload) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/projCollabs.json`, {
     method: 'POST',
@@ -101,4 +119,5 @@ export {
   getProjCollabsOfCollab,
   deleteProjCollab,
   getProjCollabsOfUser,
+  getProjCollabByEmail,
 };

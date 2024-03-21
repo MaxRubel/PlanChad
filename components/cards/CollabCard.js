@@ -57,7 +57,6 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   };
 
   const handleDelete = () => {
-    console.log('delete');
     const projCollabJoinsCopy = [...projCollabJoins];
     const taskCollabJoinsCopy = [...taskCollabJoins];
 
@@ -98,7 +97,9 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
       projectId: projectToAssign,
       collabId: collab.collabId,
       userId: user.uid,
+      email: collab.email,
     };
+
     let isAlreadyIn = false;
     const copy = [...projCollabJoins];
     const thisProjCopy = copy.filter((item) => item.projectId === projectToAssign);

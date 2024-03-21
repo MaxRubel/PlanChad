@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useSaveContext } from '../../utils/context/saveManager';
 import CollabCardForTask from '../cards/CollabCardForTask';
 import { useCollabContext } from '../../utils/context/collabContext';
+import { useAuth } from '../../utils/context/authContext';
 
 export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
   const { saveInput, allTasks } = useSaveContext();
@@ -12,6 +13,7 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
   const [tasks, setTasks] = useState([]);
   const [taskId, setTaskId] = useState(null);
   const OGCollabsOfTask = useRef([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     setCollabsOfTask((preVal) => []);
@@ -21,8 +23,9 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
       const collab = allCollabs.find((item) => item.collabId === theseTaskCollabJoins[i].collabId);
       theseCollabs.push(collab);
     }
-    setCollabsOfTask((preVal) => theseCollabs);
-    OGCollabsOfTask.current = theseCollabs;
+    const removedThisUser = theseCollabs.filter((item) => item.email !== user.email);
+    setCollabsOfTask((preVal) => removedThisUser);
+    OGCollabsOfTask.current = removedThisUser;
   }, [taskCollabJoins, allCollabs, taskId]);
 
   useEffect(() => {
@@ -119,7 +122,7 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
               ) : (
                 collabsOfTask.map((collab) => (
                   <CollabCardForTask
-                    key={collab.collabId}
+                    key={collab?.collabId}
                     taskId={taskId}
                     collab={collab}
                     ofProj
