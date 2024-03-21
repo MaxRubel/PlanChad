@@ -137,6 +137,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
       collabId: collab.collabId,
       userId: user.uid,
       teamLeader: false,
+      timeStamp: new Date().getTime(),
     };
     createNewInvite(payload).then(({ name }) => {
       updateInvite({ inviteId: name });
