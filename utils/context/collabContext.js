@@ -31,7 +31,7 @@ const CollabContextProvider = ({ children }) => {
     setTaskCollabJoins((preVal) => []);
   };
 
-  const addNonUserData = (projects) => {
+  const sendToCollabsManager = (projects) => {
     nonUserProjects.current = projects;
   };
 
@@ -176,7 +176,7 @@ const CollabContextProvider = ({ children }) => {
       searchInput,
       isFetchingCollabs,
       deleteAllProjCollabs,
-      addNonUserData,
+      sendToCollabsManager,
     }}
     >
       {children}

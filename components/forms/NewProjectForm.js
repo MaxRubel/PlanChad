@@ -43,19 +43,7 @@ export default function NewProjectForm() {
         updateProject(payload2)
           .then(() => {
             addToSaveManager({ ...payload, ...payload2 }, 'create', 'project');
-            const payload3 = {
-              projectId: name,
-              userId: user.uid,
-              email: user.email,
-              teamLeader: true,
-            };
-            createNewProjCollab(payload3).then((data) => { // Join Table
-              const payload4 = { projCollabId: data.name };
-              updateProjCollab(payload4).then(() => {
-                addToCollabManager({ ...payload3, ...payload4 }, 'projCollabJoins', 'create');
-                router.push(`/project/plan/${name}`);
-              });
-            });
+            router.push(`/project/plan/${name}`);
           });
       });
   }

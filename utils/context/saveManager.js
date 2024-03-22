@@ -27,7 +27,7 @@ export const SaveContextProvider = ({ children }) => {
   const [isFetchingProjects, setIsFetchingProjects] = useState(true);
   const [fetchUserData, setFetchUserData] = useState(0);
   const router = useRouter();
-  const { addNonUserData } = useCollabContext();
+  const { sendToCollabsManager } = useCollabContext();
 
   useEffect(() => {
     const projectsArray = [];
@@ -36,29 +36,29 @@ export const SaveContextProvider = ({ children }) => {
       // load user data:
       getUserProjects(user.uid)
         .then((data) => {
-          const copy = [...data];
-          projectsArray.push(...copy);
-          for (let i = 0; i < copy.length; i++) {
-            if (copy[i].tasks) {
-              const theseTasks = JSON.parse(copy[i].tasks);
+          const userProjects = [...data];
+          projectsArray.push(...userProjects);
+          // decipher all tasks:
+          for (let i = 0; i < userProjects.length; i++) {
+            if (userProjects[i].tasks) {
+              const theseTasks = JSON.parse(userProjects[i].tasks);
               for (let x = 0; x < theseTasks.length; x++) {
                 allTasksArr.push(theseTasks[x]);
               }
             }
           }
-          // non-user-data:
+          // load invites:
           getInvitesByEmail(user.email).then((userInvites) => {
-            // console.log('inviteProjectsData: ', inviteProjectsData);
             const invitedProjectIDs = userInvites.map((item) => item.projectId);
             const promiseArray = invitedProjectIDs.map((projectId) => getSingleProject(projectId));
+
             Promise.all(promiseArray).then((invitedProjects) => {
               const projectsData = [...invitedProjects];
-              //
+              // add additional projects if not
               for (let y = 0; y < projectsData.length; y++) {
-                if (!projectsArray.some((item) => item?.projectId === projectsData[y]?.projectId)) {
-                  projectsArray.push(projectsData[y]);
-                }
+                projectsArray.push(projectsData[y]);
               }
+              // decipher tasks:
               for (let i = 0; i < projectsData.length; i++) {
                 if (projectsData[i].tasks) {
                   const theseTasks = JSON.parse(projectsData[i].tasks);
@@ -67,7 +67,8 @@ export const SaveContextProvider = ({ children }) => {
                   }
                 }
               }
-              addNonUserData(projectsData);
+
+              sendToCollabsManager(projectsData);
               setAllProjects((preVal) => projectsArray);
               setProjectsLoaded((preVal) => true);
               setAllTasks((preVal) => allTasksArr);
