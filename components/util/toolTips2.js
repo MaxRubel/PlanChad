@@ -2,7 +2,7 @@ import { Tooltip } from 'react-bootstrap';
 
 const sendInviteTT = (
   <Tooltip id="sendInvite">
-    Share Project Link with Collaborator
+    Invite collaborator to view project
   </Tooltip>
 );
 

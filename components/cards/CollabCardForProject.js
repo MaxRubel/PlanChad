@@ -11,6 +11,7 @@ import { useSaveContext } from '../../utils/context/saveManager';
 import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 import { createNewInvite, updateInvite } from '../../api/invites';
 import sendInviteTT from '../util/toolTips2';
+import { plusPeopleIcon, envelopeIcon } from '../../public/icons2';
 
 export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
@@ -134,6 +135,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
     const payload = {
       projectId: projectToAssign,
       email: collab.email,
+      name: collab.name,
       collabId: collab.collabId,
       userId: user.uid,
       teamLeader: false,
@@ -166,7 +168,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
                 style={{ color: 'black' }}
                 onClick={handleInvite}
               >
-                {shareIcon}
+                {plusPeopleIcon}
               </button>
             </OverlayTrigger>
             <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
