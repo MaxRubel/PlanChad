@@ -5,18 +5,20 @@ import { deleteProjCollab } from '../../api/projCollab';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { useAuth } from '../../utils/context/authContext';
 import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../../api/taskCollab';
-import { removeIcon, shareIcon } from '../../public/icons';
+import { removeIcon } from '../../public/icons';
 import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
 import { useSaveContext } from '../../utils/context/saveManager';
 import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 import { createNewInvite, updateInvite } from '../../api/invites';
-import sendInviteTT from '../util/toolTips2';
-import { plusPeopleIcon, envelopeIcon } from '../../public/icons2';
+import { sendInviteTT } from '../util/toolTips2';
+import { plusPeopleIcon } from '../../public/icons2';
 
 export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
   const [ttMessage, setTTMessage] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const { addToSaveManager } = useSaveContext();
+  const { saveInput } = useSaveContext();
 
   const {
     deleteFromCollabManager,
@@ -132,6 +134,11 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
   };
 
   const handleInvite = () => {
+    const theseInvites = [...saveInput.invites];
+    if (theseInvites.some((item) => item.email === collab.email)) {
+      console.warn('this person has already been invited');
+      return;
+    }
     const payload = {
       projectId: projectToAssign,
       email: collab.email,
@@ -139,11 +146,17 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
       collabId: collab.collabId,
       userId: user.uid,
       teamLeader: false,
+      status: 'pending',
       timeStamp: new Date().getTime(),
     };
-    createNewInvite(payload).then(({ name }) => {
-      updateInvite({ inviteId: name });
-    });
+    createNewInvite(payload)
+      .then(({ name }) => {
+        updateInvite({ inviteId: name })
+          .then(() => {
+            const payload2 = { ...payload, inviteId: name };
+            addToSaveManager(payload2, 'create', 'invite');
+          });
+      });
   };
 
   return (

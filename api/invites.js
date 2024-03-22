@@ -84,5 +84,5 @@ const deleteAllInvitesOfProject = (projectId) => {
 };
 
 export {
-  createNewInvite, updateInvite, getInvitesByEmail, deleteAllInvitesOfProject,
+  createNewInvite, updateInvite, getInvitesByEmail, deleteAllInvitesOfProject, deleteInvite,
 };

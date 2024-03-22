@@ -7,6 +7,8 @@ import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/modals/AddCollabForm2';
 import { useCollabContext } from '../../utils/context/collabContext';
+import ViewInvites from '../../components/views/ViewInvites';
+import InvitesModal from '../../components/modals/InvitesModal';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -16,6 +18,7 @@ export default function ManageCollaboratorsPage() {
   const [projectToAssign, setProjectToAssign] = useState('');
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
+  const [openInvitesModal, setOpenInvitesModal] = useState(false);
   const {
     sendToServer,
     cancelSaveAnimation,
@@ -62,6 +65,10 @@ export default function ManageCollaboratorsPage() {
     setModalShow((preVal) => false);
   };
 
+  const handleCloseInvites = () => {
+    setOpenInvitesModal((preVal) => false);
+  };
+
   const handleSearch = (e) => {
     const { value } = e.target;
     updateSearchInput(value);
@@ -69,6 +76,7 @@ export default function ManageCollaboratorsPage() {
 
   return (
     <>
+      <InvitesModal show={openInvitesModal} closeModal={handleCloseInvites} />
       <div id="project-top-bar" style={{ marginBottom: '1%' }}>
         <button
           id="saveButton"
@@ -90,6 +98,15 @@ export default function ManageCollaboratorsPage() {
           onClick={() => setModalShow(true)}
         >
           Add A Collaborator
+        </button>
+        <button
+          id="showModal"
+          type="button"
+          className="clearButton"
+          style={{ color: 'rgb(200, 200, 200)' }}
+          onClick={() => setOpenInvitesModal(true)}
+        >
+          View Invites
         </button>
         <div
           id="inputControl"
@@ -121,7 +138,6 @@ export default function ManageCollaboratorsPage() {
           display: 'flex',
           flexDirection: 'row',
           gap: '3%',
-          // margin: '1% 0%',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'rgb(180, 180, 180, .4)',
@@ -134,7 +150,6 @@ export default function ManageCollaboratorsPage() {
           projectId={projectId}
           projectToAssign={projectToAssign}
         />
-        {/* <div className="verticalCenter">{rightArrow}</div> */}
       </div>
       <div
         id="twoTableRow"
@@ -164,7 +179,6 @@ export default function ManageCollaboratorsPage() {
           setTaskToAssignChild={setTaskToAssignChild}
         />
       </div>
-
     </>
   );
 }

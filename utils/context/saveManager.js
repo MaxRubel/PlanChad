@@ -15,7 +15,9 @@ export const useSaveContext = () => useContext(saveContext);
 
 // eslint-disable-next-line react/prop-types
 export const SaveContextProvider = ({ children }) => {
-  const initState = { project: {}, checkpoints: [], tasks: [] };
+  const initState = {
+    project: {}, checkpoints: [], tasks: [], invites: [],
+  };
   const [saveInput, setSaveInput] = useState(initState);
   const [min, setMin] = useState(0);
   const [allProjects, setAllProjects] = useState([]);
@@ -81,9 +83,9 @@ export const SaveContextProvider = ({ children }) => {
 
   const clearSaveManager = () => {
     setIsSaving(0);
-    setSaveInput((prevVal) => initState);
-    setMin((preVal) => 0);
-    setSingleProjectRunning((preVal) => false);
+    setSaveInput(initState);
+    setMin(0);
+    setSingleProjectRunning(false);
   };
 
   const clearAllLocalData = () => {
@@ -104,15 +106,22 @@ export const SaveContextProvider = ({ children }) => {
     const project = copy.find((item) => item.projectId === projectId);
     let checkpoints = [];
     let tasks = [];
+    let invites = [];
     if (project?.checkpoints) {
-      const checkpointsForm = JSON.parse(project.checkpoints);
-      checkpoints = checkpointsForm.sort((a, b) => a.index - b.index);
+      const checkpointsFormat = JSON.parse(project.checkpoints);
+      checkpoints = checkpointsFormat.sort((a, b) => a.index - b.index);
     }
     if (project?.tasks) {
-      const tasksForm = JSON.parse(project.tasks);
-      tasks = tasksForm;
+      const tasksFormat = JSON.parse(project.tasks);
+      tasks = tasksFormat;
     }
-    const obj = { project, checkpoints, tasks };
+    if (project?.invites) {
+      const invitesFormat = JSON.parse(project.invites);
+      invites = invitesFormat;
+    }
+    const obj = {
+      project, checkpoints, tasks, invites,
+    };
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;
@@ -215,14 +224,22 @@ export const SaveContextProvider = ({ children }) => {
         return { ...prevSaveInput, tasks: newTasks };
       });
     }
+    // ---------invites------------
+    if (type === 'invite') {
+      if (action === 'create') {
+        const invitesCopy = [...saveInput.invites];
+        invitesCopy.push(input);
+        setSaveInput((prevVal) => ({ ...prevVal, invites: [...prevVal.invites, input] }));
+      }
+    }
   };
   // --------delete-----------------
   const deleteFromSaveManager = (input, action, type) => {
-    const checkPs = [...saveInput.checkpoints];
+    const checkpoints = [...saveInput.checkpoints];
     const tasks = [...saveInput.tasks];
     if (type === 'checkpoint' && action === 'delete') {
-      const updatedTasks = saveInput.tasks.filter((task) => task.checkpointId !== input.localId);
-      const updatedCheckpoints = saveInput.checkpoints.filter((checkpoint) => checkpoint.localId !== input.localId);
+      const updatedTasks = tasks.filter((task) => task.checkpointId !== input.localId);
+      const updatedCheckpoints = checkpoints.filter((checkpoint) => checkpoint.localId !== input.localId);
       setSaveInput((prevVal) => ({
         ...prevVal,
         tasks: updatedTasks,
@@ -240,14 +257,24 @@ export const SaveContextProvider = ({ children }) => {
       setSaveInput((prevVal) => ({ ...prevVal, tasks: updatedArray }));
       setAllTasks((preVal) => allTasksCopy);
     }
+    if (type === 'invite') {
+      const invites = [...saveInput.invites];
+      const deleteIndex = invites.findIndex((item) => item.inviteId === input.inviteId);
+      invites.splice(deleteIndex, 1);
+      setSaveInput((preVal) => ({ ...preVal, invites }));
+    }
   };
 
   const sendToServer = () => {
     if (allProjects.length === 0) { return; }
     setIsSaving((preVal) => preVal + 1);
-    const { checkpoints, tasks, project } = saveInput;
+    const {
+      checkpoints, tasks, project, invites,
+    } = saveInput;
     const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
     const tasksFormatted = tasks.length > 0 ? JSON.stringify(tasks) : null;
+    const invitesFormatted = invites.length > 0 ? JSON.stringify(invites) : null;
+
     if (!saveInput.project) { return; }
     const { projectId, userId } = saveInput.project;
     const payload = {
@@ -256,13 +283,14 @@ export const SaveContextProvider = ({ children }) => {
       userId,
       checkpoints: checkpointsFormatted,
       tasks: tasksFormatted,
+      invites: invitesFormatted,
     };
 
     updateProject(payload).then(() => {
       const copy = [...allProjects];
       const index = copy.findIndex((item) => item.projectId === payload.projectId);
       copy[index] = payload;
-      setAllProjects((preVal) => copy);
+      setAllProjects(copy);
     });
   };
 
