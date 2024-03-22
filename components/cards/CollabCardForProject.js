@@ -146,7 +146,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
       collabId: collab.collabId,
       userId: user.uid,
       teamLeader: false,
-      status: 'pending',
+      status: 'Pending',
       timeStamp: new Date().getTime(),
     };
     createNewInvite(payload)

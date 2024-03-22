@@ -11,7 +11,8 @@ import { useSaveContext } from '../utils/context/saveManager';
 import DeleteProjectModal from './modals/DeleteProject';
 import { useCollabContext } from '../utils/context/collabContext';
 import ShareLinkModal from './modals/ShareLinkModal';
-import { deleteAllInvitesOfProject } from '../api/invites';
+import { deleteAllInvitesOfProject, updateInvite } from '../api/invites';
+import { useAuth } from '../utils/context/authContext';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
@@ -41,6 +42,8 @@ export default function MainProjectView({ projectId }) {
   const { deleteAllProjCollabs } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
+
   let timeout;
 
   const pauseAnimation = () => {
@@ -56,11 +59,25 @@ export default function MainProjectView({ projectId }) {
   }, [refresh]);
 
   useEffect(() => {
+    const invitesToCheck = [...saveInput.invites];
+    const thisInvitee = invitesToCheck.find((item) => item.email === user.email);
+    if (thisInvitee?.status === 'Pending') {
+      const payload = {
+        ...thisInvitee,
+        status: 'Joined',
+      };
+      updateInvite(payload).then(() => {
+        addToSaveManager(payload, 'update', 'invite');
+      });
+    }
+  }, [saveInput.invites]);
+
+  useEffect(() => {
     pauseAnimation();
     if (projectId && projectsLoaded) {
       cancelSaveAnimation();
       if (!singleProjectRunning) {
-        const projectDetails = loadProject(projectId);
+        const projectDetails = loadProject(projectId); // LOAD PROJECT
         setProject((preVal) => projectDetails.project);
         if (projectDetails?.project?.projectId) {
           setHideCompletedTasksChild((preVal) => projectDetails?.project.hideCompletedTasks);

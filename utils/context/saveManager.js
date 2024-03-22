@@ -231,6 +231,12 @@ export const SaveContextProvider = ({ children }) => {
         invitesCopy.push(input);
         setSaveInput((prevVal) => ({ ...prevVal, invites: [...prevVal.invites, input] }));
       }
+      if (action === 'update') {
+        const invites = [...saveInput.invites];
+        const updateIndex = invites.findIndex((item) => item.email === input.email);
+        invites[updateIndex] = input;
+        setSaveInput((prevVal) => ({ ...prevVal, invites }));
+      }
     }
   };
   // --------delete-----------------
