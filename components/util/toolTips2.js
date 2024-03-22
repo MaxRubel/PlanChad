@@ -6,4 +6,10 @@ const sendInviteTT = (
   </Tooltip>
 );
 
-export default sendInviteTT;
+const cancleInviteTT = (
+  <Tooltip id="cancelInvite">
+    Cancel this invite
+  </Tooltip>
+);
+
+export { sendInviteTT, cancleInviteTT };

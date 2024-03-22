@@ -2,6 +2,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.scss';
 import '../styles/calendar.scss';
+import '../styles/cards.scss';
 import { AuthProvider } from '../utils/context/authContext';
 import ViewDirectorBasedOnUserAuthStatus from '../utils/ViewDirector';
 import { SaveContextProvider } from '../utils/context/saveManager';

@@ -8,6 +8,7 @@ import { useAuth } from '../../utils/context/authContext';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { createNewCollab, updateCollab } from '../../api/collabs';
 import { getProjCollabsOfCollab, updateProjCollab } from '../../api/projCollab';
+import { closeIcon } from '../../public/icons';
 
 const initialState = {
   name: '',
@@ -83,8 +84,15 @@ export default function AddCollabForm2(props) {
   return (
     <>
       <Modal show={show} onHide={handleClose} animation>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>{updateCollaborator ? 'Edit Collaborator' : 'Add a Collaborator'}</Modal.Title>
+          <button
+            type="button"
+            className="clearButton"
+            style={{ color: 'white' }}
+            onClick={handleClose}
+          >{closeIcon}
+          </button>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
