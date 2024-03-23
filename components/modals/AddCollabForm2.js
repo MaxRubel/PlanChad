@@ -7,8 +7,6 @@ import uniqid from 'uniqid';
 import { useAuth } from '../../utils/context/authContext';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { createNewCollab, updateCollab } from '../../api/collabs';
-import { getProjCollabsOfCollab, updateProjCollab } from '../../api/projCollab';
-import { closeIcon } from '../../public/icons';
 
 const initialState = {
   name: '',
@@ -20,10 +18,8 @@ const initialState = {
 export default function AddCollabForm2(props) {
   const { handleClose, show } = props;
   const [formInput, setForminput] = useState(initialState);
-  const [addToProject, setAddtoProj] = useState(false);
-  const [role, setRole] = useState('');
   const { user } = useAuth();
-  const { addToCollabManager, updateCollaborator, setUpdateCollab } = useCollabContext();
+  const { addToCollabManager, updateCollaborator } = useCollabContext();
 
   useEffect(() => {
     if (updateCollaborator) {
@@ -33,25 +29,8 @@ export default function AddCollabForm2(props) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'role') {
-      setRole((prevVal) => value);
-    } else {
-      setForminput((prevVal) => ({ ...prevVal, [name]: value }));
-    }
+    setForminput((prevVal) => ({ ...prevVal, [name]: value }));
   };
-
-  // const updateAllJoins = (payload) => {
-  //   getProjCollabsOfCollab(payload.collabId).then((data) => {
-  //     const IDs = data.map((item) => item.projCollabId);
-  //     const promiseArray = IDs.map((id) => {
-  //       const payload2 = {
-  //         projCollabId: id,
-  //         email: payload.email,
-  //       };
-  //       return updateProjCollab(payload2);
-  //     });
-  //   });
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -63,7 +42,6 @@ export default function AddCollabForm2(props) {
       updateCollab(payload);
       setForminput(initialState);
       addToCollabManager(payload, 'allCollabs', 'update');
-      // updateAllJoins(payload);
     } else { // create collaborator
       const payload = {
         ...formInput,
@@ -72,7 +50,6 @@ export default function AddCollabForm2(props) {
       };
       createNewCollab(payload).then(({ name }) => {
         updateCollab({ collabId: name });
-        setAddtoProj((prevVal) => false);
         setForminput((prevVal) => initialState);
         addToCollabManager({ ...payload, collabId: name }, 'allCollabs', 'create');
       });
