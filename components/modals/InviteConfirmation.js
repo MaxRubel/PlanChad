@@ -73,7 +73,7 @@ export default function InviteCollaborator({
     <>
       <Modal show={show} onHide={closeModal}>
         <form onSubmit={handleSubmit}>
-          <Modal.Header>
+          <Modal.Header style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
             <Modal.Title>Invite Collaborator</Modal.Title>
             <button
               type="button"
@@ -92,6 +92,7 @@ export default function InviteCollaborator({
                 name="email"
                 value={formInput.email}
                 onChange={handleChange}
+                required
               />
             </div>
           </Modal.Body>
@@ -103,6 +104,7 @@ export default function InviteCollaborator({
             )}
             <div style={{ display: 'flex', justifyContent: 'right' }}>
               <Button
+                style={{ margin: '0px 8px' }}
                 type="submit"
               >
                 Send Invite

@@ -28,7 +28,6 @@ export default function TaskModalForCalendar({ show, task, closeModal }) {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          // backgroundColor: 'transparent',
           paddingTop: '0px',
         }}
         >
