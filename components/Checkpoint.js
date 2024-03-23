@@ -558,7 +558,7 @@ export default function Checkpoint({
       <Collapse in={formInput.expanded} style={{ transition: hasMounted ? '' : 'none' }}>
         <div>
           <motion.div>
-            <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div" layoutId={null}>
+            <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
               {tasks.map((task, indexT) => (
                 <Reorder.Item
                   key={task.localId}
