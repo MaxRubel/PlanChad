@@ -12,11 +12,13 @@ import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 import { createNewInvite, updateInvite } from '../../api/invites';
 import { sendInviteTT } from '../util/toolTips2';
 import { plusPeopleIcon } from '../../public/icons2';
+import InviteCollaborator from '../modals/InviteConfirmation';
 
 export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
   const [ttMessage, setTTMessage] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openInviteModal, setOpenInviteModal] = useState(false);
   const { addToSaveManager } = useSaveContext();
   const { saveInput } = useSaveContext();
 
@@ -133,34 +135,48 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
     setOpenDeleteModal((prevVal) => false);
   };
 
+  const closeInviteModal = () => {
+    setOpenInviteModal((preVal) => false);
+  };
+
   const handleInvite = () => {
+    setOpenInviteModal((preVal) => true);
     const theseInvites = [...saveInput.invites];
     if (theseInvites.some((item) => item.email === collab.email)) {
       console.warn('this person has already been invited');
-      return;
     }
-    const payload = {
-      projectId: projectToAssign,
-      email: collab.email,
-      name: collab.name,
-      collabId: collab.collabId,
-      userId: user.uid,
-      teamLeader: false,
-      status: 'Pending',
-      timeStamp: new Date().getTime(),
-    };
-    createNewInvite(payload)
-      .then(({ name }) => {
-        updateInvite({ inviteId: name })
-          .then(() => {
-            const payload2 = { ...payload, inviteId: name };
-            addToSaveManager(payload2, 'create', 'invite');
-          });
-      });
+    // const email = collab.email
+    //   .toLowerCase()
+    //   .replace(/\s/g, '');
+    // const payload = {
+    //   projectId: projectToAssign,
+    //   email,
+    //   name: collab.name,
+    //   collabId: collab.collabId,
+    //   userId: user.uid,
+    //   teamLeader: false,
+    //   status: 'Pending',
+    //   timeStamp: new Date().getTime(),
+    // };
+    // console.log(payload);
+    // createNewInvite(payload)
+    //   .then(({ name }) => {
+    //     updateInvite({ inviteId: name })
+    //       .then(() => {
+    //         const payload2 = { ...payload, inviteId: name };
+    //         addToSaveManager(payload2, 'create', 'invite');
+    //       });
+    //   });
   };
 
   return (
     <>
+      <InviteCollaborator
+        show={openInviteModal}
+        closeModal={closeInviteModal}
+        collab={collab}
+        projectId={projectToAssign}
+      />
       <DeleteProjCollabModal show={openDeleteModal} closeModal={handleCloseModal} handleDelete={handleRemove} />
       <div className="card" style={{ margin: '1% 0%' }}>
         <div className="card-body" style={{ padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>

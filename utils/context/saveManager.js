@@ -128,8 +128,8 @@ export const SaveContextProvider = ({ children }) => {
   };
 
   const theBigDelete = (projectId) => {
+    setIsFetchingProjects((preVal) => true);
     deleteProject(projectId).then(() => {
-      setIsFetchingProjects((preVal) => true);
       setFetchUserData((prev) => prev + 1);
       router.push('/');
       setIsFetchingProjects((preVal) => true);
