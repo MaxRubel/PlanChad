@@ -9,7 +9,6 @@ import { removeIcon } from '../../public/icons';
 import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
 import { useSaveContext } from '../../utils/context/saveManager';
 import DeleteProjCollabModal from '../modals/DeleteProjCollab';
-import { createNewInvite, updateInvite } from '../../api/invites';
 import { sendInviteTT } from '../util/toolTips2';
 import { plusPeopleIcon } from '../../public/icons2';
 import InviteCollaborator from '../modals/InviteConfirmation';
@@ -19,7 +18,6 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
   const [ttMessage, setTTMessage] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openInviteModal, setOpenInviteModal] = useState(false);
-  const { addToSaveManager } = useSaveContext();
   const { saveInput } = useSaveContext();
 
   const {

@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { OverlayTrigger } from 'react-bootstrap';
 import { trashIcon } from '../../public/icons';
-
 import { useSaveContext } from '../../utils/context/saveManager';
 import { deleteTaskToolTip } from '../util/toolTips';
 import { useCollabContext } from '../../utils/context/collabContext';
