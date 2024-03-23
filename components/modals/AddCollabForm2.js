@@ -86,13 +86,6 @@ export default function AddCollabForm2(props) {
       <Modal show={show} onHide={handleClose} animation>
         <Modal.Header>
           <Modal.Title>{updateCollaborator ? 'Edit Collaborator' : 'Add a Collaborator'}</Modal.Title>
-          <button
-            type="button"
-            className="clearButton"
-            style={{ color: 'white' }}
-            onClick={handleClose}
-          >{closeIcon}
-          </button>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
           <Modal.Body>
@@ -153,7 +146,7 @@ export default function AddCollabForm2(props) {
               Save Changes
             </Button>
             <Button variant="secondary" onClick={() => { handleClose(); setForminput(initialState); }}>
-              Close
+              Cancel
             </Button>
           </Modal.Footer>
         </Form>

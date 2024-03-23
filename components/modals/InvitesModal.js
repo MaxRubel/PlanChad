@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import ViewInvites from '../views/ViewInvites';
 import { closeIcon } from '../../public/icons';
@@ -13,15 +12,17 @@ export default function InvitesModal({ show, closeModal, handleDelete }) {
         size="lg"
         aria-labelledby="example-modal-sizes-title-lg"
       >
-        <Modal.Header style={{ border: 'none' }}>
+        <Modal.Header style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
           <Modal.Title>View Invites</Modal.Title>
-          <button
-            type="button"
-            className="clearButton"
-            style={{ color: 'white' }}
-            onClick={closeModal}
-          >{closeIcon}
-          </button>
+          <div style={{ textAlign: 'right' }}>
+            <button
+              type="button"
+              className="clearButton"
+              style={{ color: 'white' }}
+              onClick={closeModal}
+            >{closeIcon}
+            </button>
+          </div>
         </Modal.Header>
         <Modal.Body>
           <ViewInvites />
