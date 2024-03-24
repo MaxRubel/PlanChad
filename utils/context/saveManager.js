@@ -2,6 +2,7 @@ import React, {
   createContext, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { useRouter } from 'next/router';
+import useSaveStore from './saveStore';
 import {
   deleteProject, getSingleProject, getUserProjects, updateProject,
 } from '../../api/project';
@@ -30,6 +31,9 @@ export const SaveContextProvider = ({ children }) => {
   const [fetchUserData, setFetchUserData] = useState(0);
   const router = useRouter();
   const { sendToCollabsManager } = useCollabContext();
+  const loadCheckpoints = useSaveStore((state) => state.loadCheckpoints);
+  const loadTasks = useSaveStore((state) => state.loadTasks);
+  const loadProjectZus = useSaveStore((state) => state.loadProject);
 
   useEffect(() => {
     const projectsArray = [];
@@ -122,6 +126,9 @@ export const SaveContextProvider = ({ children }) => {
     const obj = {
       project, checkpoints, tasks, invites,
     };
+    loadCheckpoints(checkpoints);
+    loadProjectZus(project);
+    loadTasks(tasks);
     setSaveInput((preVal) => obj);
     setSingleProjectRunning((preVal) => true);
     return obj;

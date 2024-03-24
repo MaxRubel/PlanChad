@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Collapse, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useSaveContext } from '../utils/context/saveManager';
+import useStore from '../utils/context/saveStore';
 
 const initialState = {
   name: '',
@@ -19,7 +20,7 @@ export default function ProjectCard({
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [hasMounted, setHasMounted] = useState(false);
-  const { addToSaveManager } = useSaveContext();
+  const updateProject = useStore((state) => state.updateProject);
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
@@ -53,7 +54,7 @@ export default function ProjectCard({
   }, [progressIsShowing, hideCompletedTasksChild]);
 
   useEffect(() => {
-    addToSaveManager(formInput, 'update', 'project');
+    updateProject(formInput);
   }, [formInput]);
 
   const handleCollapse = () => {

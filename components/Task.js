@@ -22,6 +22,7 @@ import {
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteTaskModal from './modals/DeleteTask';
+import useSaveStore from '../utils/context/saveStore';
 
 const initialState = {
   localId: '',
@@ -42,31 +43,18 @@ const initialState = {
   planning: '',
 };
 
-function Task({
+export default function Task({
   task, min, refreshCheckP, indexT, checkPHasLoaded, pauseAnimations,
 }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const {
-    addToSaveManager, deleteFromSaveManager, saveInput, hideCompletedTasks,
-  } = useSaveContext();
+  const { deleteFromSaveManager, hideCompletedTasks } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [hasMounted, setHasMounted] = useState(false);
   const userExpandedChoice = useRef();
-
-  const downIcon = (
-    <svg
-      className={formInput.expanded ? 'icon-up' : 'icon-down'}
-      xmlns="http://www.w3.org/2000/svg"
-      height="10px"
-      viewBox="0 0 320 512"
-    >
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5
-      0-33.9L188.5 256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4 24.6-9.4 33.9
-      0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
-      />
-    </svg>
-  );
+  const updateTask = useSaveStore((state) => state.updateTask);
+  const deleteTask = useSaveStore((state) => state.deleteTask);
+  const storedProject = useSaveStore((state) => state.project);
 
   useEffect(() => {
     let timeout;
@@ -81,7 +69,7 @@ function Task({
 
   useEffect(() => {
     if (checkPHasLoaded) {
-      addToSaveManager(formInput, 'update', 'task');
+      updateTask(formInput);
     }
   }, [formInput]);
 
@@ -123,7 +111,9 @@ function Task({
       status: checked ? 'closed' : 'open',
     }));
   };
-
+  useEffect(() => {
+    console.log('rerender');
+  });
   const handleExpandCollabs = () => {
     if (userExpandedChoice && formInput.deetsExpanded) {
       setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
@@ -148,6 +138,7 @@ function Task({
       }
     });
     deleteFromSaveManager(formInput, 'delete', 'task');
+    deleteTask(formInput);
     refreshCheckP();
     setOpenDeleteModal((prevVal) => false);
   };
@@ -164,7 +155,7 @@ function Task({
     setOpenDeleteModal((prevVal) => false);
   }, []);
 
-  if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
+  if (storedProject.hideCompletedTasks && formInput.status === 'closed') {
     return (<div style={{ display: 'none', transition: '1s all ease' }} />);
   }
 
@@ -507,7 +498,3 @@ Task.propTypes = {
   checkPHasLoaded: PropTypes.bool.isRequired,
   pauseAnimations: PropTypes.func.isRequired,
 };
-
-const MemoizedTask = memo(Task);
-
-export default MemoizedTask;
