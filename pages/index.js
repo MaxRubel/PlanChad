@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import ProjectsTable from '../components/tables/ProjectsTable';
 import { useSaveContext } from '../utils/context/saveManager';
 import Loading from '../components/util/Loading';
+import useSaveStore from '../utils/stores/saveStore';
 
 export default function Home() {
   const {
@@ -11,11 +12,14 @@ export default function Home() {
     isFetchingProjects,
   } = useSaveContext();
 
+  const clearSaveStore = useSaveStore((state) => state.clearSaveStore);
+
   useEffect(() => {
     if (singleProjectRunning) {
       sendToServer();
     }
     clearSaveManager();
+    clearSaveStore();
   }, []);
 
   if (isFetchingProjects) {

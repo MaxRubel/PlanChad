@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import { OverlayTrigger } from 'react-bootstrap';
 import { deleteTaskCollab } from '../../api/taskCollab';
-import { useSaveContext } from '../../utils/context/saveManager';
 import { useCollabContext } from '../../utils/context/collabContext';
 import DeleteCheckpointModal from '../modals/DeleteCheckpoint';
 import { trashIcon } from '../../public/icons';
 import { deleteSegment } from '../util/toolTips';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function SegmentForCal({ checkP, closeModal }) {
   const [formInput, setFormInput] = useState({
@@ -18,20 +18,18 @@ export default function SegmentForCal({ checkP, closeModal }) {
     fresh: true,
   });
 
-  const {
-    addToSaveManager,
-    saveInput,
-    deleteFromSaveManager,
-  } = useSaveContext();
   const { deleteFromCollabManager, taskCollabJoins } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const updateCheckpoint = useSaveStore((state) => state.updateCheckpoint);
+  const storedTasks = useSaveStore((state) => state.tasks);
+  const deleteCheckpoint = useSaveStore((state) => state.deleteCheckpoint);
 
   useEffect(() => { // grab and sort the tasks from save manager
     setFormInput(checkP);
   }, [checkP]);
 
   useEffect(() => { // send to save manager
-    addToSaveManager(formInput, 'update', 'checkpoint');
+    updateCheckpoint(formInput);
   }, [formInput]);
 
   const handleChange = (e) => {
@@ -51,9 +49,8 @@ export default function SegmentForCal({ checkP, closeModal }) {
   };
 
   const handleDelete = () => {
-    const tasksCopy = [...saveInput.tasks];
     const taskCollabsCopy = [...taskCollabJoins];
-    const checkPtasks = tasksCopy.filter((item) => item.checkpointId === checkP.localId);
+    const checkPtasks = storedTasks.filter((item) => item.checkpointId === checkP.localId);
     const collabDeleteArray = [];
     for (let i = 0; i < checkPtasks.length; i++) {
       const filtered = taskCollabsCopy.filter((item) => item.taskId === checkPtasks[i].localId);
@@ -66,7 +63,7 @@ export default function SegmentForCal({ checkP, closeModal }) {
         for (let i = 0; i < collabDeleteArray.length; i++) {
           deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
         }
-        deleteFromSaveManager(formInput, 'delete', 'checkpoint');
+        deleteCheckpoint(formInput);
         setOpenDeleteModal((preVal) => false);
         closeModal();
       });

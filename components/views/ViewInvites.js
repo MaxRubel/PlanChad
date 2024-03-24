@@ -1,18 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-
-import CollabCard from '../cards/CollabCard';
-
-import { useSaveContext } from '../../utils/context/saveManager';
+import { useEffect, useState } from 'react';
 import InviteCard from '../cards/InviteCard';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function ViewInvites() {
-  const { saveInput } = useSaveContext();
   const [invites, setInvites] = useState([]);
+  const storedInvites = useSaveStore((state) => state.invites);
 
   useEffect(() => {
-    const projectInvites = [...saveInput.invites];
-    setInvites(projectInvites);
-  }, [saveInput.invites]);
+    setInvites(storedInvites);
+  }, [storedInvites]);
 
   return (
 

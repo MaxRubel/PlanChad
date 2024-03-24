@@ -7,8 +7,8 @@ import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/modals/AddCollabForm2';
 import { useCollabContext } from '../../utils/context/collabContext';
-import ViewInvites from '../../components/views/ViewInvites';
 import InvitesModal from '../../components/modals/InvitesModal';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -25,9 +25,10 @@ export default function ManageCollaboratorsPage() {
     projectsLoaded,
     singleProjectRunning,
     loadProject,
-    allProjects,
   } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
+  const allProjects = useSaveStore((state) => state.allProjects);
+
   useEffect(() => {
     sendToServer();
   }, []);

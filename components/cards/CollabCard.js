@@ -10,8 +10,8 @@ import {
 } from '../../public/icons';
 import { deleteTaskCollab } from '../../api/taskCollab';
 import { deleteCollabTT, editCollabTT, viewCollabDeetsTT } from '../util/toolTips';
-import { useSaveContext } from '../../utils/context/saveManager';
 import DeleteCollabModal from '../modals/DeleteCollab';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function CollabCard({ collab, ofProj, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
@@ -23,13 +23,12 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
     taskCollabJoins,
     setUpdateCollab,
   } = useCollabContext();
-  const { allProjects } = useSaveContext();
   const { user } = useAuth();
   const projectName = useRef();
+  const allProjects = useSaveStore((state) => state.allProjects);
 
   useEffect(() => {
-    const allProjCop = [...allProjects];
-    const project = allProjCop.find((item) => item.projectId === projectToAssign);
+    const project = allProjects.find((item) => item.projectId === projectToAssign);
     projectName.current = project?.name;
   }, [projectToAssign]);
 
