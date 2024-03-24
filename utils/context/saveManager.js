@@ -35,6 +35,7 @@ export const SaveContextProvider = ({ children }) => {
   const loadInvites = useSaveStore((state) => state.loadInvites);
   const loadAllProjects = useSaveStore((state) => state.loadAllProjects);
   const loadAllTasks = useSaveStore((state) => state.loadAllTasks);
+  const allTasksZus = useSaveStore((state) => state.allTasks);
   const allProjectsZus = useSaveStore((state) => state.allProjects);
   const storedProject = useSaveStore((state) => state.project);
   const storedCheckpoints = useSaveStore((state) => state.checkpoints);
@@ -43,6 +44,7 @@ export const SaveContextProvider = ({ children }) => {
   const updateProjectZus = useSaveStore((state) => state.updateProject);
   const projectsHaveBeenLoaded = useSaveStore((state) => state.projectsHaveBeenLoaded);
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
+
   useEffect(() => {
     const projectsArray = [];
     const allTasksArr = [];
@@ -186,10 +188,15 @@ export const SaveContextProvider = ({ children }) => {
       invites: invitesFormatted,
     };
 
-    updateProject(payload).then(() => {
-      const index = allProjectsZus.findIndex((item) => item.projectId === payload.projectId);
-      allProjectsZus[index] = payload;
-    });
+    for (let i = 0; i < storedTasks.length; i++) {
+      const index = allTasksZus.findIndex((item) => item.localId === storedTasks[i].localId);
+      allTasksZus[index] = storedTasks[i];
+      loadAllTasks(allTasks);
+    }
+    const index = allProjectsZus.findIndex((item) => item.projectId === payload.projectId);
+    allProjectsZus[index] = payload;
+    loadAllProjects(allProjectsZus);
+    updateProject(payload);
   };
 
   const memoizedValues = useMemo(() => ({

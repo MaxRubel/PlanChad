@@ -16,6 +16,8 @@ const useSaveStore = create(devtools(
       checkpoints: [],
       tasks: [],
       invites: [],
+      allTasks: state.allTasks,
+      allProjects: state.allProjects,
     })),
 
     projectsHaveBeenLoaded: (value) => set((state) => ({ projectsLoaded: value })),
@@ -29,7 +31,7 @@ const useSaveStore = create(devtools(
     loadAllTasks: (tasksArray) => set((state) => ({ allTasks: tasksArray })),
 
     // ------project-------
-    createNewProject: (newProject) => set((state) => ({ project: { newProject } })),
+    createNewProject: (newProject) => set((state) => ({ allProjects: [...state.allProjects, newProject] })),
     updateProject: (updatedProject) => set((state) => ({ project: updatedProject })),
 
     // ----checkpoints-------
@@ -42,16 +44,17 @@ const useSaveStore = create(devtools(
     })),
     deleteCheckpoint: (deletedCheckpoint) => set((state) => ({
       checkpoints: state.checkpoints.filter((checkpoint) => checkpoint.localId !== deletedCheckpoint.localId),
+      allTasks: state.allTasks.filter((task) => task.checkpointId !== deletedCheckpoint.localId),
+      tasks: state.tasks.filter((task) => task.checkpointId !== deletedCheckpoint.localId),
     })),
 
     // ------tasks--------
     createNewTask: (newTask) => set((preVal) => ({
       tasks: [...preVal.tasks, newTask],
-      allTask: [...preVal.allTasks, newTask],
+      allTasks: [...preVal.allTasks, newTask],
     })),
     updateTask: (updatedTask) => set((preVal) => ({
       tasks: preVal.tasks.map((task) => (task.localId === updatedTask.localId ? updatedTask : task)),
-      // allTasks: preVal.allTasks.map((task) => (task.localId === updatedTask.localId ? updatedTask : task)),
     })),
     deleteTask: (deletedTask) => set((preVal) => ({
       tasks: preVal.tasks.filter((task) => task.localId !== deletedTask.localId),
