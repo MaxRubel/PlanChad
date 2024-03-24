@@ -1,5 +1,4 @@
 @import 'bootstrap/dist/css/bootstrap.css';
-@import '~bootstrap-icons/font/bootstrap-icons.css';
 @import '@fontsource/roboto/300.css';
 @import '@fontsource/roboto/400.css';
 @import '@fontsource/roboto/500.css';
@@ -11,14 +10,6 @@
 }
 
 body {
-  // background-color: rgb(34, 37, 41);
-  // background-color: black;
-  // background-color: rgb(43, 27, 49);
-
-  // background: rgb(25, 0, 17);
-  // background: radial-gradient(circle, rgba(25, 0, 17, 1) 0%, rgba(0, 0, 0, 0.7693671218487395) 100%);
-  // height: 100vh;
-  // width: 100vw;
   transition: all var(--background1) ease;
   opacity: 1;
   font-family: Arial, Helvetica, sans-serif;

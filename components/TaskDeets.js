@@ -2,9 +2,7 @@ import { Collapse } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import ViewTaskCollabsInProj from './views/ViewTaskCollabsInProj';
 
-export default function TaskDeets({
-  formInput, handleChange, taskId,
-}) {
+export default function TaskDeets({ formInput, handleChange, taskId }) {
   return (
     <>
       <Collapse
