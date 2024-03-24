@@ -5,6 +5,7 @@ import { useSaveContext } from '../../utils/context/saveManager';
 import { useCollabContext } from '../../utils/context/collabContext';
 import CollabCardforProject from '../cards/CollabCardForProject';
 import { useAuth } from '../../utils/context/authContext';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToAssignChild }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
@@ -12,10 +13,10 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   const [projectToAssign, setProjectToAssign] = useState('');
   const [selectInput, setSelectInput] = useState('');
   const [taskToAssign2, setTaskToAssign2] = useState('');
-  const { allProjects } = useSaveContext();
   const { allCollabs, projCollabJoins, searchInput } = useCollabContext();
   const originalProjCollabs = useRef([]);
   const { user } = useAuth();
+  const allProjects = useSaveStore((state) => state.allProjects);
 
   useEffect(() => {
     // load in either the projectId from the router query or let the user choose from dropdown

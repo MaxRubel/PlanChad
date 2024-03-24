@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import CollabCardForTaskInProj from '../cards/CollabCardForTaskInProj';
 import { useCollabContext } from '../../utils/context/collabContext';
 
-export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput }) {
+const ViewTaskCollabsInProj = memo(({ collabsExpand, taskId, formInput }) => {
   const { taskCollabJoins, allCollabs } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
 
@@ -69,7 +69,9 @@ export default function ViewTaskCollabsInProj({ collabsExpand, taskId, formInput
       </div>
     </>
   );
-}
+});
+
+export default ViewTaskCollabsInProj;
 
 ViewTaskCollabsInProj.propTypes = {
   collabsExpand: PropTypes.bool.isRequired,

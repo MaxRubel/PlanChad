@@ -5,15 +5,18 @@ import { useSaveContext } from '../../utils/context/saveManager';
 import CollabCardForTask from '../cards/CollabCardForTask';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { useAuth } from '../../utils/context/authContext';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
-  const { saveInput, allTasks } = useSaveContext();
   const { taskCollabJoins, allCollabs, searchInput } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [taskId, setTaskId] = useState(null);
   const OGCollabsOfTask = useRef([]);
   const { user } = useAuth();
+  const storedProject = useSaveStore((state) => state.project);
+  const storedTasks = useSaveStore((state) => state.tasks);
+  const allTasks = useSaveStore((state) => state.allTasks);
 
   useEffect(() => {
     setCollabsOfTask((preVal) => []);
@@ -53,16 +56,14 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
 
   useEffect(() => {
     if (projectToAssign === projectId) {
-      if (!saveInput?.project?.projectId) {
-        const copy = [...allTasks];
-        const thisProjectsTasks = copy.filter((item) => item.projectId === projectToAssign);
+      if (!storedProject?.projectId) {
+        const thisProjectsTasks = allTasks.filter((item) => item.projectId === projectToAssign);
         setTasks((preVal) => thisProjectsTasks);
       } else {
-        setTasks((preVal) => saveInput.tasks);
+        setTasks((preVal) => storedTasks);
       }
     } else {
-      const copy = [...allTasks];
-      const thisProjectsTasks = copy.filter((item) => item.projectId === projectToAssign);
+      const thisProjectsTasks = allTasks.filter((item) => item.projectId === projectToAssign);
       setTasks((preVal) => thisProjectsTasks);
     }
   }, [projectToAssign, projectId, allTasks, taskCollabJoins]);

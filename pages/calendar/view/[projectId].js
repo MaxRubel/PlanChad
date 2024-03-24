@@ -9,21 +9,24 @@ import { caretLeft, caretRight } from '../../../public/icons';
 import chooseMonth from '../../../utils/chooseMonth';
 import TaskModalForCalendar from '../../../components/modals/TaskModalForCal';
 import SegmentModalForCal from '../../../components/modals/SegmentModalForCal';
+import useSaveStore from '../../../utils/stores/saveStore';
 
 export default function CalendarPage() {
-  const initialState = ([[], [], [], [], [], []]);
   const router = useRouter();
   const { projectId } = router.query;
   const { cancelSaveAnimation } = useSaveContext();
   const {
-    saveInput, singleProjectRunning, loadProject, projectsLoaded, sendToServer,
+    singleProjectRunning, loadProject, projectsLoaded, sendToServer,
   } = useSaveContext();
   const [sortedTasks, setSortedTasks] = useState([]);
-  const [sortedSegments, setSortedSegments] = useState([]);
+  const [sortedCheckpoints, setSortedCheckpoints] = useState([]);
   const [openTaskModal, setOpenTaskModal] = useState(false);
   const [openSegmentModal, setOpenSegmentModal] = useState(false);
   const [taskToView, setTaskToView] = useState(null);
   const [segmentToView, setSegmentToView] = useState(null);
+  const storedTasks = useSaveStore((state) => state.tasks);
+  const storedCheckpoints = useSaveStore((state) => state.checkpoints);
+  const storedProject = useSaveStore((state) => state.project);
   const [calendarData, setCalendarData] = useState(
     {
       month: null,
@@ -38,17 +41,14 @@ export default function CalendarPage() {
       loadProject(projectId);
     }
     sendToServer();
-    const tasks = [...saveInput.tasks];
-    const segments = [...saveInput.checkpoints];
-    const filteredTasks = tasks
+    const filteredTasks = storedTasks
       .filter((item) => item.startDate || item.deadline)
       .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-    const filteredSegments = segments.filter((item) => item.startDate || item.deadline)
+    const filteredCheckpoints = storedCheckpoints.filter((item) => item.startDate || item.deadline)
       .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
     setSortedTasks(filteredTasks);
-
-    setSortedSegments(filteredSegments);
-  }, [saveInput, projectsLoaded]);
+    setSortedCheckpoints(filteredCheckpoints);
+  }, [projectsLoaded, storedTasks, storedCheckpoints]);
 
   // LAYOUT CALENDAR
   useEffect(() => {
@@ -93,11 +93,12 @@ export default function CalendarPage() {
 
   // Print Project Line
   useEffect(() => {
-    if (calendarData.startingDay && saveInput.project?.projectId) {
-      const [projStartYear, projStartMonth, projStartDay] = (saveInput.project.start_date ?? '').split('-');
-      const [projEndYear, projEndMonth, projEndDay] = (saveInput.project.deadline ?? '').split('-');
-      const projStartDate = saveInput.project.start_date ? new Date(projStartYear, projStartMonth - 1, projStartDay) : null;
-      const projEndDate = saveInput.project.deadline ? new Date(projEndYear, projEndMonth - 1, projEndDay) : null;
+    if (openTaskModal) { return; }
+    if (calendarData.startingDay && storedProject?.projectId) {
+      const [projStartYear, projStartMonth, projStartDay] = (storedProject.start_date ?? '').split('-');
+      const [projEndYear, projEndMonth, projEndDay] = (storedProject.deadline ?? '').split('-');
+      const projStartDate = storedProject.start_date ? new Date(projStartYear, projStartMonth - 1, projStartDay) : null;
+      const projEndDate = storedProject.deadline ? new Date(projEndYear, projEndMonth - 1, projEndDay) : null;
       const thisDaysDate = new Date(calendarData.firstBoxDate);
 
       for (let box = 0; box <= calendarData.totalBoxes; box++) {
@@ -131,7 +132,7 @@ export default function CalendarPage() {
         }
       }
     }
-  }, [sortedTasks, calendarData.month, calendarData.firstBoxDate, calendarData.totalDays, calendarData.totalBoxes]);
+  }, [sortedTasks, openTaskModal, calendarData.month, calendarData.totalBoxes]);
 
   // Print Task Lines----------------------
   useEffect(() => {
@@ -213,6 +214,7 @@ export default function CalendarPage() {
         viewMoreDiv.className = 'viewMore';
       }
     };
+
     const thisDaysDate = new Date(calendarData.firstBoxDate);
 
     for (let box = 0; box < 42; box++) {
@@ -257,14 +259,13 @@ export default function CalendarPage() {
         }
       }
     }
-  }, [calendarData, saveInput, sortedTasks, openTaskModal]);
+  }, [calendarData, sortedTasks, openTaskModal, openTaskModal]);
 
-  // Print Segment Lines--------------------
+  // Print Checkpoint Lines--------------------
   useEffect(() => {
-    if (openTaskModal) return;
-
+    if (openSegmentModal) { return; }
     const thisBoxArray = (box) => {
-      const copy = [...sortedSegments];
+      const copy = [...sortedCheckpoints];
       const dayArray = [];
       const thisDaysDate = new Date(calendarData.firstBoxDate);
       const boxDate = new Date(thisDaysDate);
@@ -332,7 +333,6 @@ export default function CalendarPage() {
     const thisDaysDate = new Date(calendarData.firstBoxDate);
 
     for (let box = 0; box < 42; box++) {
-      if (openSegmentModal) return;
       const element = document.getElementById(`${box}Seg`);
       const viewMoreSegs = document.getElementById(`${box}ViewSegments`);
       const boxDate = new Date(thisDaysDate);
@@ -344,8 +344,8 @@ export default function CalendarPage() {
       viewMoreSegs.innerHTML = '';
       element.style.height = '100%';
 
-      for (let i = 0; i < sortedSegments.length; i++) {
-        const copy = [...sortedSegments];
+      for (let i = 0; i < sortedCheckpoints.length; i++) {
+        const copy = [...sortedCheckpoints];
         const thisSegment = copy[i];
 
         if (!thisSegment) { return; }
@@ -375,7 +375,7 @@ export default function CalendarPage() {
         }
       }
     }
-  }, [calendarData, saveInput, sortedTasks, openSegmentModal]);
+  }, [calendarData, storedCheckpoints, openSegmentModal]);
 
   const handleDateCounter = (e) => {
     const { id } = e.target;
@@ -403,13 +403,13 @@ export default function CalendarPage() {
     const { id } = e.target;
     if (id.includes('openTask')) {
       const [, taskId] = id.split('--');
-      const taskObj = saveInput.tasks.find((item) => item.localId === taskId);
+      const taskObj = storedTasks.find((item) => item.localId === taskId);
       setOpenTaskModal((preVal) => true);
       setTaskToView((preVal) => taskObj);
     }
     if (id.includes('openSegment')) {
       const [, segmentId] = id.split('--');
-      const segmentObj = saveInput.checkpoints.find((item) => item.localId === segmentId);
+      const segmentObj = storedCheckpoints.find((item) => item.localId === segmentId);
       setOpenSegmentModal((preVal) => true);
       setSegmentToView(segmentObj);
     }

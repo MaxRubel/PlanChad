@@ -1,4 +1,7 @@
-import { useState, useEffect, useMemo } from 'react';
+/* eslint-disable react/prop-types */
+import {
+  useState, useEffect, useMemo, memo, useCallback, useRef,
+} from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
 import { Reorder, motion } from 'framer-motion';
@@ -18,15 +21,11 @@ import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';
 import MemoizedTask from './Task';
+import useSaveStore from '../utils/stores/saveStore';
 
-export default function Checkpoint({
-  checkP,
-  handleRefresh,
-  min,
-  index,
-  progressIsShowing,
-  isDragging,
-}) {
+const Checkpoint = memo(({
+  checkP, handleRefresh, min, index, progressIsShowing, isDragging,
+}) => {
   const [formInput, setFormInput] = useState({
     description: '',
     name: '',
@@ -38,9 +37,7 @@ export default function Checkpoint({
     expanded: false,
   });
 
-  const {
-    addToSaveManager, deleteFromSaveManager, saveInput, hideCompletedTasks,
-  } = useSaveContext();
+  const { hideCompletedTasks } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [tasks, setTasks] = useState([]);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
@@ -48,6 +45,11 @@ export default function Checkpoint({
   const [hasLoaded, setHasloaded] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const [pauseReorder, setPauseReorder] = useState(true);
+  const updatedCheckpoint = useSaveStore((state) => state.updateCheckpoint);
+  const deleteCheckpoint = useSaveStore((state) => state.deleteCheckpoint);
+  const createNewTask = useSaveStore((state) => state.createNewTask);
+  const storedTasks = useSaveStore((state) => state.tasks);
+  const loadTasks = useSaveStore((state) => state.loadTasks);
 
   const downIcon = (
     <svg
@@ -76,19 +78,18 @@ export default function Checkpoint({
     </svg>
   );
 
-  let timeout;
+  const timeoutRef = useRef(null);
 
-  const pauseAnimations = () => {
-    setPauseReorder((preVal) => false);
-    timeout = setInterval(() => {
-      setPauseReorder((preVal) => true);
+  const pauseAnimations = useCallback(() => {
+    setPauseReorder(false);
+    timeoutRef.current = setTimeout(() => {
+      setPauseReorder(true);
     }, 1000);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isDragging) {
-      const copy = [...saveInput.tasks];
-      const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
+      const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
       const sorted = theseTasks.sort((a, b) => a.index - b.index);
       setTasks(sorted);
       setFormInput(checkP);
@@ -96,16 +97,16 @@ export default function Checkpoint({
       setFormInput(checkP);
     }
     setHasloaded((preVal) => true);
-    timeout = setInterval(() => {
+    timeoutRef.current = setInterval(() => {
       setHasMounted((preVal) => true);
     }, 1000);
     return () => {
-      clearTimeout(timeout);
+      clearTimeout(timeoutRef.current);
     };
   }, [checkP, isDragging]);
 
   useEffect(() => { // send to save context
-    addToSaveManager(formInput, 'update', 'checkpoint');
+    updatedCheckpoint(formInput);
   }, [formInput]);
 
   useEffect(() => { // saveIndex after dragNdrop
@@ -113,8 +114,7 @@ export default function Checkpoint({
   }, [index]);
 
   useEffect(() => {
-    const copy = [...saveInput.tasks];
-    const theseTasks = copy.filter((task) => task.checkpointId === checkP.localId);
+    const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
     setTasks((preVal) => theseTasks);
   }, [checkPrefresh]);
 
@@ -128,8 +128,7 @@ export default function Checkpoint({
   useEffect(() => { // show progress bar animation
     let interval;
     if (progressIsShowing) {
-      const tasksCopy = [...saveInput.tasks];
-      const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
+      const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
       const totalTasks = theseTasks.length;
       let closedTasks = 0;
       let closedPercentage = 0;
@@ -160,8 +159,7 @@ export default function Checkpoint({
 
   useEffect(() => { // show progress bar
     if (progressIsShowing) {
-      const tasksCopy = [...saveInput.tasks];
-      const theseTasks = tasksCopy.filter((task) => task.checkpointId === checkP.localId);
+      const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
       const totalTasks = theseTasks.length;
       let closedTasks = 0;
       let closedPercentage = 0;
@@ -177,7 +175,7 @@ export default function Checkpoint({
     } else {
       document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
     }
-  }, [saveInput.tasks]);
+  }, [storedTasks]);
 
   useEffect(() => { // when hiding tasks
     pauseAnimations();
@@ -189,10 +187,9 @@ export default function Checkpoint({
       { duration: 500, iterations: 1 },
     );
   };
-
-  const refreshCheckP = () => {
+  const refreshCheckP = useCallback(() => {
     setCheckPrefresh((prevVal) => prevVal + 1);
-  };
+  }, []);
 
   const handleFresh = () => {
     if (formInput.fresh) {
@@ -231,13 +228,12 @@ export default function Checkpoint({
   const handleReorder = (e) => {
     const reordered = e.map((item, idx) => ({ ...item, index: idx }));
     setTasks((preVal) => reordered);
-    addToSaveManager(reordered, 'update', 'reorderedTasks');
+    loadTasks(reordered);
   };
 
   const handleDelete = () => {
-    const tasksCopy = [...saveInput.tasks];
     const taskCollabsCopy = [...taskCollabJoins];
-    const checkPtasks = tasksCopy.filter((item) => item.checkpointId === checkP.localId);
+    const checkPtasks = storedTasks.filter((item) => item.checkpointId === checkP.localId);
     const collabDeleteArray = [];
     for (let i = 0; i < checkPtasks.length; i++) {
       const filtered = taskCollabsCopy.filter((item) => item.taskId === checkPtasks[i].localId);
@@ -250,7 +246,8 @@ export default function Checkpoint({
         for (let i = 0; i < collabDeleteArray.length; i++) {
           deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
         }
-        deleteFromSaveManager(formInput, 'delete', 'checkpoint');
+        // deleteFromSaveManager(formInput, 'delete', 'checkpoint');
+        deleteCheckpoint(formInput);
         handleRefresh();
         setOpenDeleteModal((preVal) => false);
       });
@@ -286,7 +283,7 @@ export default function Checkpoint({
       collabsExpanded: false,
       lineColor: randomColor(),
     };
-    addToSaveManager(emptyTask, 'create', 'task');
+    createNewTask(emptyTask);
     setCheckPrefresh((prevVal) => prevVal + 1);
   };
 
@@ -588,7 +585,9 @@ export default function Checkpoint({
     </>
 
   );
-}
+});
+
+export default Checkpoint;
 
 Checkpoint.propTypes = {
   checkP: PropTypes.shape({
@@ -600,5 +599,4 @@ Checkpoint.propTypes = {
   index: PropTypes.number.isRequired,
   progressIsShowing: PropTypes.bool.isRequired,
   isDragging: PropTypes.bool.isRequired,
-
 };

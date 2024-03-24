@@ -3,16 +3,16 @@ import { OverlayTrigger } from 'react-bootstrap';
 import { removeIcon } from '../../public/icons';
 import { cancleInviteTT } from '../util/toolTips2';
 import { deleteInvite } from '../../api/invites';
-import { useSaveContext } from '../../utils/context/saveManager';
+import useSaveStore from '../../utils/stores/saveStore';
 
 // eslint-disable-next-line react/prop-types
 export default function InviteCard({ invitee }) {
-  const { deleteFromSaveManager } = useSaveContext();
+  const deleteInviteZus = useSaveStore((state) => state.deleteInvite);
   const cancelInvite = () => {
-    const { inviteId, projectId } = invitee;
+    const { inviteId } = invitee;
     deleteInvite(inviteId)
       .then(() => {
-        deleteFromSaveManager(invitee, 'delete', 'invite');
+        deleteInviteZus(invitee);
       });
   };
   return (
