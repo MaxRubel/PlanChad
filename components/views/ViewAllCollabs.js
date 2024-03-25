@@ -48,7 +48,7 @@ export default function ViewAllCollabs({ projectToAssign }) {
           fontWeight: '500',
         }}
       >
-        All Collaborators
+        Your Collaborators
       </div>
       <div
         className="card-body"

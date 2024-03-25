@@ -14,8 +14,8 @@ export default function InviteCollaborator({
   const [formInput, setFormInput] = useState({ email: '' });
   const [success, setSuccess] = useState(false);
   const { user } = useAuth();
-  const createNewInviteZus = useSaveStore((state) => state.createNewInvite);
-  const storedInvites = useSaveStore((state) => state.invites);
+  const addInviteToProject = useSaveStore((state) => state.addInviteToProject);
+  const invitesOfProject = useSaveStore((state) => state.invitesOfProject);
   const [extraMessageShowing, setExtraMessageShowing] = useState(false);
   const [copiedMessageShowing, setCopiedMessageShowing] = useState(false);
   const [alreadyInvitedMessage, setAlreadyInvitedMessage] = useState(false);
@@ -51,7 +51,7 @@ export default function InviteCollaborator({
     const email = formInput.email
       .toLowerCase()
       .replace(/\s/g, '');
-    if (storedInvites.some((item) => item.email === email)) {
+    if (invitesOfProject.some((item) => item.email === email && item.projectId === projectId)) {
       setExtraMessageShowing((preVal) => true);
       setAlreadyInvitedMessage((preVal) => true);
     } else {
@@ -70,7 +70,7 @@ export default function InviteCollaborator({
           updateInvite({ inviteId: name })
             .then(() => {
               const payload2 = { ...payload, inviteId: name };
-              createNewInviteZus(payload2);
+              addInviteToProject(payload2);
               successAnimation();
             });
         });
@@ -110,6 +110,7 @@ export default function InviteCollaborator({
                 className="form-control"
                 type="email"
                 name="email"
+                autoComplete="email"
                 value={formInput.email}
                 onChange={handleChange}
                 required
@@ -121,6 +122,7 @@ export default function InviteCollaborator({
                   {alreadyInvitedMessage ? 'This person has already been invited.  Here is a link to share with them:' : 'Share link:'}
                 </div>
                 <input
+                  id="readOnly"
                   className="form-control"
                   readOnly
                   value={`https://main--planchad.netlify.app/project/plan/${projectId}`}
@@ -148,14 +150,16 @@ export default function InviteCollaborator({
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'right' }}>
-              <Button
-                style={{ margin: '0px 8px' }}
-                type="submit"
-              >
-                Create Invite
-              </Button>
+              {extraMessageShowing ? '' : (
+                <Button
+                  style={{ margin: '0px 8px' }}
+                  type="submit"
+                >
+                  Create Invite
+                </Button>
+              )}
               <Button variant="dark" onClick={closeModal}>
-                Cancel
+                {extraMessageShowing ? 'Close' : 'Cancel'}
               </Button>
             </div>
           </Modal.Footer>

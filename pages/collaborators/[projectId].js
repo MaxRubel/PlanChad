@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import ViewAllCollabs from '../../components/views/ViewAllCollabs';
 import ViewProjCollabs from '../../components/views/ViewProjCollabs';
 import ViewTaskCollabs from '../../components/views/ViewTaskCollabs';
-import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/modals/AddCollabForm2';
 import { useCollabContext } from '../../utils/context/collabContext';
 import InvitesModal from '../../components/modals/InvitesModal';
 import useSaveStore from '../../utils/stores/saveStore';
+import { getInvitesByProject } from '../../api/invites';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -25,6 +25,8 @@ export default function ManageCollaboratorsPage() {
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
+  const addBatchOfInvites = useSaveStore((state) => state.addBatchOfInvites);
+  const updateInvitesOfProjectBatch = useSaveStore((state) => state.updateInvitesOfProjectBatch);
 
   useEffect(() => {
     sendToServer();
@@ -52,6 +54,9 @@ export default function ManageCollaboratorsPage() {
 
   const setProjectToAssignChild = (value) => {
     setProjectToAssign((preVal) => value);
+    getInvitesByProject(value).then((data) => {
+      updateInvitesOfProjectBatch(data);
+    });
   };
 
   const setTaskToAssignChild = (value) => {
@@ -74,7 +79,7 @@ export default function ManageCollaboratorsPage() {
 
   return (
     <>
-      <InvitesModal show={openInvitesModal} closeModal={handleCloseInvites} />
+      <InvitesModal projectId={projectToAssign} show={openInvitesModal} closeModal={handleCloseInvites} />
       <div id="project-top-bar" style={{ marginBottom: '1%' }}>
         <button
           id="saveButton"

@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { updateProject } from '../../api/project';
+import { getInvitesByProject } from '../../api/invites';
 
 const useSaveStore = create(devtools(
   (set, get) => ({
     project: {},
     checkpoints: [],
     tasks: [],
+    invitesOfProject: [],
     invites: [],
     allProjects: [],
     allTasks: [],
@@ -116,26 +118,38 @@ const useSaveStore = create(devtools(
       };
     }),
     // ------invites---------
+    addInviteToProject: (newInvite) => set((preVal) => ({ invitesOfProject: [...preVal.invitesOfProject, newInvite] })),
     createNewInvite: (newInvite) => set((preVal) => ({ invites: [...preVal.invites, newInvite] })),
+    updateInvitesOfProjectBatch: (newInvites) => set((preVal) => ({ invitesOfProject: newInvites })),
+    addBatchOfInvites: (newInvites) => set((preVal) => {
+      const uniqueNewInvites = newInvites
+        .filter((newInvite) => !preVal.invites.some((invite) => invite.inviteId === newInvite.inviteId));
+      return { invites: [...preVal.invites, ...uniqueNewInvites] };
+    }),
     updateInvite: (updatedInvite) => set((preVal) => ({
       invites: preVal.invites.map((invite) => (
         invite.localId === updatedInvite.localId ? updatedInvite : invite)),
     })),
     deleteInvite: (deletedInvite) => set((preVal) => ({
-      invites: preVal.invites.filter(
+      invitesOfProject: preVal.invitesOfProject.filter(
         (invite) => invite.inviteId !== deletedInvite.inviteId,
       ),
     })),
+    deleteInvitesUponRemoval: (deletedInvites) => set((preVal) => {
+      const updatedInvites = preVal.invites.filter(
+        (invite) => !deletedInvites.some((deletedInvite) => deletedInvite.inviteId === invite.inviteId),
+      );
+      return { invites: updatedInvites };
+    }),
 
     sendToServer: () => {
       const {
-        allProjects, checkpoints, tasks, invites, project,
+        allProjects, checkpoints, tasks, invitesOfProject, project,
       } = get();
 
       if (allProjects.length === 0) { return; }
       const checkpointsFormatted = checkpoints.length > 0 ? JSON.stringify(checkpoints) : null;
       const tasksFormatted = tasks.length > 0 ? JSON.stringify(tasks) : null;
-      const invitesFormatted = invites.length > 0 ? JSON.stringify(invites) : null;
 
       if (!project) { return; }
       const { projectId, userId } = project;
@@ -145,7 +159,6 @@ const useSaveStore = create(devtools(
         userId,
         checkpoints: checkpointsFormatted,
         tasks: tasksFormatted,
-        invites: invitesFormatted,
       };
       set((state) => ({
         allProjects: state.allProjects.map((item) => (

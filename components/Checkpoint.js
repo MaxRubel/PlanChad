@@ -7,7 +7,7 @@ import uniqid from 'uniqid';
 import { Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
-import { calendarIcon, trashIcon } from '../public/icons';
+import { calendarIcon, plusIcon, trashIcon } from '../public/icons';
 import {
   expandTooltip,
   collapseToolTip,
@@ -22,6 +22,9 @@ import DeleteCheckpointModal from './modals/DeleteCheckpoint';
 import Task from './Task';
 import useSaveStore from '../utils/stores/saveStore';
 import useAnimationStore from '../utils/stores/animationsStore';
+import useProgressBarAnimation from '../utils/hooks/useProgressBarAnimation';
+import useProgressBar from '../utils/hooks/useProgressBar';
+import useMinimizeCheckpoint from '../utils/hooks/useMinimizeCheckpoint';
 
 const Checkpoint = memo(({
   checkP, handleRefresh, index, progressIsShowing,
@@ -50,7 +53,6 @@ const Checkpoint = memo(({
   const reOrderTheTasks = useSaveStore((state) => state.reOrderTheTasks);
   const pauseReorder = useAnimationStore((state) => state.pauseReorder);
   const reorderPaused = useAnimationStore((state) => state.reorderPaused);
-  const minAll = useAnimationStore((state) => state.minAll);
 
   const downIcon = (
     <svg
@@ -66,26 +68,15 @@ const Checkpoint = memo(({
       />
     </svg>
   );
-  const plusIcon = (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="29px"
-      height="29px"
-      style={{ pointerEvents: 'none' }}
-      fill="currentColor"
-      viewBox="0 0 16 16"
-    >
-      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-    </svg>
-  );
 
   const timeoutRef = useRef(null);
 
   useEffect(() => {
     pauseReorder();
-    const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
-    const sorted = theseTasks.sort((a, b) => a.index - b.index);
-    setTasks(sorted);
+    const theseTasks = storedTasks
+      .filter((task) => task.checkpointId === checkP.localId)
+      .sort((a, b) => a.index - b.index);
+    setTasks(theseTasks);
     setFormInput(checkP);
     setHasloaded((preVal) => true);
     timeoutRef.current = setInterval(() => {
@@ -96,7 +87,7 @@ const Checkpoint = memo(({
     };
   }, [checkP]);
 
-  useEffect(() => { // send to save context
+  useEffect(() => { // send to zustand
     updatedCheckpoint(formInput);
   }, [formInput]);
 
@@ -109,64 +100,9 @@ const Checkpoint = memo(({
     setTasks((preVal) => theseTasks);
   }, [checkPrefresh]);
 
-  useEffect(() => { // minimize
-    if (hasLoaded) {
-      pauseReorder();
-      setFormInput((prevVal) => ({ ...prevVal, expandedCal: false, expanded: false }));
-    }
-  }, [minAll]);
-
-  useEffect(() => { // show progress bar animation
-    let interval;
-    if (progressIsShowing) {
-      const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
-      const totalTasks = theseTasks.length;
-      let closedTasks = 0;
-      let closedPercentage = 0;
-
-      for (let i = 0; i < totalTasks; i++) {
-        if (theseTasks[i].status === 'closed') {
-          closedTasks += 1;
-        }
-      }
-      if (totalTasks !== 0) {
-        closedPercentage = Math.round((closedTasks / totalTasks) * 100);
-      }
-      let i = 0;
-      interval = setInterval(() => {
-        document.getElementById(`progressOf${checkP.localId}`).style.width = `${i}%`;
-        i += 1;
-        if (i > closedPercentage) {
-          clearInterval(interval);
-        }
-      }, 20);
-    } else {
-      document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
-    }
-    return () => {
-      clearInterval(interval);
-    };
-  }, [progressIsShowing]);
-
-  useEffect(() => { // show progress bar
-    if (progressIsShowing) {
-      const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
-      const totalTasks = theseTasks.length;
-      let closedTasks = 0;
-      let closedPercentage = 0;
-      for (let i = 0; i < totalTasks; i++) {
-        if (theseTasks[i].status === 'closed') {
-          closedTasks += 1;
-        }
-      }
-      if (totalTasks !== 0) {
-        closedPercentage = Math.round((closedTasks / totalTasks) * 100);
-      }
-      document.getElementById(`progressOf${checkP.localId}`).style.width = `${closedPercentage}%`;
-    } else {
-      document.getElementById(`progressOf${checkP.localId}`).style.width = '0%';
-    }
-  }, [storedTasks]);
+  useMinimizeCheckpoint(hasLoaded, setFormInput);
+  useProgressBarAnimation(progressIsShowing, storedTasks, checkP);
+  useProgressBar(progressIsShowing, storedTasks, checkP);
 
   const dance = () => {
     document.getElementById(`addTask${checkP.localId}`).animate(
@@ -183,7 +119,6 @@ const Checkpoint = memo(({
       setFormInput((preVal) => ({ ...preVal, fresh: false }));
     }
   };
-
   const handleChange = (e) => {
     handleFresh();
     const { name, value } = e.target;
@@ -198,7 +133,6 @@ const Checkpoint = memo(({
       setFormInput((prevVal) => ({ ...prevVal, expanded: true }));
     }
   };
-
   const handleCollapseCal = () => {
     pauseReorder();
     if (formInput.expandedCal) {
@@ -211,35 +145,12 @@ const Checkpoint = memo(({
   const handleDragStart = () => {
     refreshCheckP();
   };
-
   const handleDragEnd = () => {
     reOrderTheTasks(tasks);
   };
-
   const handleReorder = (e) => {
     const reordered = e.map((item, idx) => ({ ...item, index: idx }));
     setTasks((preVal) => reordered);
-  };
-
-  const handleDelete = () => {
-    const taskCollabsCopy = [...taskCollabJoins];
-    const checkPtasks = storedTasks.filter((item) => item.checkpointId === checkP.localId);
-    const collabDeleteArray = [];
-    for (let i = 0; i < checkPtasks.length; i++) {
-      const filtered = taskCollabsCopy.filter((item) => item.taskId === checkPtasks[i].localId);
-      for (let x = 0; x < filtered.length; x++) {
-        collabDeleteArray.push(filtered[x]);
-      }
-    }
-    Promise.all(collabDeleteArray.map((item) => deleteTaskCollab(item.taskCollabId)))
-      .then(() => {
-        for (let i = 0; i < collabDeleteArray.length; i++) {
-          deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
-        }
-        deleteCheckpoint(formInput);
-        handleRefresh();
-        setOpenDeleteModal((preVal) => false);
-      });
   };
 
   const handleOpenModal = () => {
@@ -274,6 +185,27 @@ const Checkpoint = memo(({
     createNewTask(emptyTask);
     pauseReorder();
     setCheckPrefresh((prevVal) => prevVal + 1);
+  };
+
+  const handleDelete = () => {
+    const taskCollabsCopy = [...taskCollabJoins];
+    const checkPtasks = storedTasks.filter((item) => item.checkpointId === checkP.localId);
+    const collabDeleteArray = [];
+    for (let i = 0; i < checkPtasks.length; i++) {
+      const filtered = taskCollabsCopy.filter((item) => item.taskId === checkPtasks[i].localId);
+      for (let x = 0; x < filtered.length; x++) {
+        collabDeleteArray.push(filtered[x]);
+      }
+    }
+    Promise.all(collabDeleteArray.map((item) => deleteTaskCollab(item.taskCollabId)))
+      .then(() => {
+        for (let i = 0; i < collabDeleteArray.length; i++) {
+          deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
+        }
+        deleteCheckpoint(formInput);
+        handleRefresh();
+        setOpenDeleteModal((preVal) => false);
+      });
   };
 
   return (

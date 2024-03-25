@@ -10,7 +10,7 @@ import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
 import DeleteProjectModal from './modals/DeleteProject';
 import { useCollabContext } from '../utils/context/collabContext';
-import { deleteAllInvitesOfProject, updateInvite } from '../api/invites';
+import { deleteAllInvitesOfProject, getInvitesByProject, updateInvite } from '../api/invites';
 import { useAuth } from '../utils/context/authContext';
 import useSaveStore from '../utils/stores/saveStore';
 import useAnimationStore from '../utils/stores/animationsStore';
@@ -27,7 +27,7 @@ export default function MainProjectView({ projectId }) {
   const { user } = useAuth();
   const storedCheckpoints = useSaveStore((state) => state.checkpoints);
   const storedProject = useSaveStore((state) => state.project);
-  const storedInvites = useSaveStore((state) => state.invites);
+  const invitesOfProject = useSaveStore((state) => state.invitesOfProject);
   const updateInviteZus = useSaveStore((state) => state.updateInvite);
   const createNewCheckpoint = useSaveStore((state) => state.createNewCheckpoint);
   const saveNewArray = useSaveStore((state) => state.loadCheckpoints);
@@ -41,6 +41,7 @@ export default function MainProjectView({ projectId }) {
   const hideCompletedTasksProjectData = useSaveStore((state) => state.hideCompletedTasksProjectData);
   const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const updateInvitesOfProjectBatch = useSaveStore((state) => state.updateInvitesOfProjectBatch);
   const showProgress = useAnimationStore((state) => state.showProgress);
   const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
   const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
@@ -56,6 +57,9 @@ export default function MainProjectView({ projectId }) {
         pauseReorder();
         setCheckpoints((preVal) => storedCheckpoints);
       }
+      getInvitesByProject(projectId).then((projectInvites) => {
+        updateInvitesOfProjectBatch(projectInvites);
+      });
     }
   }, [projectId, projectsLoaded, singleProjectRunning]);
 
@@ -65,7 +69,7 @@ export default function MainProjectView({ projectId }) {
   }, [refresh]);
 
   useEffect(() => {
-    const thisInvitee = storedInvites?.find((item) => item.email === user.email);
+    const thisInvitee = invitesOfProject?.find((item) => item.email === user.email);
     if (thisInvitee?.status === 'Pending') {
       const payload = {
         ...thisInvitee,
@@ -75,7 +79,7 @@ export default function MainProjectView({ projectId }) {
         updateInviteZus(payload);
       });
     }
-  }, [storedInvites]);
+  }, [invitesOfProject]);
 
   const handleRefresh = useCallback(() => {
     setRefresh((prevVal) => prevVal + 1);
@@ -159,9 +163,9 @@ export default function MainProjectView({ projectId }) {
     <>
       <DeleteProjectModal
         handleDelete={() => {
+          theBigDelete(projectId);
           deleteAllProjCollabs(project.projectId);
           deleteAllInvitesOfProject(project.projectId);
-          theBigDelete(projectId);
         }}
         closeModal={handleCloseModal}
         show={openDeleteModal}

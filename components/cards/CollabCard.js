@@ -12,6 +12,7 @@ import { deleteTaskCollab } from '../../api/taskCollab';
 import { deleteCollabTT, editCollabTT, viewCollabDeetsTT } from '../util/toolTips';
 import DeleteCollabModal from '../modals/DeleteCollab';
 import useSaveStore from '../../utils/stores/saveStore';
+import { deleteInvite, getInvitesByCollab } from '../../api/invites';
 
 export default function CollabCard({ collab, ofProj, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
@@ -72,12 +73,17 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
       deleteFromCollabManager(theseTaskCollabsJoinsIds[i], 'taskCollabJoin');
     }
 
-    const removeTaskJoinArray = theseTaskCollabsJoins.map((item) => deleteTaskCollab(item.taskCollabId));
-    const removeProjoinArray = theseProjJoins.map((item) => deleteProjCollab(item.projCollabId));
+    getInvitesByCollab(collab.collabId).then((invitesData) => {
+      const deleteInvitesOfCollab = invitesData.map((item) => (deleteInvite(item.inviteId)));
+      Promise.all(deleteInvitesOfCollab).then(() => {
+        const removeTaskJoinArray = theseTaskCollabsJoins.map((item) => deleteTaskCollab(item.taskCollabId));
+        const removeProjoinArray = theseProjJoins.map((item) => deleteProjCollab(item.projCollabId));
 
-    Promise.all([...removeTaskJoinArray, ...removeProjoinArray]).then(() => {
-      deleteCollab(collab.collabId).then(() => {
-        deleteFromCollabManager(collab.collabId, 'allCollabs');
+        Promise.all([...removeTaskJoinArray, ...removeProjoinArray]).then(() => {
+          deleteCollab(collab.collabId).then(() => {
+            deleteFromCollabManager(collab.collabId, 'allCollabs');
+          });
+        });
       });
     });
   };
