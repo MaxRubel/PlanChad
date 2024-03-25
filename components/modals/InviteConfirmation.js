@@ -2,18 +2,19 @@
 import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { useSaveContext } from '../../utils/context/saveManager';
 import { createNewInvite, updateInvite } from '../../api/invites';
 import { useAuth } from '../../utils/context/authContext';
 import { closeIcon } from '../../public/icons';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function InviteCollaborator({
   show, closeModal, collab, projectId,
 }) {
   const [formInput, setFormInput] = useState({ email: '' });
   const [success, setSuccess] = useState(false);
-  const { saveInput, addToSaveManager } = useSaveContext();
   const { user } = useAuth();
+  const createNewInviteZus = useSaveStore((state) => state.createNewInvite);
+  const storedInvites = useSaveStore((state) => state.storedInvites);
 
   let timeout;
 
@@ -40,11 +41,10 @@ export default function InviteCollaborator({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const theseInvites = [...saveInput.invites];
     const email = formInput.email
       .toLowerCase()
       .replace(/\s/g, '');
-    if (theseInvites.some((item) => item.email === email)) {
+    if (storedInvites.some((item) => item.email === email)) {
       window.alert('this person has already been invited');
     } else {
       const payload = {
@@ -62,7 +62,7 @@ export default function InviteCollaborator({
           updateInvite({ inviteId: name })
             .then(() => {
               const payload2 = { ...payload, inviteId: name };
-              addToSaveManager(payload2, 'create', 'invite');
+              createNewInviteZus(payload2);
               successAnimation();
             });
         });

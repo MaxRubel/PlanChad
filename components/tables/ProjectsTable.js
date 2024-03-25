@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../utils/context/authContext';
-import { useSaveContext } from '../../utils/context/saveManager';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function ProjectsTable() {
   const [projectsArray, setProjectsArray] = useState([]);
   const { user } = useAuth();
-  const { allProjects } = useSaveContext();
+  const storedProjects = useSaveStore((state) => state.allProjects);
   const router = useRouter();
 
   useEffect(() => {
-    setProjectsArray((preVal) => allProjects);
-  }, [user, allProjects]);
+    setProjectsArray(storedProjects);
+  }, [user, storedProjects]);
 
   return (
     <table id="projects-table" style={{ marginTop: '4%' }}>

@@ -2,16 +2,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../utils/context/authContext';
 import { createNewProject, updateProject } from '../../api/project';
-import { useSaveContext } from '../../utils/context/saveManager';
-import { createNewProjCollab, updateProjCollab } from '../../api/projCollab';
 import { useCollabContext } from '../../utils/context/collabContext';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function NewProjectForm() {
   const [formInput, setFormInput] = useState({ name: '' });
   const { user } = useAuth();
-  const { addToSaveManager } = useSaveContext();
   const { addToCollabManager } = useCollabContext();
   const router = useRouter();
+  const createNewProjectZus = useSaveStore((state) => state.createNewProject);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -42,7 +41,7 @@ export default function NewProjectForm() {
         const payload2 = { projectId: name };
         updateProject(payload2)
           .then(() => {
-            addToSaveManager({ ...payload, ...payload2 }, 'create', 'project');
+            createNewProjectZus({ ...payload, ...payload2 });
             router.push(`/project/plan/${name}`);
           });
       });

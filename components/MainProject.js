@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
-import { AnimatePresence, Reorder, motion } from 'framer-motion';
+import { Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import ProjectCard from './ProjectCard';
@@ -10,113 +10,80 @@ import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
 import DeleteProjectModal from './modals/DeleteProject';
 import { useCollabContext } from '../utils/context/collabContext';
-import ShareLinkModal from './modals/ShareLinkModal';
 import { deleteAllInvitesOfProject, updateInvite } from '../api/invites';
 import { useAuth } from '../utils/context/authContext';
+import useSaveStore from '../utils/stores/saveStore';
+import useAnimationStore from '../utils/stores/animationsStore';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
-  const [progressIsShowing, setProgressIsShowing] = useState(false);
-  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [animationPaused, setAnimationPaused] = useState(true);
-  const [shareLinkModalOpen, setShareLinkModalOpen] = useState(false);
-
-  const {
-    addToSaveManager,
-    saveInput,
-    sendToServer,
-    min,
-    minAll,
-    loadProject,
-    projectsLoaded,
-    singleProjectRunning,
-    isSaving,
-    hideCompletedTasks,
-    theBigDelete,
-    cancelSaveAnimation,
-  } = useSaveContext();
-
+  const { theBigDelete } = useSaveContext();
   const { deleteAllProjCollabs } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
-
-  let timeout;
-
-  const pauseAnimation = () => {
-    setAnimationPaused(((preVal) => true));
-    timeout = setTimeout(() => { setAnimationPaused(((preVal) => false)); }, 500);
-  };
+  const storedCheckpoints = useSaveStore((state) => state.checkpoints);
+  const storedProject = useSaveStore((state) => state.project);
+  const storedInvites = useSaveStore((state) => state.invites);
+  const updateInviteZus = useSaveStore((state) => state.updateInvite);
+  const createNewCheckpoint = useSaveStore((state) => state.createNewCheckpoint);
+  const saveNewArray = useSaveStore((state) => state.loadCheckpoints);
+  const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
+  const sendToServer = useSaveStore((state) => state.sendToServer);
+  const pauseReorder = useAnimationStore((state) => state.pauseReorder);
+  const reorderPaused = useAnimationStore((state) => state.reorderPaused);
+  const minimizeAll = useAnimationStore((state) => state.minimizeAll);
+  const minAll = useAnimationStore((state) => state.minAll);
+  const hideCompletedTasks = useAnimationStore((state) => state.hideCompletedTasks);
+  const hideCompletedTasksProjectData = useSaveStore((state) => state.hideCompletedTasksProjectData);
+  const checkpointsZus = useSaveStore((state) => state.checkpoints);
+  const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const showProgress = useAnimationStore((state) => state.showProgress);
+  const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
+  const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
+  const zustandFinished = useAnimationStore((state) => state.zustandFinished);
+  const [isSaving, setIsSaving] = useState(0);
 
   useEffect(() => {
-    pauseAnimation();
-    const copy = [...saveInput.checkpoints];
-    const sortedArr = copy.sort((a, b) => a.index - b.index);
+    pauseReorder();
+    if (projectId && projectsLoaded) {
+      if (!singleProjectRunning) {
+        loadASingleProject(projectId);
+      } else {
+        setProject(storedProject);
+        const checkpointsSorted = storedCheckpoints.sort((a, b) => a.index - b.index);
+        pauseReorder();
+        setCheckpoints((preVal) => checkpointsSorted);
+      }
+    }
+  }, [projectId, projectsLoaded, singleProjectRunning]);
+
+  useEffect(() => {
+    pauseReorder();
+    const sortedArr = storedCheckpoints.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
   }, [refresh]);
 
   useEffect(() => {
-    const invitesToCheck = [...saveInput.invites];
-    const thisInvitee = invitesToCheck.find((item) => item.email === user.email);
+    const thisInvitee = storedInvites?.find((item) => item.email === user.email);
     if (thisInvitee?.status === 'Pending') {
       const payload = {
         ...thisInvitee,
         status: 'Joined',
       };
       updateInvite(payload).then(() => {
-        addToSaveManager(payload, 'update', 'invite');
+        updateInviteZus(payload);
       });
     }
-  }, [saveInput.invites]);
+  }, [storedInvites]);
 
-  useEffect(() => {
-    pauseAnimation();
-    if (projectId && projectsLoaded) {
-      cancelSaveAnimation();
-      if (!singleProjectRunning) {
-        const projectDetails = loadProject(projectId); // LOAD PROJECT
-        setProject((preVal) => projectDetails.project);
-        if (projectDetails?.project?.projectId) {
-          setHideCompletedTasksChild((preVal) => projectDetails?.project.hideCompletedTasks);
-        }
-        const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
-        setCheckpoints(checkpointsSorted);
-      } else {
-        setProject((preVal) => saveInput.project);
-        setHideCompletedTasksChild((preVal) => saveInput.project?.hideCompletedTasks);
-        const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
-        setCheckpoints((preVal) => checkpointsSorted);
-      }
-    }
-    return () => { clearTimeout(timeout); };
-  }, [projectId, projectsLoaded]);
-
-  const tellProjectIfProgressShowing = (value) => {
-    setProgressIsShowing((preVal) => value);
-  };
-
-  const handleRefresh = () => { // retreive from save manager
+  const handleRefresh = useCallback(() => {
     setRefresh((prevVal) => prevVal + 1);
-  };
-
-  useEffect(() => { // minimize animation
-    let minColorChange;
-    const minButton = document.getElementById('minButton');
-    if (min > 0 && minButton) {
-      minButton.style.color = 'rgb(16, 197, 234)';
-      minColorChange = setTimeout(() => {
-        minButton.style.color = 'rgb(200, 200, 200)';
-      }, 1000);
-    }
-    return () => {
-      if (minColorChange) {
-        clearTimeout(minColorChange);
-      }
-    };
-  }, [min]);
+  }, []);
 
   useEffect(() => { // save button color animation
     let saveColorChange;
@@ -150,46 +117,55 @@ export default function MainProjectView({ projectId }) {
       dragId: uniqid(),
       lineColor: randomColor(),
     };
-    addToSaveManager(emptyChckP, 'create', 'checkpoint');
+    createNewCheckpoint(emptyChckP);
     handleRefresh();
   };
 
-  const handleDragStart = () => {
-    setCheckpoints(saveInput.checkpoints);
-    setIsDragging((preVal) => true);
+  const handleDragStart = (e) => {
+    setCheckpoints(storedCheckpoints);
+    checkpointsAreBeingDragged();
+  };
+
+  const handleDragEnd = (e) => {
+    checkpointsAreNotBeingDragged();
   };
 
   const reOrderCheckPoints = (e) => {
     const reordered = e.map((item, index) => ({ ...item, index }));
-    setCheckpoints((preVal) => reordered);
-    addToSaveManager(reordered, 'update', 'checkpointsArr');
+    saveNewArray(reordered);
+    setCheckpoints(reordered);
   };
 
   const handleChange = (e) => {
     if (e === 'minAll') {
-      minAll();
+      pauseReorder();
+      minimizeAll();
     }
     if (e === 'showProgress') {
-      setProgressIsShowing((preVal) => !preVal);
+      showProgress();
     }
     if (e === 'hideCompleted') {
-      pauseAnimation();
+      pauseReorder();
       hideCompletedTasks();
-      setHideCompletedTasksChild((preVal) => !preVal);
+      hideCompletedTasksProjectData();
     }
   };
 
   const handleCloseModal = () => {
     setOpenDeleteModal((prevVal) => false);
   };
+
+  const saveAnimation = () => {
+    setIsSaving((preVal) => preVal + 1);
+  };
+
   return (
     <>
-      <ShareLinkModal show={shareLinkModalOpen} />
       <DeleteProjectModal
         handleDelete={() => {
           deleteAllProjCollabs(project.projectId);
           deleteAllInvitesOfProject(project.projectId);
-          theBigDelete(project.projectId);
+          theBigDelete(projectId);
         }}
         closeModal={handleCloseModal}
         show={openDeleteModal}
@@ -202,7 +178,10 @@ export default function MainProjectView({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={sendToServer}
+              onClick={() => {
+                sendToServer();
+                saveAnimation();
+              }}
             >
               Save
             </button>
@@ -236,19 +215,10 @@ export default function MainProjectView({ projectId }) {
               </Dropdown.Toggle>
               <Dropdown.Menu style={{ backgroundColor: 'rgb(0,0,0, .85)', color: 'white' }}>
                 <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
-                <Dropdown.Item eventKey="showProgress">{progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
-                <Dropdown.Item eventKey="hideCompleted">{saveInput.project?.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
+                <Dropdown.Item eventKey="showProgress">{storedProject.progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
+                <Dropdown.Item eventKey="hideCompleted">{storedProject.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            {/* <button
-              id="manageCollaborators"
-              type="button"
-              className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => { setShareLinkModalOpen(true); }}
-            >
-              Share Link
-            </button> */}
             <button
               id="manageCollaborators"
               type="button"
@@ -261,12 +231,8 @@ export default function MainProjectView({ projectId }) {
           </div>
           <div id="projectCard-container" className="fullCenter">
             <ProjectCard
-              min={min}
-              minAll={minAll}
               project={project}
-              progressIsShowing={progressIsShowing}
-              hideCompletedTasksChild={hideCompletedTasksChild}
-              tellProjectIfProgressShowing={tellProjectIfProgressShowing}
+              progressIsShowing={storedProject.progressIsShowing}
             />
           </div>
           <div
@@ -291,52 +257,48 @@ export default function MainProjectView({ projectId }) {
               Add A Phase
             </button>
             <div />
-            <div className="verticalCenter" style={{ justifyContent: 'right', color: 'lightgrey', fontSize: '12px' }}>{saveInput?.project?.hideCompletedTasks && '(Completed Tasks are Hidden)'}</div>
+            <div className="verticalCenter" style={{ justifyContent: 'right', color: 'lightgrey', fontSize: '12px' }}>{storedProject?.hideCompletedTasks && '(Completed Tasks are Hidden)'}</div>
           </div>
           <div id="dnd-container">
-            <AnimatePresence initial={false}>
-              <motion.div>
-                <Reorder.Group
-                  as="div"
-                  axis="y"
-                  values={checkpoints}
-                  onReorder={reOrderCheckPoints}
-                  positiontransition="true"
-                  key="checkpointsReorder"
-                  animate={false}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {checkpoints.map((checkP, index) => (
-                      <Reorder.Item
-                        as={motion.div}
-                        key={checkP.localId}
-                        value={checkP}
-                        style={{ cursor: 'grab' }}
-                        onDragStart={handleDragStart}
-                        layoutId={null}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 1 }}
-                        transition={{ duration: animationPaused ? 0 : 0.4 }}
-                      >
-                        <Checkpoint
-                          key={checkP.localId}
-                          checkP={checkP}
-                          handleRefresh={handleRefresh}
-                          minAll={minAll}
-                          min={min}
-                          index={index}
-                          refresh={refresh}
-                          progressIsShowing={progressIsShowing}
-                          isDragging={isDragging}
-                          layoutId={null}
-                        />
-                      </Reorder.Item>
-                    ))}
-                  </div>
-                </Reorder.Group>
-              </motion.div>
-            </AnimatePresence>
+            <Reorder.Group
+              as="div"
+              axis="y"
+              values={checkpoints}
+              onReorder={reOrderCheckPoints}
+              positiontransition="true"
+              key="checkpointsReorder"
+              animate={false}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                {checkpoints.map((checkP, index) => (
+                  <Reorder.Item
+                    as={motion.div}
+                    key={checkP.localId}
+                    value={checkP}
+                    style={{ cursor: 'grab' }}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                    layoutId={null}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 1 }}
+                    transition={{ duration: reorderPaused ? 0 : 0.2 }}
+                  >
+                    <Checkpoint
+                      key={checkP.localId}
+                      checkP={checkP}
+                      handleRefresh={handleRefresh}
+                      minAll={minAll}
+                      index={index}
+                      refresh={refresh}
+                      progressIsShowing={storedProject.progressIsShowing}
+                      isDragging={isDragging}
+                      layoutId={null}
+                    />
+                  </Reorder.Item>
+                ))}
+              </div>
+            </Reorder.Group>
           </div>
         </div>
       </div>

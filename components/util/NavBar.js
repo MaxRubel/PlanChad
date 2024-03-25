@@ -4,12 +4,13 @@ import Link from 'next/link';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { homeIcon } from '../../public/icons';
 import { signOut } from '../../utils/auth';
-import { useSaveContext } from '../../utils/context/saveManager';
 import { useCollabContext } from '../../utils/context/collabContext';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function NavBar() {
-  const { singleProjectRunning, clearAllLocalData } = useSaveContext();
   const { clearCollabManager } = useCollabContext();
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const clearAllLocalData = useSaveStore((state) => state.clearAllLocalData);
 
   if (singleProjectRunning) {
     return (
