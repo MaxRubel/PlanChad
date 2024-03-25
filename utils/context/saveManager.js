@@ -23,10 +23,6 @@ export const SaveContextProvider = ({ children }) => {
   const { sendToCollabsManager } = useCollabContext();
 
   // ----zustand-data-store-----
-  const loadCheckpoints = useSaveStore((state) => state.loadCheckpoints);
-  const loadTasks = useSaveStore((state) => state.loadTasks);
-  const loadProjectZus = useSaveStore((state) => state.loadProject);
-  const loadInvites = useSaveStore((state) => state.loadInvites);
   const loadAllProjects = useSaveStore((state) => state.loadAllProjects);
   const loadAllTasks = useSaveStore((state) => state.loadAllTasks);
   const allProjectsZus = useSaveStore((state) => state.allProjects);
@@ -88,33 +84,6 @@ export const SaveContextProvider = ({ children }) => {
   const clearAllLocalData = () => {
     projectsHaveBeenLoaded(false);
   };
-
-  const loadProject = useCallback((projectId) => {
-    const project = allProjectsZus.find((item) => item.projectId === projectId);
-    let checkpoints = [];
-    let tasks = [];
-    let invites = [];
-    if (project?.checkpoints) {
-      const checkpointsFormat = JSON.parse(project.checkpoints);
-      checkpoints = checkpointsFormat.sort((a, b) => a.index - b.index);
-    }
-    if (project?.tasks) {
-      const tasksFormat = JSON.parse(project.tasks);
-      tasks = tasksFormat;
-    }
-    if (project?.invites) {
-      const invitesFormat = JSON.parse(project.invites);
-      invites = invitesFormat;
-    }
-    const obj = {
-      project, checkpoints, tasks, invites,
-    };
-    loadProjectZus(project);
-    loadCheckpoints(checkpoints);
-    loadTasks(tasks);
-    loadInvites(invites);
-    return obj;
-  }, [projectsLoaded]);
 
   const theBigDelete = (projectId) => {
     setIsFetchingUserData((preVal) => true);

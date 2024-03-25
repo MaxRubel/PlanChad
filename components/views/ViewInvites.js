@@ -1,14 +1,16 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
 import InviteCard from '../cards/InviteCard';
 import useSaveStore from '../../utils/stores/saveStore';
+import { getInvitesByProject } from '../../api/invites';
 
-export default function ViewInvites() {
+export default function ViewInvites({ projectId }) {
   const [invites, setInvites] = useState([]);
-  const storedInvites = useSaveStore((state) => state.invites);
+  const invitesOfProject = useSaveStore((state) => state.invitesOfProject);
 
   useEffect(() => {
-    setInvites(storedInvites);
-  }, [storedInvites]);
+    setInvites(invitesOfProject);
+  }, [projectId, invitesOfProject]);
 
   return (
 

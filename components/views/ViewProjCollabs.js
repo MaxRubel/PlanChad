@@ -5,6 +5,7 @@ import { useCollabContext } from '../../utils/context/collabContext';
 import CollabCardforProject from '../cards/CollabCardForProject';
 import { useAuth } from '../../utils/context/authContext';
 import useSaveStore from '../../utils/stores/saveStore';
+import { getInvitesByProject } from '../../api/invites';
 
 export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToAssignChild }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
@@ -16,6 +17,7 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   const originalProjCollabs = useRef([]);
   const { user } = useAuth();
   const allProjects = useSaveStore((state) => state.allProjects);
+  const addBatchOfInvites = useSaveStore((state) => state.addBatchOfInvites);
 
   useEffect(() => {
     // load in either the projectId from the router query or let the user choose from dropdown
@@ -61,6 +63,9 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   const changeProject = (e) => {
     const { value } = e.target;
     const project = allProjects.find((item) => item.projectId === value);
+    getInvitesByProject(value).then((data) => {
+      addBatchOfInvites(data);
+    });
     setThisProject((preVal) => project);
     setSelectInput((preVal) => value);
     setProjectToAssignChild(value);
