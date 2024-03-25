@@ -39,13 +39,11 @@ export default function MainProjectView({ projectId }) {
   const minAll = useAnimationStore((state) => state.minAll);
   const hideCompletedTasks = useAnimationStore((state) => state.hideCompletedTasks);
   const hideCompletedTasksProjectData = useSaveStore((state) => state.hideCompletedTasksProjectData);
-  const checkpointsZus = useSaveStore((state) => state.checkpoints);
   const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const showProgress = useAnimationStore((state) => state.showProgress);
   const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
   const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
-  const zustandFinished = useAnimationStore((state) => state.zustandFinished);
   const [isSaving, setIsSaving] = useState(0);
 
   useEffect(() => {
@@ -55,17 +53,15 @@ export default function MainProjectView({ projectId }) {
         loadASingleProject(projectId);
       } else {
         setProject(storedProject);
-        const checkpointsSorted = storedCheckpoints.sort((a, b) => a.index - b.index);
         pauseReorder();
-        setCheckpoints((preVal) => checkpointsSorted);
+        setCheckpoints((preVal) => storedCheckpoints);
       }
     }
   }, [projectId, projectsLoaded, singleProjectRunning]);
 
   useEffect(() => {
     pauseReorder();
-    const sortedArr = storedCheckpoints.sort((a, b) => a.index - b.index);
-    setCheckpoints(sortedArr);
+    setCheckpoints(storedCheckpoints);
   }, [refresh]);
 
   useEffect(() => {
@@ -128,11 +124,11 @@ export default function MainProjectView({ projectId }) {
 
   const handleDragEnd = (e) => {
     checkpointsAreNotBeingDragged();
+    saveNewArray(checkpoints);
   };
 
   const reOrderCheckPoints = (e) => {
     const reordered = e.map((item, index) => ({ ...item, index }));
-    saveNewArray(reordered);
     setCheckpoints(reordered);
   };
 

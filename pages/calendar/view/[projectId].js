@@ -41,7 +41,6 @@ export default function CalendarPage() {
     if (!singleProjectRunning && projectsLoaded) { // load the project if page refreshed
       loadASingleProject(projectId);
     }
-    sendToServer();
     const filteredTasks = storedTasks
       .filter((item) => item.startDate || item.deadline)
       .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
@@ -50,6 +49,10 @@ export default function CalendarPage() {
     setSortedTasks(filteredTasks);
     setSortedCheckpoints(filteredCheckpoints);
   }, [projectsLoaded, storedTasks, storedCheckpoints]);
+
+  useEffect(() => {
+    sendToServer();
+  }, []);
 
   // LAYOUT CALENDAR
   useEffect(() => {
@@ -443,7 +446,6 @@ export default function CalendarPage() {
             className="clearButton"
             style={{ color: 'rgb(200, 200, 200)' }}
             onClick={() => {
-              cancelSaveAnimation();
               router.push(`/project/plan/${projectId}`);
             }}
           >

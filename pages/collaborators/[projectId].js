@@ -19,15 +19,12 @@ export default function ManageCollaboratorsPage() {
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
   const [openInvitesModal, setOpenInvitesModal] = useState(false);
-  const {
-    cancelSaveAnimation,
-    projectsLoaded,
-    singleProjectRunning,
-    loadProject,
-  } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
   const allProjects = useSaveStore((state) => state.allProjects);
   const sendToServer = useSaveStore((state) => state.sendToServer);
+  const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
 
   useEffect(() => {
     sendToServer();
@@ -35,7 +32,7 @@ export default function ManageCollaboratorsPage() {
 
   useEffect(() => {
     if (!singleProjectRunning && projectsLoaded) {
-      loadProject(projectId);
+      loadASingleProject(projectId);
     }
   }, [projectsLoaded, allProjects]);
 
@@ -85,7 +82,6 @@ export default function ManageCollaboratorsPage() {
           className="clearButton"
           style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => {
-            cancelSaveAnimation();
             router.push(`/project/plan/${projectId}`);
           }}
         >

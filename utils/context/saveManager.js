@@ -17,8 +17,7 @@ export const useSaveContext = () => useContext(saveContext);
 // eslint-disable-next-line react/prop-types
 export const SaveContextProvider = ({ children }) => {
   const [fetchUserData, setFetchUserData] = useState(0);
-  const [singleProjectRunning, setSingleProjectRunning] = useState(false);
-  const [isFetchingProjects, setIsFetchingProjects] = useState(true);
+  const [isFetchingUserData, setIsFetchingUserData] = useState(true);
   const { user } = useAuth();
   const router = useRouter();
   const { sendToCollabsManager } = useCollabContext();
@@ -33,11 +32,13 @@ export const SaveContextProvider = ({ children }) => {
   const allProjectsZus = useSaveStore((state) => state.allProjects);
   const projectsHaveBeenLoaded = useSaveStore((state) => state.projectsHaveBeenLoaded);
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
+  const deleteProjectZus = useSaveStore((state) => state.deleteProject);
+  const clearSaveStore = useSaveStore((state) => state.clearSaveStore);
 
   useEffect(() => {
     const projectsArray = [];
     const allTasksArr = [];
-    if (user && !projectsLoaded) {
+    if (user) {
       // load user data:
       getUserProjects(user.uid)
         .then((data) => {
@@ -77,7 +78,7 @@ export const SaveContextProvider = ({ children }) => {
                 loadAllProjects(projectsArray);
                 projectsHaveBeenLoaded(true);
                 loadAllTasks(allTasksArr);
-                setIsFetchingProjects((preVal) => false);
+                setIsFetchingUserData((preVal) => false);
               });
             });
         });
@@ -86,7 +87,6 @@ export const SaveContextProvider = ({ children }) => {
 
   const clearAllLocalData = () => {
     projectsHaveBeenLoaded(false);
-    setSingleProjectRunning(false);
   };
 
   const loadProject = useCallback((projectId) => {
@@ -113,14 +113,15 @@ export const SaveContextProvider = ({ children }) => {
     loadCheckpoints(checkpoints);
     loadTasks(tasks);
     loadInvites(invites);
-    setSingleProjectRunning((preVal) => true);
     return obj;
   }, [projectsLoaded]);
 
   const theBigDelete = (projectId) => {
-    setIsFetchingProjects((preVal) => true);
+    setIsFetchingUserData((preVal) => true);
+    deleteProjectZus(projectId);
     deleteProject(projectId).then(() => {
       setFetchUserData((prev) => prev + 1);
+      clearSaveStore();
       router.push('/');
       projectsHaveBeenLoaded(false);
     });
@@ -130,9 +131,7 @@ export const SaveContextProvider = ({ children }) => {
 
   return (
     <saveContext.Provider value={{
-      loadProject, // function
-      singleProjectRunning, // bool
-      isFetchingProjects, // bool
+      isFetchingUserData, // bool
       theBigDelete, // function
       clearAllLocalData, // function
     }}

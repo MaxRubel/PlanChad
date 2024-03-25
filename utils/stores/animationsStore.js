@@ -38,7 +38,7 @@ const useAnimationStore = create(devtools(
 
       setTimeout(() => {
         set((state) => ({ reorderPaused: false }));
-      }, 300);
+      }, 500);
     },
 
     minimizeAll: () => {

@@ -212,10 +212,13 @@ const Checkpoint = memo(({
     refreshCheckP();
   };
 
+  const handleDragEnd = () => {
+    reOrderTheTasks(tasks);
+  };
+
   const handleReorder = (e) => {
     const reordered = e.map((item, idx) => ({ ...item, index: idx }));
     setTasks((preVal) => reordered);
-    reOrderTheTasks(reordered);
   };
 
   const handleDelete = () => {
@@ -539,6 +542,7 @@ const Checkpoint = memo(({
                   as={motion.div}
                   style={{ cursor: 'grab' }}
                   onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
                   layoutId={task.localId}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

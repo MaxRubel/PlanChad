@@ -6,6 +6,7 @@ import { createNewInvite, updateInvite } from '../../api/invites';
 import { useAuth } from '../../utils/context/authContext';
 import { closeIcon } from '../../public/icons';
 import useSaveStore from '../../utils/stores/saveStore';
+import { copyIcon, thumbsUpIcon } from '../../public/icons2';
 
 export default function InviteCollaborator({
   show, closeModal, collab, projectId,
@@ -14,15 +15,19 @@ export default function InviteCollaborator({
   const [success, setSuccess] = useState(false);
   const { user } = useAuth();
   const createNewInviteZus = useSaveStore((state) => state.createNewInvite);
-  const storedInvites = useSaveStore((state) => state.storedInvites);
+  const storedInvites = useSaveStore((state) => state.invites);
+  const [extraMessageShowing, setExtraMessageShowing] = useState(false);
+  const [copiedMessageShowing, setCopiedMessageShowing] = useState(false);
+  const [alreadyInvitedMessage, setAlreadyInvitedMessage] = useState(false);
 
   let timeout;
 
   const successAnimation = () => {
     setSuccess((preVal) => true);
     timeout = setTimeout(() => {
-      closeModal();
-    }, 1500);
+      setExtraMessageShowing((preVal) => true);
+      setSuccess((preVal) => false);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -31,6 +36,8 @@ export default function InviteCollaborator({
     return () => {
       clearTimeout(timeout);
       setSuccess((preVal) => false);
+      setExtraMessageShowing((preVal) => false);
+      setAlreadyInvitedMessage((preVal) => false);
     };
   }, [show]);
 
@@ -45,7 +52,8 @@ export default function InviteCollaborator({
       .toLowerCase()
       .replace(/\s/g, '');
     if (storedInvites.some((item) => item.email === email)) {
-      window.alert('this person has already been invited');
+      setExtraMessageShowing((preVal) => true);
+      setAlreadyInvitedMessage((preVal) => true);
     } else {
       const payload = {
         projectId,
@@ -69,23 +77,35 @@ export default function InviteCollaborator({
     }
   };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(`https://main--planchad.netlify.app/project/plan/${projectId}`)
+      .then(() => {
+        setCopiedMessageShowing((preVal) => true);
+        timeout = setTimeout(() => {
+          setCopiedMessageShowing((preVal) => false);
+        }, 1000);
+      });
+  };
+
   return (
     <>
       <Modal show={show} onHide={closeModal}>
         <form onSubmit={handleSubmit}>
           <Modal.Header style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
             <Modal.Title>Invite Collaborator</Modal.Title>
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'white' }}
-              onClick={closeModal}
-            >{closeIcon}
-            </button>
+            <div style={{ textAlign: 'right' }}>
+              <button
+                type="button"
+                className="clearButton"
+                style={{ color: 'white' }}
+                onClick={closeModal}
+              >{closeIcon}
+              </button>
+            </div>
           </Modal.Header>
           <Modal.Body>
-            If you would like to invite this collaborator to view this project, please make sure this email matches what they would use to log in to this app.
-            <div style={{ margin: '7px 0px' }}>
+            Please make sure this email matches what this collaborator would use to log in to this app.
+            <div style={{ margin: '3% 0px' }}>
               <input
                 className="form-control"
                 type="email"
@@ -95,11 +115,36 @@ export default function InviteCollaborator({
                 required
               />
             </div>
+            {extraMessageShowing && (
+              <div style={{ borderTop: '1px solid lightgrey', paddingTop: '3%', marginBottom: '3px' }}>
+                <div style={{ marginBottom: '2%' }}>
+                  {alreadyInvitedMessage ? 'This person has already been invited.  Here is a link to share with them:' : 'Share link:'}
+                </div>
+                <input
+                  className="form-control"
+                  readOnly
+                  value={`https://main--planchad.netlify.app/project/plan/${projectId}`}
+                />
+                <div style={{ marginTop: '6px' }}>
+                  <button type="button" onClick={handleCopy} className="clearButton" style={{ color: 'white' }}>
+                    {copiedMessageShowing ? (
+                      <>
+                        Copied <span role="img" aria-label="thumbs up">{thumbsUpIcon}</span>
+                      </>
+                    ) : (
+                      <>
+                        Copy text <span role="img" aria-label="thumbs up">{copyIcon}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </Modal.Body>
           <Modal.Footer>
             {success && (
               <div style={{ display: 'flex', justifyContent: 'right' }}>
-                Invite Sent!
+                <div>  Invite Created!</div>
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'right' }}>
@@ -107,7 +152,7 @@ export default function InviteCollaborator({
                 style={{ margin: '0px 8px' }}
                 type="submit"
               >
-                Send Invite
+                Create Invite
               </Button>
               <Button variant="dark" onClick={closeModal}>
                 Cancel

@@ -59,6 +59,9 @@ const useSaveStore = create(devtools(
         allProjects: updatedProjects,
       };
     }),
+    deleteProject: (projectId) => set((state) => ({
+      allProjects: state.allProjects.filter((item) => item.projectId !== projectId),
+    })),
     hideCompletedTasksProjectData: () => set((state) => ({
       project: {
         ...state.project,
@@ -119,8 +122,8 @@ const useSaveStore = create(devtools(
         invite.localId === updatedInvite.localId ? updatedInvite : invite)),
     })),
     deleteInvite: (deletedInvite) => set((preVal) => ({
-      invites: preVal.invite.filter(
-        (invite) => invite.localId !== deletedInvite.localId,
+      invites: preVal.invites.filter(
+        (invite) => invite.inviteId !== deletedInvite.inviteId,
       ),
     })),
 
