@@ -33,7 +33,6 @@ export const SaveContextProvider = ({ children }) => {
   const allProjectsZus = useSaveStore((state) => state.allProjects);
   const projectsHaveBeenLoaded = useSaveStore((state) => state.projectsHaveBeenLoaded);
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
-  console.log(isFetchingProjects);
 
   useEffect(() => {
     const projectsArray = [];
