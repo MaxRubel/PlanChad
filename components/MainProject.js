@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import uniqid from 'uniqid';
 import { useRouter } from 'next/router';
 import { Dropdown } from 'react-bootstrap';
-import { AnimatePresence, Reorder, motion } from 'framer-motion';
+import { Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import ProjectCard from './ProjectCard';
@@ -13,28 +13,14 @@ import { useCollabContext } from '../utils/context/collabContext';
 import { deleteAllInvitesOfProject, updateInvite } from '../api/invites';
 import { useAuth } from '../utils/context/authContext';
 import useSaveStore from '../utils/stores/saveStore';
+import useAnimationStore from '../utils/stores/animationsStore';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
-  const [progressIsShowing, setProgressIsShowing] = useState(false);
-  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [animationPaused, setAnimationPaused] = useState(true);
-
-  const {
-    sendToServer,
-    min,
-    minAll,
-    loadProject,
-    singleProjectRunning,
-    isSaving,
-    hideCompletedTasks,
-    theBigDelete,
-    cancelSaveAnimation,
-  } = useSaveContext();
-
+  const { theBigDelete } = useSaveContext();
   const { deleteAllProjCollabs } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
@@ -46,24 +32,44 @@ export default function MainProjectView({ projectId }) {
   const createNewCheckpoint = useSaveStore((state) => state.createNewCheckpoint);
   const saveNewArray = useSaveStore((state) => state.loadCheckpoints);
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
-
-  let timeout;
-
-  const pauseAnimation = useCallback(() => {
-    setAnimationPaused((prevVal) => true);
-    timeout = setTimeout(() => {
-      setAnimationPaused((prevVal) => false);
-    }, 500);
-  }, []);
+  const sendToServer = useSaveStore((state) => state.sendToServer);
+  const pauseReorder = useAnimationStore((state) => state.pauseReorder);
+  const reorderPaused = useAnimationStore((state) => state.reorderPaused);
+  const minimizeAll = useAnimationStore((state) => state.minimizeAll);
+  const minAll = useAnimationStore((state) => state.minAll);
+  const hideCompletedTasks = useAnimationStore((state) => state.hideCompletedTasks);
+  const hideCompletedTasksProjectData = useSaveStore((state) => state.hideCompletedTasksProjectData);
+  const checkpointsZus = useSaveStore((state) => state.checkpoints);
+  const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const showProgress = useAnimationStore((state) => state.showProgress);
+  const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
+  const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
+  const zustandFinished = useAnimationStore((state) => state.zustandFinished);
+  const [isSaving, setIsSaving] = useState(0);
 
   useEffect(() => {
-    pauseAnimation();
+    pauseReorder();
+    if (projectId && projectsLoaded) {
+      if (!singleProjectRunning) {
+        loadASingleProject(projectId);
+      } else {
+        setProject(storedProject);
+        const checkpointsSorted = storedCheckpoints.sort((a, b) => a.index - b.index);
+        pauseReorder();
+        setCheckpoints((preVal) => checkpointsSorted);
+      }
+    }
+  }, [projectId, projectsLoaded, singleProjectRunning]);
+
+  useEffect(() => {
+    pauseReorder();
     const sortedArr = storedCheckpoints.sort((a, b) => a.index - b.index);
     setCheckpoints(sortedArr);
   }, [refresh]);
 
   useEffect(() => {
-    const thisInvitee = storedInvites.find((item) => item.email === user.email);
+    const thisInvitee = storedInvites?.find((item) => item.email === user.email);
     if (thisInvitee?.status === 'Pending') {
       const payload = {
         ...thisInvitee,
@@ -75,51 +81,9 @@ export default function MainProjectView({ projectId }) {
     }
   }, [storedInvites]);
 
-  useEffect(() => {
-    pauseAnimation();
-    if (projectId && projectsLoaded) {
-      cancelSaveAnimation();
-      if (!singleProjectRunning) {
-        const projectDetails = loadProject(projectId); // LOAD PROJECT
-        setProject(projectDetails.project);
-        if (projectDetails?.project?.projectId) {
-          setHideCompletedTasksChild((preVal) => projectDetails?.project.hideCompletedTasks);
-        }
-        const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
-        setCheckpoints(checkpointsSorted);
-      } else {
-        setProject(storedProject);
-        setHideCompletedTasksChild((preVal) => storedProject?.hideCompletedTasks);
-        const checkpointsSorted = storedCheckpoints.sort((a, b) => a.index - b.index);
-        setCheckpoints((preVal) => checkpointsSorted);
-      }
-    }
-    return () => { clearTimeout(timeout); };
-  }, [projectId, projectsLoaded]);
-
-  const tellProjectIfProgressShowing = useCallback((value) => {
-    setProgressIsShowing((preVal) => value);
-  }, []);
-
   const handleRefresh = useCallback(() => {
     setRefresh((prevVal) => prevVal + 1);
   }, []);
-
-  useEffect(() => { // minimize animation
-    let minColorChange;
-    const minButton = document.getElementById('minButton');
-    if (min > 0 && minButton) {
-      minButton.style.color = 'rgb(16, 197, 234)';
-      minColorChange = setTimeout(() => {
-        minButton.style.color = 'rgb(200, 200, 200)';
-      }, 1000);
-    }
-    return () => {
-      if (minColorChange) {
-        clearTimeout(minColorChange);
-      }
-    };
-  }, [min]);
 
   useEffect(() => { // save button color animation
     let saveColorChange;
@@ -157,41 +121,51 @@ export default function MainProjectView({ projectId }) {
     handleRefresh();
   };
 
-  const handleDragStart = () => {
+  const handleDragStart = (e) => {
     setCheckpoints(storedCheckpoints);
-    setIsDragging((preVal) => true);
+    checkpointsAreBeingDragged();
+  };
+
+  const handleDragEnd = (e) => {
+    checkpointsAreNotBeingDragged();
   };
 
   const reOrderCheckPoints = (e) => {
     const reordered = e.map((item, index) => ({ ...item, index }));
-    setCheckpoints((preVal) => reordered);
     saveNewArray(reordered);
+    setCheckpoints(reordered);
   };
 
   const handleChange = (e) => {
     if (e === 'minAll') {
-      minAll();
+      pauseReorder();
+      minimizeAll();
     }
     if (e === 'showProgress') {
-      setProgressIsShowing((preVal) => !preVal);
+      showProgress();
     }
     if (e === 'hideCompleted') {
-      pauseAnimation();
+      pauseReorder();
       hideCompletedTasks();
-      setHideCompletedTasksChild((preVal) => !preVal);
+      hideCompletedTasksProjectData();
     }
   };
 
   const handleCloseModal = () => {
     setOpenDeleteModal((prevVal) => false);
   };
+
+  const saveAnimation = () => {
+    setIsSaving((preVal) => preVal + 1);
+  };
+
   return (
     <>
       <DeleteProjectModal
         handleDelete={() => {
           deleteAllProjCollabs(project.projectId);
           deleteAllInvitesOfProject(project.projectId);
-          theBigDelete(project.projectId);
+          theBigDelete(projectId);
         }}
         closeModal={handleCloseModal}
         show={openDeleteModal}
@@ -204,7 +178,10 @@ export default function MainProjectView({ projectId }) {
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={sendToServer}
+              onClick={() => {
+                sendToServer();
+                saveAnimation();
+              }}
             >
               Save
             </button>
@@ -238,8 +215,8 @@ export default function MainProjectView({ projectId }) {
               </Dropdown.Toggle>
               <Dropdown.Menu style={{ backgroundColor: 'rgb(0,0,0, .85)', color: 'white' }}>
                 <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
-                <Dropdown.Item eventKey="showProgress">{progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
-                <Dropdown.Item eventKey="hideCompleted">{storedProject?.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
+                <Dropdown.Item eventKey="showProgress">{storedProject.progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
+                <Dropdown.Item eventKey="hideCompleted">{storedProject.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
             <button
@@ -254,12 +231,8 @@ export default function MainProjectView({ projectId }) {
           </div>
           <div id="projectCard-container" className="fullCenter">
             <ProjectCard
-              min={min}
-              minAll={minAll}
               project={project}
-              progressIsShowing={progressIsShowing}
-              hideCompletedTasksChild={hideCompletedTasksChild}
-              tellProjectIfProgressShowing={tellProjectIfProgressShowing}
+              progressIsShowing={storedProject.progressIsShowing}
             />
           </div>
           <div
@@ -287,8 +260,6 @@ export default function MainProjectView({ projectId }) {
             <div className="verticalCenter" style={{ justifyContent: 'right', color: 'lightgrey', fontSize: '12px' }}>{storedProject?.hideCompletedTasks && '(Completed Tasks are Hidden)'}</div>
           </div>
           <div id="dnd-container">
-            {/* <AnimatePresence initial={false}>
-              <motion.div> */}
             <Reorder.Group
               as="div"
               axis="y"
@@ -306,22 +277,21 @@ export default function MainProjectView({ projectId }) {
                     value={checkP}
                     style={{ cursor: 'grab' }}
                     onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                     layoutId={null}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 1 }}
-                    transition={{ duration: animationPaused ? 0 : 0.4 }}
+                    transition={{ duration: reorderPaused ? 0 : 0.2 }}
                   >
                     <Checkpoint
                       key={checkP.localId}
                       checkP={checkP}
                       handleRefresh={handleRefresh}
                       minAll={minAll}
-                      min={min}
                       index={index}
                       refresh={refresh}
-                      pauseAnimation={pauseAnimation}
-                      progressIsShowing={progressIsShowing}
+                      progressIsShowing={storedProject.progressIsShowing}
                       isDragging={isDragging}
                       layoutId={null}
                     />
@@ -329,8 +299,6 @@ export default function MainProjectView({ projectId }) {
                 ))}
               </div>
             </Reorder.Group>
-            {/* </motion.div>
-            </AnimatePresence> */}
           </div>
         </div>
       </div>

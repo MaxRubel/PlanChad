@@ -5,23 +5,18 @@ import Loading from '../components/util/Loading';
 import useSaveStore from '../utils/stores/saveStore';
 
 export default function Home() {
-  const {
-    clearSaveManager,
-    singleProjectRunning,
-    sendToServer,
-    isFetchingProjects,
-  } = useSaveContext();
+  const { isFetchingProjects } = useSaveContext();
 
   const clearSaveStore = useSaveStore((state) => state.clearSaveStore);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
 
   useEffect(() => {
     if (singleProjectRunning) {
-      sendToServer();
+      // sendToServer();
     }
-    clearSaveManager();
     clearSaveStore();
   }, []);
-
+  console.log(isFetchingProjects);
   if (isFetchingProjects) {
     return (<Loading />);
   }

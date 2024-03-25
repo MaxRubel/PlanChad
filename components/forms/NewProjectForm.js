@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../utils/context/authContext';
 import { createNewProject, updateProject } from '../../api/project';
+import { useCollabContext } from '../../utils/context/collabContext';
 import useSaveStore from '../../utils/stores/saveStore';
 
 export default function NewProjectForm() {
   const [formInput, setFormInput] = useState({ name: '' });
   const { user } = useAuth();
+  const { addToCollabManager } = useCollabContext();
   const router = useRouter();
   const createNewProjectZus = useSaveStore((state) => state.createNewProject);
 
@@ -33,6 +35,7 @@ export default function NewProjectForm() {
       progressIsShowing: false,
       hideCompletedTasks: false,
     };
+
     createNewProject(payload)
       .then(({ name }) => {
         const payload2 = { projectId: name };

@@ -8,7 +8,6 @@ import { Reorder, motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import { calendarIcon, trashIcon } from '../public/icons';
-import { useSaveContext } from '../utils/context/saveManager';
 import {
   expandTooltip,
   collapseToolTip,
@@ -20,11 +19,12 @@ import {
 import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteCheckpointModal from './modals/DeleteCheckpoint';
-import MemoizedTask from './Task';
+import Task from './Task';
 import useSaveStore from '../utils/stores/saveStore';
+import useAnimationStore from '../utils/stores/animationsStore';
 
 const Checkpoint = memo(({
-  checkP, handleRefresh, min, index, progressIsShowing, isDragging,
+  checkP, handleRefresh, index, progressIsShowing,
 }) => {
   const [formInput, setFormInput] = useState({
     description: '',
@@ -37,19 +37,20 @@ const Checkpoint = memo(({
     expanded: false,
   });
 
-  const { hideCompletedTasks } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [tasks, setTasks] = useState([]);
   const [checkPrefresh, setCheckPrefresh] = useState(0);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [hasLoaded, setHasloaded] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-  const [pauseReorder, setPauseReorder] = useState(true);
   const updatedCheckpoint = useSaveStore((state) => state.updateCheckpoint);
   const deleteCheckpoint = useSaveStore((state) => state.deleteCheckpoint);
   const createNewTask = useSaveStore((state) => state.createNewTask);
   const storedTasks = useSaveStore((state) => state.tasks);
-  const loadTasks = useSaveStore((state) => state.loadTasks);
+  const reOrderTheTasks = useSaveStore((state) => state.reOrderTheTasks);
+  const pauseReorder = useAnimationStore((state) => state.pauseReorder);
+  const reorderPaused = useAnimationStore((state) => state.reorderPaused);
+  const minAll = useAnimationStore((state) => state.minAll);
 
   const downIcon = (
     <svg
@@ -80,22 +81,12 @@ const Checkpoint = memo(({
 
   const timeoutRef = useRef(null);
 
-  const pauseAnimations = useCallback(() => {
-    setPauseReorder(false);
-    timeoutRef.current = setTimeout(() => {
-      setPauseReorder(true);
-    }, 1000);
-  }, []);
-
   useEffect(() => {
-    if (!isDragging) {
-      const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
-      const sorted = theseTasks.sort((a, b) => a.index - b.index);
-      setTasks(sorted);
-      setFormInput(checkP);
-    } else {
-      setFormInput(checkP);
-    }
+    pauseReorder();
+    const theseTasks = storedTasks.filter((task) => task.checkpointId === checkP.localId);
+    const sorted = theseTasks.sort((a, b) => a.index - b.index);
+    setTasks(sorted);
+    setFormInput(checkP);
     setHasloaded((preVal) => true);
     timeoutRef.current = setInterval(() => {
       setHasMounted((preVal) => true);
@@ -103,7 +94,7 @@ const Checkpoint = memo(({
     return () => {
       clearTimeout(timeoutRef.current);
     };
-  }, [checkP, isDragging]);
+  }, [checkP]);
 
   useEffect(() => { // send to save context
     updatedCheckpoint(formInput);
@@ -120,10 +111,10 @@ const Checkpoint = memo(({
 
   useEffect(() => { // minimize
     if (hasLoaded) {
-      pauseAnimations();
+      pauseReorder();
       setFormInput((prevVal) => ({ ...prevVal, expandedCal: false, expanded: false }));
     }
-  }, [min]);
+  }, [minAll]);
 
   useEffect(() => { // show progress bar animation
     let interval;
@@ -177,10 +168,6 @@ const Checkpoint = memo(({
     }
   }, [storedTasks]);
 
-  useEffect(() => { // when hiding tasks
-    pauseAnimations();
-  }, [hideCompletedTasks]);
-
   const dance = () => {
     document.getElementById(`addTask${checkP.localId}`).animate(
       [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
@@ -204,7 +191,7 @@ const Checkpoint = memo(({
   };
 
   const handleCollapse = () => {
-    pauseAnimations();
+    pauseReorder();
     if (formInput.expanded) {
       setFormInput((prevVal) => ({ ...prevVal, expanded: false }));
     } else {
@@ -213,7 +200,7 @@ const Checkpoint = memo(({
   };
 
   const handleCollapseCal = () => {
-    pauseAnimations();
+    pauseReorder();
     if (formInput.expandedCal) {
       setFormInput((prevVal) => ({ ...prevVal, expandedCal: false }));
     } else {
@@ -228,7 +215,7 @@ const Checkpoint = memo(({
   const handleReorder = (e) => {
     const reordered = e.map((item, idx) => ({ ...item, index: idx }));
     setTasks((preVal) => reordered);
-    loadTasks(reordered);
+    reOrderTheTasks(reordered);
   };
 
   const handleDelete = () => {
@@ -246,7 +233,6 @@ const Checkpoint = memo(({
         for (let i = 0; i < collabDeleteArray.length; i++) {
           deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
         }
-        // deleteFromSaveManager(formInput, 'delete', 'checkpoint');
         deleteCheckpoint(formInput);
         handleRefresh();
         setOpenDeleteModal((preVal) => false);
@@ -262,7 +248,6 @@ const Checkpoint = memo(({
 
   const addTask = () => {
     dance();
-    pauseAnimations();
     handleFresh();
     setFormInput((preVal) => ({ ...preVal, expanded: true }));
     const emptyTask = {
@@ -284,18 +269,9 @@ const Checkpoint = memo(({
       lineColor: randomColor(),
     };
     createNewTask(emptyTask);
+    pauseReorder();
     setCheckPrefresh((prevVal) => prevVal + 1);
   };
-
-  const memoizedProps = useMemo(
-    () => ({
-      checkPHasLoaded: hasLoaded,
-      min,
-      handleRefresh,
-      refreshCheckP,
-    }),
-    [hasLoaded, min, handleRefresh, refreshCheckP],
-  );
 
   return (
     <>
@@ -567,14 +543,14 @@ const Checkpoint = memo(({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: pauseReorder ? 0.4 : 0 }}
+                  transition={{ duration: reorderPaused ? 0 : 0.4 }}
                 >
-                  <MemoizedTask
-                    {...memoizedProps}
+                  <Task
                     key={task.localId}
+                    checkPHasLoaded={hasLoaded}
                     task={task}
                     indexT={indexT}
-                    pauseAnimations={pauseAnimations}
+                    refreshCheckP={refreshCheckP}
                   />
                 </Reorder.Item>
               ))}
@@ -595,8 +571,6 @@ Checkpoint.propTypes = {
     projectId: PropTypes.string.isRequired,
   }).isRequired,
   handleRefresh: PropTypes.func.isRequired,
-  min: PropTypes.number.isRequired,
   index: PropTypes.number.isRequired,
   progressIsShowing: PropTypes.bool.isRequired,
-  isDragging: PropTypes.bool.isRequired,
 };

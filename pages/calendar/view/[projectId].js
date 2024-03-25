@@ -15,9 +15,6 @@ export default function CalendarPage() {
   const router = useRouter();
   const { projectId } = router.query;
   const { cancelSaveAnimation } = useSaveContext();
-  const {
-    singleProjectRunning, loadProject, projectsLoaded, sendToServer,
-  } = useSaveContext();
   const [sortedTasks, setSortedTasks] = useState([]);
   const [sortedCheckpoints, setSortedCheckpoints] = useState([]);
   const [openTaskModal, setOpenTaskModal] = useState(false);
@@ -27,6 +24,10 @@ export default function CalendarPage() {
   const storedTasks = useSaveStore((state) => state.tasks);
   const storedCheckpoints = useSaveStore((state) => state.checkpoints);
   const storedProject = useSaveStore((state) => state.project);
+  const sendToServer = useSaveStore((state) => state.sendToServer);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
+  const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
   const [calendarData, setCalendarData] = useState(
     {
       month: null,
@@ -38,7 +39,7 @@ export default function CalendarPage() {
 
   useEffect(() => { // sort tasks on mount
     if (!singleProjectRunning && projectsLoaded) { // load the project if page refreshed
-      loadProject(projectId);
+      loadASingleProject(projectId);
     }
     sendToServer();
     const filteredTasks = storedTasks

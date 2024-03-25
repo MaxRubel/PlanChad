@@ -3,12 +3,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.scss';
 import '../styles/calendar.scss';
 import '../styles/cards.scss';
+import { memo } from 'react';
 import { AuthProvider } from '../utils/context/authContext';
 import ViewDirectorBasedOnUserAuthStatus from '../utils/ViewDirector';
 import { SaveContextProvider } from '../utils/context/saveManager';
 import { CollabContextProvider } from '../utils/context/collabContext';
 
 function MyApp({ Component, pageProps }) {
+  const MemoizedSaveContextProvider = memo(SaveContextProvider);
   return (
     <AuthProvider>
       <CollabContextProvider>

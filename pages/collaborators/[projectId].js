@@ -20,7 +20,6 @@ export default function ManageCollaboratorsPage() {
   const [modalShow, setModalShow] = useState(false);
   const [openInvitesModal, setOpenInvitesModal] = useState(false);
   const {
-    sendToServer,
     cancelSaveAnimation,
     projectsLoaded,
     singleProjectRunning,
@@ -28,6 +27,7 @@ export default function ManageCollaboratorsPage() {
   } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
   const allProjects = useSaveStore((state) => state.allProjects);
+  const sendToServer = useSaveStore((state) => state.sendToServer);
 
   useEffect(() => {
     sendToServer();

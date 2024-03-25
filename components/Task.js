@@ -8,7 +8,6 @@ import {
   calendarIcon, editIcon, peopleIcon, trashIcon,
 } from '../public/icons';
 import TaskDeets from './TaskDeets';
-import { useSaveContext } from '../utils/context/saveManager';
 import {
   closeTaskToolTip,
   collapseToolTaskTip,
@@ -23,6 +22,7 @@ import { useCollabContext } from '../utils/context/collabContext';
 import { deleteTaskCollab } from '../api/taskCollab';
 import DeleteTaskModal from './modals/DeleteTask';
 import useSaveStore from '../utils/stores/saveStore';
+import useAnimationStore from '../utils/stores/animationsStore';
 
 const initialState = {
   localId: '',
@@ -45,17 +45,19 @@ const initialState = {
 
 const Task = memo(({
   // eslint-disable-next-line react/prop-types
-  task, min, refreshCheckP, indexT, checkPHasLoaded, pauseAnimations,
+  task, refreshCheckP, indexT, checkPHasLoaded,
 }) => {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const { hideCompletedTasks } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
   const [hasMounted, setHasMounted] = useState(false);
   const userExpandedChoice = useRef();
   const updateTask = useSaveStore((state) => state.updateTask);
   const deleteTask = useSaveStore((state) => state.deleteTask);
-  const storedProject = useSaveStore((state) => state.project);
+  const pauseReorder = useAnimationStore((state) => state.pauseReorder);
+  const minAll = useAnimationStore((state) => state.minAll);
+  const completeTasksHidden = useAnimationStore((state) => state.completeTasksHidden);
+  const reorderPaused = useAnimationStore((state) => state.reorderPaused);
 
   useEffect(() => {
     let timeout;
@@ -84,15 +86,15 @@ const Task = memo(({
         ...prevVal, expanded: false, deetsExpanded: false,
       }));
     }
-  }, [min]);
+  }, [minAll]);
 
   const handleCollapse = () => { // collapse main details
-    pauseAnimations();
+    pauseReorder();
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
 
   const handleCollapse2 = () => { // collapse extra details
-    pauseAnimations();
+    pauseReorder();
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
     userExpandedChoice.current = !formInput.deetsExpanded;
   };
@@ -105,17 +107,17 @@ const Task = memo(({
     }));
   }, []);
 
-  const handleCheck = (e) => {
+  const handleCheck = useCallback((e) => {
     handleFresh();
     const { checked } = e.target;
     setFormInput((prevVal) => ({
       ...prevVal,
       status: checked ? 'closed' : 'open',
     }));
-  };
+  }, []);
 
   const handleExpandCollabs = () => {
-    pauseAnimations();
+    pauseReorder();
     if (userExpandedChoice && formInput.deetsExpanded) {
       setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
     }
@@ -138,14 +140,11 @@ const Task = memo(({
         deleteFromCollabManager(filteredCopy[i].taskCollabId, 'taskCollabJoin');
       }
     });
+    pauseReorder();
     deleteTask(formInput);
     refreshCheckP();
     setOpenDeleteModal((prevVal) => false);
   };
-
-  useEffect(() => { // when hiding tasks
-    pauseAnimations();
-  }, [hideCompletedTasks]);
 
   const handleOpenModal = useCallback(() => {
     setOpenDeleteModal((preVal) => true);
@@ -155,7 +154,7 @@ const Task = memo(({
     setOpenDeleteModal((prevVal) => false);
   }, []);
 
-  if (storedProject.hideCompletedTasks && formInput.status === 'closed') {
+  if (completeTasksHidden && formInput.status === 'closed') {
     return (<div style={{ display: 'none', transition: '1s all ease' }} />);
   }
 
@@ -183,7 +182,7 @@ const Task = memo(({
             id="line"
             style={{
               borderLeft: '2px solid rgb(255, 117, 26, .5)',
-              transition: '1.5s all ease',
+              transition: reorderPaused ? 'none' : '1.5s all ease',
               display: 'grid',
               gridTemplateRows: '1fr 1fr',
             }}
@@ -191,7 +190,7 @@ const Task = memo(({
             <div
               id="empty"
               style={{
-                transition: '1.5s all ease',
+                transition: reorderPaused ? 'none' : '1.5s all ease',
                 borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
               }}
             />
@@ -202,7 +201,7 @@ const Task = memo(({
           <div
             id="top-div"
             style={{
-              transition: '1.5s all ease',
+              transition: reorderPaused ? 'none' : '1.5s all ease',
               borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
             }}
           />
@@ -214,7 +213,7 @@ const Task = memo(({
           style={{
             margin: '3px 0px',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
-            transition: '1.5s all ease',
+            transition: reorderPaused ? 'none' : '1.5s all ease',
             minWidth: '516px',
           }}
         >
@@ -396,7 +395,7 @@ const Task = memo(({
                         style={{
                           backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                           border: 'none',
-                          transition: '1.5s all ease',
+                          transition: reorderPaused ? 'none' : '1.5s all ease',
                         }}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       />
@@ -426,7 +425,7 @@ const Task = memo(({
                         style={{
                           backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                           border: 'none',
-                          transition: '1.5s all ease',
+                          transition: reorderPaused ? 'none' : '1.5s all ease',
                         }}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       />
@@ -459,7 +458,7 @@ const Task = memo(({
                     name="description"
                     style={{
                       backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
-                      transition: '1.5s all ease',
+                      transition: reorderPaused ? 'none' : '1.5s all ease',
                       border: 'none',
                       minWidth: '250px',
                     }}
@@ -493,9 +492,7 @@ Task.propTypes = {
       PropTypes.oneOf([undefined]),
     ]),
   }).isRequired,
-  min: PropTypes.number.isRequired,
   refreshCheckP: PropTypes.func.isRequired,
   indexT: PropTypes.number.isRequired,
   checkPHasLoaded: PropTypes.bool.isRequired,
-  pauseAnimations: PropTypes.func.isRequired,
 };
