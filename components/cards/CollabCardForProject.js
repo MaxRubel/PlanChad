@@ -7,18 +7,17 @@ import { useAuth } from '../../utils/context/authContext';
 import { createTaskCollab, deleteTaskCollab, updateTaskCollab } from '../../api/taskCollab';
 import { removeIcon } from '../../public/icons';
 import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
-import { useSaveContext } from '../../utils/context/saveManager';
 import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 import { sendInviteTT } from '../util/toolTips2';
 import { plusPeopleIcon } from '../../public/icons2';
 import InviteCollaborator from '../modals/InviteConfirmation';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function CollabCardforProject({ collab, taskToAssign, projectToAssign }) {
   const [expanded, setExpanded] = useState(false);
   const [ttMessage, setTTMessage] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openInviteModal, setOpenInviteModal] = useState(false);
-  const { saveInput } = useSaveContext();
 
   const {
     deleteFromCollabManager,
@@ -26,12 +25,12 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
     taskCollabJoins,
     addToCollabManager,
   } = useCollabContext();
-  const { allTasks } = useSaveContext();
   const { user } = useAuth();
+  const storedInvites = useSaveStore((state) => state.invites);
+  const allTasks = useSaveStore((state) => state.allTasks);
 
   useEffect(() => {
-    const allTasksCopy = [...allTasks];
-    const thisTasktoAssign = allTasksCopy.find((item) => item.localId === taskToAssign);
+    const thisTasktoAssign = allTasks.find((item) => item.localId === taskToAssign);
     if (!thisTasktoAssign) {
       setTTMessage((preVal) => 'There Are No Tasks To Assign');
       return;
@@ -139,32 +138,9 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
 
   const handleInvite = () => {
     setOpenInviteModal((preVal) => true);
-    const theseInvites = [...saveInput.invites];
-    if (theseInvites.some((item) => item.email === collab.email)) {
+    if (storedInvites.some((item) => item.email === collab.email)) {
       console.warn('this person has already been invited');
     }
-    // const email = collab.email
-    //   .toLowerCase()
-    //   .replace(/\s/g, '');
-    // const payload = {
-    //   projectId: projectToAssign,
-    //   email,
-    //   name: collab.name,
-    //   collabId: collab.collabId,
-    //   userId: user.uid,
-    //   teamLeader: false,
-    //   status: 'Pending',
-    //   timeStamp: new Date().getTime(),
-    // };
-    // console.log(payload);
-    // createNewInvite(payload)
-    //   .then(({ name }) => {
-    //     updateInvite({ inviteId: name })
-    //       .then(() => {
-    //         const payload2 = { ...payload, inviteId: name };
-    //         addToSaveManager(payload2, 'create', 'invite');
-    //       });
-    //   });
   };
 
   return (

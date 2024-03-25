@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Collapse, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useSaveContext } from '../utils/context/saveManager';
+import useSaveStore from '../utils/stores/saveStore';
+import useAnimationStore from '../utils/stores/animationsStore';
 
 const initialState = {
   name: '',
@@ -14,12 +15,13 @@ const initialState = {
   expanded: false,
 };
 
-export default function ProjectCard({
-  project, min, progressIsShowing, tellProjectIfProgressShowing, hideCompletedTasksChild,
-}) {
+export default function ProjectCard() {
   const [formInput, setFormInput] = useState(initialState);
   const [hasMounted, setHasMounted] = useState(false);
-  const { addToSaveManager } = useSaveContext();
+  const project = useSaveStore((state) => state.project);
+  const updateProject = useSaveStore((state) => state.updateProject);
+  const minAll = useAnimationStore((state) => state.minAll);
+
   const downIcon = (
     <svg
       className={formInput.expanded ? 'icon-up' : 'icon-down'}
@@ -40,20 +42,12 @@ export default function ProjectCard({
     let timeout;
     if (project?.projectId) {
       setFormInput(project);
-      tellProjectIfProgressShowing(project.progressIsShowing);
       timeout = setTimeout(() => { setHasMounted((preVal) => true); }, 1000);
     }
-    return () => {
-      clearTimeout(timeout);
-    };
   }, [project]);
 
   useEffect(() => {
-    setFormInput((preVal) => ({ ...preVal, progressIsShowing, hideCompletedTasks: hideCompletedTasksChild }));
-  }, [progressIsShowing, hideCompletedTasksChild]);
-
-  useEffect(() => {
-    addToSaveManager(formInput, 'update', 'project');
+    updateProject(formInput);
   }, [formInput]);
 
   const handleCollapse = () => {
@@ -64,7 +58,7 @@ export default function ProjectCard({
     if (formInput.expanded) {
       handleCollapse();
     }
-  }, [min]);
+  }, [minAll]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -293,14 +287,6 @@ ProjectCard.propTypes = {
       PropTypes.oneOf([undefined]),
     ]),
   }),
-  min: PropTypes.number.isRequired,
-  progressIsShowing: PropTypes.bool.isRequired,
-  tellProjectIfProgressShowing: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/require-default-props
-  hideCompletedTasksChild: PropTypes.oneOfType([
-    PropTypes.bool,
-    PropTypes.oneOf([null]),
-  ]),
 };
 
 ProjectCard.defaultProps = {

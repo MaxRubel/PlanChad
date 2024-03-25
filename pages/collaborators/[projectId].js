@@ -7,8 +7,8 @@ import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/modals/AddCollabForm2';
 import { useCollabContext } from '../../utils/context/collabContext';
-import ViewInvites from '../../components/views/ViewInvites';
 import InvitesModal from '../../components/modals/InvitesModal';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -19,22 +19,20 @@ export default function ManageCollaboratorsPage() {
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
   const [openInvitesModal, setOpenInvitesModal] = useState(false);
-  const {
-    sendToServer,
-    cancelSaveAnimation,
-    projectsLoaded,
-    singleProjectRunning,
-    loadProject,
-    allProjects,
-  } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
+  const allProjects = useSaveStore((state) => state.allProjects);
+  const sendToServer = useSaveStore((state) => state.sendToServer);
+  const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
+
   useEffect(() => {
     sendToServer();
   }, []);
 
   useEffect(() => {
     if (!singleProjectRunning && projectsLoaded) {
-      loadProject(projectId);
+      loadASingleProject(projectId);
     }
   }, [projectsLoaded, allProjects]);
 
@@ -84,7 +82,6 @@ export default function ManageCollaboratorsPage() {
           className="clearButton"
           style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => {
-            cancelSaveAnimation();
             router.push(`/project/plan/${projectId}`);
           }}
         >
