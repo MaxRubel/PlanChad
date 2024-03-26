@@ -123,8 +123,6 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
     const taskDeleteArray = tasksToRemoveIds.map((id) => deleteTaskCollab(id));
     Promise.all(taskDeleteArray);
     const invitesToDelete = invitesOfProject.filter((item) => item.collabId === collab.collabId);
-    console.log('big list: ', invitesOfProject);
-    console.log('delete list: ', invitesToDelete);
     const invitesDeletePromiseArr = invitesToDelete.map((item) => (deleteInvite(item.inviteId)));
     Promise.all(invitesToDelete).then(() => {
       deleteInvitesUponRemoval(invitesToDelete);

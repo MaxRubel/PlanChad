@@ -135,11 +135,16 @@ const useSaveStore = create(devtools(
         (invite) => invite.inviteId !== deletedInvite.inviteId,
       ),
     })),
+    deleteProjInviteByCollabId: (collabId) => set((preVal) => ({
+      invitesOfProject: preVal.invitesOfProject.filter(
+        (item) => item.collabId !== collabId,
+      ),
+    })),
     deleteInvitesUponRemoval: (deletedInvites) => set((preVal) => {
-      const updatedInvites = preVal.invites.filter(
+      const updatedInvites = preVal.invitesOfProject.filter(
         (invite) => !deletedInvites.some((deletedInvite) => deletedInvite.inviteId === invite.inviteId),
       );
-      return { invites: updatedInvites };
+      return { invitesOfProject: updatedInvites };
     }),
 
     sendToServer: () => {
