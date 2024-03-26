@@ -25,7 +25,6 @@ export default function ManageCollaboratorsPage() {
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
-  const addBatchOfInvites = useSaveStore((state) => state.addBatchOfInvites);
   const updateInvitesOfProjectBatch = useSaveStore((state) => state.updateInvitesOfProjectBatch);
 
   useEffect(() => {

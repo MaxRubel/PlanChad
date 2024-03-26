@@ -19,7 +19,6 @@ export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   const { theBigDelete } = useSaveContext();
   const { deleteAllProjCollabs } = useCollabContext();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -203,6 +202,18 @@ export default function MainProjectView({ projectId }) {
             >
               Collaborators
             </button>
+            {/* <button
+              id="saveButton"
+              type="button"
+              className="clearButton"
+              style={{ color: 'rgb(200, 200, 200)' }}
+              onClick={() => {
+                sendToServer();
+                router.push(`/messages/${projectId}`);
+              }}
+            >
+              Chat
+            </button> */}
             <Dropdown
               style={{ outline: 'none' }}
               onSelect={handleChange}
@@ -292,7 +303,6 @@ export default function MainProjectView({ projectId }) {
                       index={index}
                       refresh={refresh}
                       progressIsShowing={storedProject.progressIsShowing}
-                      isDragging={isDragging}
                       layoutId={null}
                     />
                   </Reorder.Item>
