@@ -92,12 +92,12 @@ const Task = memo(({
     pauseReorder();
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
-
   const handleCollapse2 = () => { // collapse extra details
     pauseReorder();
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
     userExpandedChoice.current = !formInput.deetsExpanded;
   };
+
   const handleChange = useCallback((e) => {
     handleFresh();
     const { name, value } = e.target;

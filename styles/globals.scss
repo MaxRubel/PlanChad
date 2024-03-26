@@ -155,7 +155,7 @@ body {
 .clearButton {
   background-color: transparent;
   border: none;
-  color: rgb(149, 149, 149);
+  color: white;
   transition: all ease 1s;
 }
 
@@ -379,4 +379,12 @@ tr:hover {
 
 .modal-dialog {
   width: 100%;
+}
+
+.smallFont{
+  font-size: 12px;
+}
+
+.minWidth320{
+  min-width: 320px;
 }

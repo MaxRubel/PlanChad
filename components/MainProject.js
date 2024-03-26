@@ -176,7 +176,6 @@ export default function MainProjectView({ projectId }) {
               id="saveButton"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => {
                 sendToServer();
                 saveAnimation();
@@ -188,7 +187,6 @@ export default function MainProjectView({ projectId }) {
               id="manageCollaborators"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { router.push(`/calendar/view/${projectId}`); }}
             >
               Calendar
@@ -197,12 +195,12 @@ export default function MainProjectView({ projectId }) {
               id="manageCollaborators"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
+
               onClick={() => { router.push(`/collaborators/${projectId}`); }}
             >
               Collaborators
             </button>
-            {/* <button
+            <button
               id="saveButton"
               type="button"
               className="clearButton"
@@ -213,7 +211,7 @@ export default function MainProjectView({ projectId }) {
               }}
             >
               Chat
-            </button> */}
+            </button>
             <Dropdown
               style={{ outline: 'none' }}
               onSelect={handleChange}
@@ -261,7 +259,7 @@ export default function MainProjectView({ projectId }) {
               style={{
                 maxWidth: '200px',
                 margin: '1% 0%',
-                color: 'rgb(200, 200, 200)',
+                color: 'white',
                 border: '1px solid rgb(100, 100, 100)',
               }}
             >

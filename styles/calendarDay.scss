@@ -1,0 +1,18 @@
+.timeRow{
+    padding: 0px; 
+    display: grid; 
+    grid-template-columns: 10% 90%;
+    height: 6vh;
+}
+
+.timeCol{
+    border-right: 1px solid rgb(187, 187, 187);
+}
+
+.padded{
+    padding: 10px
+}
+
+.borderBottom{
+    border-bottom: 1px solid rgb(187, 187, 187)
+}

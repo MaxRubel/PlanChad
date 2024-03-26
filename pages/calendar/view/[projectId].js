@@ -405,6 +405,19 @@ export default function CalendarPage() {
 
   const handleClick = (e) => {
     const { id } = e.target;
+    if (id.includes('Num')) {
+      const thisDaysDate = new Date(calendarData.firstBoxDate);
+      const boxDate = new Date(thisDaysDate);
+      const number = parseInt(id.match(/\d+/)[0], 10);
+      boxDate.setDate(boxDate.getDate() + number);
+      const queryParams = {
+        param1: projectId,
+        param2: boxDate,
+      };
+
+      const queryString = new URLSearchParams(queryParams).toString();
+      router.push(`/calendar/view/day/${queryString}`);
+    }
     if (id.includes('openTask')) {
       const [, taskId] = id.split('--');
       const taskObj = storedTasks.find((item) => item.localId === taskId);
