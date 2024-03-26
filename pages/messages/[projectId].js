@@ -6,29 +6,21 @@ export default function MessagesPage() {
   const { projectId } = router.query;
 
   return (
-    <>
-      <div id="project-top-bar" style={{ marginBottom: '1%' }}>
+    <div id="chat page container" style={{ marginBottom: '15px' }}>
+      <div id="project-top-bar" style={{ marginBottom: '15px' }}>
         <button
           id="saveButton"
           type="button"
           className="clearButton"
-          style={{ color: 'rgb(200, 200, 200)' }}
+          style={{ color: 'white' }}
           onClick={() => {
             router.push(`/project/plan/${projectId}`);
           }}
         >
           Back to Project
         </button>
-        <button
-          id="showModal"
-          type="button"
-          className="clearButton"
-          style={{ color: 'rgb(200, 200, 200)' }}
-        >
-          View Invites
-        </button>
       </div>
       <ViewChat projectId={projectId} />
-    </>
+    </div>
   );
 }

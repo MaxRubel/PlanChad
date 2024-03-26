@@ -88,12 +88,12 @@ export default function MainProjectView({ projectId }) {
     let saveColorChange;
     const saveButton = document.getElementById('saveButton');
     if (!isSaving) {
-      saveButton.style.color = 'rgb(200, 200, 200)';
+      saveButton.style.color = 'white';
     }
     if (isSaving) {
       saveButton.style.color = 'rgb(16, 197, 234)';
       saveColorChange = setTimeout(() => {
-        saveButton.style.color = 'rgb(200, 200, 200)';
+        saveButton.style.color = 'white';
       }, 1000);
     }
     return () => {
@@ -176,7 +176,6 @@ export default function MainProjectView({ projectId }) {
               id="saveButton"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => {
                 sendToServer();
                 saveAnimation();
@@ -188,7 +187,6 @@ export default function MainProjectView({ projectId }) {
               id="manageCollaborators"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { router.push(`/calendar/view/${projectId}`); }}
             >
               Calendar
@@ -197,44 +195,45 @@ export default function MainProjectView({ projectId }) {
               id="manageCollaborators"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { router.push(`/collaborators/${projectId}`); }}
             >
               Collaborators
             </button>
-            {/* <button
+            <button
               id="saveButton"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => {
                 sendToServer();
                 router.push(`/messages/${projectId}`);
               }}
             >
               Chat
-            </button> */}
+            </button>
             <Dropdown
               style={{ outline: 'none' }}
               onSelect={handleChange}
             >
               <Dropdown.Toggle
-                style={{ backgroundColor: 'transparent', border: 'none', color: 'rgb(200, 200, 200)' }}
+                style={{ backgroundColor: 'transparent', border: 'none', color: 'white' }}
                 id="dropdown-view-options"
               >
                 View Options
               </Dropdown.Toggle>
-              <Dropdown.Menu style={{ backgroundColor: 'rgb(0,0,0, .85)', color: 'white' }}>
-                <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
-                <Dropdown.Item eventKey="showProgress">{storedProject.progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
-                <Dropdown.Item eventKey="hideCompleted">{storedProject.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
+              <Dropdown.Menu style={{
+                backgroundColor: 'rgb(0,0,0, .85)',
+                color: 'white !important',
+              }}
+              >
+                <Dropdown.Item eventKey="minAll" style={{ color: 'white' }}>Minimize All</Dropdown.Item>
+                <Dropdown.Item eventKey="showProgress" style={{ color: 'white' }}>{storedProject.progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
+                <Dropdown.Item eventKey="hideCompleted" style={{ color: 'white' }}>{storedProject.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
             <button
               id="manageCollaborators"
               type="button"
               className="clearButton"
-              style={{ color: 'rgb(200, 200, 200)' }}
               onClick={() => { setOpenDeleteModal((preVal) => true); }}
             >
               Delete This Project
@@ -261,7 +260,7 @@ export default function MainProjectView({ projectId }) {
               style={{
                 maxWidth: '200px',
                 margin: '1% 0%',
-                color: 'rgb(200, 200, 200)',
+                color: 'white',
                 border: '1px solid rgb(100, 100, 100)',
               }}
             >

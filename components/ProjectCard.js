@@ -112,7 +112,7 @@ export default function ProjectCard() {
               backgroundColor: 'transparent',
               border: 'none',
               fontWeight: '600',
-              color: formInput.expanded ? '' : 'lightgray',
+              color: formInput.expanded ? '' : 'white',
               transition: 'all ease 1s',
               overflow: 'hidden',
               textOverflow: 'ellipsis',

@@ -84,7 +84,6 @@ export default function ManageCollaboratorsPage() {
           id="saveButton"
           type="button"
           className="clearButton"
-          style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => {
             router.push(`/project/plan/${projectId}`);
           }}
@@ -95,7 +94,6 @@ export default function ManageCollaboratorsPage() {
           id="showModal"
           type="button"
           className="clearButton"
-          style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => setModalShow(true)}
         >
           Add A Collaborator
@@ -104,7 +102,6 @@ export default function ManageCollaboratorsPage() {
           id="showModal"
           type="button"
           className="clearButton"
-          style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => setOpenInvitesModal(true)}
         >
           View Invites

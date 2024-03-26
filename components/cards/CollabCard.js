@@ -135,7 +135,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   return (
     <>
       <DeleteCollabModal closeModal={handleCloseModal} show={openDeleteModal} handleDelete={handleDelete} />
-      <div className="card" style={{ margin: '1% 0%' }}>
+      <div className="card" style={{ margin: '.6% 0%' }}>
         <div
           className="card-body"
           style={{
