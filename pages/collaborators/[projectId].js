@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react';
 import ViewAllCollabs from '../../components/views/ViewAllCollabs';
 import ViewProjCollabs from '../../components/views/ViewProjCollabs';
 import ViewTaskCollabs from '../../components/views/ViewTaskCollabs';
-import { useSaveContext } from '../../utils/context/saveManager';
 import { rightArrowWhite } from '../../public/icons';
 import AddCollabForm2 from '../../components/modals/AddCollabForm2';
 import { useCollabContext } from '../../utils/context/collabContext';
-import ViewInvites from '../../components/views/ViewInvites';
 import InvitesModal from '../../components/modals/InvitesModal';
+import useSaveStore from '../../utils/stores/saveStore';
+import { getInvitesByProject } from '../../api/invites';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -19,22 +19,21 @@ export default function ManageCollaboratorsPage() {
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
   const [openInvitesModal, setOpenInvitesModal] = useState(false);
-  const {
-    sendToServer,
-    cancelSaveAnimation,
-    projectsLoaded,
-    singleProjectRunning,
-    loadProject,
-    allProjects,
-  } = useSaveContext();
   const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
+  const allProjects = useSaveStore((state) => state.allProjects);
+  const sendToServer = useSaveStore((state) => state.sendToServer);
+  const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
+  const updateInvitesOfProjectBatch = useSaveStore((state) => state.updateInvitesOfProjectBatch);
+
   useEffect(() => {
     sendToServer();
   }, []);
 
   useEffect(() => {
     if (!singleProjectRunning && projectsLoaded) {
-      loadProject(projectId);
+      loadASingleProject(projectId);
     }
   }, [projectsLoaded, allProjects]);
 
@@ -54,6 +53,9 @@ export default function ManageCollaboratorsPage() {
 
   const setProjectToAssignChild = (value) => {
     setProjectToAssign((preVal) => value);
+    getInvitesByProject(value).then((data) => {
+      updateInvitesOfProjectBatch(data);
+    });
   };
 
   const setTaskToAssignChild = (value) => {
@@ -76,7 +78,7 @@ export default function ManageCollaboratorsPage() {
 
   return (
     <>
-      <InvitesModal show={openInvitesModal} closeModal={handleCloseInvites} />
+      <InvitesModal projectId={projectToAssign} show={openInvitesModal} closeModal={handleCloseInvites} />
       <div id="project-top-bar" style={{ marginBottom: '1%' }}>
         <button
           id="saveButton"
@@ -84,7 +86,6 @@ export default function ManageCollaboratorsPage() {
           className="clearButton"
           style={{ color: 'rgb(200, 200, 200)' }}
           onClick={() => {
-            cancelSaveAnimation();
             router.push(`/project/plan/${projectId}`);
           }}
         >

@@ -64,6 +64,24 @@ const getInvitesByProject = (projectId) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+const getInvitesByCollab = (collabId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/invites.json?orderBy="collabId"&equalTo="${collabId}"`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
 const deleteInvite = (inviteId) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/invites/${inviteId}.json`, {
     method: 'DELETE',
@@ -84,5 +102,11 @@ const deleteAllInvitesOfProject = (projectId) => {
 };
 
 export {
-  createNewInvite, updateInvite, getInvitesByEmail, deleteAllInvitesOfProject, deleteInvite,
+  createNewInvite,
+  updateInvite,
+  getInvitesByEmail,
+  deleteAllInvitesOfProject,
+  deleteInvite,
+  getInvitesByProject,
+  getInvitesByCollab,
 };

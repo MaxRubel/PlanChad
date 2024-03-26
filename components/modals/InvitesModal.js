@@ -2,8 +2,12 @@
 import Modal from 'react-bootstrap/Modal';
 import ViewInvites from '../views/ViewInvites';
 import { closeIcon } from '../../public/icons';
+import useSaveStore from '../../utils/stores/saveStore';
 
-export default function InvitesModal({ show, closeModal, handleDelete }) {
+export default function InvitesModal({ show, closeModal, projectId }) {
+  const allProjects = useSaveStore((state) => state.allProjects);
+  const project = allProjects.find((item) => item.projectId === projectId);
+
   return (
     <>
       <Modal
@@ -13,7 +17,7 @@ export default function InvitesModal({ show, closeModal, handleDelete }) {
         aria-labelledby="example-modal-sizes-title-lg"
       >
         <Modal.Header style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-          <Modal.Title>View Invites</Modal.Title>
+          <Modal.Title>View Invites for {project?.name}</Modal.Title>
           <div style={{ textAlign: 'right' }}>
             <button
               type="button"
@@ -25,7 +29,7 @@ export default function InvitesModal({ show, closeModal, handleDelete }) {
           </div>
         </Modal.Header>
         <Modal.Body>
-          <ViewInvites />
+          <ViewInvites projectId={projectId} />
         </Modal.Body>
         <Modal.Footer style={{ border: 'none' }} />
       </Modal>

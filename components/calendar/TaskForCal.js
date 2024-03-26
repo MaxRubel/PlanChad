@@ -2,13 +2,13 @@
 import { useState, useEffect } from 'react';
 import { OverlayTrigger } from 'react-bootstrap';
 import { trashIcon } from '../../public/icons';
-import { useSaveContext } from '../../utils/context/saveManager';
 import { deleteTaskToolTip } from '../util/toolTips';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { deleteTaskCollab } from '../../api/taskCollab';
 import DeleteTaskModal from '../modals/DeleteTask';
 import TaskDeetsForCalendar from './TaskDeetsForCal';
 import ViewTaskCollabsForCal from './ViewTaskCollabsForCal';
+import useSaveStore from '../../utils/stores/saveStore';
 
 const initialState = {
   localId: '',
@@ -32,15 +32,17 @@ const initialState = {
 export default function TaskForCal({ task, min, closeModal }) {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const { addToSaveManager, deleteFromSaveManager, saveInput } = useSaveContext();
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
+  const updateTask = useSaveStore((state) => state.updateTask);
+  const deleteTask = useSaveStore((state) => state.deleteTask);
+  const storedProject = useSaveStore((state) => state.project);
 
   useEffect(() => {
     setFormInput((preVal) => task);
   }, [task]);
 
   useEffect(() => {
-    addToSaveManager(formInput, 'update', 'task');
+    updateTask(formInput);
   }, [formInput]);
 
   const handleFresh = () => {
@@ -73,7 +75,7 @@ export default function TaskForCal({ task, min, closeModal }) {
       for (let i = 0; i < filteredCopy.length; i++) {
         deleteFromCollabManager(filteredCopy[i].taskCollabId, 'taskCollabJoin');
       }
-      deleteFromSaveManager(formInput, 'delete', 'task');
+      deleteTask(formInput);
       closeModal();
     });
   };
@@ -86,7 +88,7 @@ export default function TaskForCal({ task, min, closeModal }) {
     setOpenDeleteModal((prevVal) => false);
   };
 
-  if (saveInput.project.hideCompletedTasks && formInput.status === 'closed') {
+  if (storedProject.hideCompletedTasks && formInput.status === 'closed') {
     return (<div style={{ display: 'none' }} />);
   }
   return (

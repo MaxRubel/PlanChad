@@ -1,18 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-
-import CollabCard from '../cards/CollabCard';
-
-import { useSaveContext } from '../../utils/context/saveManager';
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from 'react';
 import InviteCard from '../cards/InviteCard';
+import useSaveStore from '../../utils/stores/saveStore';
+import { getInvitesByProject } from '../../api/invites';
 
-export default function ViewInvites() {
-  const { saveInput } = useSaveContext();
+export default function ViewInvites({ projectId }) {
   const [invites, setInvites] = useState([]);
+  const invitesOfProject = useSaveStore((state) => state.invitesOfProject);
 
   useEffect(() => {
-    const projectInvites = [...saveInput.invites];
-    setInvites(projectInvites);
-  }, [saveInput.invites]);
+    setInvites(invitesOfProject);
+  }, [projectId, invitesOfProject]);
 
   return (
 

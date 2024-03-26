@@ -1,15 +1,18 @@
 import { useEffect } from 'react';
 import NewProjectForm from '../../components/forms/NewProjectForm';
 import { useSaveContext } from '../../utils/context/saveManager';
+import useSaveStore from '../../utils/stores/saveStore';
 
 export default function CreateNewProject() {
-  const { clearSaveManager, singleProjectRunning, sendToServer } = useSaveContext();
+  const sendToServer = useSaveStore((state) => state.sendToServer);
+  const clearSaveStore = useSaveStore((state) => state.clearSaveStore);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
 
   useEffect(() => {
     if (singleProjectRunning) {
       sendToServer();
     }
-    clearSaveManager();
+    clearSaveStore();
   }, []);
 
   return (

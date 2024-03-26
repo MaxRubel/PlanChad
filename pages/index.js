@@ -2,23 +2,24 @@ import { useEffect } from 'react';
 import ProjectsTable from '../components/tables/ProjectsTable';
 import { useSaveContext } from '../utils/context/saveManager';
 import Loading from '../components/util/Loading';
+import useSaveStore from '../utils/stores/saveStore';
 
 export default function Home() {
-  const {
-    clearSaveManager,
-    singleProjectRunning,
-    sendToServer,
-    isFetchingProjects,
-  } = useSaveContext();
+  const { isFetchingUserData } = useSaveContext();
+
+  const clearSaveStore = useSaveStore((state) => state.clearSaveStore);
+  const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
+  const sendToServer = useSaveStore((state) => state.sendToServer);
+  const projectsHaveBeenLoaded = useSaveStore((state) => state.sendToServer);
 
   useEffect(() => {
-    if (singleProjectRunning) {
+    if (singleProjectRunning && projectsHaveBeenLoaded) {
       sendToServer();
     }
-    clearSaveManager();
+    clearSaveStore();
   }, []);
 
-  if (isFetchingProjects) {
+  if (isFetchingUserData) {
     return (<Loading />);
   }
 
