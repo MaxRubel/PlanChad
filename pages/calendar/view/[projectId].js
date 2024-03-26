@@ -457,7 +457,6 @@ export default function CalendarPage() {
             id="backToProj"
             type="button"
             className="clearButton"
-            style={{ color: 'rgb(200, 200, 200)' }}
             onClick={() => {
               router.push(`/project/plan/${projectId}`);
             }}

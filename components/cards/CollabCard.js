@@ -27,6 +27,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   const { user } = useAuth();
   const projectName = useRef();
   const allProjects = useSaveStore((state) => state.allProjects);
+  const deleteProjInviteByCollabId = useSaveStore((state) => state.deleteProjInviteByCollabId);
 
   useEffect(() => {
     const project = allProjects.find((item) => item.projectId === projectToAssign);
@@ -72,13 +73,14 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
     for (let i = 0; i < theseTaskCollabsJoinsIds.length; i++) {
       deleteFromCollabManager(theseTaskCollabsJoinsIds[i], 'taskCollabJoin');
     }
-
+    deleteProjInviteByCollabId(collab.collabId);
     getInvitesByCollab(collab.collabId).then((invitesData) => {
       const deleteInvitesOfCollab = invitesData.map((item) => (deleteInvite(item.inviteId)));
       Promise.all(deleteInvitesOfCollab).then(() => {
-        const removeTaskJoinArray = theseTaskCollabsJoins.map((item) => deleteTaskCollab(item.taskCollabId));
-        const removeProjoinArray = theseProjJoins.map((item) => deleteProjCollab(item.projCollabId));
-
+        const removeTaskJoinArray = theseTaskCollabsJoins
+          .map((item) => deleteTaskCollab(item.taskCollabId));
+        const removeProjoinArray = theseProjJoins
+          .map((item) => deleteProjCollab(item.projCollabId));
         Promise.all([...removeTaskJoinArray, ...removeProjoinArray]).then(() => {
           deleteCollab(collab.collabId).then(() => {
             deleteFromCollabManager(collab.collabId, 'allCollabs');
@@ -135,7 +137,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   return (
     <>
       <DeleteCollabModal closeModal={handleCloseModal} show={openDeleteModal} handleDelete={handleDelete} />
-      <div className="card" style={{ margin: '1% 0%' }}>
+      <div className="card" style={{ margin: '.6% 0%' }}>
         <div
           className="card-body"
           style={{

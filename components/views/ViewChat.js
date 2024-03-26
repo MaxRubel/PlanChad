@@ -1,24 +1,24 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import firebase from 'firebase/app';
-import { sendIcon } from '../../public/icons2';
+import { sendIcon, upArrow } from '../../public/icons2';
 import { useAuth } from '../../utils/context/authContext';
 import { createNewMessage, updateMessage } from '../../api/message';
 import 'firebase/database';
+import MessageCard from '../cards/MessageCard';
 
 export default function ViewChat({ projectId }) {
   const [message, setMessage] = useState('');
   const [allMessages, setAllMessages] = useState([]);
   const { user } = useAuth();
   const db = firebase.database();
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     const messagesRef = db.ref('messages').orderByChild('projectId').equalTo(projectId);
-
     const onMessageAdded = (snapshot) => {
       const newMessage = snapshot.val();
       setAllMessages((prevMessages) => [...prevMessages, newMessage]);
-      console.log(newMessage);
     };
 
     messagesRef.on('child_added', onMessageAdded);
@@ -28,12 +28,17 @@ export default function ViewChat({ projectId }) {
     };
   }, [projectId]);
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [allMessages]);
+
   const handleChange = (e) => {
     const { value } = e.target;
     setMessage((preVal) => value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setMessage('');
     const payload = {
       message,
@@ -48,45 +53,55 @@ export default function ViewChat({ projectId }) {
       });
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e);
+    }
+  };
+
   return (
-    <div className="card text-dark bg-info mb-3" style={{ marginBottom: '100px !important' }}>
-      <div className="card-header fullCenter">Chat</div>
-      <div className="card-body">
+    <>
+      <div
+        id="allMessages"
+        className="messagesView"
+      >
+        {allMessages.map((newMessage) => (
+          <MessageCard key={newMessage.messageId} message={newMessage} />
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      <div className="transitionBlock" />
+      <form
+        id="inputMessage"
+        onSubmit={handleSubmit}
+        className="chatInputField"
+      >
         <div
-          className="card-body"
+          className="input-container"
           style={{
-            backgroundColor: 'lightgray',
-            height: '70vh',
-            overflow: 'auto',
-            borderBottom: '1px solid grey',
+            position: 'relative',
+            display: 'flex',
           }}
         >
-          {allMessages.map((newMessage) => (
-            <div>
-              {newMessage.message}
-            </div>
-          ))}
+          <textarea
+            className="form-control chat-message-input"
+            type="text"
+            name="message"
+            value={message}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            placeholder="Type something..."
+          />
+          <button
+            type="submit"
+            className="clearButton"
+            style={{ color: 'black' }}
+          >
+            {upArrow}
+          </button>
         </div>
-        <div className="card-body" style={{ backgroundColor: 'lightgray', minHeight: '5vh' }}>
-          <div id="input-bar" style={{ display: 'grid', gridTemplateColumns: '94% 5%', gap: '1%' }}>
-            <textarea
-              placeholder="Say something nice..."
-              className="form-control"
-              name="message"
-              value={message}
-              onChange={handleChange}
-            />
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'black', border: '1px solid black', borderRadius: '20%' }}
-              onClick={handleSubmit}
-            >
-              {sendIcon}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      </form>
+    </>
   );
 }

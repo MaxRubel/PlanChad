@@ -1,0 +1,139 @@
+.input-container {
+  position: relative;
+  display: inline-block;
+}
+
+.input-container input {
+  padding-right: 30px;
+}
+
+.input-container button {
+  position: absolute;
+  top: 0;
+  right: 30px;
+  height: 100%;
+}
+
+// .inputFooter {
+//   border-bottom-left-radius: 20px;
+//   border-bottom-right-radius: 20px;
+//   padding: 25px;
+//   padding-top: 40px;
+
+//   min-height: 10vh,
+// }
+// backgroundColor: 'white',
+// height: '70vh',
+// padding: '13px',
+// overflow: 'auto',
+// borderTopLeftRadius: '20px',
+// borderTopRightRadius: '20px',
+// display: 'flex',
+// flexDirection: 'column',
+.messagesView {
+  background-color: rgb(226, 226, 226);
+  padding: 13px 4%;
+  overflow-y: auto;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  height: 75vh;
+  /* Subtract the height of the transition block */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.chatInputField {
+  background-color: rgb(226, 226, 226);
+  padding: 13px;
+  padding-top: 26px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
+}
+
+#allMessages {
+  flex: 1;
+}
+
+.chatContainer {
+  position: relative;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-message-input {
+  border-radius: 20px;
+  resize: none;
+  border: 1px solid lightgrey;
+  padding-left: 15px;
+  padding-top: 15px
+}
+
+#allMessages {
+  flex: 1;
+}
+
+.isUserMessage {
+  background-color: purple;
+  min-height: 40px;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 1px;
+  display: flex;
+  justify-content: center;
+  max-width: 75%;
+  color: white;
+  padding: 10px 20px
+}
+
+.isNonUserMessage {
+  background-color: rgb(226, 226, 226);
+  min-height: 40px;
+  border-radius: 20px;
+  border: 1px solid rgb(165, 165, 165);
+  // box-shadow: rgba(0, 0, 0, 0.05) 0px 2px 24px 0px, rgba(0, 0, 0, .3) 0px 0px 0px 1px;
+  max-width: 70%;
+  color: black;
+  padding: 10px 20px
+}
+
+.messageCardLineUser {
+  display: flex;
+  justify-content: right;
+}
+
+.messageCardLineNonUser {
+  display: flex;
+  justify-content: left;
+}
+
+.authoerLineNonUser {
+  font-size: 13px;
+  margin-left: 1%;
+  margin-bottom: 2px;
+  color: black;
+}
+
+.messageCardUser {
+  margin: 5px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+}
+
+.messageCardNonUser {
+  margin: 5px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: right;
+}
+
+.userTimeStamp {
+  display: flex;
+  justify-content: right;
+  font-size: 12px;
+  margin-right: 3%;
+}
