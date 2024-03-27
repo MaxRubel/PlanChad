@@ -2,3 +2,35 @@
   background: rgb(0, 0, 0);
   background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(125, 6, 0, 1) 100%);
 }
+
+.card-header.\32 {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20% 60% 20%;
+  align-items: center;
+  min-width: 516px;
+  align-content: 'center';
+  height: 53px
+}
+
+.cardRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: .5% 0%,
+}
+
+.paddingSides12{
+  padding: 0px 12px
+}
+
+.cardRowTask{
+  display: grid;
+  grid-template-columns: .8fr 1.5fr 1fr .2fr;
+  gap: 2%;
+  margin: .5% 0%,
+}
+
+.cardTitle {
+  text-align: center;
+  font-size: 20px;
+}

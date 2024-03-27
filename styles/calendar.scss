@@ -16,10 +16,9 @@
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-// .date-number {
-//   margin-top: 4%;
-//   margin-left: 10%
-// }
+.date-number {
+  cursor: pointer;
+}
 
 .calendar-row {
   display: grid;

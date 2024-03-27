@@ -59,16 +59,6 @@ body {
   background-color: rgba(51, 51, 52, 0.3) !important;
 }
 
-.btn.btn-outline-dark.rounded-0 {
-  border: 'none';
-  transition: all ease 2s;
-
-  &:hover {
-    background-color: transparent;
-    color: black;
-  }
-}
-
 .newProjectPage {
   display: flex;
   flex-direction: column;
@@ -89,23 +79,8 @@ body {
   align-items: center;
 }
 
-.cardTitle {
-  text-align: center;
-  font-size: 20px;
-}
-
-.cardRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: .5% 0%,
-}
-
 .btn.btn-outline-secondary {
   transition: all ease 1s;
-}
-
-.btn.btn-outline-secondary:hover {
-  background-color: rgb(36, 36, 36);
 }
 
 .fullCenter {
@@ -152,17 +127,6 @@ body {
   border-bottom: 1px solid rgb(84, 84, 84);
   display: flex;
   gap: 7%
-}
-
-.clearButton {
-  background-color: transparent;
-  border: none;
-  color: white;
-  transition: all ease 1s;
-}
-
-.clearButton:hover {
-  color: #a0a0a0 !important
 }
 
 .bottomRow {
@@ -266,24 +230,15 @@ tr:hover {
   background-color: #00b5d1ae;
 }
 
-.card-header.\32 {
-  position: relative;
+.add-checkpt-button-row{
+  padding: 10px 0%;
   display: grid;
-  grid-template-columns: 20% 60% 20%;
-  align-items: center;
+  grid-template-columns: 30% 27.5% 42.5%;
 }
 
-.btn.btn-close {
-  color: white
-}
-
-.btn.btn-primary {
-  transition: all 1s ease;
-}
-
-.btn.btn-primary:hover {
-  color: rgb(149, 149, 149) !important;
-  transition: all 1s ease;
+.flexColumn{
+  display: flex;
+  flex-direction: column
 }
 
 ::-webkit-scrollbar {
@@ -316,14 +271,6 @@ tr:hover {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-
-.dropdown-item {
-  color: rgb(200, 200, 200)
-}
-
-.dropdown-item:hover {
-  background-color: rgb(130, 130, 130);
 }
 
 .container {
@@ -381,4 +328,12 @@ tr:hover {
 
 .modal-dialog {
   width: 100%;
+}
+
+.smallFont{
+  font-size: 12px;
+}
+
+.minWidth320{
+  min-width: 320px;
 }

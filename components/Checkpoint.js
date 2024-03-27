@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import {
-  useState, useEffect, useMemo, memo, useCallback, useRef,
+  useState, useEffect, memo, useCallback, useRef,
 } from 'react';
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
 import uniqid from 'uniqid';
@@ -181,6 +181,8 @@ const Checkpoint = memo(({
       deetsExpanded: false,
       collabsExpanded: false,
       lineColor: randomColor(),
+      startTime: '',
+      endTime: '',
     };
     createNewTask(emptyTask);
     pauseReorder();

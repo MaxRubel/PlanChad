@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/globals.scss';
+import '../styles/buttons.scss';
 import '../styles/calendar.scss';
 import '../styles/cards.scss';
+import '../styles/calendarDay.scss';
 import '../styles/chat.scss';
 import { memo } from 'react';
 import { AuthProvider } from '../utils/context/authContext';
