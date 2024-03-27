@@ -1,16 +1,22 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import { homeIcon } from '../../public/icons';
 import { signOut } from '../../utils/auth';
 import { useCollabContext } from '../../utils/context/collabContext';
 import useSaveStore from '../../utils/stores/saveStore';
+import DeleteAProjectModal from '../modals/DeleteAProject';
 
 export default function NavBar() {
   const { clearCollabManager } = useCollabContext();
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const clearAllLocalData = useSaveStore((state) => state.clearAllLocalData);
+  const [deleteAProjectModal, setDeleteAProjectModal] = useState(true);
+
+  const closeModal = () => {
+    setDeleteAProjectModal((preVal) => false);
+  };
 
   if (singleProjectRunning) {
     return (
@@ -26,37 +32,50 @@ export default function NavBar() {
 
   if (!singleProjectRunning) {
     return (
-      <Navbar collapseOnSelect expand="sm" bg="black" variant="dark" className="navBarShowing">
-        <Container>
-          <Link passHref href="/">
-            <Navbar.Brand>planChad</Navbar.Brand>
-          </Link>
-          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-          <Navbar.Collapse id="responsive-navbar-nav">
-            <Nav className="me-auto">
-              <Link passHref href="/">
-                <Nav.Link>Home</Nav.Link>
-              </Link>
-              <Link passHref href="/project/new">
-                <Nav.Link>Create New Project</Nav.Link>
-              </Link>
-              <button
-                type="button"
-                className="clearButton"
-                style={{
-                  color: 'rgb(155, 157, 158)',
-                }}
-                onClick={() => {
-                  signOut();
-                  clearAllLocalData();
-                  clearCollabManager();
-                }}
-              >Sign Out
-              </button>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      <>
+        <DeleteAProjectModal
+          show={deleteAProjectModal}
+          closeModal={closeModal}
+        />;
+        <Navbar collapseOnSelect expand="sm" bg="black" variant="dark" className="navBarShowing">
+          <Container>
+            <Link passHref href="/">
+              <Navbar.Brand>planChad</Navbar.Brand>
+            </Link>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+              <Nav className="me-auto">
+                <Link passHref href="/project/new">
+                  <Nav.Link>Create New Project</Nav.Link>
+                </Link>
+                <button
+                  type="button"
+                  className="clearButton navBarButton"
+                  onClick={() => {
+                    setDeleteAProjectModal((preVal) => true);
+                  }}
+                >
+                  Delete A Project
+                </button>
+                <button
+                  type="button"
+                  className="clearButton"
+                  style={{
+                    color: 'rgb(155, 157, 158)',
+                  }}
+                  onClick={() => {
+                    signOut();
+                    clearAllLocalData();
+                    clearCollabManager();
+                  }}
+                >Sign Out
+                </button>
+              </Nav>
+            </Navbar.Collapse>
+          </Container>
+        </Navbar>
+      </>
+
     );
   }
 }

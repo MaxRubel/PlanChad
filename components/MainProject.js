@@ -8,13 +8,14 @@ import randomColor from 'randomcolor';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
 import { useSaveContext } from '../utils/context/saveManager';
-import DeleteProjectModal from './modals/DeleteProject';
 import { useCollabContext } from '../utils/context/collabContext';
-import { deleteAllInvitesOfProject, getInvitesByProject, updateInvite } from '../api/invites';
+import { getInvitesByProject, updateInvite } from '../api/invites';
 import { useAuth } from '../utils/context/authContext';
 import useSaveStore from '../utils/stores/saveStore';
 import useAnimationStore from '../utils/stores/animationsStore';
 import useSaveButtonColorAnimation from '../utils/hooks/useSaveButtonAnimation';
+import { binoculars, chatIcon, saveIcon } from '../public/icons2';
+import { calendarIcon, peopleIcon } from '../public/icons';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
@@ -45,6 +46,7 @@ export default function MainProjectView({ projectId }) {
   const showProgress = useAnimationStore((state) => state.showProgress);
   const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
   const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
+  const amViewingMaingProject = useSaveStore((state) => state.amViewingMaingProject);
   const [isSaving, setIsSaving] = useState(0);
 
   useEffect(() => {
@@ -146,15 +148,6 @@ export default function MainProjectView({ projectId }) {
 
   return (
     <>
-      <DeleteProjectModal
-        handleDelete={() => {
-          theBigDelete(projectId);
-          deleteAllProjCollabs(project.projectId);
-          deleteAllInvitesOfProject(project.projectId);
-        }}
-        closeModal={handleCloseModal}
-        show={openDeleteModal}
-      />
       <div className="bigDad">
         <div id="project-container">
           <div id="project-top-bar" style={{ marginBottom: '10px' }}>
@@ -167,7 +160,7 @@ export default function MainProjectView({ projectId }) {
                 saveAnimation();
               }}
             >
-              Save
+              {saveIcon} &nbsp; Save
             </button>
             <button
               id="manageCollaborators"
@@ -175,7 +168,7 @@ export default function MainProjectView({ projectId }) {
               className="clearButton"
               onClick={() => { router.push(`/calendar/view/${projectId}`); }}
             >
-              Calendar
+              {calendarIcon} &nbsp;Calendar
             </button>
             <button
               id="manageCollaborators"
@@ -183,7 +176,7 @@ export default function MainProjectView({ projectId }) {
               className="clearButton"
               onClick={() => { router.push(`/collaborators/${projectId}`); }}
             >
-              Collaborators
+              {peopleIcon} &nbsp;Collaboratos
             </button>
             <button
               id="saveButton"
@@ -194,18 +187,18 @@ export default function MainProjectView({ projectId }) {
                 router.push(`/messages/${projectId}`);
               }}
             >
-              Chat
+              {chatIcon} &nbsp;Chat
             </button>
             <Dropdown
-              style={{ outline: 'none' }}
+              className="clearButton"
+              id="yo"
+              style={{ display: 'flex', flexWrap: 'c' }}
               onSelect={handleChange}
             >
               <Dropdown.Toggle
-                className="dropdown-toggle"
-                id="dropdown-view-options"
-
+                id="dropdown-view-options fullCenter"
               >
-                View Options
+                {binoculars}&nbsp; View
               </Dropdown.Toggle>
               <Dropdown.Menu
                 className="dropdown-menu"
@@ -215,14 +208,6 @@ export default function MainProjectView({ projectId }) {
                 <Dropdown.Item eventKey="hideCompleted" style={{ color: 'white' }}>{storedProject.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            <button
-              id="manageCollaborators"
-              type="button"
-              className="clearButton"
-              onClick={() => { setOpenDeleteModal((preVal) => true); }}
-            >
-              Delete This Project
-            </button>
           </div>
           <div id="projectCard-container" className="fullCenter">
             <ProjectCard
