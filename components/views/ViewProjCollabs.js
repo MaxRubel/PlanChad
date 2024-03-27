@@ -6,6 +6,8 @@ import CollabCardforProject from '../cards/CollabCardForProject';
 import { useAuth } from '../../utils/context/authContext';
 import useSaveStore from '../../utils/stores/saveStore';
 import { getInvitesByProject } from '../../api/invites';
+import { getCollabsOfProject } from '../../api/projCollab';
+import { getSingleCollab } from '../../api/collabs';
 
 export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToAssignChild }) {
   const [collabsOfProj, setCollabsOfProj] = useState([]);
@@ -30,18 +32,36 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
 
   useEffect(() => {
     if (projectId) {
-      const thisProjCollabs = [];
-      const copy = [...projCollabJoins];
-      const thisProjCollabJoins = copy.filter((item) => item.projectId === thisProject?.projectId);
-      const collabIds = thisProjCollabJoins.map((item) => item.collabId);
-      for (let i = 0; i < allCollabs.length; i++) {
-        if (collabIds.includes(allCollabs[i].collabId)) {
-          thisProjCollabs.push(allCollabs[i]);
-        }
-      }
-      const removedThisUser = thisProjCollabs.filter((item) => item.email !== user.email);
-      setCollabsOfProj((preVal) => removedThisUser);
-      originalProjCollabs.current = removedThisUser;
+      // const thisProjCollabs = [];
+      const allCollabsCopy = [...allCollabs];
+      // const copy = [...projCollabJoins];
+      // const thisProjCollabJoins = copy.filter((item) => item.projectId === thisProject?.projectId);
+      // const collabIds = thisProjCollabJoins.map((item) => item.collabId);
+      // for (let i = 0; i < allCollabs.length; i++) {
+      //   if (collabIds.includes(allCollabs[i].collabId)) {
+      //     thisProjCollabs.push(allCollabs[i]);
+      //   }
+      // }
+
+      // grab all collabs of this project
+      getCollabsOfProject(projectId)
+        .then((projCollabJoinData) => {
+          const projCollabs = [];
+          const promiseArray = projCollabJoinData.map((item) => getSingleCollab(item.collabId));
+          Promise.all(promiseArray)
+            // if any of them are user collabs don't add
+            .then((projCollabsData) => {
+              const removedThisUser = projCollabsData.filter((item) => item.email !== user.email);
+              for (let i = 0; i < removedThisUser.length; i++) {
+                const projCollaborator = removedThisUser[i];
+                if (!allCollabsCopy.some((item) => item.email === projCollaborator.email)) {
+                  projCollabs.push(projCollaborator);
+                }
+              }
+              setCollabsOfProj((preVal) => removedThisUser);
+              originalProjCollabs.current = removedThisUser;
+            });
+        });
     }
   }, [projCollabJoins, projectId, selectInput, allCollabs, thisProject]);
 

@@ -16,12 +16,14 @@ const initialState = {
 };
 
 export default function AddCollabForm2(props) {
-  const { handleClose, show } = props;
+  const { handleClose, show, email } = props;
   const [formInput, setForminput] = useState(initialState);
   const { user } = useAuth();
   const { addToCollabManager, updateCollaborator } = useCollabContext();
-
   useEffect(() => {
+    if (email) {
+      setForminput((preVal) => ({ ...preVal, email }));
+    }
     if (updateCollaborator) {
       setForminput(updateCollaborator);
     }
@@ -34,9 +36,11 @@ export default function AddCollabForm2(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const emailFormatted = formInput.email.toLowerCase();
     if (updateCollaborator) { // update collaborator
       const payload = {
         ...formInput,
+        email: emailFormatted,
         collabId: updateCollaborator.collabId,
       };
       updateCollab(payload);
@@ -45,6 +49,7 @@ export default function AddCollabForm2(props) {
     } else { // create collaborator
       const payload = {
         ...formInput,
+        email: emailFormatted,
         userId: user.uid,
         localId: uniqid(),
       };

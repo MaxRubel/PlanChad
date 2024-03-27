@@ -6,6 +6,8 @@ import CollabCardForTask from '../cards/CollabCardForTask';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { useAuth } from '../../utils/context/authContext';
 import useSaveStore from '../../utils/stores/saveStore';
+import { getCollabsOfTask } from '../../api/taskCollab';
+import { getSingleCollab } from '../../api/collabs';
 
 export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
   const { taskCollabJoins, allCollabs, searchInput } = useCollabContext();
@@ -20,15 +22,10 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
 
   useEffect(() => {
     setCollabsOfTask((preVal) => []);
-    const theseTaskCollabJoins = taskCollabJoins.filter((item) => item.taskId === taskId);
-    const theseCollabs = [];
-    for (let i = 0; i < theseTaskCollabJoins.length; i++) {
-      const collab = allCollabs.find((item) => item.collabId === theseTaskCollabJoins[i].collabId);
-      theseCollabs.push(collab);
-    }
-    const removedThisUser = theseCollabs.filter((item) => item.email !== user.email);
-    setCollabsOfTask((preVal) => removedThisUser);
-    OGCollabsOfTask.current = removedThisUser;
+    getCollabsOfTask(taskId).then((data) => {
+      const promiseArray = data.map((item) => getSingleCollab(item.collabId));
+      Promise.all(promiseArray).then(setCollabsOfTask);
+    });
   }, [taskCollabJoins, allCollabs, taskId]);
 
   useEffect(() => {

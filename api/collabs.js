@@ -20,6 +20,24 @@ const getCollabsOfUser = (userId) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+const getCollabByEmail = (email) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/collabs.json?orderBy="email"&equalTo="${email}"`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data) {
+        resolve(Object.values(data));
+      } else {
+        resolve([]);
+      }
+    })
+    .catch(reject);
+});
+
 const getSingleCollab = (collabId) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/collabs/${collabId}.json`, {
     method: 'GET',
@@ -71,5 +89,5 @@ const deleteCollab = (collabId) => new Promise((resolve, reject) => {
 });
 
 export {
-  createNewCollab, updateCollab, getCollabsOfUser, deleteCollab, getSingleCollab,
+  createNewCollab, updateCollab, getCollabsOfUser, deleteCollab, getSingleCollab, getCollabByEmail,
 };

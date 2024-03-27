@@ -17,7 +17,7 @@ export default function NavBar() {
   const closeModal = () => {
     setDeleteAProjectModal((preVal) => false);
   };
-  console.log();
+
   if (singleProjectRunning) {
     return (
       <Navbar collapseOnSelect expand="sm" bg="black" variant="dark" className="navBarShowing">

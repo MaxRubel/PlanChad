@@ -9,6 +9,7 @@ import { useCollabContext } from '../../utils/context/collabContext';
 import InvitesModal from '../../components/modals/InvitesModal';
 import useSaveStore from '../../utils/stores/saveStore';
 import { getInvitesByProject } from '../../api/invites';
+import { shortBack } from '../../public/icons2';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -88,7 +89,7 @@ export default function ManageCollaboratorsPage() {
             router.push(`/project/plan/${projectId}`);
           }}
         >
-          Back to Project
+          {shortBack} Back to Project
         </button>
         <button
           id="showModal"

@@ -45,14 +45,25 @@ export default function AddCollabForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const emailFormatted = formInput.email.toLowerCase();
+    console.log(emailFormatted);
     if (updateCollaborator) { // update collaborator
-      const payload = { ...formInput, collabId: updateCollaborator.collabId };
+      const payload = {
+        ...formInput,
+        email: emailFormatted,
+        collabId: updateCollaborator.collabId,
+      };
       updateCollab(payload);
       setUpdateCollab(null);
       setForminput(initialState);
       addToCollabManager(payload, 'allCollabs', 'update');
     } else { // create collaborator
-      const payload = { ...formInput, userId: user.uid };
+      const payload = {
+        ...formInput,
+        email: emailFormatted,
+        userId: user.uid,
+      };
+
       createNewCollab(payload).then(({ name }) => {
         updateCollab({ collabId: name });
         setAddtoProj((prevVal) => false);

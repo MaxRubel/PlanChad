@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import randomColor from 'randomcolor';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
-import { useSaveContext } from '../utils/context/saveManager';
-import { useCollabContext } from '../utils/context/collabContext';
 import { getInvitesByProject, updateInvite } from '../api/invites';
 import { useAuth } from '../utils/context/authContext';
 import useSaveStore from '../utils/stores/saveStore';
@@ -16,14 +14,13 @@ import useAnimationStore from '../utils/stores/animationsStore';
 import useSaveButtonColorAnimation from '../utils/hooks/useSaveButtonAnimation';
 import { binoculars, chatIcon, saveIcon } from '../public/icons2';
 import { calendarIcon, peopleIcon } from '../public/icons';
+import { getTaskCollabsOfProject } from '../api/taskCollab';
+import { getSingleCollab } from '../api/collabs';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
   const [refresh, setRefresh] = useState(0);
-  const { theBigDelete } = useSaveContext();
-  const { deleteAllProjCollabs } = useCollabContext();
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
   const storedCheckpoints = useSaveStore((state) => state.checkpoints);
@@ -46,7 +43,8 @@ export default function MainProjectView({ projectId }) {
   const showProgress = useAnimationStore((state) => state.showProgress);
   const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
   const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
-  const amViewingMaingProject = useSaveStore((state) => state.amViewingMaingProject);
+  const updateTaskCollaboratorsBatch = useSaveStore((state) => state.updateTaskCollaboratorsBatch);
+  const updateTaskCollaboratorJoinsBatch = useSaveStore((state) => state.updateTaskCollaboratorJoinsBatch);
   const [isSaving, setIsSaving] = useState(0);
 
   useEffect(() => {
@@ -61,6 +59,14 @@ export default function MainProjectView({ projectId }) {
       }
       getInvitesByProject(projectId).then((projectInvites) => {
         updateInvitesOfProjectBatch(projectInvites);
+      });
+      getTaskCollabsOfProject(projectId).then((taskCollabJoins) => {
+        const promiseArray = taskCollabJoins.map((item) => getSingleCollab(item.collabId));
+        Promise.all(promiseArray).then((data) => {
+          console.log(promiseArray);
+          updateTaskCollaboratorJoinsBatch(taskCollabJoins);
+          updateTaskCollaboratorsBatch(data);
+        });
       });
     }
   }, [projectId, projectsLoaded, singleProjectRunning]);
@@ -138,10 +144,6 @@ export default function MainProjectView({ projectId }) {
     }
   };
 
-  const handleCloseModal = () => {
-    setOpenDeleteModal((prevVal) => false);
-  };
-
   const saveAnimation = () => {
     setIsSaving((preVal) => preVal + 1);
   };
@@ -176,7 +178,7 @@ export default function MainProjectView({ projectId }) {
               className="clearButton"
               onClick={() => { router.push(`/collaborators/${projectId}`); }}
             >
-              {peopleIcon} &nbsp;Collaboratos
+              {peopleIcon} &nbsp;Collaborators
             </button>
             <button
               id="saveButton"
@@ -184,7 +186,7 @@ export default function MainProjectView({ projectId }) {
               className="clearButton"
               onClick={() => {
                 sendToServer();
-                router.push(`/messages/${projectId}`);
+                router.push(`/chat/${projectId}`);
               }}
             >
               {chatIcon} &nbsp;Chat

@@ -2,21 +2,24 @@ import { memo, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import CollabCardForTaskInProj from '../cards/CollabCardForTaskInProj';
 import { useCollabContext } from '../../utils/context/collabContext';
+import useSaveStore from '../../utils/stores/saveStore';
 
 const ViewTaskCollabsInProj = memo(({ collabsExpand, taskId, formInput }) => {
   const { taskCollabJoins, allCollabs } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
+  const taskCollaborators = useSaveStore((state) => state.taskCollaborators);
+  const taskCollaboratorJoins = useSaveStore((state) => state.taskCollaboratorJoins);
 
   useEffect(() => {
-    const copy = [...taskCollabJoins];
-    const filtered = copy.filter((item) => item.taskId === taskId);
+    console.log('joins: ', taskCollaboratorJoins);
+    const filtered = taskCollaboratorJoins.filter((item) => item.taskId === taskId);
     const collabs = [];
     for (let i = 0; i < filtered.length; i++) {
-      const collab = allCollabs.find((item) => item.collabId === filtered[i].collabId);
+      const collab = taskCollaborators.find((item) => item.collabId === filtered[i].collabId);
       collabs.push(collab);
     }
     setCollabsOfTask((preVal) => collabs);
-  }, [taskId, taskCollabJoins]);
+  }, [taskId, taskCollabJoins, taskCollaboratorJoins]);
 
   return (
     <>

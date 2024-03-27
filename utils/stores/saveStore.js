@@ -12,14 +12,19 @@ const useSaveStore = create(devtools(
     invites: [],
     allProjects: [],
     allTasks: [],
+    taskCollaborators: [],
+    taskCollaboratorJoins: [],
     projectsLoaded: false,
     singleProjectRunning: false,
     zustandFinised: false,
+    chatMessageToEdit: {},
 
     clearSaveStore: () => set((state) => ({
       project: {},
       checkpoints: [],
       tasks: [],
+      taskCollaborators: [],
+      taskCollaboratorJoins: [],
       invites: [],
       singleProjectRunning: false,
       zustandFinised: false,
@@ -30,6 +35,8 @@ const useSaveStore = create(devtools(
       checkpoints: [],
       tasks: [],
       invites: [],
+      taskCollaborators: [],
+      taskCollaboratorJoins: [],
       allProjects: [],
       allTasks: [],
       projectsLoaded: false,
@@ -117,6 +124,9 @@ const useSaveStore = create(devtools(
         allTasks: [...allOldTasks, ...newTasks],
       };
     }),
+    // --------task-collaborators---
+    updateTaskCollaboratorJoinsBatch: (newJoins) => set((preVal) => ({ taskCollaboratorJoins: newJoins })),
+    updateTaskCollaboratorsBatch: (newCollabs) => set((preVal) => ({ taskCollaborators: newCollabs })),
     // ------invites---------
     addInviteToProject: (newInvite) => set((preVal) => ({ invitesOfProject: [...preVal.invitesOfProject, newInvite] })),
     createNewInvite: (newInvite) => set((preVal) => ({ invites: [...preVal.invites, newInvite] })),
@@ -146,10 +156,16 @@ const useSaveStore = create(devtools(
       );
       return { invitesOfProject: updatedInvites };
     }),
-
+    // --------------chat--------------
+    editChatMessage: (message) => set((preVal) => ({
+      chatMessageToEdit: message,
+    })),
+    clearEditChatMessage: () => set(() => ({
+      chatMessageToEdit: {},
+    })),
     sendToServer: () => {
       const {
-        allProjects, checkpoints, tasks, invitesOfProject, project,
+        allProjects, checkpoints, tasks, project,
       } = get();
 
       if (allProjects.length === 0) { return; }
