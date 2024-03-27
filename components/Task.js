@@ -41,10 +41,11 @@ const initialState = {
   collabsExpanded: false,
   fresh: true,
   planning: '',
+  startTime: '',
+  endTime: '',
 };
 
 const Task = memo(({
-  // eslint-disable-next-line react/prop-types
   task, refreshCheckP, indexT, checkPHasLoaded,
 }) => {
   const [formInput, setFormInput] = useState(initialState);
@@ -219,12 +220,7 @@ const Task = memo(({
         >
           <div
             className="card-header 2"
-            style={{
-              minWidth: '516px',
-              alignContent: 'center',
-              height: '53px',
-              border: !formInput.expanded ? 'none' : '',
-            }}
+            style={{ border: !formInput.expanded ? 'none' : '' }}
           >
             <div className="verticalCenter">
               <div
@@ -246,16 +242,7 @@ const Task = memo(({
                   <button
                     type="button"
                     onClick={handleCollapse}
-                    className="fullCenter"
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      textAlign: 'center',
-                      color: 'black',
-                      width: '35px',
-                      height: '35px',
-                    }}
+                    className="clearButtonDark fullCenter"
                   >
                     {calendarIcon}
                   </button>
@@ -269,17 +256,8 @@ const Task = memo(({
                   <button
                     type="button"
                     onClick={handleCollapse2}
-                    className="fullCenter"
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      textAlign: 'center',
-                      color: 'black',
-                      width: '35px',
-                      height: '35px',
-                      justifyContent: 'center',
-                    }}
+                    className="clearButtonDark fullCenter"
+                    style={{ marginRight: '-6px' }}
                   >
                     {editIcon}
                   </button>
@@ -340,7 +318,7 @@ const Task = memo(({
               >
                 <button
                   type="button"
-                  className="verticalCenter"
+                  className="clearButtonDark fullCenter"
                   style={{ color: 'black', backgroundColor: 'transparent', border: 'none' }}
                   onClick={handleExpandCollabs}
                 >
@@ -355,11 +333,9 @@ const Task = memo(({
               >
                 <button
                   type="button"
-                  className="veritcalCenter"
+                  className="clearButtonDark fullCenter"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
-                  style={{
-                    paddingBottom: '4px', color: 'black', backgroundColor: 'transparent', border: 'none',
-                  }}
+
                 >
                   {trashIcon}
                 </button>
@@ -371,20 +347,11 @@ const Task = memo(({
             <div>
               <div id="whole-card">
                 <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
-                  <div
-                    id="row3"
-                    className="cardRow"
-                  >
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                      <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
-                        <label htmlFor="startDate">Start Date:</label>
-                      </div>
-                      <div />
+                  <div id="row1" className="cardRowTask">
+                    <div id="col2" className="fullCenter">
+                      <label htmlFor="startDate">Start:</label>
                     </div>
-                    <div
-                      className="fullCenter"
-                      style={{ paddingRight: '20%' }}
-                    >
+                    <div id="col3" className="fullCenter">
                       <input
                         id="startDate"
                         className="form-control"
@@ -394,27 +361,38 @@ const Task = memo(({
                         name="startDate"
                         style={{
                           backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
-                          border: 'none',
+                          border: formInput.status === 'closed' ? '1px solid rgb(116, 116, 116)' : '',
                           transition: reorderPaused ? 'none' : '1.5s all ease',
                         }}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       />
                     </div>
+                    <div id="col4">
+                      <input
+                        id="startDate"
+                        className="form-control"
+                        type="time"
+                        value={formInput.startTime}
+                        onChange={handleChange}
+                        name="startTime"
+                        style={{
+                          backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                          border: formInput.status === 'closed' ? '1px solid rgb(116, 116, 116)' : '',
+                          transition: reorderPaused ? 'none' : '1.5s all ease',
+                        }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                    <div id="col5 empty" />
                   </div>
                   <div
                     id="row2"
-                    className="cardRow"
+                    className="cardRowTask"
                   >
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                      <div className="verticalCenter">
-                        <label htmlFor="deadline">Deadline:</label>
-                      </div>
-                      <div />
+                    <div id="col2" className="fullCenter">
+                      <label htmlFor="deadline">End:</label>
                     </div>
-                    <div style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-                    }}
-                    >
+                    <div id="col3">
                       <input
                         className="form-control"
                         type="date"
@@ -424,12 +402,29 @@ const Task = memo(({
                         id="deadline"
                         style={{
                           backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
-                          border: 'none',
+                          border: formInput.status === 'closed' ? '1px solid rgb(116, 116, 116)' : '',
                           transition: reorderPaused ? 'none' : '1.5s all ease',
                         }}
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       />
                     </div>
+                    <div id="col4">
+                      <input
+                        id="end"
+                        className="form-control"
+                        type="time"
+                        value={formInput.endTime}
+                        onChange={handleChange}
+                        name="endTime"
+                        style={{
+                          backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                          border: formInput.status === 'closed' ? '1px solid rgb(116, 116, 116)' : '',
+                          transition: reorderPaused ? 'none' : '1.5s all ease',
+                        }}
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                    <div id="col5 empty" />
                   </div>
                 </div>
                 <div
@@ -459,7 +454,7 @@ const Task = memo(({
                     style={{
                       backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                       transition: reorderPaused ? 'none' : '1.5s all ease',
-                      border: 'none',
+                      border: formInput.status === 'closed' ? '1px solid rgb(116, 116, 116)' : '',
                       minWidth: '250px',
                     }}
                     onPointerDownCapture={(e) => e.stopPropagation()}

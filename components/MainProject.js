@@ -14,6 +14,7 @@ import { deleteAllInvitesOfProject, getInvitesByProject, updateInvite } from '..
 import { useAuth } from '../utils/context/authContext';
 import useSaveStore from '../utils/stores/saveStore';
 import useAnimationStore from '../utils/stores/animationsStore';
+import useSaveButtonColorAnimation from '../utils/hooks/useSaveButtonAnimation';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
@@ -84,22 +85,7 @@ export default function MainProjectView({ projectId }) {
     setRefresh((prevVal) => prevVal + 1);
   }, []);
 
-  useEffect(() => { // save button color animation
-    let saveColorChange;
-    const saveButton = document.getElementById('saveButton');
-    if (!isSaving) {
-      saveButton.style.color = 'white';
-    }
-    if (isSaving) {
-      saveButton.style.color = 'rgb(16, 197, 234)';
-      saveColorChange = setTimeout(() => {
-        saveButton.style.color = 'white';
-      }, 1000);
-    }
-    return () => {
-      clearTimeout(saveColorChange);
-    };
-  }, [isSaving]);
+  useSaveButtonColorAnimation(isSaving);
 
   const addCheckpoint = () => {
     const emptyChckP = {
@@ -171,11 +157,11 @@ export default function MainProjectView({ projectId }) {
       />
       <div className="bigDad">
         <div id="project-container">
-          <div id="project-top-bar" style={{ marginBottom: '1%' }}>
+          <div id="project-top-bar" style={{ marginBottom: '10px' }}>
             <button
               id="saveButton"
               type="button"
-              className="clearButton"
+              className="clearButtonNoHover"
               onClick={() => {
                 sendToServer();
                 saveAnimation();
@@ -215,15 +201,14 @@ export default function MainProjectView({ projectId }) {
               onSelect={handleChange}
             >
               <Dropdown.Toggle
-                style={{ backgroundColor: 'transparent', border: 'none', color: 'white' }}
+                className="dropdown-toggle"
                 id="dropdown-view-options"
+
               >
                 View Options
               </Dropdown.Toggle>
-              <Dropdown.Menu style={{
-                backgroundColor: 'rgb(0,0,0, .85)',
-                color: 'white !important',
-              }}
+              <Dropdown.Menu
+                className="dropdown-menu"
               >
                 <Dropdown.Item eventKey="minAll" style={{ color: 'white' }}>Minimize All</Dropdown.Item>
                 <Dropdown.Item eventKey="showProgress" style={{ color: 'white' }}>{storedProject.progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
@@ -245,21 +230,13 @@ export default function MainProjectView({ projectId }) {
               progressIsShowing={storedProject.progressIsShowing}
             />
           </div>
-          <div
-            id="add-checkpt-button"
-            style={{
-              padding: '1% 0%',
-              display: 'grid',
-              gridTemplateColumns: '30% 27.5% 42.5%',
-            }}
-          >
+          <div className="add-checkpt-button-row">
             <button
               type="button"
               className="btn btn-outline-secondary"
               onClick={() => { addCheckpoint(); }}
               style={{
                 maxWidth: '200px',
-                margin: '1% 0%',
                 color: 'white',
                 border: '1px solid rgb(100, 100, 100)',
               }}
@@ -279,7 +256,7 @@ export default function MainProjectView({ projectId }) {
               key="checkpointsReorder"
               animate={false}
             >
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="flexColumn">
                 {checkpoints.map((checkP, index) => (
                   <Reorder.Item
                     as={motion.div}

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
+import uniqid from 'uniqid';
 import months from '../../../../utils/months';
-import hours, { hoursTimes } from '../../../../utils/hours';
+import { hoursTimes } from '../../../../utils/hours';
 import TimeBlock from '../../../../components/calendar/TimeBlock';
 
 export default function ViewCalDayPage() {
@@ -16,7 +17,7 @@ export default function ViewCalDayPage() {
   return (
 
     <div className="minWidth320">
-      <div id="project-top-bar" style={{ marginBottom: '1%' }}>
+      <div id="project-top-bar" style={{ marginBottom: '10px', paddingBottom: '3px' }}>
         <button
           id="backToProject"
           type="button"
@@ -44,7 +45,7 @@ export default function ViewCalDayPage() {
           </div>
         </div>
         {hoursTimes.map((hour, index) => (
-          <TimeBlock hour={index} />
+          <TimeBlock key={uniqid()} hour={index} />
         ))}
       </div>
     </div>

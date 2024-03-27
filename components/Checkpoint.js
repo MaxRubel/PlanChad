@@ -181,6 +181,8 @@ const Checkpoint = memo(({
       deetsExpanded: false,
       collabsExpanded: false,
       lineColor: randomColor(),
+      startTime: '',
+      endTime: '',
     };
     createNewTask(emptyTask);
     pauseReorder();

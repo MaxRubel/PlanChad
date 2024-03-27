@@ -1,0 +1,85 @@
+.clearButton {
+    background-color: transparent;
+    border: none;
+    color: white;
+    transition: all ease .6s;
+ }
+
+ .clearButtonNoHover{
+    background-color: transparent;
+    border: none;
+    color: white;
+    transition: all ease 1s;
+ }
+  
+.clearButtonDark {
+    background-color: transparent;
+    border: none;
+    color: black;
+    transition: all ease .6s;
+}
+  
+.clearButton:hover {
+    color: #b9b9b9 !important
+}
+.clearButtonDark:hover {
+    color: #484747 !important
+}
+
+.btn.btn-close {
+    color: white
+}
+  
+.btn.btn-primary {
+    transition: all 1s ease;
+}
+  
+.btn.btn-primary:hover {
+    color: rgb(149, 149, 149) !important;
+    transition: all .6s ease;
+}
+
+
+.btn.btn-outline-secondary {
+    transition: all ease 1s;
+  }
+
+.btn.btn-outline-secondary:hover {
+    background-color: rgb(36, 36, 36);
+}
+
+.btn.btn-outline-dark.rounded-0 {
+    border: 'none';
+    transition: all ease 2s;
+  
+    &:hover {
+      background-color: transparent;
+      color: black;
+    }
+}
+
+.dropdown-menu{
+    background-color: rgb(0,0,0, .85);
+    color: white !important
+}
+
+.dropdown-toggle{
+    background-color: transparent !important; 
+    border: none !important;
+    color: white !important;
+}
+
+.dropdown-toggle:hover{
+    background-color: transparent;
+    color:rgb(149, 149, 149)  !important;
+
+}
+
+
+.dropdown-item {
+    color: rgb(200, 200, 200)
+}
+  
+.dropdown-item:hover {
+    background-color: rgb(39, 39, 39);
+}

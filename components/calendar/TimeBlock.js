@@ -8,7 +8,7 @@ export default function TimeBlock({ hour }) {
       <div className="fullCenter padded">
         {hoursTimes[hour]} <div className="smallFont">&nbsp;{morningOrNight}</div>
       </div>
-      <div className="fullCenter padded borderBottom">hey again</div>
+      <div className="fullCenter padded borderBottom" />
 
     </div>
   );

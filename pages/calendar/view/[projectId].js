@@ -1,10 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useRouter } from 'next/router';
-import {
-  useEffect, useLayoutEffect, useRef, useState,
-} from 'react';
-import { useSaveContext } from '../../../utils/context/saveManager';
+import { useEffect, useState } from 'react';
 import { caretLeft, caretRight } from '../../../public/icons';
 import chooseMonth from '../../../utils/chooseMonth';
 import TaskModalForCalendar from '../../../components/modals/TaskModalForCal';
@@ -14,7 +11,6 @@ import useSaveStore from '../../../utils/stores/saveStore';
 export default function CalendarPage() {
   const router = useRouter();
   const { projectId } = router.query;
-  const { cancelSaveAnimation } = useSaveContext();
   const [sortedTasks, setSortedTasks] = useState([]);
   const [sortedCheckpoints, setSortedCheckpoints] = useState([]);
   const [openTaskModal, setOpenTaskModal] = useState(false);
@@ -452,7 +448,7 @@ export default function CalendarPage() {
         closeModal={handleCloseSegModal}
       />
       <div id="project-container" style={{ paddingBottom: '40vh' }}>
-        <div id="project-top-bar" style={{ marginBottom: '1%' }}>
+        <div id="project-top-bar" style={{ marginBottom: '10px' }}>
           <button
             id="backToProj"
             type="button"
@@ -479,7 +475,7 @@ export default function CalendarPage() {
               </button>
             </div>
             <div id="col3" style={{ textAlign: 'right' }}>
-              <button type="button" className="clearButton" style={{ color: 'white', padding: '8px', border: '1px solid rgb(84, 84, 84)' }} onClick={handleToday}>
+              <button type="button" className="clearButton" style={{ padding: '8px', border: '1px solid rgb(84, 84, 84)' }} onClick={handleToday}>
                 Today
               </button>
             </div>
