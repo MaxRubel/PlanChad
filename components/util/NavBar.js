@@ -12,7 +12,7 @@ export default function NavBar() {
   const { clearCollabManager } = useCollabContext();
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const clearAllLocalData = useSaveStore((state) => state.clearAllLocalData);
-  const [deleteAProjectModal, setDeleteAProjectModal] = useState(true);
+  const [deleteAProjectModal, setDeleteAProjectModal] = useState(false);
 
   const closeModal = () => {
     setDeleteAProjectModal((preVal) => false);
