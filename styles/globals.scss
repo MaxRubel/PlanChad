@@ -230,13 +230,13 @@ tr:hover {
   background-color: #00b5d1ae;
 }
 
-.add-checkpt-button-row{
+.add-checkpt-button-row {
   padding: 10px 0%;
   display: grid;
   grid-template-columns: 30% 27.5% 42.5%;
 }
 
-.flexColumn{
+.flexColumn {
   display: flex;
   flex-direction: column
 }
@@ -292,7 +292,8 @@ tr:hover {
 
 .grid3 {
   display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-columns: 8% 15% 77%;
+  // gap: 10px
 }
 
 .arrowOpen {
@@ -330,10 +331,10 @@ tr:hover {
   width: 100%;
 }
 
-.smallFont{
+.smallFont {
   font-size: 12px;
 }
 
-.minWidth320{
+.minWidth320 {
   min-width: 320px;
 }

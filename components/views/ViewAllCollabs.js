@@ -5,14 +5,14 @@ import { useCollabContext } from '../../utils/context/collabContext';
 import { useAuth } from '../../utils/context/authContext';
 
 export default function ViewAllCollabs({ projectToAssign }) {
-  const [collabs, setCollabs] = useState([]);
+  const [userCollabs, setCollabs] = useState([]);
   const { allCollabs, searchInput } = useCollabContext();
   const originalCollabs = useRef([]);
   const { user } = useAuth();
 
   useEffect(() => {
     const allCollabsCopy = [...allCollabs];
-    const filtered = allCollabsCopy.filter((item) => item.email !== user.email);
+    const filtered = allCollabsCopy.filter((item) => item.email !== user.email && item.userId === user.uid);
     setCollabs(filtered);
     originalCollabs.current = filtered;
   }, [allCollabs]);
@@ -37,6 +37,7 @@ export default function ViewAllCollabs({ projectToAssign }) {
         opacity: '.9',
         width: '100%',
         height: '45vh',
+        minWidth: '420px',
         margin: '0px !important',
       }}
     >
@@ -65,10 +66,10 @@ export default function ViewAllCollabs({ projectToAssign }) {
         }}
       >
         <div className="card" style={{ border: 'none' }}>
-          {collabs.length === 0 ? (
+          {userCollabs.length === 0 ? (
             <div>There are no collaborators...</div>
           ) : (
-            collabs.map((collab) => (
+            userCollabs.map((collab) => (
               <CollabCard
                 key={collab.localId}
                 collab={collab}

@@ -63,7 +63,6 @@ export default function MainProjectView({ projectId }) {
       getTaskCollabsOfProject(projectId).then((taskCollabJoins) => {
         const promiseArray = taskCollabJoins.map((item) => getSingleCollab(item.collabId));
         Promise.all(promiseArray).then((data) => {
-          console.log(promiseArray);
           updateTaskCollaboratorJoinsBatch(taskCollabJoins);
           updateTaskCollaboratorsBatch(data);
         });

@@ -46,7 +46,7 @@ export default function AddCollabForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const emailFormatted = formInput.email.toLowerCase();
-    console.log(emailFormatted);
+
     if (updateCollaborator) { // update collaborator
       const payload = {
         ...formInput,
