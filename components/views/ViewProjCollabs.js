@@ -67,16 +67,8 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   };
 
   return (
-    <div
-      className="card "
-      style={{
-        width: '47%',
-        backgroundColor: 'lightgrey',
-      }}
-    >
-      <div
-        className="card-header projectViewHeader"
-      >
+    <div className="card white">
+      <div className="card-header projectViewHeader">
         <div style={{ padding: '3px', marginBottom: '1%' }}>Project</div>
         <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
           <Form.Select
@@ -85,12 +77,14 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
             className="form-control shadow-none"
             value={selectInput}
             onChange={changeProject}
-            style={{
-              backgroundColor: 'rgb(225, 225, 225)',
-            }}
+          // style={{ backgroundColor: 'rgb(225, 225, 225)' }}
           >
             {allProjects.map((project) => (
-              <option key={project.projectId} value={project.projectId}>{project.name}</option>
+              <option
+                key={project.projectId}
+                value={project.projectId}
+              >{project.name}
+              </option>
             ))}
           </Form.Select>
         </div>
@@ -99,7 +93,7 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
         <div className="card">
           <div
             id="2"
-            className="card-body"
+            className="card-body white"
             style={{
               paddingTop: '2%',
               paddingBottom: '2%',
@@ -107,16 +101,19 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
               overflow: 'auto',
             }}
           >
-            {collabsOfProj.length === 0 ? ('No one is assigned to this project...') : (collabsOfProj.map((collab) => (
-              <CollabCardforProject
-                taskToAssign={taskToAssign2}
-                key={collab.collabId}
-                collab={collab}
-                ofProj
-                projectId={projectId}
-                projectToAssign={projectToAssign}
-              />
-            )))}
+            {collabsOfProj.length === 0 ? (
+              'No one is assigned to this project...'
+            ) : (
+              collabsOfProj.map((collab) => (
+                <CollabCardforProject
+                  taskToAssign={taskToAssign2}
+                  key={collab.collabId}
+                  collab={collab}
+                  ofProj
+                  projectId={projectId}
+                  projectToAssign={projectToAssign}
+                />
+              )))}
           </div>
         </div>
       </div>

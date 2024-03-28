@@ -210,7 +210,7 @@ const Task = memo(({
         </div>
         {/* -----------card---------------------- */}
         <div
-          className="card"
+          className="card white"
           style={{
             margin: '3px 0px',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
