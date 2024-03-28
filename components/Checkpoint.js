@@ -231,7 +231,7 @@ const Checkpoint = memo(({
         </div>
         {/* --------------card------------------------ */}
         <div
-          className="card"
+          className="card white"
           style={{
             margin: '3px 0px',
             minWidth: '565px',

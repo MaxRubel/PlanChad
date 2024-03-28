@@ -138,12 +138,10 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   return (
     <>
       <DeleteCollabModal closeModal={handleCloseModal} show={openDeleteModal} handleDelete={handleDelete} />
-      <div className="card" style={{ margin: '4px 0%' }}>
+      <div className="card white" style={{ margin: '4px 0%' }}>
         <div
-          className="card-body"
-          style={{
-            padding: '.5%',
-          }}
+          className="card-body white"
+          style={{ padding: '.5%' }}
         >
           <div id="row1" style={{ display: 'grid', gridTemplateColumns: '5% 70% 25%' }}>
             <div id="col1" className="fullCenter">

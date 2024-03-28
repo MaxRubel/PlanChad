@@ -130,37 +130,44 @@ export default function ManageCollaboratorsPage() {
         handleClose={handleClose}
         onHide={() => setModalShow((preVal) => false)}
       />
-      <div
-        id="row1"
-        className="collabPageRow1"
-      >
-        <ViewAllCollabs
-          refreshAllColabs={refreshAllColabs}
-          refreshProjCollabs={refreshProjCollabs}
-          refreshAllCs={refreshAllCs}
-          projectId={projectId}
-          projectToAssign={projectToAssign}
-        />
-      </div>
-      <div className="twoTableRow">
-        <ViewProjCollabs
-          projectId={projectId}
-          refreshProjCollabs={refreshProjCollabs}
-          refreshProjCs={refreshProjCs}
-          setProjectToAssignChild={setProjectToAssignChild}
-          taskToAssign={taskToAssign}
-          projectToAssign={projectToAssign}
-        />
-        <div className="verticalCenter">
-          {rightArrowWhite}
+      <div className="container">
+        <div className="row">
+          <div className="col mb-2">
+            <ViewAllCollabs
+              refreshAllColabs={refreshAllColabs}
+              refreshProjCollabs={refreshProjCollabs}
+              refreshAllCs={refreshAllCs}
+              projectId={projectId}
+              projectToAssign={projectToAssign}
+            />
+          </div>
         </div>
-        <ViewTaskCollabs
-          projectId={projectId}
-          refreshProjCollabs={refreshProjCollabs}
-          refreshProjCs={refreshProjCs}
-          projectToAssign={projectToAssign}
-          setTaskToAssignChild={setTaskToAssignChild}
-        />
+        <div className="row">
+          <div className="col-lg-6 col-md-12 mb-2">
+            <ViewProjCollabs
+              projectId={projectId}
+              refreshProjCollabs={refreshProjCollabs}
+              refreshProjCs={refreshProjCs}
+              setProjectToAssignChild={setProjectToAssignChild}
+              taskToAssign={taskToAssign}
+              projectToAssign={projectToAssign}
+            />
+          </div>
+          {/* <div className="col-lg-2 col-md-1 mb-2 fullCenter">
+            <div className="fullCenter">
+              {rightArrowWhite}
+            </div>
+          </div> */}
+          <div className="col-lg-6 col-md-12 mb-4">
+            <ViewTaskCollabs
+              projectId={projectId}
+              refreshProjCollabs={refreshProjCollabs}
+              refreshProjCs={refreshProjCs}
+              projectToAssign={projectToAssign}
+              setTaskToAssignChild={setTaskToAssignChild}
+            />
+          </div>
+        </div>
       </div>
     </>
   );

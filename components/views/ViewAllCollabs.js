@@ -29,13 +29,12 @@ export default function ViewAllCollabs({ projectToAssign }) {
   return (
 
     <div
-      className="card text-bg-info mb-3"
+      className="card text-bg-info mb-3 white"
       id="allCollabsCard"
       style={{
         opacity: '.9',
         width: '100%',
         height: '45vh',
-        minWidth: '420px',
         margin: '0px !important',
       }}
     >
@@ -51,19 +50,18 @@ export default function ViewAllCollabs({ projectToAssign }) {
         Your Collaborators
       </div>
       <div
-        className="card-body"
+        className="card-body white"
         id="1"
         style={{
           paddingTop: '0%',
           padding: '1% 2%',
-          backgroundColor: 'rgb(225,225,225)',
           borderRadius: '10px',
           overflow: 'auto',
           margin: '1.5%',
           marginTop: '0%',
         }}
       >
-        <div className="card" style={{ border: 'none' }}>
+        <div className="card white" style={{ border: 'none' }}>
           {userCollabs.length === 0 ? (
             <div>There are no collaborators...</div>
           ) : (

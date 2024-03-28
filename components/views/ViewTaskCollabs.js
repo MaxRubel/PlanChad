@@ -75,38 +75,39 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
 
   return (
     <>
-      <div
-        className="card"
-        style={{
-          width: '47%',
-          backgroundColor: 'lightgray',
-        }}
-      >
+      <div className="card white">
         <div className="card-header tasksViewHeader">
           <div style={{ padding: '3px', marginBottom: '1%' }}>Task</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
             <Form.Select
-              style={{
-                backgroundColor: 'rgb(225, 225, 225)',
-              }}
               name="tasks"
               id="tasks"
-              className="form-control shadow-none"
+              className="form-control shadow-none white"
               onChange={handleChange}
               onFocus={(e) => {
                 e.target.style.borderColor = 'none';
               }}
             >{tasks.length > 0 ? (tasks.map((task, index) => (
-              <option key={task.localId} value={task.localId}>{task.name ? task.name : `Task ${index + 1}`}</option>
-            ))) : (<option key={1} value={null}>No tasks have been created...</option>)}
+              <option
+                key={task.localId}
+                value={task.localId}
+              >{task.name ? task.name : `Task ${index + 1}`}
+              </option>
+            ))) : (
+              <option
+                key={1}
+                value={null}
+              >No tasks have been created...
+              </option>
+            )}
 
             </Form.Select>
           </div>
         </div>
-        <div className="card-body">
-          <div className="card">
+        <div className="card-body white">
+          <div className="card white">
             <div
-              className="card-body"
+              className="card-body white"
               style={{
                 paddingTop: '2%',
                 height: '30vh',

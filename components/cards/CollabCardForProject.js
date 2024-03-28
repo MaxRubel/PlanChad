@@ -9,7 +9,7 @@ import { removeIcon } from '../../public/icons';
 import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
 import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 import { addToCollabsTT, sendInviteTT } from '../util/toolTips2';
-import { addPersonMed, plusPeopleIcon } from '../../public/icons2';
+import { addPersonMed } from '../../public/icons2';
 import envelopeArrowUp from '../../public/icons3';
 import InviteCollaborator from '../modals/InviteConfirmation';
 import useSaveStore from '../../utils/stores/saveStore';
@@ -179,7 +179,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
       <DeleteProjCollabModal show={openDeleteModal} closeModal={handleCloseModal} handleDelete={handleRemove} />
       <div className="card" style={{ margin: '1% 0%' }}>
         <div
-          className="card-body"
+          className="card-body white"
           style={{ padding: '8px' }}
         >
           <div

@@ -43,7 +43,7 @@ export default function CollabCardForTask({ taskId, collab }) {
   return (
     <div className="card" style={{ margin: '1% 0%' }}>
       <div
-        className="card-body"
+        className="card-body white"
         style={{
           padding: '8px',
           display: 'grid',
