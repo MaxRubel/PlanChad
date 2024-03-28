@@ -13,14 +13,15 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   const [projectToAssign, setProjectToAssign] = useState('');
   const [selectInput, setSelectInput] = useState('');
   const [taskToAssign2, setTaskToAssign2] = useState('');
-  const { allCollabs, projCollabJoins, searchInput } = useCollabContext();
+  const {
+    allCollabs, projCollabJoins, searchInput, loadProjectCollabs, projCollabs,
+  } = useCollabContext();
   const originalProjCollabs = useRef([]);
   const { user } = useAuth();
   const allProjects = useSaveStore((state) => state.allProjects);
   const addBatchOfInvites = useSaveStore((state) => state.addBatchOfInvites);
 
   useEffect(() => {
-    // load in either the projectId from the router query or let the user choose from dropdown
     const runningProject = allProjects.find((item) => item.projectId === projectId);
     setThisProject((preVal) => runningProject);
     setSelectInput((preVal) => projectId);
@@ -30,18 +31,8 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
 
   useEffect(() => {
     if (projectId) {
-      const thisProjCollabs = [];
-      const copy = [...projCollabJoins];
-      const thisProjCollabJoins = copy.filter((item) => item.projectId === thisProject?.projectId);
-      const collabIds = thisProjCollabJoins.map((item) => item.collabId);
-      for (let i = 0; i < allCollabs.length; i++) {
-        if (collabIds.includes(allCollabs[i].collabId)) {
-          thisProjCollabs.push(allCollabs[i]);
-        }
-      }
-      const removedThisUser = thisProjCollabs.filter((item) => item.email !== user.email);
-      setCollabsOfProj((preVal) => removedThisUser);
-      originalProjCollabs.current = removedThisUser;
+      setCollabsOfProj((preVal) => projCollabs);
+      originalProjCollabs.current = projCollabs;
     }
   }, [projCollabJoins, projectId, selectInput, allCollabs, thisProject]);
 
@@ -66,6 +57,7 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
     getInvitesByProject(value).then((data) => {
       addBatchOfInvites(data);
     });
+    loadProjectCollabs(value);
     setThisProject((preVal) => project);
     setSelectInput((preVal) => value);
     setProjectToAssignChild(value);

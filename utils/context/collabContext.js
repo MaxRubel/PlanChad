@@ -4,7 +4,8 @@ import React, {
 import { useAuth } from './authContext';
 import { getCollabsOfUser, getSingleCollab } from '../../api/collabs';
 import { deleteProjCollab, getCollabsOfProject, getProjCollabsOfUser } from '../../api/projCollab';
-import { deleteTaskCollab, getTaskCollabsOfUser } from '../../api/taskCollab';
+import { deleteTaskCollab, getTaskCollabsOfProject, getTaskCollabsOfUser } from '../../api/taskCollab';
+import getJoinsOfProject from '../../api/mergeData';
 
 const CollabContext = createContext();
 
@@ -22,7 +23,7 @@ const CollabContextProvider = ({ children }) => {
   const [isFetchingCollabs, setIsFetchingCollabs] = useState(true);
   const [fetchUserData, setFetchUserData] = useState(0);
   const [hasFetched, setHasFetched] = useState(false);
-  const nonUserProjects = useRef(null);
+  const [nonUserProjects, setNonUserProjects] = useState(null);
 
   const clearCollabManager = () => {
     setAllCollabs((preVal) => []);
@@ -31,8 +32,8 @@ const CollabContextProvider = ({ children }) => {
     setTaskCollabJoins((preVal) => []);
   };
 
-  const sendToCollabsManager = (projects) => {
-    nonUserProjects.current = projects;
+  const sendToCollabManager = (projects) => {
+    setNonUserProjects(projects);
   };
 
   // fetch user collaborators
@@ -52,37 +53,15 @@ const CollabContextProvider = ({ children }) => {
     }
   }, [user, fetchUserData]);
 
-  // fetch non-user collaborators
-  useEffect(() => {
-    if (nonUserProjects.current && hasFetched) {
-      const allCollabsCopy = [...allCollabs];
-      const nonUserProjectsArray = nonUserProjects.current.map((item) => getCollabsOfProject(item.projectId));
-      Promise.all(nonUserProjectsArray).then((collabJoins) => {
-        const flatArray = [...collabJoins.flat()];
-        setProjCollabJoins((preVal) => [...preVal, ...flatArray]);
-        // the person who created the project has no collabId
-        const getNonUserCollabs = flatArray.map((item) => {
-          if (item.collabId) {
-            return getSingleCollab(item.collabId);
-          }
-          return false;
-        }).filter(Boolean);
-        Promise.all(getNonUserCollabs).then((collabs) => {
-          const filtered2 = collabs.filter((item) => item.email !== user.email);
-          for (let i = 0; i < filtered2.length; i++) {
-            if (!allCollabsCopy.some((item) => item.collabId === filtered2.collabId)) {
-              allCollabsCopy.push(filtered2[i]);
-            }
-          }
-
-          const removeDuplicates = allCollabsCopy.filter(
-            (obj, index, self) => index === self.findIndex((t) => t.email === obj.email),
-          );
-          setAllCollabs((preVal) => ([...removeDuplicates]));
-        });
+  const loadProjectCollabs = (projectId) => {
+    getJoinsOfProject(projectId)
+      .then((data) => {
+        const { projCollabJoinsData, taskCollabJoinsData, projCollabsData } = data;
+        setProjCollabJoins(projCollabJoinsData);
+        setTaskCollabJoins(taskCollabJoinsData);
+        setProjCollabs(projCollabsData);
       });
-    }
-  }, [nonUserProjects.current, hasFetched]);
+  };
 
   const setUpdateCollab = (collabObj) => {
     setUpdateCollaborator(collabObj);
@@ -111,10 +90,7 @@ const CollabContextProvider = ({ children }) => {
     // --------project-collaborators----------------------
     if (type === 'projCollabs') {
       if (action === 'create') {
-        const copy = [...allCollabs];
-        const index = copy.findIndex((item) => item.collabId === input.collabId);
-        setProjCollabs((preVal) => [...preVal, copy[index]]);
-        setProjCollabJoins((preVal) => [...preVal, input]);
+        setProjCollabs((preVal) => [...preVal, input]);
       }
     }
     if (type === 'projCollabJoins') {
@@ -143,6 +119,9 @@ const CollabContextProvider = ({ children }) => {
     }
     if (type === 'taskCollabJoin') {
       setTaskCollabJoins((prevTaskCollabJoins) => prevTaskCollabJoins.filter((item) => item.taskCollabId !== id));
+    }
+    if (type === 'projCollabs') {
+      setProjCollabs((prevProjCollabs) => prevProjCollabs.filter((item) => item.collabId !== id));
     }
   };
 
@@ -176,7 +155,8 @@ const CollabContextProvider = ({ children }) => {
       searchInput,
       isFetchingCollabs,
       deleteAllProjCollabs,
-      sendToCollabsManager,
+      sendToCollabManager,
+      loadProjectCollabs,
     }}
     >
       {children}

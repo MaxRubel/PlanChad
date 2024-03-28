@@ -23,6 +23,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
     projCollabJoins,
     taskCollabJoins,
     setUpdateCollab,
+    allCollabs,
   } = useCollabContext();
   const { user } = useAuth();
   const projectName = useRef();
@@ -84,6 +85,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
         Promise.all([...removeTaskJoinArray, ...removeProjoinArray]).then(() => {
           deleteCollab(collab.collabId).then(() => {
             deleteFromCollabManager(collab.collabId, 'allCollabs');
+            deleteFromCollabManager(collab.collabId, 'projCollabs');
           });
         });
       });
@@ -107,19 +109,18 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
       email: collab.email,
     };
 
-    let isAlreadyIn = false;
     const copy = [...projCollabJoins];
-    const thisProjCopy = copy.filter((item) => item.projectId === projectToAssign);
-    for (let i = 0; i < thisProjCopy.length; i++) {
-      if (payload.collabId === thisProjCopy[i].collabId) {
-        isAlreadyIn = true;
-      }
-    }
+    const copy2 = [...allCollabs];
+
+    const thisProjCollab = copy2.find((item) => item.collabId === collab.collabId);
+    const isAlreadyIn = copy.some((item) => item.collabId === collab.collabId);
+
     if (!isAlreadyIn) {
       createNewProjCollab(payload).then(({ name }) => { // Join Table
         const payload2 = { projCollabId: name };
         updateProjCollab(payload2);
         addToCollabManager({ ...payload, ...payload2 }, 'projCollabJoins', 'create');
+        addToCollabManager(thisProjCollab, 'projCollabs', 'create');
       });
     }
   };
@@ -142,79 +143,97 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
           className="card-body"
           style={{
             padding: '.5%',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
           }}
         >
-          <div id="col1">
-            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
-              <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
-                {downIcon}
-              </button>
-            </OverlayTrigger>
-            {collab.name}
+          <div id="row1" style={{ display: 'grid', gridTemplateColumns: '5% 70% 25%' }}>
+            <div id="col1" className="fullCenter">
+              <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
+                <button
+                  type="button"
+                  className="clearButton"
+                  onClick={handleCollapse}
+                >
+                  {downIcon}
+                </button>
+              </OverlayTrigger>
+            </div>
+            <div id="col2" className="verticalCenter">
+              {collab.name}
+            </div>
+            {ofProj ? (
+              <div style={{ textAlign: 'right' }}>
+                <button
+                  type="button"
+                  className="clearButton"
+                  style={{ color: 'black' }}
+                  onClick={handleRemove}
+                >
+                  {removeIcon}
+                </button>
+              </div>
+            ) : (
+              <div id="col2">
+                <div />
+                <div
+                  className="verticalCenter"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'right',
+                    paddingRight: '4%',
+                    alignItems: 'center',
+                    gap: '7%',
+                  }}
+                >
+                  <OverlayTrigger placement="top" overlay={addToProjTT} delay={{ show: 750, hide: 0 }}>
+                    <button
+                      type="button"
+                      className="clearButton"
+                      style={{ color: 'black', marginBottom: '-2px', marginRight: '-5px' }}
+                      onClick={handleAssignToProj}
+                    >
+                      {plusIconSmol}
+                    </button>
+                  </OverlayTrigger>
+                  <OverlayTrigger placement="top" overlay={editCollabTT} delay={{ show: 750, hide: 0 }}>
+                    <button
+                      id="update-collab"
+                      type="button"
+                      className="clearButton"
+                      style={{ color: 'black', marginLeft: '-3px' }}
+                      onClick={handleUpdate}
+                    >
+                      {editIcon}
+                    </button>
+                  </OverlayTrigger>
+                  <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={{ show: 750, hide: 0 }}>
+                    <button
+                      type="button"
+                      className="clearButton"
+                      style={{ color: 'black' }}
+                      onClick={() => { setOpenDeleteModal((prevVal) => true); }}
+                    >
+                      {deleteIcon}
+                    </button>
+                  </OverlayTrigger>
+                </div>
+              </div>
+            )}
           </div>
-          {ofProj ? (
-            <div style={{ textAlign: 'right' }}>
-              <button
-                type="button"
-                className="clearButton"
-                style={{ color: 'black' }}
-                onClick={handleRemove}
-              >
-                {removeIcon}
-              </button>
-            </div>
-          ) : (
-            <div id="col2" style={{ textAlign: 'right' }}>
-              <OverlayTrigger placement="top" overlay={addToProjTT} delay={{ show: 750, hide: 0 }}>
-                <button
-                  type="button"
-                  className="clearButton"
-                  style={{ color: 'black' }}
-                  onClick={handleAssignToProj}
-                >
-                  {plusIconSmol}
-                </button>
-              </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={editCollabTT} delay={{ show: 750, hide: 0 }}>
-                <button
-                  id="update-collab"
-                  type="button"
-                  className="clearButton"
-                  style={{ color: 'black' }}
-                  onClick={handleUpdate}
-                >
-                  {editIcon}
-                </button>
-              </OverlayTrigger>
-              <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={{ show: 750, hide: 0 }}>
-                <button
-                  type="button"
-                  className="clearButton"
-                  style={{ color: 'black' }}
-                  onClick={() => { setOpenDeleteModal((prevVal) => true); }}
-                >
-                  {deleteIcon}
-                </button>
-              </OverlayTrigger>
-            </div>
-          )}
           <Collapse in={expanded}>
             <div>
               <div className="grid3">
                 <div />
                 <div>Phone:</div>
-                {collab.phone}
+                <div> {collab.phone}</div>
               </div>
               <div className="grid3">
                 <div />
-                <div>Email:</div>
-                {collab.email}
+                Email:
+                <div>{collab.email}</div>
               </div>
               <div className="grid3">
                 <div />
-                <div>Notes:</div>
+                Notes:
                 {collab.notes}
               </div>
             </div>

@@ -1,9 +1,9 @@
 import React, {
-  createContext, useCallback, useContext, useEffect, useMemo, useState,
+  createContext, useContext, useEffect, useState,
 } from 'react';
 import { useRouter } from 'next/router';
 import {
-  deleteProject, getSingleProject, getUserProjects, updateProject,
+  deleteProject, getSingleProject, getUserProjects,
 } from '../../api/project';
 import { useAuth } from './authContext';
 import { useCollabContext } from './collabContext';
@@ -20,14 +20,12 @@ export const SaveContextProvider = ({ children }) => {
   const [isFetchingUserData, setIsFetchingUserData] = useState(true);
   const { user } = useAuth();
   const router = useRouter();
-  const { sendToCollabsManager } = useCollabContext();
+  const { sendToCollabManager } = useCollabContext();
 
   // ----zustand-data-store-----
   const loadAllProjects = useSaveStore((state) => state.loadAllProjects);
   const loadAllTasks = useSaveStore((state) => state.loadAllTasks);
-  const allProjectsZus = useSaveStore((state) => state.allProjects);
   const projectsHaveBeenLoaded = useSaveStore((state) => state.projectsHaveBeenLoaded);
-  const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
   const deleteProjectZus = useSaveStore((state) => state.deleteProject);
   const clearSaveStore = useSaveStore((state) => state.clearSaveStore);
 
@@ -70,7 +68,7 @@ export const SaveContextProvider = ({ children }) => {
                     }
                   }
                 }
-                sendToCollabsManager(projectsData);
+                sendToCollabManager(projectsData);
                 loadAllProjects(projectsArray);
                 projectsHaveBeenLoaded(true);
                 loadAllTasks(allTasksArr);

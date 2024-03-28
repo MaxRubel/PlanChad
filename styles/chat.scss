@@ -14,6 +14,19 @@
   height: 100%;
 }
 
+.userImageChat {
+  height: 35px;
+  border-radius: 20px;
+  margin-left: 10px;
+}
+
+.nonUserImageChat {
+  height: 35px;
+  border-radius: 20px;
+  margin-right: 10px;
+}
+
+
 // .inputFooter {
 //   border-bottom-left-radius: 20px;
 //   border-bottom-right-radius: 20px;
@@ -112,9 +125,21 @@
 
 .authoerLineNonUser {
   font-size: 13px;
-  margin-left: 1%;
-  margin-bottom: 2px;
+  margin-left: 6px;
   color: black;
+}
+
+.timeLineNonUser {
+  font-size: 12px;
+  margin-left: 6px;
+  margin-bottom: 2px;
+}
+
+.timeLineUser {
+  text-align: right;
+  font-size: 12px;
+  margin-right: 1%;
+  margin-bottom: 2px;
 }
 
 .messageCardUser {

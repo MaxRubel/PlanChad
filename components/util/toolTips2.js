@@ -12,4 +12,14 @@ const cancleInviteTT = (
   </Tooltip>
 );
 
-export { sendInviteTT, cancleInviteTT };
+const addToCollabsTT = (
+  <Tooltip id="addToCollabsTT">
+    Add this person to your contacts?
+  </Tooltip>
+);
+
+export {
+  sendInviteTT,
+  addToCollabsTT,
+  cancleInviteTT,
+};

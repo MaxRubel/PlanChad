@@ -26,9 +26,9 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
       const collab = allCollabs.find((item) => item.collabId === theseTaskCollabJoins[i].collabId);
       theseCollabs.push(collab);
     }
-    const removedThisUser = theseCollabs.filter((item) => item.email !== user.email);
-    setCollabsOfTask((preVal) => removedThisUser);
-    OGCollabsOfTask.current = removedThisUser;
+    // const removedThisUser = theseCollabs.filter((item) => item.email !== user.email);
+    setCollabsOfTask((preVal) => theseCollabs);
+    OGCollabsOfTask.current = theseCollabs;
   }, [taskCollabJoins, allCollabs, taskId]);
 
   useEffect(() => {

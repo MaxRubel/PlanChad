@@ -7,6 +7,7 @@ import { alertDanger } from '../../public/icons2';
 import { useSaveContext } from '../../utils/context/saveManager';
 import { deleteAllInvitesOfProject } from '../../api/invites';
 import { useCollabContext } from '../../utils/context/collabContext';
+import { deleteMessagesOfProject } from '../../api/message';
 
 export default function DeleteAProjectModal({ show, closeModal }) {
   const [askAreYouSure, setAskAreYouSure] = useState(false);
@@ -28,6 +29,7 @@ export default function DeleteAProjectModal({ show, closeModal }) {
     theBigDelete(projectToDelete);
     deleteAllProjCollabs(projectToDelete);
     deleteAllInvitesOfProject(projectToDelete);
+    deleteMessagesOfProject(projectToDelete);
   };
 
   return (

@@ -117,8 +117,9 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
     const thisCollabJoinsCopy = [...taskCollabJoins];
     const thisProjJoin = copy.filter((item) => item.projectId === projectToAssign);
     const delItem = thisProjJoin.find((item) => item.collabId === collab.collabId);
-    const tasksOfThisCollab = thisCollabJoinsCopy.filter((item) => item.collabId === delItem.collabId
-      && item.projectId === projectToAssign);
+    const tasksOfThisCollab = thisCollabJoinsCopy
+      .filter((item) => item.collabId === delItem.collabId
+        && item.projectId === projectToAssign);
     const tasksToRemoveIds = tasksOfThisCollab.map((item) => item.taskCollabId);
     const taskDeleteArray = tasksToRemoveIds.map((id) => deleteTaskCollab(id));
     Promise.all(taskDeleteArray);
@@ -132,6 +133,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
         }
         deleteProjCollab(delItem.projCollabId).then(() => {
           deleteFromCollabManager(delItem.projCollabId, 'projCollabJoin');
+          deleteFromCollabManager(delItem.collabId, 'projCollabs');
         });
       });
     });
@@ -159,47 +161,61 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
       />
       <DeleteProjCollabModal show={openDeleteModal} closeModal={handleCloseModal} handleDelete={handleRemove} />
       <div className="card" style={{ margin: '1% 0%' }}>
-        <div className="card-body" style={{ padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-
-          <div id="col1">
-            <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
-              <button type="button" style={{ marginRight: '3%' }} className="clearButton" onClick={handleCollapse}>
-                {downIcon}
-              </button>
-            </OverlayTrigger>
-            {collab.name}
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <OverlayTrigger placement="top" overlay={sendInviteTT} delay={{ show: 750, hide: 0 }}>
-              <button
-                type="button"
-                className="clearButton"
-                style={{ color: 'black' }}
-                onClick={handleInvite}
-              >
-                {plusPeopleIcon}
-              </button>
-            </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
-              <button
-                type="button"
-                className="clearButton"
-                style={{ color: 'black' }}
-                onClick={() => { setOpenDeleteModal((preVal) => true); }}
-              >
-                {removeIcon}
-              </button>
-            </OverlayTrigger>
-            <OverlayTrigger placement="top" overlay={assignToTaskTT} delay={{ show: 750, hide: 0 }}>
-              <button
-                type="button"
-                className="clearButton"
-                style={{ color: 'black' }}
-                onClick={assignToTask}
-              >
-                {rightArrow}
-              </button>
-            </OverlayTrigger>
+        <div
+          className="card-body"
+        >
+          <div
+            id="col1"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '10% 60% 30%',
+            }}
+          >
+            <div>
+              <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
+                <button
+                  type="button"
+                  style={{ marginRight: '3%' }}
+                  className="clearButton"
+                  onClick={handleCollapse}
+                >
+                  {downIcon}
+                </button>
+              </OverlayTrigger>
+            </div>
+            <div style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>{collab.name}</div>
+            <div style={{ textAlign: 'right' }}>
+              <OverlayTrigger placement="top" overlay={sendInviteTT} delay={{ show: 750, hide: 0 }}>
+                <button
+                  type="button"
+                  className="clearButton"
+                  style={{ color: 'black' }}
+                  onClick={handleInvite}
+                >
+                  {plusPeopleIcon}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
+                <button
+                  type="button"
+                  className="clearButton"
+                  style={{ color: 'black' }}
+                  onClick={() => { setOpenDeleteModal((preVal) => true); }}
+                >
+                  {removeIcon}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={assignToTaskTT} delay={{ show: 750, hide: 0 }}>
+                <button
+                  type="button"
+                  className="clearButton"
+                  style={{ color: 'black' }}
+                  onClick={assignToTask}
+                >
+                  {rightArrow}
+                </button>
+              </OverlayTrigger>
+            </div>
           </div>
           <Collapse in={expanded}>
             <div>

@@ -2,8 +2,8 @@ import { clientCredentials } from '../utils/client';
 
 const endpoint = clientCredentials.databaseURL;
 
-const getCollabsOfTask = (projectId) => new Promise((resolve, reject) => {
-  fetch(`${endpoint}/taskCollabs.json?orderBy="projectId"&equalTo="${projectId}"`, {
+const getCollabsOfTask = (taskId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/taskCollabs.json?orderBy="taskId"&equalTo="${taskId}"`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

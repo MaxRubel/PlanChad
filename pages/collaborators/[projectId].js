@@ -9,6 +9,8 @@ import { useCollabContext } from '../../utils/context/collabContext';
 import InvitesModal from '../../components/modals/InvitesModal';
 import useSaveStore from '../../utils/stores/saveStore';
 import { getInvitesByProject } from '../../api/invites';
+import { shortBack } from '../../public/icons2';
+import getJoinsOfProject from '../../api/mergeData';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -19,7 +21,9 @@ export default function ManageCollaboratorsPage() {
   const [taskToAssign, setTaskToAssign] = useState('');
   const [modalShow, setModalShow] = useState(false);
   const [openInvitesModal, setOpenInvitesModal] = useState(false);
-  const { updateCollaborator, setUpdateCollab, updateSearchInput } = useCollabContext();
+  const {
+    updateCollaborator, setUpdateCollab, updateSearchInput, loadProjectCollabs,
+  } = useCollabContext();
   const allProjects = useSaveStore((state) => state.allProjects);
   const sendToServer = useSaveStore((state) => state.sendToServer);
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
@@ -29,7 +33,8 @@ export default function ManageCollaboratorsPage() {
 
   useEffect(() => {
     sendToServer();
-  }, []);
+    loadProjectCollabs(projectId);
+  }, [projectId]);
 
   useEffect(() => {
     if (!singleProjectRunning && projectsLoaded) {
@@ -88,7 +93,7 @@ export default function ManageCollaboratorsPage() {
             router.push(`/project/plan/${projectId}`);
           }}
         >
-          Back to Project
+          {shortBack} Back to Project
         </button>
         <button
           id="showModal"
