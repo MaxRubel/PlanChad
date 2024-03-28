@@ -3,7 +3,6 @@ import { Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useCollabContext } from '../../utils/context/collabContext';
 import CollabCardforProject from '../cards/CollabCardForProject';
-import { useAuth } from '../../utils/context/authContext';
 import useSaveStore from '../../utils/stores/saveStore';
 import { getInvitesByProject } from '../../api/invites';
 
@@ -14,10 +13,13 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
   const [selectInput, setSelectInput] = useState('');
   const [taskToAssign2, setTaskToAssign2] = useState('');
   const {
-    allCollabs, projCollabJoins, searchInput, loadProjectCollabs, projCollabs,
+    allCollabs,
+    projCollabJoins,
+    searchInput,
+    loadProjectCollabs,
+    projCollabs,
   } = useCollabContext();
   const originalProjCollabs = useRef([]);
-  const { user } = useAuth();
   const allProjects = useSaveStore((state) => state.allProjects);
   const addBatchOfInvites = useSaveStore((state) => state.addBatchOfInvites);
 
@@ -63,6 +65,7 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
     setProjectToAssignChild(value);
     setProjectToAssign((preVal) => value);
   };
+
   return (
     <div
       className="card "

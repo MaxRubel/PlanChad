@@ -4,7 +4,7 @@ import CollabCardForTaskInProj from '../cards/CollabCardForTaskInProj';
 import { useCollabContext } from '../../utils/context/collabContext';
 
 const ViewTaskCollabsInProj = memo(({ collabsExpand, taskId, formInput }) => {
-  const { taskCollabJoins, allCollabs } = useCollabContext();
+  const { taskCollabJoins, projCollabs } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ const ViewTaskCollabsInProj = memo(({ collabsExpand, taskId, formInput }) => {
     const filtered = copy.filter((item) => item.taskId === taskId);
     const collabs = [];
     for (let i = 0; i < filtered.length; i++) {
-      const collab = allCollabs.find((item) => item.collabId === filtered[i].collabId);
+      const collab = projCollabs.find((item) => item.collabId === filtered[i].collabId);
       collabs.push(collab);
     }
     setCollabsOfTask((preVal) => collabs);
@@ -56,7 +56,7 @@ const ViewTaskCollabsInProj = memo(({ collabsExpand, taskId, formInput }) => {
               ) : (
                 collabsOfTask.map((collab) => (
                   <CollabCardForTaskInProj
-                    key={collab.collabId}
+                    key={collab?.collabId}
                     collab={collab}
                     taskId={taskId}
                     formInput={formInput}

@@ -16,7 +16,9 @@ const initialState = {
 };
 
 export default function AddCollabForm2(props) {
-  const { handleClose, show, email } = props;
+  const {
+    handleClose, show, email, inComingName,
+  } = props;
   const [formInput, setForminput] = useState(initialState);
   const { user } = useAuth();
   const { addToCollabManager, updateCollaborator } = useCollabContext();
@@ -24,10 +26,13 @@ export default function AddCollabForm2(props) {
     if (email) {
       setForminput((preVal) => ({ ...preVal, email }));
     }
+    if (inComingName) {
+      setForminput((preVal) => ({ ...preVal, name: inComingName }));
+    }
     if (updateCollaborator) {
       setForminput(updateCollaborator);
     }
-  }, [updateCollaborator]);
+  }, [updateCollaborator, show]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -127,7 +132,13 @@ export default function AddCollabForm2(props) {
             <Button variant="primary" type="submit">
               Save Changes
             </Button>
-            <Button variant="secondary" onClick={() => { handleClose(); setForminput(initialState); }}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setForminput(initialState);
+                handleClose();
+              }}
+            >
               Cancel
             </Button>
           </Modal.Footer>

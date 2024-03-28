@@ -17,6 +17,7 @@ const CollabContextProvider = ({ children }) => {
   const [projCollabs, setProjCollabs] = useState([]);
   const [projCollabJoins, setProjCollabJoins] = useState([]);
   const [taskCollabJoins, setTaskCollabJoins] = useState([]);
+  const [taskCollabs, setTaskCollabs] = useState([]);
   const [updateCollaborator, setUpdateCollaborator] = useState(null);
   const [searchInput, setSearchInput] = useState(null);
   const { user } = useAuth();
