@@ -118,14 +118,10 @@ export default function ManageCollaboratorsPage() {
           }}
         >
           <input
-            className="form-control"
+            className="form-control collabsSearch"
             id="collaborator-search-input"
             placeholder="Search collaborators..."
             onChange={handleSearch}
-            style={{
-              border: '3.5px solid rgb(16, 197, 234)',
-              backgroundColor: 'rgb(225, 225, 225)',
-            }}
           />
         </div>
       </div>
@@ -136,15 +132,7 @@ export default function ManageCollaboratorsPage() {
       />
       <div
         id="row1"
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '3%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'rgb(180, 180, 180, .4)',
-        }}
+        className="collabPageRow1"
       >
         <ViewAllCollabs
           refreshAllColabs={refreshAllColabs}

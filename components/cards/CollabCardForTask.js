@@ -42,7 +42,9 @@ export default function CollabCardForTask({ taskId, collab }) {
       <div
         className="card-body"
         style={{
-          padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr',
+          padding: '8px',
+          display: 'grid',
+          gridTemplateColumns: '8% 80% 12%',
         }}
       >
         <div id="col1">
@@ -51,9 +53,11 @@ export default function CollabCardForTask({ taskId, collab }) {
               {downIcon}
             </button>
           </OverlayTrigger>
+        </div>
+        <div id="col2" style={{ paddingLeft: '2%' }}>
           {collab?.name}
         </div>
-        <div id="col2" style={{ textAlign: 'right' }}>
+        <div id="col3" style={{ textAlign: 'right' }}>
           <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={{ show: 750, hide: 0 }}>
             <button
               type="button"
@@ -65,26 +69,26 @@ export default function CollabCardForTask({ taskId, collab }) {
             </button>
           </OverlayTrigger>
         </div>
-        <Collapse in={expanded}>
-          <div>
-            <div className="grid3">
-              <div />
-              <div>Phone:</div>
-              {collab?.phone}
-            </div>
-            <div className="grid3">
-              <div />
-              <div>Email:</div>
-              {collab?.email}
-            </div>
-            <div className="grid3">
-              <div />
-              <div>Notes:</div>
-              {collab?.notes}
-            </div>
-          </div>
-        </Collapse>
       </div>
+      <Collapse in={expanded}>
+        <div>
+          <div className="grid3">
+            <div />
+            <div>Phone:</div>
+            {collab.phone}
+          </div>
+          <div className="grid3">
+            <div />
+            <div>Email:</div>
+            {collab.email}
+          </div>
+          <div className="grid3">
+            <div />
+            <div>Notes:</div>
+            {collab.notes}
+          </div>
+        </div>
+      </Collapse>
     </div>
   );
 }

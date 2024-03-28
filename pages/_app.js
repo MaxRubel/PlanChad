@@ -6,6 +6,7 @@ import '../styles/calendar.scss';
 import '../styles/cards.scss';
 import '../styles/calendarDay.scss';
 import '../styles/chat.scss';
+import '../styles/collaborators.scss';
 import { memo } from 'react';
 import { AuthProvider } from '../utils/context/authContext';
 import ViewDirectorBasedOnUserAuthStatus from '../utils/ViewDirector';

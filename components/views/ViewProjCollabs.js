@@ -72,15 +72,7 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
       }}
     >
       <div
-        className="card-header"
-        style={{
-          fontSize: '22px',
-          padding: '16px',
-          paddingTop: '1%',
-          textAlign: 'center',
-          fontWeight: '500',
-          botderBottom: '1px solid rgb(84,84,84)',
-        }}
+        className="card-header projectViewHeader"
       >
         <div style={{ padding: '3px', marginBottom: '1%' }}>Project</div>
         <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>

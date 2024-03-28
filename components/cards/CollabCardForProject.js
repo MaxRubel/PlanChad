@@ -163,6 +163,7 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
       <div className="card" style={{ margin: '1% 0%' }}>
         <div
           className="card-body"
+          style={{ padding: '8px' }}
         >
           <div
             id="col1"
