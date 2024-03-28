@@ -1,14 +1,16 @@
 import { Collapse, OverlayTrigger } from 'react-bootstrap';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { removeIcon } from '../../public/icons';
 import { deleteTaskCollab } from '../../api/taskCollab';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { removeFromTaskTT, viewCollabDeetsTT } from '../util/toolTips';
+import { useAuth } from '../../utils/context/authContext';
 
 export default function CollabCardForTask({ taskId, collab }) {
   const [expanded, setExpanded] = useState(false);
   const { taskCollabJoins, deleteFromCollabManager } = useCollabContext();
+  const { user } = useAuth();
 
   const downIcon = (
     <svg
@@ -32,6 +34,7 @@ export default function CollabCardForTask({ taskId, collab }) {
       deleteFromCollabManager(itemToRemove.taskCollabId, 'taskCollabJoin');
     });
   };
+  const isUsersCollab = useMemo(() => user.uid === collab?.userId, [user.uid, collab?.userId]);
 
   const handleCollapse = () => {
     setExpanded((prevVal) => !prevVal);
@@ -42,7 +45,9 @@ export default function CollabCardForTask({ taskId, collab }) {
       <div
         className="card-body"
         style={{
-          padding: '.75%', display: 'grid', gridTemplateColumns: '1fr 1fr',
+          padding: '8px',
+          display: 'grid',
+          gridTemplateColumns: '8% 80% 12%',
         }}
       >
         <div id="col1">
@@ -51,40 +56,44 @@ export default function CollabCardForTask({ taskId, collab }) {
               {downIcon}
             </button>
           </OverlayTrigger>
+        </div>
+        <div id="col2" style={{ paddingLeft: '2%' }}>
           {collab?.name}
         </div>
-        <div id="col2" style={{ textAlign: 'right' }}>
-          <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={{ show: 750, hide: 0 }}>
-            <button
-              type="button"
-              className="clearButton"
-              style={{ color: 'black' }}
-              onClick={removeFromTask}
-            >
-              {removeIcon}
-            </button>
-          </OverlayTrigger>
-        </div>
-        <Collapse in={expanded}>
-          <div>
-            <div className="grid3">
-              <div />
-              <div>Phone:</div>
-              {collab?.phone}
-            </div>
-            <div className="grid3">
-              <div />
-              <div>Email:</div>
-              {collab?.email}
-            </div>
-            <div className="grid3">
-              <div />
-              <div>Notes:</div>
-              {collab?.notes}
-            </div>
+        {isUsersCollab && (
+          <div id="col3" style={{ textAlign: 'right' }}>
+            <OverlayTrigger placement="top" overlay={removeFromTaskTT} delay={{ show: 750, hide: 0 }}>
+              <button
+                type="button"
+                className="clearButton"
+                style={{ color: 'black' }}
+                onClick={removeFromTask}
+              >
+                {removeIcon}
+              </button>
+            </OverlayTrigger>
           </div>
-        </Collapse>
+        )}
       </div>
+      <Collapse in={expanded}>
+        <div>
+          <div className="grid3">
+            <div />
+            <div>Phone:</div>
+            {collab?.phone}
+          </div>
+          <div className="grid3">
+            <div />
+            <div>Email:</div>
+            {collab?.email}
+          </div>
+          <div className="grid3">
+            <div />
+            <div>Notes:</div>
+            {collab?.notes}
+          </div>
+        </div>
+      </Collapse>
     </div>
   );
 }
@@ -96,6 +105,7 @@ CollabCardForTask.propTypes = {
     phone: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     notes: PropTypes.string.isRequired,
+    userId: PropTypes.string.isRequired,
   }).isRequired,
   taskId: PropTypes.string.isRequired,
 };

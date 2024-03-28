@@ -19,11 +19,11 @@
   margin: .5% 0%,
 }
 
-.paddingSides12{
+.paddingSides12 {
   padding: 0px 12px
 }
 
-.cardRowTask{
+.cardRowTask {
   display: grid;
   grid-template-columns: .8fr 1.5fr 1fr .2fr;
   gap: 2%;
@@ -33,4 +33,9 @@
 .cardTitle {
   text-align: center;
   font-size: 20px;
+}
+
+.hideOverflow {
+  white-space: nowrap;
+  overflow: hidden
 }

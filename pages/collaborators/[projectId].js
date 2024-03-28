@@ -9,8 +9,7 @@ import { useCollabContext } from '../../utils/context/collabContext';
 import InvitesModal from '../../components/modals/InvitesModal';
 import useSaveStore from '../../utils/stores/saveStore';
 import { getInvitesByProject } from '../../api/invites';
-import { shortBack } from '../../public/icons2';
-import getJoinsOfProject from '../../api/mergeData';
+import { addPersonMed, envelopeIcon, shortBack } from '../../public/icons2';
 
 export default function ManageCollaboratorsPage() {
   const router = useRouter();
@@ -22,7 +21,10 @@ export default function ManageCollaboratorsPage() {
   const [modalShow, setModalShow] = useState(false);
   const [openInvitesModal, setOpenInvitesModal] = useState(false);
   const {
-    updateCollaborator, setUpdateCollab, updateSearchInput, loadProjectCollabs,
+    updateCollaborator,
+    setUpdateCollab,
+    updateSearchInput,
+    loadProjectCollabs,
   } = useCollabContext();
   const allProjects = useSaveStore((state) => state.allProjects);
   const sendToServer = useSaveStore((state) => state.sendToServer);
@@ -101,7 +103,7 @@ export default function ManageCollaboratorsPage() {
           className="clearButton"
           onClick={() => setModalShow(true)}
         >
-          Add A Collaborator
+          {addPersonMed}&nbsp; Add A Collaborator
         </button>
         <button
           id="showModal"
@@ -109,23 +111,17 @@ export default function ManageCollaboratorsPage() {
           className="clearButton"
           onClick={() => setOpenInvitesModal(true)}
         >
-          View Invites
+          {envelopeIcon}&nbsp; View Invites
         </button>
         <div
           id="inputControl"
-          style={{
-            flex: '1', marginBottom: '8px',
-          }}
+          style={{ flex: '1', marginBottom: '8px' }}
         >
           <input
-            className="form-control"
+            className="form-control collabsSearch"
             id="collaborator-search-input"
             placeholder="Search collaborators..."
             onChange={handleSearch}
-            style={{
-              border: '3.5px solid rgb(16, 197, 234)',
-              backgroundColor: 'rgb(225, 225, 225)',
-            }}
           />
         </div>
       </div>
@@ -136,15 +132,7 @@ export default function ManageCollaboratorsPage() {
       />
       <div
         id="row1"
-        style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '3%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'rgb(180, 180, 180, .4)',
-        }}
+        className="collabPageRow1"
       >
         <ViewAllCollabs
           refreshAllColabs={refreshAllColabs}
@@ -154,15 +142,7 @@ export default function ManageCollaboratorsPage() {
           projectToAssign={projectToAssign}
         />
       </div>
-      <div
-        id="twoTableRow"
-        style={{
-          padding: '1% 0%',
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: '1%',
-        }}
-      >
+      <div className="twoTableRow">
         <ViewProjCollabs
           projectId={projectId}
           refreshProjCollabs={refreshProjCollabs}

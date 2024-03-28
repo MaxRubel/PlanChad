@@ -11,10 +11,8 @@ export default function ViewAllCollabs({ projectToAssign }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    const allCollabsCopy = [...allCollabs];
-    const filtered = allCollabsCopy.filter((item) => item.email !== user.email && item.userId === user.uid);
-    setCollabs(filtered);
-    originalCollabs.current = filtered;
+    setCollabs(allCollabs);
+    originalCollabs.current = allCollabs;
   }, [allCollabs]);
 
   useEffect(() => {

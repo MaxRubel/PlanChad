@@ -1,35 +1,40 @@
 import { useEffect, useRef, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { useSaveContext } from '../../utils/context/saveManager';
 import CollabCardForTask from '../cards/CollabCardForTask';
 import { useCollabContext } from '../../utils/context/collabContext';
 import { useAuth } from '../../utils/context/authContext';
 import useSaveStore from '../../utils/stores/saveStore';
 
 export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToAssignChild }) {
-  const { taskCollabJoins, allCollabs, searchInput } = useCollabContext();
+  const {
+    taskCollabJoins,
+    searchInput,
+    projCollabs,
+  } = useCollabContext();
   const [collabsOfTask, setCollabsOfTask] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [taskId, setTaskId] = useState(null);
   const OGCollabsOfTask = useRef([]);
-  const { user } = useAuth();
   const storedProject = useSaveStore((state) => state.project);
   const storedTasks = useSaveStore((state) => state.tasks);
   const allTasks = useSaveStore((state) => state.allTasks);
 
   useEffect(() => {
     setCollabsOfTask((preVal) => []);
-    const theseTaskCollabJoins = taskCollabJoins.filter((item) => item.taskId === taskId);
+
+    const theseTaskCollabJoins = taskCollabJoins
+      .filter((item) => item.taskId === taskId);
+
     const theseCollabs = [];
     for (let i = 0; i < theseTaskCollabJoins.length; i++) {
-      const collab = allCollabs.find((item) => item.collabId === theseTaskCollabJoins[i].collabId);
+      const collab = projCollabs.find((item) => item.collabId === theseTaskCollabJoins[i].collabId);
       theseCollabs.push(collab);
     }
-    // const removedThisUser = theseCollabs.filter((item) => item.email !== user.email);
+
     setCollabsOfTask((preVal) => theseCollabs);
     OGCollabsOfTask.current = theseCollabs;
-  }, [taskCollabJoins, allCollabs, taskId]);
+  }, [taskCollabJoins, projCollabs, taskId]);
 
   useEffect(() => {
     const val = document.getElementById('tasks').value;
@@ -77,17 +82,7 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
           backgroundColor: 'lightgray',
         }}
       >
-        <div
-          className="card-header"
-          style={{
-            fontSize: '22px',
-            padding: '16px',
-            paddingTop: '1%',
-            textAlign: 'center',
-            fontWeight: '500',
-            botderBottom: '1px solid rgb(84,84,84)',
-          }}
-        >
+        <div className="card-header tasksViewHeader">
           <div style={{ padding: '3px', marginBottom: '1%' }}>Task</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }}>
             <Form.Select
