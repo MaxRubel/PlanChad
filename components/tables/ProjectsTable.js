@@ -19,22 +19,22 @@ export default function ProjectsTable() {
         <tr
           style={{ border: '1px solid black', backgroundColor: 'rgb(171, 171, 171, 0.1)' }}
         >
-          <th className="minWidth200">
+          <th>
             <button type="button" name="customer" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
               Project Name
             </button>
           </th>
-          <th className="minWidth200">
+          <th>
             <button type="button" name="company" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
               Client
             </button>
           </th>
-          <th className="minWidth200">
+          <th>
             <button type="button" id="phone-number" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
               Deadline
             </button>
           </th>
-          <th className="minWidth200">
+          <th>
             <button type="button" name="email" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
               Start Date
             </button>
@@ -50,7 +50,7 @@ export default function ProjectsTable() {
               () => { router.push(`/project/plan/${project.projectId}`); }
             }
           >
-            <td style={{ paddingLeft: '1.5%', minWidth: '300px' }}>
+            <td style={{ paddingLeft: '1.5%' }}>
               {project?.name}
             </td>
             <td style={{ paddingLeft: '1.5%' }}>

@@ -28,7 +28,7 @@ export default function CollabCardForTask({ taskId, collab }) {
   );
 
   const removeFromTask = () => {
-    const itemToRemove = taskCollabJoins.find((item) => item.collabId === collab.collabId
+    const itemToRemove = taskCollabJoins.find((item) => item.collabId === collab?.collabId
       && item.taskId === taskId);
     deleteTaskCollab(itemToRemove.taskCollabId).then(() => {
       deleteFromCollabManager(itemToRemove.taskCollabId, 'taskCollabJoin');

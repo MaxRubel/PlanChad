@@ -53,7 +53,7 @@ export default function ViewTaskCollabsForCal({ taskId, formInput }) {
               ) : (
                 collabsOfTask.map((collab) => (
                   <CollabCardForTaskInCal
-                    key={collab.collabId}
+                    key={collab?.collabId}
                     collab={collab}
                     taskId={taskId}
                     formInput={formInput}

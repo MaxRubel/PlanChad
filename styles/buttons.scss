@@ -69,17 +69,22 @@
     display: none;
 }
 
+.addPhaseButton {
+    color: white;
+    border: 1px solid rgb(100, 100, 100)
+}
+
 .dropdown-toggle {
     background-color: transparent !important;
     border: none !important;
     color: white !important;
-    white-space: pre-line;
+    // white-space: pre-line;
 }
 
 .dropdown-toggle:hover {
     background-color: transparent;
     color: rgb(149, 149, 149) !important;
-    white-space: pre-line;
+    // white-space: pre-line;
 }
 
 .navBarButton {
