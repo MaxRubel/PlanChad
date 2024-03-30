@@ -1,22 +1,27 @@
+.welcomeHeader {
+  text-align: center;
+  font-size: 22px;
+}
+
+// .width-75 {
+//   width: 75%;
+// }
+
 .sphere-gradient {
   background: rgb(0, 0, 0);
   background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(125, 6, 0, 1) 100%);
+}
+
+.noBorder {
+  border: none;
 }
 
 .card-header.\32 {
   position: relative;
   display: grid;
   grid-template-columns: 20% 60% 20%;
-  align-items: center;
-  min-width: 516px;
   align-content: 'center';
   height: 53px
-}
-
-.cardRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin: .5% 0%,
 }
 
 .paddingSides12 {
@@ -38,4 +43,41 @@
 .hideOverflow {
   white-space: nowrap;
   overflow: hidden
+}
+
+.cardRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: .5% 0%,
+}
+
+.project-card-left-label {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr
+}
+
+
+.project-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20%,
+}
+
+
+@media only screen and (max-width: 579px) {
+
+  .project-card-left-label {
+    grid-template-columns: 29px 1fr .4fr;
+  }
+
+  .cardRow {
+    grid-template-columns: .5fr 1fr
+  }
+
+  .project-input-container {
+    display: grid;
+    grid-template-columns: 1fr 29px;
+    padding-right: 0px
+  }
 }

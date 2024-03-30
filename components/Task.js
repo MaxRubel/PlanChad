@@ -180,12 +180,9 @@ const Task = memo(({
         >
           <div id="empty" />
           <div
-            id="line"
+            className="orange-line-left"
             style={{
-              borderLeft: '2px solid rgb(255, 117, 26, .5)',
               transition: reorderPaused ? 'none' : '1.5s all ease',
-              display: 'grid',
-              gridTemplateRows: '1fr 1fr',
             }}
           >
             <div
@@ -215,7 +212,6 @@ const Task = memo(({
             margin: '3px 0px',
             backgroundColor: formInput.status === 'closed' ? 'grey' : '',
             transition: reorderPaused ? 'none' : '1.5s all ease',
-            minWidth: '516px',
           }}
         >
           <div
@@ -227,7 +223,6 @@ const Task = memo(({
                 id="button-row"
                 className="verticalCenter"
                 style={{
-                  minWidth: '115px',
                   alignItems: 'center',
                   display: 'flex',
                   justifyContent: 'space-between',

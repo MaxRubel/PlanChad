@@ -2,6 +2,9 @@
     background-color: transparent;
     border: none;
     color: white;
+    padding: none;
+
+    height: 44px;
     transition: all ease .6s;
 }
 
@@ -10,6 +13,7 @@
     border: none;
     color: white;
     transition: all ease 1s;
+    height: 44px;
 }
 
 .clearButtonDark {
@@ -43,6 +47,8 @@
 
 .btn.btn-outline-secondary {
     transition: all ease 1s;
+    height: 44px;
+    margin: 1rem 0rem
 }
 
 .btn.btn-outline-secondary:hover {
@@ -98,4 +104,14 @@
 
 .dropdown-item:hover {
     background-color: rgb(39, 39, 39);
+}
+
+.projectCollapse {
+    background-color: transparent !important;
+    width: 100%;
+    border: none;
+    padding: 0px;
+    padding-left: 10%;
+    text-align: left;
+    color: black
 }

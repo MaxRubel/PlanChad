@@ -206,7 +206,7 @@ export default function MainProjectView({ projectId }) {
                 className="clearButton"
                 id="yo"
                 onSelect={handleChange}
-                style={{ marginTop: '-5px', marginLeft: '-5px' }}
+                style={{ paddingTop: '4px', marginLeft: '-5px' }}
               >
                 <Dropdown.Toggle
                   id="dropdown-view-options fullCenter"
@@ -245,7 +245,7 @@ export default function MainProjectView({ projectId }) {
             />
           </div>
           <div className="row">
-            <div className="col-lg-4 col-md-4 col-sm-12 mb-1">
+            <div className="addPhaseButtonRow">
               <button
                 type="button"
                 className="btn btn-outline-secondary addPhaseButton"

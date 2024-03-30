@@ -1,0 +1,31 @@
+.task {
+  display: grid;
+  grid-template-columns: 10% 8% 82%
+}
+
+.taskDeets {
+  display: grid;
+  grid-template-columns: 10% 8% 72% 10%;
+}
+
+.taskDeetsExpand {
+  grid-template-columns: 10% 40% 40% 10%;
+}
+
+.orange-line-left {
+
+  border-left: 2px solid rgb(255, 117, 26, .5);
+  display: grid;
+  grid-template-rows: 1fr 1fr
+}
+
+@media only screen and (max-width: 579px) {
+
+  .orange-line-left {
+    display: none;
+  }
+
+  .task {
+    grid-template-columns: 0% 8% 92%
+  }
+}

@@ -1,0 +1,56 @@
+.checkpoint {
+  display: grid;
+  grid-template-columns: 10% 90% // min-width: 500px;
+}
+
+.centeredInput {
+  text-align: center !important;
+  border: none !important;
+  background-color: transparent !important;
+  width: 75% !important;
+}
+
+.threeVert {
+  margin: 3px 0px;
+}
+
+.blueLineLeft {
+  border-left: 2px solid rgb(35, 166, 213);
+  display: grid;
+  grid-template-rows: 1fr 1fr
+}
+
+.blueLineBottom {
+  border-bottom: 2px solid rgb(35, 166, 213)
+}
+
+.checkP-margin-left {
+  display: grid;
+  grid-template-columns: 1fr 1fr
+}
+
+.checkPButton {
+  background-color: transparent;
+  border: none;
+  padding: 0px;
+  text-align: center;
+  color: black;
+  width: 35px;
+  height: 35px
+}
+
+@media only screen and (max-width: 600px) {
+  .hideSmall {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 579px) {
+  .hideVsmall {
+    display: none;
+  }
+
+  .checkpoint {
+    grid-template-columns: 0% 100%
+  }
+}
