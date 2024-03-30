@@ -76,12 +76,14 @@
 .collab-card-main-line {
   display: grid;
   grid-template-columns: 44px 1fr 132px;
+  background-color: rgb(225, 225, 225);
 }
 
 .collab-card-project-main-line {
   display: grid;
   grid-template-columns: 44px 1fr 176px;
   padding: 0px;
+  background-color: rgb(225, 225, 225);
 }
 
 .collapse-button {

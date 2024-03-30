@@ -138,7 +138,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   return (
     <>
       <DeleteCollabModal closeModal={handleCloseModal} show={openDeleteModal} handleDelete={handleDelete} />
-      <div className="card white collab-card ">
+      <div className="card white collab-card  ">
         <div
           className="card-body white"
           style={{ padding: '0px' }}

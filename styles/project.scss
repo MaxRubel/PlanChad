@@ -2,4 +2,11 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
+  min-width: 375px;
+}
+
+@media only screen and (min-width: 770px) {
+  .project-top-bar {
+    padding: 0% 25%
+  }
 }

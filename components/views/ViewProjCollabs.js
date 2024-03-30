@@ -77,7 +77,7 @@ export default function ViewProjCollabs({ projectId, taskToAssign, setProjectToA
             className="form-control shadow-none"
             value={selectInput}
             onChange={changeProject}
-          // style={{ backgroundColor: 'rgb(225, 225, 225)' }}
+            style={{ backgroundColor: 'rgb(225, 225, 225)' }}
           >
             {allProjects.map((project) => (
               <option
