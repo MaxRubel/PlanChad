@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Navbar, Container, Nav } from 'react-bootstrap';
+import { useRouter } from 'next/router';
 import { homeIcon } from '../../public/icons';
 import { signOut } from '../../utils/auth';
 import { useCollabContext } from '../../utils/context/collabContext';
@@ -13,6 +14,7 @@ export default function NavBar() {
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const clearAllLocalData = useSaveStore((state) => state.clearAllLocalData);
   const [deleteAProjectModal, setDeleteAProjectModal] = useState(false);
+  const router = useRouter();
 
   const closeModal = () => {
     setDeleteAProjectModal((preVal) => false);
@@ -33,10 +35,7 @@ export default function NavBar() {
   if (!singleProjectRunning) {
     return (
       <>
-        <DeleteAProjectModal
-          show={deleteAProjectModal}
-          closeModal={closeModal}
-        />;
+        <DeleteAProjectModal show={deleteAProjectModal} closeModal={closeModal} />;
         <Navbar collapseOnSelect expand="sm" bg="black" variant="dark" className="navBarShowing">
           <Container>
             <Link passHref href="/">
@@ -45,9 +44,15 @@ export default function NavBar() {
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="me-auto">
-                <Link passHref href="/project/new">
-                  <Nav.Link>Create New Project</Nav.Link>
-                </Link>
+                <button
+                  type="button"
+                  className="clearButton navBarButton"
+                  onClick={() => {
+                    router.push('/project/new');
+                  }}
+                >
+                  Create New Project
+                </button>
                 <button
                   type="button"
                   className="clearButton navBarButton"
@@ -59,7 +64,7 @@ export default function NavBar() {
                 </button>
                 <button
                   type="button"
-                  className="clearButton"
+                  className="clearButton navBarButton"
                   style={{
                     color: 'rgb(155, 157, 158)',
                   }}
@@ -68,14 +73,14 @@ export default function NavBar() {
                     clearAllLocalData();
                     clearCollabManager();
                   }}
-                >Sign Out
+                >
+                  Sign Out
                 </button>
               </Nav>
             </Navbar.Collapse>
           </Container>
         </Navbar>
       </>
-
     );
   }
 }

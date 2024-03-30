@@ -61,7 +61,8 @@ const Checkpoint = memo(({
       height="16px"
       viewBox="0 0 320 512"
     >
-      <path d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
+      <path
+        d="M285.5 273L91.1 467.3c-9.4 9.4-24.6
       9.4-33.9 0l-22.7-22.7c-9.4-9.4-9.4-24.5 0-33.9L188.5
       256 34.5 101.3c-9.3-9.4-9.3-24.5 0-33.9l22.7-22.7c9.4-9.4
       24.6-9.4 33.9 0L285.5 239c9.4 9.4 9.4 24.6 0 33.9z"
@@ -87,11 +88,13 @@ const Checkpoint = memo(({
     };
   }, [checkP]);
 
-  useEffect(() => { // send to zustand
+  useEffect(() => {
+    // send to zustand
     updatedCheckpoint(formInput);
   }, [formInput]);
 
-  useEffect(() => { // saveIndex after dragNdrop
+  useEffect(() => {
+    // saveIndex after dragNdrop
     setFormInput((prevVal) => ({ ...prevVal, index }));
   }, [index]);
 
@@ -105,10 +108,12 @@ const Checkpoint = memo(({
   useProgressBar(progressIsShowing, storedTasks, checkP);
 
   const dance = () => {
-    document.getElementById(`addTask${checkP.localId}`).animate(
-      [{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }],
-      { duration: 500, iterations: 1 },
-    );
+    document
+      .getElementById(`addTask${checkP.localId}`)
+      .animate([{ transform: 'rotate(0deg)' }, { transform: 'rotate(180deg)' }], {
+        duration: 500,
+        iterations: 1,
+      });
   };
   const refreshCheckP = useCallback(() => {
     setCheckPrefresh((prevVal) => prevVal + 1);
@@ -186,7 +191,11 @@ const Checkpoint = memo(({
     };
     createNewTask(emptyTask);
     pauseReorder();
-    setCheckPrefresh((prevVal) => prevVal + 1);
+    setTasks((preVal) => ([...preVal, emptyTask]));
+  };
+
+  const updateArrayAfterDelete = (array) => {
+    setTasks(array);
   };
 
   const handleDelete = () => {
@@ -199,51 +208,36 @@ const Checkpoint = memo(({
         collabDeleteArray.push(filtered[x]);
       }
     }
-    Promise.all(collabDeleteArray.map((item) => deleteTaskCollab(item.taskCollabId)))
-      .then(() => {
-        for (let i = 0; i < collabDeleteArray.length; i++) {
-          deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
-        }
-        deleteCheckpoint(formInput);
-        handleRefresh();
-        setOpenDeleteModal((preVal) => false);
-      });
+    Promise.all(collabDeleteArray.map((item) => deleteTaskCollab(item.taskCollabId))).then(() => {
+      for (let i = 0; i < collabDeleteArray.length; i++) {
+        deleteFromCollabManager(collabDeleteArray[i].taskCollabId, 'taskCollabJoin');
+      }
+      deleteCheckpoint(formInput);
+      handleRefresh();
+      setOpenDeleteModal((preVal) => false);
+    });
   };
 
   return (
     <>
-      {openDeleteModal && <DeleteCheckpointModal handleDelete={handleDelete} closeModal={handleCloseModal} show={openDeleteModal} />}
+      {openDeleteModal && (
+        <DeleteCheckpointModal
+          handleDelete={handleDelete}
+          closeModal={handleCloseModal}
+          show={openDeleteModal}
+        />
+      )}
       <div className="checkpoint">
         {/* -------line-side------------- */}
-        <div
-          className="marginL hide"
-          style={{ display: 'grid', gridTemplateColumns: '1fr' }}
-        >
-
-          <div
-            id="line"
-            style={{
-              borderLeft: '2px solid rgb(35, 166, 213)',
-              display: 'grid',
-              gridTemplateRows: '1fr 1fr',
-            }}
-          >
-            <div
-              id="empty"
-              style={{ borderBottom: '2px solid rgb(35, 166, 213)' }}
-            />
+        <div className="marginL hide" style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
+          <div id="line" className="blue-line-left hide">
+            <div className="blue-line-bottom" />
             <div />
           </div>
         </div>
         {/* --------------card------------------------ */}
-        <div
-          className="card white"
-          style={{ margin: '3px 0px' }}
-        >
-          <div
-            className="checkpoint-header"
-            style={{ border: !formInput.expandedCal ? 'none' : '' }}
-          >
+        <div className="card white" style={{ margin: '3px 0px' }}>
+          <div className="checkpoint-header" style={{ border: !formInput.expandedCal ? 'none' : '' }}>
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div id="col1" className="header-col-1">
               <OverlayTrigger
@@ -290,7 +284,7 @@ const Checkpoint = memo(({
             </div>
             <div id="col2" className="fullCenter">
               <input
-                className="form-control"
+                className="form-control small-name"
                 style={{
                   textAlign: 'center',
                   border: 'none',
@@ -314,148 +308,133 @@ const Checkpoint = memo(({
                 paddingRight: '8%',
               }}
             >
-              <div
-                className="hide"
-                style={{ fontSize: '13px', color: 'grey' }}
-              >
-                {tasks.length > 0 && formInput.expanded
-                  ? ''
-                  : `(${tasks.length} tasks)`}
+              <div className="hide" style={{ fontSize: '13px', color: 'grey' }}>
+                {tasks.length > 0 && formInput.expanded ? '' : `(${tasks.length} tasks)`}
               </div>
             </div>
             <div id="col4" className="fullCenter">
-              <OverlayTrigger
-                placement="top"
-                overlay={deleteSegment}
-                delay={{ show: 750, hide: 0 }}
-              >
+              <OverlayTrigger placement="top" overlay={deleteSegment} delay={{ show: 750, hide: 0 }}>
                 <button
                   type="button"
                   className="clearButtonDark"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
                   style={{ paddingBottom: '4px' }}
-                >{trashIcon}
+                >
+                  {trashIcon}
                 </button>
               </OverlayTrigger>
-
             </div>
           </div>
         </div>
-        {/* --------------card-body------------------------ */}
-        <Collapse
-          in={formInput.expandedCal}
-          style={{ transition: hasMounted ? '' : 'none' }}
-        >
-          <div>
-            <div id="whole-card">
-              <div
-                id="card-container"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '1% 0%',
-                }}
-              >
-                <div
-                  id="row3"
-                  className="cardRow"
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
-                      <label htmlFor={`budget${checkP.localId}`}>Start Date:</label>
-                    </div>
-                    <div />
+      </div>
+      {/* --------------card-body------------------------ */}
+      <Collapse in={formInput.expandedCal} style={{ transition: hasMounted ? '' : 'none' }}>
+        <div className="checkpoint">
+          <div className="marginL hide" style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
+            <div id="line" className="blue-line-left hide">
+              <div className="blue-line-bottom" />
+              <div />
+            </div>
+          </div>
+          <div className="card" id="whole-card">
+            <div
+              id="card-container"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '1% 0%',
+              }}
+            >
+              <div id="row3" className="cardRow">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+                  <div />
+                  <div className="verticalCenter" style={{ whiteSpace: 'nowrap' }}>
+                    <label htmlFor={`budget${checkP.localId}`}>Start Date:</label>
                   </div>
-                  <div
-                    className="fullCenter"
-                    style={{ paddingRight: '20%' }}
-                  >
-                    <input
-                      id={`budget${checkP.localId}`}
-                      className="form-control"
-                      type="date"
-                      value={formInput.startDate}
-                      placeholder="$$$"
-                      onChange={handleChange}
-                      name="startDate"
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                    />
+                  <div />
+                </div>
+                <div className="fullCenter" style={{ paddingRight: '20%' }}>
+                  <input
+                    id={`budget${checkP.localId}`}
+                    className="form-control"
+                    type="date"
+                    value={formInput.startDate}
+                    placeholder="$$$"
+                    onChange={handleChange}
+                    name="startDate"
+                    style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                    onPointerDownCapture={(e) => e.stopPropagation()}
+                  />
+                </div>
+              </div>
+              <div id="row2" className="cardRow">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}>
+                  <div />
+                  <div className="verticalCenter">
+                    <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
                   </div>
+                  <div />
                 </div>
                 <div
-                  id="row2"
-                  className="cardRow"
-                >
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
-                    <div className="verticalCenter">
-                      <label htmlFor={`deadline${checkP.localId}`}>Deadline:</label>
-                    </div>
-                    <div />
-                  </div>
-                  <div style={{
+                  style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                     paddingRight: '20%',
                   }}
-                  >
-                    <input
-                      className="form-control"
-                      type="date"
-                      value={formInput.deadline}
-                      onChange={handleChange}
-                      name="deadline"
-                      id={`deadline${checkP.localId}`}
-                      style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
-                      onPointerDownCapture={(e) => e.stopPropagation()}
-                    />
-                  </div>
+                >
+                  <input
+                    className="form-control"
+                    type="date"
+                    value={formInput.deadline}
+                    onChange={handleChange}
+                    name="deadline"
+                    id={`deadline${checkP.localId}`}
+                    style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                    onPointerDownCapture={(e) => e.stopPropagation()}
+                  />
                 </div>
-              </div>
-              <div
-                id="description-field"
-                className="fullCenter"
-                style={{
-                  borderTop: '1px solid rgb(180, 180, 180)',
-                  padding: '1% 10%',
-                  paddingTop: '1%',
-                  paddingBottom: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-              >
-                <div id="text-label" className="fullCenter">
-                  <label
-                    htmlFor={`description${checkP.localId}`}
-                    className="form-label"
-                    style={{ textAlign: 'center' }}
-                  >
-                    Description:
-                  </label>
-                </div>
-                <textarea
-                  className="form-control"
-                  placeholder="A description of your segment..."
-                  id={`description${checkP.localId}`}
-                  rows="3"
-                  value={formInput.description}
-                  onChange={handleChange}
-                  name="description"
-                  style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
-                  onPointerDownCapture={(e) => e.stopPropagation()}
-                />
               </div>
             </div>
+            <div
+              id="description-field"
+              className="fullCenter"
+              style={{
+                borderTop: '1px solid rgb(180, 180, 180)',
+                padding: '1% 10%',
+                paddingTop: '1%',
+                paddingBottom: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <div id="text-label" className="fullCenter">
+                <label
+                  htmlFor={`description${checkP.localId}`}
+                  className="form-label"
+                  style={{ textAlign: 'center' }}
+                >
+                  Description:
+                </label>
+              </div>
+              <textarea
+                className="form-control"
+                placeholder="A description of your segment..."
+                id={`description${checkP.localId}`}
+                rows="3"
+                value={formInput.description}
+                onChange={handleChange}
+                name="description"
+                style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                onPointerDownCapture={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
-        </Collapse>
-      </div>
+        </div>
+      </Collapse>
 
       {/* ----------tasks------------------ */}
-      <Collapse
-        in={formInput.expanded}
-        style={{ transition: hasMounted ? '' : 'none' }}
-      >
+      <Collapse in={formInput.expanded} style={{ transition: hasMounted ? '' : 'none' }}>
         <div>
           <motion.div>
             <Reorder.Group axis="y" key={tasks} values={tasks} onReorder={handleReorder} as="div">
@@ -479,6 +458,7 @@ const Checkpoint = memo(({
                     task={task}
                     indexT={indexT}
                     refreshCheckP={refreshCheckP}
+                    updateArrayAfterDelete={updateArrayAfterDelete}
                   />
                 </Reorder.Item>
               ))}
@@ -487,7 +467,6 @@ const Checkpoint = memo(({
         </div>
       </Collapse>
     </>
-
   );
 });
 

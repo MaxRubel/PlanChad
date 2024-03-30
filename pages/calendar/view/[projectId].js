@@ -7,6 +7,7 @@ import chooseMonth from '../../../utils/chooseMonth';
 import TaskModalForCalendar from '../../../components/modals/TaskModalForCal';
 import SegmentModalForCal from '../../../components/modals/SegmentModalForCal';
 import useSaveStore from '../../../utils/stores/saveStore';
+import { useCollabContext } from '../../../utils/context/collabContext';
 
 export default function CalendarPage() {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function CalendarPage() {
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
   const projectsLoaded = useSaveStore((state) => state.projectsLoaded);
+  const { loadProjectCollabs } = useCollabContext();
   const [calendarData, setCalendarData] = useState(
     {
       month: null,
@@ -33,9 +35,12 @@ export default function CalendarPage() {
     },
   );
 
+  const allProjects = useSaveStore((state) => state.allProjects);
+
   useEffect(() => { // sort tasks on mount
     if (!singleProjectRunning && projectsLoaded) { // load the project if page refreshed
       loadASingleProject(projectId);
+      loadProjectCollabs(projectId);
     }
     const filteredTasks = storedTasks
       .filter((item) => item.startDate || item.deadline)

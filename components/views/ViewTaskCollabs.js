@@ -29,7 +29,9 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
     const theseCollabs = [];
     for (let i = 0; i < theseTaskCollabJoins.length; i++) {
       const collab = projCollabs.find((item) => item.collabId === theseTaskCollabJoins[i].collabId);
-      theseCollabs.push(collab);
+      if (collab) {
+        theseCollabs.push(collab);
+      }
     }
 
     setCollabsOfTask((preVal) => theseCollabs);

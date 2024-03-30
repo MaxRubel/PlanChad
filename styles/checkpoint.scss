@@ -9,13 +9,23 @@
   display: grid;
   grid-template-columns: 22% 48% 20% 10%;
   align-content: 'center';
-  height: 53px
+  height: 53px;
 }
 
 .header-col-1 {
   display: flex;
   align-items: center;
-  padding: 0px 8px // justify-content: space-between;
+  padding: 0px 8px; // justify-content: space-between;
+}
+
+.blue-line-left {
+  border-left: 2px solid rgb(35, 166, 213);
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+}
+
+.blue-line-bottom {
+  border-bottom: 2px solid rgb(35, 166, 213);
 }
 
 .centeredInput {
@@ -32,16 +42,16 @@
 .blueLineLeft {
   border-left: 2px solid rgb(35, 166, 213);
   display: grid;
-  grid-template-rows: 1fr 1fr
+  grid-template-rows: 1fr 1fr;
 }
 
 .blueLineBottom {
-  border-bottom: 2px solid rgb(35, 166, 213)
+  border-bottom: 2px solid rgb(35, 166, 213);
 }
 
 .checkP-margin-left {
   display: grid;
-  grid-template-columns: 1fr 1fr
+  grid-template-columns: 1fr 1fr;
 }
 
 .checkPButton {
@@ -51,7 +61,7 @@
   text-align: center;
   color: black;
   width: 35px;
-  height: 35px
+  height: 35px;
 }
 
 @media only screen and (max-width: 580px) {
@@ -65,17 +75,19 @@
     display: none;
   }
 
+  .small-name{
+    width: 75% !important;
+  }
+
   .hide {
     display: none;
   }
 
   .checkpoint {
-    grid-template-columns: 0% 100%
+    grid-template-columns: 0% 100%;
   }
 
   .checkpoint-header {
     grid-template-columns: 22% 56% 22%;
   }
-
-
 }

@@ -46,7 +46,7 @@ const initialState = {
 };
 
 const Task = memo(({
-  task, refreshCheckP, indexT, checkPHasLoaded,
+  task, refreshCheckP, indexT, checkPHasLoaded, updateArrayAfterDelete,
 }) => {
   const [formInput, setFormInput] = useState(initialState);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -68,7 +68,9 @@ const Task = memo(({
         setHasMounted((preVal) => true);
       }, 1000);
     }
-    return () => { clearTimeout(timeout); };
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [task, checkPHasLoaded]);
 
   useEffect(() => {
@@ -81,22 +83,45 @@ const Task = memo(({
     setFormInput((preVal) => ({ ...preVal, fresh: false }));
   };
 
-  useEffect(() => { // minimze task
+  useEffect(() => {
+    // minimze task
     if ((formInput.expanded || formInput.deetsExpanded) && checkPHasLoaded) {
       setFormInput((prevVal) => ({
-        ...prevVal, expanded: false, deetsExpanded: false,
+        ...prevVal,
+        expanded: false,
+        deetsExpanded: false,
       }));
     }
   }, [minAll]);
 
-  const handleCollapse = () => { // collapse main details
+  const handleCollapse = () => {
+    // collapse main details
     pauseReorder();
     setFormInput((prevVal) => ({ ...prevVal, expanded: !prevVal.expanded }));
   };
-  const handleCollapse2 = () => { // collapse extra details
+  const handleCollapse2 = () => {
+    // collapse extra details
     pauseReorder();
     setFormInput((prevVal) => ({ ...prevVal, deetsExpanded: !prevVal.deetsExpanded }));
     userExpandedChoice.current = !formInput.deetsExpanded;
+    if (formInput.deetsExpanded && formInput.collabsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: false }));
+    }
+  };
+
+  const handleExpandCollabs = () => {
+    pauseReorder();
+    if (userExpandedChoice && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
+    }
+    if (!userExpandedChoice.current && !formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: true }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: true }));
+    }
+    if (!userExpandedChoice.current && formInput.deetsExpanded) {
+      setFormInput((preVal) => ({ ...preVal, collabsExpanded: false }));
+      setFormInput((preVal) => ({ ...preVal, deetsExpanded: false }));
+    }
   };
 
   const handleChange = useCallback((e) => {
@@ -116,21 +141,6 @@ const Task = memo(({
       status: checked ? 'closed' : 'open',
     }));
   }, []);
-
-  const handleExpandCollabs = () => {
-    pauseReorder();
-    if (userExpandedChoice && formInput.deetsExpanded) {
-      setFormInput((preVal) => ({ ...preVal, collabsExpanded: !preVal.collabsExpanded }));
-    }
-    if (!userExpandedChoice.current && !formInput.deetsExpanded) {
-      setFormInput((preVal) => ({ ...preVal, collabsExpanded: true }));
-      setFormInput((preVal) => ({ ...preVal, deetsExpanded: true }));
-    }
-    if (!userExpandedChoice.current && formInput.deetsExpanded) {
-      setFormInput((preVal) => ({ ...preVal, collabsExpanded: false }));
-      setFormInput((preVal) => ({ ...preVal, deetsExpanded: false }));
-    }
-  };
 
   const handleDelete = () => {
     const joinsCopy = [...taskCollabJoins];
@@ -156,16 +166,12 @@ const Task = memo(({
   }, []);
 
   if (completeTasksHidden && formInput.status === 'closed') {
-    return (<div style={{ display: 'none', transition: '1s all ease' }} />);
+    return <div style={{ display: 'none', transition: '1s all ease' }} />;
   }
   return (
     <>
       {openDeleteModal && (
-        <DeleteTaskModal
-          show={openDeleteModal}
-          handleDelete={handleDelete}
-          closeModal={handleCloseModal}
-        />
+        <DeleteTaskModal show={openDeleteModal} handleDelete={handleDelete} closeModal={handleCloseModal} />
       )}
       <div className="task">
         {/* -------line-side------------- */}
@@ -177,21 +183,21 @@ const Task = memo(({
             gridTemplateColumns: '1fr',
           }}
         >
-
           <div
+            className="task-deets-left-line"
             id="line"
             style={{
-              borderLeft: '2px solid rgb(255, 117, 26, .5)',
               transition: reorderPaused ? 'none' : '1.5s all ease',
-              display: 'grid',
-              gridTemplateRows: '1fr 1fr',
             }}
           >
             <div
               id="empty"
               style={{
                 transition: reorderPaused ? 'none' : '1.5s all ease',
-                borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
+                borderBottom:
+                  formInput.status === 'closed'
+                    ? '2px solid grey'
+                    : '2px solid rgb(255, 117, 26, .5)',
               }}
             />
             <div />
@@ -202,7 +208,10 @@ const Task = memo(({
             id="top-div"
             style={{
               transition: reorderPaused ? 'none' : '1.5s all ease',
-              borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
+              borderBottom:
+                formInput.status === 'closed'
+                  ? '2px solid grey'
+                  : '2px solid rgb(255, 117, 26, .5)',
             }}
           />
           <div id="bottom-div" />
@@ -220,6 +229,28 @@ const Task = memo(({
             <div className="col-1-task" style={{ padding: '0px 4px' }}>
               <OverlayTrigger
                 placement="top"
+                overlay={closeTaskToolTip}
+                trigger={['hover', 'focus']}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <Checkbox
+                  id={`task-completed${task.localId}`}
+                  checked={formInput.status === 'closed'}
+                  onChange={(e) => {
+                    handleCheck(e);
+                  }}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  size="medium"
+                  sx={{
+                    '& .MuiSvgIcon-root': {
+                      fontSize: 23,
+                      color: 'black',
+                    },
+                  }}
+                />
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
                 overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
                 trigger={['hover', 'focus']}
                 delay={{ show: 750, hide: 0 }}
@@ -233,48 +264,10 @@ const Task = memo(({
                   {calendarIcon}
                 </button>
               </OverlayTrigger>
-              <OverlayTrigger
-                placement="top"
-                overlay={formInput.deetsExpanded ? viewTaskDeetsToolTipCollapse : viewTaskDeetsToolTip}
-                trigger={['hover', 'focus']}
-                delay={{ show: 750, hide: 0 }}
-              >
-                <button
-                  type="button"
-                  onClick={handleCollapse2}
-                  style={{ width: '44px', height: '44px', marginRight: '-3px' }}
-                  className="clearButtonDark fullCenter hide"
-                >
-                  {editIcon}
-                </button>
-              </OverlayTrigger>
-              <OverlayTrigger
-                placement="top"
-                overlay={closeTaskToolTip}
-                trigger={['hover', 'focus']}
-                delay={{ show: 750, hide: 0 }}
-              >
-                <Checkbox
-                  id={`task-completed${task.localId}`}
-                  checked={formInput.status === 'closed'}
-                  onChange={(e) => { handleCheck(e); }}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                  size="medium"
-                  sx={{
-                    '& .MuiSvgIcon-root': {
-                      fontSize: 23,
-                      color: 'black',
-                    },
-                  }}
-                />
-              </OverlayTrigger>
             </div>
-            <div
-              id="col-2"
-              className="verticalCenter"
-            >
+            <div id="col-2" className="verticalCenter">
               <input
-                className="form-control"
+                className="form-control small-name"
                 style={{
                   textAlign: 'center',
                   border: 'none',
@@ -295,6 +288,22 @@ const Task = memo(({
                 justifyContent: 'right',
               }}
             >
+              {' '}
+              <OverlayTrigger
+                placement="top"
+                overlay={formInput.deetsExpanded ? viewTaskDeetsToolTipCollapse : viewTaskDeetsToolTip}
+                trigger={['hover', 'focus']}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <button
+                  type="button"
+                  onClick={handleCollapse2}
+                  style={{ width: '44px', height: '44px', marginRight: '-3px' }}
+                  className="clearButtonDark fullCenter hide"
+                >
+                  {editIcon}
+                </button>
+              </OverlayTrigger>
               <OverlayTrigger
                 placement="top"
                 overlay={formInput.collabsExpanded ? hideCollabsToolTips : viewCollabsToolTips}
@@ -333,7 +342,10 @@ const Task = memo(({
           <Collapse in={formInput.expanded} style={{ transition: hasMounted ? '' : 'none' }}>
             <div>
               <div id="whole-card">
-                <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}>
+                <div
+                  id="card-container"
+                  style={{ display: 'flex', flexDirection: 'column', padding: '.5% 0%' }}
+                >
                   <div id="row1" className="cardRowTask">
                     <div id="col2" className="fullCenter">
                       <label htmlFor="startDate">Start:</label>
@@ -372,10 +384,7 @@ const Task = memo(({
                     </div>
                     <div id="col5 empty" />
                   </div>
-                  <div
-                    id="row2"
-                    className="cardRowTask"
-                  >
+                  <div id="row2" className="cardRowTask">
                     <div id="col2" className="fullCenter">
                       <label htmlFor="deadline">End:</label>
                     </div>
@@ -426,7 +435,11 @@ const Task = memo(({
                   }}
                 >
                   <div id="text-label" className="fullCenter">
-                    <label htmlFor={`description${task.localId}`} className="form-label" style={{ textAlign: 'center' }}>
+                    <label
+                      htmlFor={`description${task.localId}`}
+                      className="form-label"
+                      style={{ textAlign: 'center' }}
+                    >
                       Description:
                     </label>
                   </div>
@@ -453,11 +466,7 @@ const Task = memo(({
         {/* -----add-a-task------ */}
         <div className="marginR" />
       </div>
-      <TaskDeets
-        formInput={formInput}
-        handleChange={handleChange}
-        taskId={task.localId}
-      />
+      <TaskDeets formInput={formInput} handleChange={handleChange} taskId={task.localId} />
     </>
   );
 });
@@ -468,12 +477,10 @@ Task.propTypes = {
   task: PropTypes.shape({
     index: PropTypes.number.isRequired,
     localId: PropTypes.string.isRequired,
-    progressIsShowing: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.oneOf([undefined]),
-    ]),
+    progressIsShowing: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf([undefined])]),
   }).isRequired,
   refreshCheckP: PropTypes.func.isRequired,
   indexT: PropTypes.number.isRequired,
   checkPHasLoaded: PropTypes.bool.isRequired,
+  updateArrayAfterDelete: PropTypes.func.isRequired,
 };
