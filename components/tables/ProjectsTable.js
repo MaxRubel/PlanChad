@@ -14,7 +14,7 @@ export default function ProjectsTable() {
   }, [user, storedProjects]);
 
   return (
-    <table id="projects-table" style={{ marginTop: '4%', width: '100%' }}>
+    <table className="projects-table">
       <thead>
         <tr
           style={{

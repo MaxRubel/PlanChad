@@ -1,6 +1,17 @@
 .task {
+  min-width: 375px;
   display: grid;
-  grid-template-columns: 10% 8% 82%
+  grid-template-columns: 5% 10% 85%
+}
+
+.task-header {
+  display: grid;
+  grid-template-columns: 20% 44% 25% 11%;
+  height: 53px
+}
+
+.col-1-task {
+  display: flex;
 }
 
 .taskDeets {
@@ -27,5 +38,50 @@
 
   .task {
     grid-template-columns: 0% 8% 92%
+  }
+}
+
+.planning-box {
+  height: 250px;
+  border: none;
+  margin: 3px 0px;
+  display: flex;
+  flex-direction: column;
+  transition: all 1.5s ease
+}
+
+.planning-text {
+  padding: 2% 5%;
+  padding-top: 6px;
+  flex: 1
+}
+
+.small-orange-line-left {
+  border-left: 2px solid rgb(255, 117, 26, .5);
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  transition: 1.5s all ease
+}
+
+@media only screen and (max-width: 580px) {
+
+  // .taskDeetsExpand {
+  //   background-color: red;
+  //   grid-template-columns: 40% 40% 10%;
+  // }
+
+  .taskDeets {
+    grid-template-columns: 8% 92%
+  }
+
+  .task-header {
+    display: grid;
+    grid-template-columns: 15% 61% 24%
+  }
+
+  .col-1-task {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

@@ -117,7 +117,7 @@ export default function ProjectCard() {
 
       {/* --------------card-body------------------------ */}
       <Collapse in={formInput.expanded} style={{ transition: hasMounted ? '' : 'none' }}>
-        <div id="whole-card">
+        <div className="project-card">
           <div id="card-container" style={{ display: 'flex', flexDirection: 'column', padding: '2% 0%' }}>
             <div
               id="row1"
@@ -217,7 +217,7 @@ export default function ProjectCard() {
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
                     border: 'none',
-                    margin: '6px 0px',
+                    margin: 'px 0px',
                   }}
                 />
               </div>

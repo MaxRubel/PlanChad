@@ -12,16 +12,14 @@
   background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(125, 6, 0, 1) 100%);
 }
 
-.noBorder {
-  border: none;
+.project-card {
+  min-width: 375px;
 }
 
-.card-header.\32 {
-  position: relative;
-  display: grid;
-  grid-template-columns: 20% 60% 20%;
-  align-content: 'center';
-  height: 53px
+
+
+.noBorder {
+  border: none;
 }
 
 .paddingSides12 {
@@ -45,6 +43,10 @@
   overflow: hidden
 }
 
+.card-header {
+  min-width: 375px;
+}
+
 .cardRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -64,6 +66,39 @@
   padding-right: 20%,
 }
 
+.collab-card {
+  margin: 4px 0%;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0px !important
+}
+
+.collab-card-main-line {
+  display: grid;
+  grid-template-columns: 44px 1fr 132px;
+}
+
+.collab-card-project-main-line {
+  display: grid;
+  grid-template-columns: 44px 1fr 176px;
+  padding: 0px;
+}
+
+.collapse-button {
+  width: 100%;
+}
+
+.collab-button {
+  width: 40px;
+  height: 44px;
+}
+
+.collab-card-buttons-right {
+  display: flex;
+  justify-content: right;
+  padding-right: 4%;
+  align-items: center;
+}
 
 @media only screen and (max-width: 579px) {
 

@@ -9,6 +9,9 @@ import '../styles/chat.scss';
 import '../styles/checkpoint.scss';
 import '../styles/collaborators.scss';
 import '../styles/task.scss';
+import '../styles/tables.scss';
+import '../styles/project.scss';
+
 import { memo } from 'react';
 import { AuthProvider } from '../utils/context/authContext';
 import ViewDirectorBasedOnUserAuthStatus from '../utils/ViewDirector';
