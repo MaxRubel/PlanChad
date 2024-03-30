@@ -84,6 +84,7 @@ export default function ViewTaskCollabs({ projectId, projectToAssign, setTaskToA
               id="tasks"
               className="form-control shadow-none white"
               onChange={handleChange}
+              style={{ backgroundColor: 'rgb(225, 225, 225)' }}
               onFocus={(e) => {
                 e.target.style.borderColor = 'none';
               }}

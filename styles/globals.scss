@@ -323,6 +323,10 @@ tr:hover {
   justify-content: space-between;
 }
 
+.lighterGrey {
+  background-color: (225, 225, 225)
+}
+
 @media only screen and (max-width: 770px) {
   .addPhaseButtonRow {
     display: flex;

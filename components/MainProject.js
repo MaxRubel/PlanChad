@@ -158,6 +158,7 @@ export default function MainProjectView({ projectId }) {
                 id="saveButton"
                 type="button"
                 className="clearButtonNoHover"
+                style={{ height: '50px' }}
                 onClick={() => {
                   sendToServer();
                   saveAnimation();
@@ -170,6 +171,7 @@ export default function MainProjectView({ projectId }) {
               <button
                 id="calendarBUtton"
                 type="button"
+                style={{ height: '50px' }}
                 className="clearButton"
                 onClick={() => { router.push(`/calendar/view/${projectId}`); }}
               >
@@ -181,6 +183,7 @@ export default function MainProjectView({ projectId }) {
                 id="manageCollaborators"
                 type="button"
                 className="clearButton"
+                style={{ height: '50px' }}
                 onClick={() => {
                   router.push(`/collaborators/${projectId}`);
                 }}
@@ -192,6 +195,7 @@ export default function MainProjectView({ projectId }) {
               <button
                 id="saveButton"
                 type="button"
+                style={{ height: '50px' }}
                 className="clearButton"
                 onClick={() => {
                   sendToServer();
@@ -203,19 +207,18 @@ export default function MainProjectView({ projectId }) {
             </div>
             <div className="">
               <Dropdown
-                className="clearButton"
-                id="yo"
+                className="clearButton dropdown-view"
                 onSelect={handleChange}
-                style={{
-                  paddingTop: '4px',
-                  marginLeft: '-5px',
-                  whiteSpace: 'wrap',
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                }}
               >
                 <Dropdown.Toggle
+                  className="clearButton fullCenter"
                   id="dropdown-view-options fullCenter"
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    padding: '1px 6px',
+                    borderRadius: 'none',
+                  }}
                 >
                   {binoculars} View
                 </Dropdown.Toggle>

@@ -118,9 +118,10 @@ export default function ManageCollaboratorsPage() {
           style={{ flex: '1', marginBottom: '8px' }}
         >
           <input
-            className="form-control collabsSearch"
+            className="form-control collabsSearch "
             id="collaborator-search-input"
             placeholder="Search collaborators..."
+            style={{ backgroundColor: 'rgb(225, 225, 225)' }}
             onChange={handleSearch}
           />
         </div>

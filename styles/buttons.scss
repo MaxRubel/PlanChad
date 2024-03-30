@@ -16,6 +16,21 @@
     height: 44px;
 }
 
+.dropdown-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3px;
+    border-radius: 0px !important
+}
+
+@media only screen and (min-width: 770px) and (max-width: 1000px) {
+    .dropdown-view {
+        margin-top: 6.3px;
+    }
+}
+
 .clearButtonDark {
     background-color: transparent;
     border: none;
