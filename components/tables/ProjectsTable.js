@@ -27,17 +27,17 @@ export default function ProjectsTable() {
               Project
             </button>
           </th>
-          <th>
+          <th className="hide">
             <button type="button" name="company" className="btn btn-outline-dark rounded-0 noBorder">
               Client
             </button>
           </th>
-          <th>
+          <th className="hide">
             <button type="button" id="phone-number" className="btn btn-outline-dark rounded-0 noBorder">
               Deadline
             </button>
           </th>
-          <th>
+          <th className="hide">
             <button type="button" name="email" className="btn btn-outline-dark rounded-0 noBorder">
               Start Date
             </button>
@@ -56,13 +56,22 @@ export default function ProjectsTable() {
             <td style={{ paddingLeft: '1.5%' }}>
               {project?.name}
             </td>
-            <td style={{ paddingLeft: '1.5%' }}>
+            <td
+              className="hide"
+              style={{ paddingLeft: '1.5%' }}
+            >
               {project?.client}
             </td>
-            <td style={{ paddingLeft: '1.5%' }}>
+            <td
+              className="hide"
+              style={{ paddingLeft: '1.5%' }}
+            >
               {project?.deadline}
             </td>
-            <td style={{ paddingLeft: '1.5%' }}>
+            <td
+              className="hide"
+              style={{ paddingLeft: '1.5%' }}
+            >
               {project?.start_date}
             </td>
           </tr>

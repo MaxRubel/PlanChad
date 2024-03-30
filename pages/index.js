@@ -3,6 +3,7 @@ import ProjectsTable from '../components/tables/ProjectsTable';
 import { useSaveContext } from '../utils/context/saveManager';
 import Loading from '../components/util/Loading';
 import useSaveStore from '../utils/stores/saveStore';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function Home() {
   const { isFetchingUserData } = useSaveContext();
@@ -11,12 +12,14 @@ export default function Home() {
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
   const sendToServer = useSaveStore((state) => state.sendToServer);
   const projectsHaveBeenLoaded = useSaveStore((state) => state.sendToServer);
+  const { clearCollabManager } = useCollabContext();
 
   useEffect(() => {
     if (singleProjectRunning && projectsHaveBeenLoaded) {
       sendToServer();
     }
     clearSaveStore();
+    clearCollabManager();
   }, []);
 
   if (isFetchingUserData) {
@@ -25,7 +28,7 @@ export default function Home() {
 
   return (
     <div className="homePage">
-      <div className="card text-bg-info mb-3" style={{ width: '75%' }}>
+      <div className="card text-bg-info mb-3 project-table-card">
         <div className="card-header welcomeHeader">
           <strong>Welcome to planChad!</strong>
         </div>

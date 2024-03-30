@@ -17,24 +17,16 @@ const CollabContextProvider = ({ children }) => {
   const [projCollabs, setProjCollabs] = useState([]);
   const [projCollabJoins, setProjCollabJoins] = useState([]);
   const [taskCollabJoins, setTaskCollabJoins] = useState([]);
-  const [taskCollabs, setTaskCollabs] = useState([]);
   const [updateCollaborator, setUpdateCollaborator] = useState(null);
   const [searchInput, setSearchInput] = useState(null);
   const { user } = useAuth();
-  const [isFetchingCollabs, setIsFetchingCollabs] = useState(true);
   const [fetchUserData, setFetchUserData] = useState(0);
-  const [hasFetched, setHasFetched] = useState(false);
-  const [nonUserProjects, setNonUserProjects] = useState(null);
 
   const clearCollabManager = () => {
     setAllCollabs((preVal) => []);
     setProjCollabs((preVal) => []);
     setProjCollabJoins((preVal) => []);
     setTaskCollabJoins((preVal) => []);
-  };
-
-  const sendToCollabManager = (projects) => {
-    setNonUserProjects(projects);
   };
 
   // fetch user collaborators
@@ -46,8 +38,6 @@ const CollabContextProvider = ({ children }) => {
             setAllCollabs((preVal) => userCollabs);
             setProjCollabJoins((preVal) => userProjCollabJoins);
             setTaskCollabJoins((preVal) => taskCollabJoinData);
-            setIsFetchingCollabs((preVal) => false);
-            setHasFetched((preVal) => true);
           });
         });
       });
@@ -136,7 +126,6 @@ const CollabContextProvider = ({ children }) => {
     const taskJoinsDel = taskCollabsJoinsCopy2.map((item) => deleteTaskCollab(item.taskCollabId));
     Promise.all([...projectJoinsDel, ...taskJoinsDel])
       .then(() => {
-        setIsFetchingCollabs((preVal) => true);
         setFetchUserData((preVal) => preVal + 1);
       });
   };
@@ -154,9 +143,7 @@ const CollabContextProvider = ({ children }) => {
       taskCollabJoins,
       updateSearchInput,
       searchInput,
-      isFetchingCollabs,
       deleteAllProjCollabs,
-      sendToCollabManager,
       loadProjectCollabs,
     }}
     >

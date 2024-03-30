@@ -20,7 +20,6 @@ export const SaveContextProvider = ({ children }) => {
   const [isFetchingUserData, setIsFetchingUserData] = useState(true);
   const { user } = useAuth();
   const router = useRouter();
-  const { sendToCollabManager } = useCollabContext();
 
   // ----zustand-data-store-----
   const loadAllProjects = useSaveStore((state) => state.loadAllProjects);
@@ -68,7 +67,6 @@ export const SaveContextProvider = ({ children }) => {
                     }
                   }
                 }
-                sendToCollabManager(projectsData);
                 loadAllProjects(projectsArray);
                 projectsHaveBeenLoaded(true);
                 loadAllTasks(allTasksArr);

@@ -13,7 +13,9 @@ const ViewTaskCollabsInProj = memo(({ collabsExpand, taskId, formInput }) => {
     const collabs = [];
     for (let i = 0; i < filtered.length; i++) {
       const collab = projCollabs.find((item) => item.collabId === filtered[i].collabId);
-      collabs.push(collab);
+      if (collab) {
+        collabs.push(collab);
+      }
     }
     setCollabsOfTask((preVal) => collabs);
   }, [taskId, taskCollabJoins]);
@@ -31,7 +33,14 @@ const ViewTaskCollabsInProj = memo(({ collabsExpand, taskId, formInput }) => {
           transition: 'all 1.5s ease',
         }}
       >
-        <div className="card-header" style={{ fontSize: '18px', textAlign: 'center' }}>
+        <div
+          className="card-header"
+          style={{
+            display: 'flex',
+            fontSize: '18px',
+
+          }}
+        >
           <div> Assigned to This Task:</div>
           <div style={{ fontSize: '18px', textAlign: 'center', fontWeight: '300' }} />
         </div>

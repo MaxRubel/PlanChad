@@ -10,16 +10,7 @@
   --background1: 'linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(46, 45, 253, 1) 100%)';
 }
 
-//dim font color is rgb(200, 200, 200)
 body {
-  // background-color: rgb(34, 37, 41);
-  // background-color: black;
-  // background-color: rgb(43, 27, 49);
-
-  // background: rgb(25, 0, 17);
-  // background: radial-gradient(circle, rgba(25, 0, 17, 1) 0%, rgba(0, 0, 0, 0.7693671218487395) 100%);
-  // height: 100vh;
-  // width: 100vw;
   background-color: black;
   transition: all var(--background1) ease;
   opacity: 1;
@@ -36,21 +27,10 @@ body {
 }
 
 #__next {
-  // min-height: 100vh;
-  background: black // background: linear-gradient(90deg, rgba(0, 20, 28, 1) 0%, rgba(0, 0, 0, 1) 50%, rgb(23, 10, 0) 100%);
-    // background: rgb(0, 0, 0);
-    // background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgb(17, 11, 11) 100%);
+  background: black 
 }
 
 .bigDad {
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // justify-content: center;
-  // padding: 2% 10%;
-  // background: rgb(0, 17, 25);
-  // background: linear-gradient(90deg, rgba(0, 17, 25, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(46, 0, 21, 1) 100%);
-  // min-width: 600px;
   padding-bottom: 50vh;
 }
 
@@ -69,10 +49,6 @@ body {
 .card.text-bg-info.mb-3 {
   margin-bottom: 0px !important;
 }
-
-// .minWidth200 {
-//   min-width: 150px;
-// }
 
 .verticalCenter {
   display: flex;
@@ -95,11 +71,6 @@ body {
   justify-content: center;
   padding: 1% 4%;
 }
-
-// .form-control {
-//   min-width: 129.29px;
-// }
-
 
 .icon-down {
   transform: rotate(90deg);
@@ -136,8 +107,6 @@ body {
 .card {
   background-color: rgb(225, 225, 225, .95);
 }
-
-.addPhaseButtonRow {}
 
 .tooltip {
   position: relative;
@@ -343,11 +312,24 @@ tr:hover {
   }
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 579px) {
   .addPhaseButtonRow {
     display: flex;
     justify-content: center;
     align-items: center;
     min-width: 375px;
   }
+
+  .homePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10% 0px;
+}
+.navBarButton{
+  display: flex;
+  align-items: left;
+}
+.navbar-brand{ padding-left: 6px}
 }

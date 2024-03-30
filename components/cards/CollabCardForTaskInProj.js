@@ -31,7 +31,6 @@ export default function CollabCardForTaskInProj({ taskId, collab, formInput }) {
       deleteFromCollabManager(itemToRemove.taskCollabId, 'taskCollabJoin');
     });
   };
-
   const handleCollapse = () => {
     setExpanded((prevVal) => !prevVal);
   };

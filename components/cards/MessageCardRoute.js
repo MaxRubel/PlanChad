@@ -18,9 +18,7 @@ const deepEqualityCheck = (prevProps, nextProps) => {
 const MessageCardRoute = memo(({ message }) => {
   const { user } = useAuth();
   const isUserMessage = user.uid === message.userId;
-  useEffect(() => {
-    console.log('rerender');
-  });
+
   if (isUserMessage) {
     return <UserMessageCard message={message} />;
   }

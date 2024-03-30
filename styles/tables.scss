@@ -1,5 +1,27 @@
 .projects-table {
   margin-top: 4%;
   width: 100%;
-  // min-width: 375px
+  min-width: 320px;
+  padding: 0px 0px;
 }
+
+.project-table-card{
+  width: 75%;
+}
+
+.welcomeHeader {
+  text-align: center;
+  font-size: 22px;
+}
+
+// @media only screen and (max-width: 579px) {
+// .welcomeHeader{
+//   text-align: left;
+// }
+// }
+
+@media only screen and (max-width: 769px) {
+  .project-table-card{
+    width: 100%;
+  }
+  }

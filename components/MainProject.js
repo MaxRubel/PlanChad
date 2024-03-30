@@ -17,6 +17,7 @@ import { calendarIcon, peopleIcon } from '../public/icons';
 import { getTaskCollabsOfProject } from '../api/taskCollab';
 import { getSingleCollab } from '../api/collabs';
 import { peopleIconNoFill } from '../public/icons3';
+import { useCollabContext } from '../utils/context/collabContext';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
@@ -44,15 +45,17 @@ export default function MainProjectView({ projectId }) {
   const showProgress = useAnimationStore((state) => state.showProgress);
   const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
   const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
-  const updateTaskCollaboratorsBatch = useSaveStore((state) => state.updateTaskCollaboratorsBatch);
-  const updateTaskCollaboratorJoinsBatch = useSaveStore((state) => state.updateTaskCollaboratorJoinsBatch);
+  // const updateTaskCollaboratorsBatch = useSaveStore((state) => state.updateTaskCollaboratorsBatch);
+  // const updateTaskCollaboratorJoinsBatch = useSaveStore((state) => state.updateTaskCollaboratorJoinsBatch);
   const [isSaving, setIsSaving] = useState(0);
+  const { loadProjectCollabs } = useCollabContext();
 
   useEffect(() => {
     pauseReorder();
     if (projectId && projectsLoaded) {
       if (!singleProjectRunning) {
         loadASingleProject(projectId);
+        loadProjectCollabs(projectId);
       } else {
         setProject(storedProject);
         pauseReorder();
@@ -61,13 +64,13 @@ export default function MainProjectView({ projectId }) {
       getInvitesByProject(projectId).then((projectInvites) => {
         updateInvitesOfProjectBatch(projectInvites);
       });
-      getTaskCollabsOfProject(projectId).then((taskCollabJoins) => {
-        const promiseArray = taskCollabJoins.map((item) => getSingleCollab(item.collabId));
-        Promise.all(promiseArray).then((data) => {
-          updateTaskCollaboratorJoinsBatch(taskCollabJoins);
-          updateTaskCollaboratorsBatch(data);
-        });
-      });
+      // getTaskCollabsOfProject(projectId).then((taskCollabJoins) => {
+      //   const promiseArray = taskCollabJoins.map((item) => getSingleCollab(item.collabId));
+      //   Promise.all(promiseArray).then((data) => {
+      //     updateTaskCollaboratorJoinsBatch(taskCollabJoins);
+      //     updateTaskCollaboratorsBatch(data);
+      //   });
+      // });
     }
   }, [projectId, projectsLoaded, singleProjectRunning]);
 
