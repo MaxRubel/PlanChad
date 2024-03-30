@@ -37,7 +37,7 @@ export default function ManageCollaboratorsPage() {
     sendToServer();
     loadProjectCollabs(projectId);
   }, [projectId]);
-
+  console.log();
   useEffect(() => {
     if (!singleProjectRunning && projectsLoaded) {
       loadASingleProject(projectId);
