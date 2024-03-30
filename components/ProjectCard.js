@@ -78,7 +78,6 @@ export default function ProjectCard() {
       <div
         className="card-header"
         style={{
-          minWidth: '409.6px',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr 1fr',
           borderBottom: 'none',
@@ -88,15 +87,8 @@ export default function ProjectCard() {
         }}
       >
         <Button
+          className="projectCollapse"
           onClick={handleCollapse}
-          style={{
-            backgroundColor: 'transparent',
-            border: 'none',
-            padding: '0px',
-            paddingLeft: '10%',
-            textAlign: 'left',
-            color: 'black',
-          }}
         >
           {downIcon}
         </Button>
@@ -131,16 +123,14 @@ export default function ProjectCard() {
               id="row1"
               className="cardRow"
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+              <div className="project-card-left-label">
+                <div />
                 <div className="verticalCenter">
                   <label htmlFor="client">Client:</label>
                 </div>
                 <div />
               </div>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-              }}
-              >
+              <div className="project-input-container">
                 <input
                   id="client"
                   className="form-control"
@@ -153,22 +143,19 @@ export default function ProjectCard() {
                     border: 'none',
                   }}
                 />
+                <div />
               </div>
             </div>
             <div
               id="row2"
               className="cardRow"
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+              <div className="project-card-left-label"><div />
                 <div className="verticalCenter">
                   <label htmlFor="deadline">Start Date:</label>
                 </div>
-                <div />
               </div>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-              }}
-              >
+              <div className="project-input-container">
                 <input
                   className="form-control"
                   type="date"
@@ -187,17 +174,13 @@ export default function ProjectCard() {
               id="row2"
               className="cardRow"
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+              <div className="project-card-left-label "><div />
                 <div className="verticalCenter">
                   <label htmlFor="deadline">Deadline:</label>
                 </div>
                 <div />
               </div>
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: '20%',
-
-              }}
-              >
+              <div className="project-input-container">
                 <input
                   className="form-control"
                   type="date"
@@ -216,16 +199,13 @@ export default function ProjectCard() {
               id="row3"
               className="cardRow"
             >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr' }}><div />
+              <div className="project-card-left-label "><div />
                 <div className="verticalCenter">
                   <label htmlFor="budget">Budget:</label>
                 </div>
                 <div />
               </div>
-              <div
-                className="fullCenter"
-                style={{ paddingRight: '20%' }}
-              >
+              <div className="project-input-container">
                 <input
                   id="budget"
                   className="form-control"
@@ -237,6 +217,7 @@ export default function ProjectCard() {
                   style={{
                     backgroundColor: 'rgb(13, 195, 240)',
                     border: 'none',
+                    margin: '6px 0px',
                   }}
                 />
               </div>
@@ -252,7 +233,7 @@ export default function ProjectCard() {
           >
             <div id="text-label" className="fullCenter" style={{ marginBottom: '1%' }}>
               <label htmlFor="exampleFormControlTextarea1" className="form-label" style={{ textAlign: 'center' }}>
-                Project Description:
+                Description:
               </label>
             </div>
             <textarea
@@ -265,7 +246,7 @@ export default function ProjectCard() {
               style={{
                 backgroundColor: 'rgb(13, 195, 240)',
                 border: 'none',
-                minWidth: '250px',
+                // minWidth: '250px',
               }}
             />
           </div>

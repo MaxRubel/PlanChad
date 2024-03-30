@@ -25,8 +25,8 @@ export default function Home() {
 
   return (
     <div className="homePage">
-      <div className="card text-bg-info mb-3">
-        <div className="card-header" style={{ textAlign: 'center', fontSize: '22px' }}>
+      <div className="card text-bg-info mb-3" style={{ width: '75%' }}>
+        <div className="card-header welcomeHeader">
           <strong>Welcome to planChad!</strong>
         </div>
         <div className="card-body">

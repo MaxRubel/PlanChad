@@ -50,7 +50,7 @@ body {
   // padding: 2% 10%;
   // background: rgb(0, 17, 25);
   // background: linear-gradient(90deg, rgba(0, 17, 25, 1) 0%, rgba(0, 0, 0, 1) 50%, rgba(46, 0, 21, 1) 100%);
-  min-width: 600px;
+  // min-width: 600px;
   padding-bottom: 50vh;
 }
 
@@ -70,9 +70,9 @@ body {
   margin-bottom: 0px !important;
 }
 
-.minWidth200 {
-  min-width: 150px;
-}
+// .minWidth200 {
+//   min-width: 150px;
+// }
 
 .verticalCenter {
   display: flex;
@@ -96,9 +96,9 @@ body {
   padding: 1% 4%;
 }
 
-.form-control {
-  min-width: 129.29px;
-}
+// .form-control {
+//   min-width: 129.29px;
+// }
 
 
 .icon-down {
@@ -116,17 +116,15 @@ body {
   transition: all ease 1.5s;
 }
 
+.hideCompletedTasks {
+  justify-content: right;
+  color: lightgrey;
+  font-size: 12px
+}
+
 .twirlup {
   transition: all ease 1.5s;
   transform: rotate(720deg);
-}
-
-
-#project-top-bar {
-  color: white;
-  border-bottom: 1px solid rgb(84, 84, 84);
-  display: flex;
-  gap: 7%
 }
 
 .bottomRow {
@@ -135,31 +133,11 @@ body {
   text-align: center;
 }
 
-.checkpoint {
-  display: grid;
-  grid-template-columns: 10% 1fr 10%;
-  min-width: 500px;
-}
-
-.task {
-  display: grid;
-  grid-template-columns: 10% 8% 1fr 10%;
-  min-width: 500px;
-}
-
-.taskDeets {
-  display: grid;
-  grid-template-columns: 10% 8% 72% 10%;
-  min-width: 500px;
-}
-
-.taskDeetsExpand {
-  grid-template-columns: 10% 40% 40% 10%;
-}
-
 .card {
   background-color: rgb(225, 225, 225, .95);
 }
+
+.addPhaseButtonRow {}
 
 .tooltip {
   position: relative;
@@ -339,6 +317,10 @@ tr:hover {
   font-size: 12px;
 }
 
-.minWidth320 {
-  min-width: 320px;
+@media only screen and (max-width: 579px) {
+  .addPhaseButtonRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

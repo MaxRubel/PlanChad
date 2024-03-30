@@ -215,35 +215,17 @@ const Checkpoint = memo(({
       {openDeleteModal && <DeleteCheckpointModal handleDelete={handleDelete} closeModal={handleCloseModal} show={openDeleteModal} />}
       <div className="checkpoint">
         {/* -------line-side------------- */}
-        <div className="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        <div className="checkP-margin-left ">
           <div id="empty" />
-          <div
-            id="line"
-            style={{
-              borderLeft: '2px solid rgb(35, 166, 213)',
-              display: 'grid',
-              gridTemplateRows: '1fr 1fr',
-            }}
-          >
-            <div id="empty" style={{ borderBottom: '2px solid rgb(35, 166, 213)' }} />
+          <div className="blueLineLeft hideVsmall">
+            <div className="blueLineBottom" />
             <div />
           </div>
         </div>
-        {/* --------------card------------------------ */}
-        <div
-          className="card white"
-          style={{
-            margin: '3px 0px',
-            minWidth: '565px',
-          }}
-        >
+        <div className="card white threeVert">
+          {/* --------------card-header--------------------- */}
           <div
-            className="card-header 2"
-            style={{
-              minWidth: '516px',
-              height: '53px',
-              border: !formInput.expandedCal ? 'none' : '',
-            }}
+            className={!formInput.expandedCal ? ' card-header 2 noBorder' : 'card-header 2'}
           >
             <div id={`progressOf${checkP.localId}`} className="checkpoint-progress" />
             <div className="verticalCenter">
@@ -256,16 +238,8 @@ const Checkpoint = memo(({
                 >
                   <button
                     type="button"
+                    className="checkPButton"
                     onClick={handleCollapse}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      textAlign: 'center',
-                      color: 'black',
-                      width: '35px',
-                      height: '35px',
-                    }}
                   >
                     {downIcon}
                   </button>
@@ -279,15 +253,7 @@ const Checkpoint = memo(({
                   <button
                     type="button"
                     onClick={handleCollapseCal}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      textAlign: 'center',
-                      color: 'black',
-                      width: '35px',
-                      height: '35px',
-                    }}
+                    className="checkPButton"
                   >
                     {calendarIcon}
                   </button>
@@ -297,15 +263,7 @@ const Checkpoint = memo(({
                     type="button"
                     id={`addTask${checkP.localId}`}
                     onClick={addTask}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      padding: '0px',
-                      textAlign: 'center',
-                      color: 'black',
-                      width: '35px',
-                      height: '35px',
-                    }}
+                    className="checkPButton"
                   >
                     {plusIcon}
                   </button>
@@ -314,7 +272,7 @@ const Checkpoint = memo(({
             </div>
             <div className="verticalCenter" style={{ justifyContent: 'center' }}>
               <input
-                className="form-control"
+                className="form-control centerdInput"
                 style={{
                   textAlign: 'center',
                   border: 'none',
@@ -338,7 +296,8 @@ const Checkpoint = memo(({
               }}
             >
               <div style={{ fontSize: '13px', color: 'grey' }}>
-                {tasks.length > 0 && formInput.expanded ? '' : `(${tasks.length} tasks)`}
+                {tasks.length > 0 && formInput.expanded
+                  ? '' : `(${tasks.length} tasks)`}
               </div>
               <OverlayTrigger
                 placement="top"
@@ -348,14 +307,7 @@ const Checkpoint = memo(({
                 <button
                   type="button"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
-                  style={{
-                    paddingBottom: '4px',
-                    color: 'black',
-                    backgroundColor: 'transparent',
-                    border: 'none',
-                    width: '35px',
-                    height: '35px',
-                  }}
+                  className="checkPButton"
                 >{trashIcon}
                 </button>
               </OverlayTrigger>

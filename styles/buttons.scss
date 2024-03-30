@@ -2,6 +2,9 @@
     background-color: transparent;
     border: none;
     color: white;
+    padding: none;
+
+    height: 44px;
     transition: all ease .6s;
 }
 
@@ -10,6 +13,7 @@
     border: none;
     color: white;
     transition: all ease 1s;
+    height: 44px;
 }
 
 .clearButtonDark {
@@ -43,6 +47,8 @@
 
 .btn.btn-outline-secondary {
     transition: all ease 1s;
+    height: 44px;
+    margin: 1rem 0rem
 }
 
 .btn.btn-outline-secondary:hover {
@@ -69,17 +75,22 @@
     display: none;
 }
 
+.addPhaseButton {
+    color: white;
+    border: 1px solid rgb(100, 100, 100)
+}
+
 .dropdown-toggle {
     background-color: transparent !important;
     border: none !important;
     color: white !important;
-    white-space: pre-line;
+    // white-space: pre-line;
 }
 
 .dropdown-toggle:hover {
     background-color: transparent;
     color: rgb(149, 149, 149) !important;
-    white-space: pre-line;
+    // white-space: pre-line;
 }
 
 .navBarButton {
@@ -93,4 +104,14 @@
 
 .dropdown-item:hover {
     background-color: rgb(39, 39, 39);
+}
+
+.projectCollapse {
+    background-color: transparent !important;
+    width: 100%;
+    border: none;
+    padding: 0px;
+    padding-left: 10%;
+    text-align: left;
+    color: black
 }

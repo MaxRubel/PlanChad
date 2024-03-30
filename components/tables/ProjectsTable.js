@@ -14,28 +14,31 @@ export default function ProjectsTable() {
   }, [user, storedProjects]);
 
   return (
-    <table id="projects-table" style={{ marginTop: '4%' }}>
+    <table id="projects-table" style={{ marginTop: '4%', width: '100%' }}>
       <thead>
         <tr
-          style={{ border: '1px solid black', backgroundColor: 'rgb(171, 171, 171, 0.1)' }}
+          style={{
+            border: '1px solid black',
+            backgroundColor: 'rgb(171, 171, 171, 0.1)',
+          }}
         >
-          <th className="minWidth200">
-            <button type="button" name="customer" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
-              Project Name
+          <th>
+            <button type="button" name="customer" className="btn btn-outline-dark rounded-0 noBorder">
+              Project
             </button>
           </th>
-          <th className="minWidth200">
-            <button type="button" name="company" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
+          <th>
+            <button type="button" name="company" className="btn btn-outline-dark rounded-0 noBorder">
               Client
             </button>
           </th>
-          <th className="minWidth200">
-            <button type="button" id="phone-number" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
+          <th>
+            <button type="button" id="phone-number" className="btn btn-outline-dark rounded-0 noBorder">
               Deadline
             </button>
           </th>
-          <th className="minWidth200">
-            <button type="button" name="email" className="btn btn-outline-dark rounded-0" style={{ border: 'none' }}>
+          <th>
+            <button type="button" name="email" className="btn btn-outline-dark rounded-0 noBorder">
               Start Date
             </button>
           </th>
@@ -50,7 +53,7 @@ export default function ProjectsTable() {
               () => { router.push(`/project/plan/${project.projectId}`); }
             }
           >
-            <td style={{ paddingLeft: '1.5%', minWidth: '300px' }}>
+            <td style={{ paddingLeft: '1.5%' }}>
               {project?.name}
             </td>
             <td style={{ paddingLeft: '1.5%' }}>

@@ -16,6 +16,7 @@ import { binoculars, chatIcon, saveIcon } from '../public/icons2';
 import { calendarIcon, peopleIcon } from '../public/icons';
 import { getTaskCollabsOfProject } from '../api/taskCollab';
 import { getSingleCollab } from '../api/collabs';
+import { peopleIconNoFill } from '../public/icons3';
 
 export default function MainProjectView({ projectId }) {
   const [project, setProject] = useState({});
@@ -150,87 +151,112 @@ export default function MainProjectView({ projectId }) {
   return (
     <>
       <div className="bigDad">
-        <div id="project-container">
-          <div id="project-top-bar" style={{ marginBottom: '10px' }}>
-            <button
-              id="saveButton"
-              type="button"
-              className="clearButtonNoHover"
-              onClick={() => {
-                sendToServer();
-                saveAnimation();
-              }}
-            >
-              {saveIcon} &nbsp; Save
-            </button>
-            <button
-              id="manageCollaborators"
-              type="button"
-              className="clearButton"
-              onClick={() => { router.push(`/calendar/view/${projectId}`); }}
-            >
-              {calendarIcon} &nbsp;Calendar
-            </button>
-            <button
-              id="manageCollaborators"
-              type="button"
-              className="clearButton"
-              onClick={() => { router.push(`/collaborators/${projectId}`); }}
-            >
-              {peopleIcon} &nbsp;Collaborators
-            </button>
-            <button
-              id="saveButton"
-              type="button"
-              className="clearButton"
-              onClick={() => {
-                sendToServer();
-                router.push(`/chat/${projectId}`);
-              }}
-            >
-              {chatIcon} &nbsp;Chat
-            </button>
-            <Dropdown
-              className="clearButton"
-              id="yo"
-              style={{ display: 'flex', flexWrap: 'c' }}
-              onSelect={handleChange}
-            >
-              <Dropdown.Toggle
-                id="dropdown-view-options fullCenter"
+        <div id="container">
+          <div id="project-top-bar" className="row">
+            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+              <button
+                id="saveButton"
+                type="button"
+                className="clearButtonNoHover"
+                onClick={() => {
+                  sendToServer();
+                  saveAnimation();
+                }}
               >
-                {binoculars}&nbsp; View
-              </Dropdown.Toggle>
-              <Dropdown.Menu
-                className="dropdown-menu"
+                {saveIcon} Save
+              </button>
+            </div>
+            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+              <button
+                id="calendarBUtton"
+                type="button"
+                className="clearButton"
+                onClick={() => { router.push(`/calendar/view/${projectId}`); }}
               >
-                <Dropdown.Item eventKey="minAll" style={{ color: 'white' }}>Minimize All</Dropdown.Item>
-                <Dropdown.Item eventKey="showProgress" style={{ color: 'white' }}>{storedProject.progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
-                <Dropdown.Item eventKey="hideCompleted" style={{ color: 'white' }}>{storedProject.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+                {calendarIcon} Calendar
+              </button>
+            </div>
+            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+              <button
+                id="manageCollaborators"
+                type="button"
+                className="clearButton"
+                onClick={() => {
+                  router.push(`/collaborators/${projectId}`);
+                }}
+              >
+                {peopleIconNoFill} Team
+              </button>
+            </div>
+            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+              <button
+                id="saveButton"
+                type="button"
+                className="clearButton"
+                onClick={() => {
+                  sendToServer();
+                  router.push(`/chat/${projectId}`);
+                }}
+              >
+                {chatIcon} Chat
+              </button>
+            </div>
+            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+              <Dropdown
+                className="clearButton"
+                id="yo"
+                onSelect={handleChange}
+                style={{ paddingTop: '4px', marginLeft: '-5px' }}
+              >
+                <Dropdown.Toggle
+                  id="dropdown-view-options fullCenter"
+                >
+                  {binoculars} View
+                </Dropdown.Toggle>
+                <Dropdown.Menu
+                  className="dropdown-menu"
+                >
+                  <Dropdown.Item
+                    eventKey="minAll"
+                    style={{ color: 'white' }}
+                  >Minimize All
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    eventKey="showProgress"
+                    style={{ color: 'white' }}
+                  >{storedProject.progressIsShowing
+                    ? 'Hide Progress' : 'Show Progress'}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    eventKey="hideCompleted"
+                    style={{ color: 'white' }}
+                  >{storedProject.hideCompletedTasks
+                    ? 'Show Completed Tasks'
+                    : 'Hide Completed Tasks'}
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </div>
-          <div id="projectCard-container" className="fullCenter">
+          <div id="projectCardContainer" className="fullCenter">
             <ProjectCard
               project={project}
               progressIsShowing={storedProject.progressIsShowing}
             />
           </div>
-          <div className="add-checkpt-button-row">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={() => { addCheckpoint(); }}
-              style={{
-                maxWidth: '200px',
-                color: 'white',
-                border: '1px solid rgb(100, 100, 100)',
-              }}
-            >
-              Add A Phase
-            </button>
-            <div />
-            <div className="verticalCenter" style={{ justifyContent: 'right', color: 'lightgrey', fontSize: '12px' }}>{storedProject?.hideCompletedTasks && '(Completed Tasks are Hidden)'}</div>
+          <div className="row">
+            <div className="addPhaseButtonRow">
+              <button
+                type="button"
+                className="btn btn-outline-secondary addPhaseButton"
+                onClick={() => { addCheckpoint(); }}
+              >
+                Add A Phase
+              </button>
+            </div>
+            <div className="col-lg-8 col-md-8 col-sm-6 mb-1 verticalCenter hideCompletedTasks">
+              {storedProject?.hideCompletedTasks && '(Completed Tasks are Hidden)'}
+            </div>
           </div>
           <div id="dnd-container">
             <Reorder.Group
