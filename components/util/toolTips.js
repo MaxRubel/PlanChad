@@ -55,7 +55,7 @@ export const closeTaskToolTip = (
 
 export const deleteSegment = (
   <Tooltip id="deleteSegment">
-    Delete this Phase
+    Delete this Segment
   </Tooltip>
 );
 

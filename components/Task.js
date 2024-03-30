@@ -158,7 +158,6 @@ const Task = memo(({
   if (completeTasksHidden && formInput.status === 'closed') {
     return (<div style={{ display: 'none', transition: '1s all ease' }} />);
   }
-
   return (
     <>
       {openDeleteModal && (
@@ -175,14 +174,17 @@ const Task = memo(({
           className="marginL"
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            gridTemplateColumns: '1fr',
           }}
         >
-          <div id="empty" />
+
           <div
-            className="orange-line-left"
+            id="line"
             style={{
+              borderLeft: '2px solid rgb(255, 117, 26, .5)',
               transition: reorderPaused ? 'none' : '1.5s all ease',
+              display: 'grid',
+              gridTemplateRows: '1fr 1fr',
             }}
           >
             <div
@@ -214,79 +216,69 @@ const Task = memo(({
             transition: reorderPaused ? 'none' : '1.5s all ease',
           }}
         >
-          <div
-            className="card-header 2"
-            style={{ border: !formInput.expanded ? 'none' : '' }}
-          >
-            <div className="verticalCenter">
-              <div
-                id="button-row"
-                className="verticalCenter"
-                style={{
-                  alignItems: 'center',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
+          <div className="task-header verticalCenter">
+            <div className="col-1-task" style={{ padding: '0px 4px' }}>
+              <OverlayTrigger
+                placement="top"
+                overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
+                trigger={['hover', 'focus']}
+                delay={{ show: 750, hide: 0 }}
               >
-                <OverlayTrigger
-                  placement="top"
-                  overlay={formInput.expanded ? collapseToolTaskTip : expandTaskTooltip}
-                  trigger={['hover', 'focus']}
-                  delay={{ show: 750, hide: 0 }}
+                <button
+                  type="button"
+                  onClick={handleCollapse}
+                  style={{ width: '44px', height: '44px' }}
+                  className="clearButtonDark fullCenter hide"
                 >
-                  <button
-                    type="button"
-                    onClick={handleCollapse}
-                    className="clearButtonDark fullCenter"
-                  >
-                    {calendarIcon}
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={formInput.deetsExpanded ? viewTaskDeetsToolTipCollapse : viewTaskDeetsToolTip}
-                  trigger={['hover', 'focus']}
-                  delay={{ show: 750, hide: 0 }}
+                  {calendarIcon}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
+                overlay={formInput.deetsExpanded ? viewTaskDeetsToolTipCollapse : viewTaskDeetsToolTip}
+                trigger={['hover', 'focus']}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <button
+                  type="button"
+                  onClick={handleCollapse2}
+                  style={{ width: '44px', height: '44px', marginRight: '-3px' }}
+                  className="clearButtonDark fullCenter hide"
                 >
-                  <button
-                    type="button"
-                    onClick={handleCollapse2}
-                    className="clearButtonDark fullCenter"
-                    style={{ marginRight: '-6px' }}
-                  >
-                    {editIcon}
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger
-                  placement="top"
-                  overlay={closeTaskToolTip}
-                  trigger={['hover', 'focus']}
-                  delay={{ show: 750, hide: 0 }}
-                >
-                  <Checkbox
-                    id={`task-completed${task.localId}`}
-                    checked={formInput.status === 'closed'}
-                    onChange={(e) => { handleCheck(e); }}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                    size="medium"
-                    sx={{
-                      '& .MuiSvgIcon-root': {
-                        fontSize: 23,
-                        color: 'black',
-                      },
-                    }}
-                  />
-                </OverlayTrigger>
-              </div>
+                  {editIcon}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
+                overlay={closeTaskToolTip}
+                trigger={['hover', 'focus']}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <Checkbox
+                  id={`task-completed${task.localId}`}
+                  checked={formInput.status === 'closed'}
+                  onChange={(e) => { handleCheck(e); }}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                  size="medium"
+                  sx={{
+                    '& .MuiSvgIcon-root': {
+                      fontSize: 23,
+                      color: 'black',
+                    },
+                  }}
+                />
+              </OverlayTrigger>
             </div>
-            <div className="fullCenter" style={{ display: 'flex', justifyContent: 'left', marginLeft: '5%' }}>
+            <div
+              id="col-2"
+              className="verticalCenter"
+            >
               <input
                 className="form-control"
                 style={{
                   textAlign: 'center',
                   border: 'none',
                   backgroundColor: 'transparent',
-                  width: '75%',
                 }}
                 placeholder={`Task ${indexT + 1}`}
                 value={formInput.name}
@@ -297,12 +289,10 @@ const Task = memo(({
               />
             </div>
             <div
-              className="verticalCenter"
+              id="col-3"
+              className="verticalCenter hide"
               style={{
-
-                gap: '12%',
                 justifyContent: 'right',
-                paddingRight: '10%',
               }}
             >
               <OverlayTrigger
@@ -313,13 +303,15 @@ const Task = memo(({
               >
                 <button
                   type="button"
-                  className="clearButtonDark fullCenter"
-                  style={{ color: 'black', backgroundColor: 'transparent', border: 'none' }}
+                  className="clearButtonDark fullCenter hide"
+                  style={{ height: '44px', width: '44px' }}
                   onClick={handleExpandCollabs}
                 >
                   {peopleIcon}
                 </button>
               </OverlayTrigger>
+            </div>
+            <div id="col-4" className="fullCenter">
               <OverlayTrigger
                 placement="top"
                 overlay={deleteTaskToolTip}
@@ -330,7 +322,7 @@ const Task = memo(({
                   type="button"
                   className="clearButtonDark fullCenter"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
-
+                  style={{ height: '44px', width: '44px' }}
                 >
                   {trashIcon}
                 </button>
@@ -450,7 +442,6 @@ const Task = memo(({
                       backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
                       transition: reorderPaused ? 'none' : '1.5s all ease',
                       border: formInput.status === 'closed' ? '1px solid rgb(116, 116, 116)' : '',
-                      minWidth: '250px',
                     }}
                     onPointerDownCapture={(e) => e.stopPropagation()}
                   />

@@ -152,8 +152,8 @@ export default function MainProjectView({ projectId }) {
     <>
       <div className="bigDad">
         <div id="container">
-          <div id="project-top-bar" className="row">
-            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+          <div id="project-top-bar" className="project-top-bar">
+            <div className="">
               <button
                 id="saveButton"
                 type="button"
@@ -166,7 +166,7 @@ export default function MainProjectView({ projectId }) {
                 {saveIcon} Save
               </button>
             </div>
-            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+            <div className="">
               <button
                 id="calendarBUtton"
                 type="button"
@@ -176,7 +176,7 @@ export default function MainProjectView({ projectId }) {
                 {calendarIcon} Calendar
               </button>
             </div>
-            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+            <div className="">
               <button
                 id="manageCollaborators"
                 type="button"
@@ -188,7 +188,7 @@ export default function MainProjectView({ projectId }) {
                 {peopleIconNoFill} Team
               </button>
             </div>
-            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+            <div className="">
               <button
                 id="saveButton"
                 type="button"
@@ -201,12 +201,18 @@ export default function MainProjectView({ projectId }) {
                 {chatIcon} Chat
               </button>
             </div>
-            <div className="col-lg-2 col-md-2 col-sm-12 mb-1">
+            <div className="">
               <Dropdown
                 className="clearButton"
                 id="yo"
                 onSelect={handleChange}
-                style={{ paddingTop: '4px', marginLeft: '-5px' }}
+                style={{
+                  paddingTop: '4px',
+                  marginLeft: '-5px',
+                  whiteSpace: 'wrap',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                }}
               >
                 <Dropdown.Toggle
                   id="dropdown-view-options fullCenter"
@@ -251,7 +257,7 @@ export default function MainProjectView({ projectId }) {
                 className="btn btn-outline-secondary addPhaseButton"
                 onClick={() => { addCheckpoint(); }}
               >
-                Add A Phase
+                Add A Segment
               </button>
             </div>
             <div className="col-lg-8 col-md-8 col-sm-6 mb-1 verticalCenter hideCompletedTasks">

@@ -10,7 +10,7 @@ import { removeFromProjTT, viewCollabDeetsTT } from '../util/toolTips';
 import DeleteProjCollabModal from '../modals/DeleteProjCollab';
 import { addToCollabsTT, sendInviteTT } from '../util/toolTips2';
 import { addPersonMed } from '../../public/icons2';
-import envelopeArrowUp from '../../public/icons3';
+import envelopeArrowUp, { envelopeIcon } from '../../public/icons3';
 import InviteCollaborator from '../modals/InviteConfirmation';
 import useSaveStore from '../../utils/stores/saveStore';
 import { deleteInvite } from '../../api/invites';
@@ -177,79 +177,88 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
         projectId={projectToAssign}
       />
       <DeleteProjCollabModal show={openDeleteModal} closeModal={handleCloseModal} handleDelete={handleRemove} />
-      <div className="card" style={{ margin: '1% 0%' }}>
+      <div className="card collab-card" style={{ margin: '1% 0%' }}>
         <div
           className="card-body white"
-          style={{ padding: '8px' }}
+          style={{ padding: '0px' }}
         >
           <div
             id="col1"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '10% 60% 30%',
-            }}
+            className="collab-card-project-main-line"
           >
             <div id="collapse details">
-              <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
+              <OverlayTrigger
+                placement="top"
+                overlay={viewCollabDeetsTT}
+                delay={{ show: 750, hide: 0 }}
+              >
                 <button
                   type="button"
-                  style={{ marginRight: '3%' }}
-                  className="clearButton"
+                  style={{ marginRight: '3%', padding: '0px' }}
+                  className="clearButton collab-button"
                   onClick={handleCollapse}
                 >
                   {downIcon}
                 </button>
               </OverlayTrigger>
             </div>
-            <div className="hideOverflow">
+            <div className="hideOverflow verticalCenter">
               {collab.name}
             </div>
-            {isUsersCollab ? (
-              <div style={{ textAlign: 'right' }}>
-                <OverlayTrigger placement="top" overlay={sendInviteTT} delay={{ show: 750, hide: 0 }}>
-                  <button
-                    id="invite to project"
-                    type="button"
-                    className="clearButtonDark"
-                    onClick={handleInvite}
-                  >
-                    {envelopeArrowUp}
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
-                  <button
-                    type="button"
-                    className="clearButtonDark"
-                    onClick={() => { setOpenDeleteModal((preVal) => true); }}
-                  >
-                    {removeIcon}
-                  </button>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={assignToTaskTT} delay={{ show: 750, hide: 0 }}>
-                  <button
-                    type="button"
-                    className="clearButton"
-                    style={{ color: 'black' }}
-                    onClick={assignToTask}
-                  >
-                    {rightArrow}
-                  </button>
-                </OverlayTrigger>
-              </div>
-            ) : (
-              <div style={{ textAlign: 'right' }}>
-                <OverlayTrigger placement="top" overlay={addToCollabsTT} delay={{ show: 750, hide: 0 }}>
-                  <button
-                    id="add to your collabs"
-                    type="button"
-                    className="clearButtonDark"
-                    onClick={() => { setOpenAddCollabModal((preVal) => true); }}
-                  >
-                    {addPersonMed}
-                  </button>
-                </OverlayTrigger>
-              </div>
-            )}
+
+            <div style={{ textAlign: 'right' }}>
+              <OverlayTrigger
+                placement="top"
+                overlay={addToCollabsTT}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <button
+                  id="add to your collabs"
+                  type="button"
+                  className="clearButtonDark  collab-button"
+                  onClick={() => { setOpenAddCollabModal((preVal) => true); }}
+                >
+                  {addPersonMed}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
+                overlay={sendInviteTT}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <button
+                  id="invite to project"
+                  type="button"
+                  className="clearButtonDark collab-button"
+                  style={{ color: 'black' }}
+                  onClick={handleInvite}
+                >
+                  {envelopeIcon}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger placement="top" overlay={removeFromProjTT} delay={{ show: 750, hide: 0 }}>
+                <button
+                  type="button"
+                  className="clearButtonDark collab-button"
+                  onClick={() => { setOpenDeleteModal((preVal) => true); }}
+                >
+                  {removeIcon}
+                </button>
+              </OverlayTrigger>
+              <OverlayTrigger
+                placement="top"
+                overlay={assignToTaskTT}
+                delay={{ show: 750, hide: 0 }}
+              >
+                <button
+                  type="button"
+                  className="clearButtonDark collab-button"
+                  onClick={assignToTask}
+                >
+                  {rightArrow}
+                </button>
+              </OverlayTrigger>
+            </div>
           </div>
           <Collapse in={expanded}>
             <div>

@@ -12,58 +12,54 @@ const TaskDeets = memo(({ formInput, handleChange, taskId }) => (
       onEnter={() => { document.getElementById(`taskDeets${formInput.localId}`).style.display = 'grid'; }}
     >
       <div>
-        <div id={`taskDeets${formInput.localId}`} style={{ display: 'none' }} className={formInput.collabsExpanded ? 'taskDeetsExpand' : 'taskDeets'}>
-          <div id="marginL" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-            <div id="empty" />
+        <div
+          id={`taskDeets${formInput.localId}`}
+          style={{ display: 'none' }}
+          className={formInput.collabsExpanded
+            ? 'taskDeetsExpand'
+            : 'taskDeets'}
+        >
+          <div className="hide">
             <div
-              id="line"
+              id="marginL"
+              className="hey"
               style={{
-                borderLeft: '2px solid rgb(255, 117, 26, .5)',
                 display: 'grid',
-                gridTemplateRows: '1fr 1fr',
-                transition: '1.5s all ease',
+                gridTemplateColumns: '1fr 1fr',
               }}
             >
-              <div style={{
-                transition: '1.5s all ease',
-                borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
-              }}
+              <div id="empty" />
+              <div
+                className="small-orange-line-left"
+              >
+                <div style={{
+                  transition: '1.5s all ease',
+                  borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
+                }}
+                />
+              </div>
+            </div>
+            <div
+              id="marginL2"
+              style={{ display: formInput.collabsExpanded ? 'none' : 'grid', gridTemplateRows: '1fr 1fr' }}
+            >
+              <div
+                id="line"
+                style={{
+                  transition: '1.5s border ease',
+                  borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
+                }}
               />
+              <div id="empty" />
             </div>
           </div>
-          <div id="marginL2" style={{ display: formInput.collabsExpanded ? 'none' : 'grid', gridTemplateRows: '1fr 1fr' }}>
-            <div
-              id="line"
-              style={{
-                transition: '1.5s border ease',
-                borderBottom: formInput.status === 'closed' ? '2px solid grey' : '2px solid rgb(255, 117, 26, .5)',
-              }}
-            />
-            <div id="empty" />
-          </div>
           {/* -------card-body------------------------ */}
+          <div className="show" />
           <div
-            id="whole-card"
-            className="card"
-            style={{
-              height: '250px',
-              backgroundColor: formInput.status === 'closed' ? 'grey' : '',
-              border: 'none',
-              margin: '3px 0px',
-              marginRight: formInput.collabsExpanded ? '3px' : '',
-              display: 'flex',
-              flexDirection: 'column',
-              transition: 'all 1.5s ease',
-            }}
+            className="card planning-box"
+            style={{ backgroundColor: formInput.status === 'closed' ? 'grey' : '' }}
           >
-            <div
-              id="text area"
-              style={{
-                padding: '2% 5%',
-                paddingTop: '6px',
-                flex: '1',
-              }}
-            >
+            <div className="planning-text">
               <div id="plan" style={{ paddingLeft: '6px', paddingBottom: '6px' }}><strong>Plan:</strong></div>
               <textarea
                 className="form-control"

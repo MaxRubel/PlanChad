@@ -265,7 +265,7 @@ tr:hover {
 }
 
 .white {
-  background-color: white;
+  background-color: lightgray;
 }
 
 .rotate {
@@ -317,10 +317,33 @@ tr:hover {
   font-size: 12px;
 }
 
-@media only screen and (max-width: 579px) {
+.evenly {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media only screen and (max-width: 770px) {
   .addPhaseButtonRow {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .show {
+    display: block;
+  }
+
+  .tooltip {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .addPhaseButtonRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 375px;
   }
 }

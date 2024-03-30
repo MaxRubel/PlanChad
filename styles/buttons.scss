@@ -3,7 +3,7 @@
     border: none;
     color: white;
     padding: none;
-
+    min-width: 44px;
     height: 44px;
     transition: all ease .6s;
 }
@@ -21,6 +21,8 @@
     border: none;
     color: black;
     transition: all ease .6s;
+    // height: 44pc;
+    // width: 44px;
 }
 
 .clearButton:hover {

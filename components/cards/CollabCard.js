@@ -138,17 +138,17 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
   return (
     <>
       <DeleteCollabModal closeModal={handleCloseModal} show={openDeleteModal} handleDelete={handleDelete} />
-      <div className="card white" style={{ margin: '4px 0%' }}>
+      <div className="card white collab-card ">
         <div
           className="card-body white"
-          style={{ padding: '.5%' }}
+          style={{ padding: '0px' }}
         >
-          <div id="row1" style={{ display: 'grid', gridTemplateColumns: '5% 70% 25%' }}>
+          <div id="row1" className="collab-card-main-line">
             <div id="col1" className="fullCenter">
               <OverlayTrigger placement="top" overlay={viewCollabDeetsTT} delay={{ show: 750, hide: 0 }}>
                 <button
                   type="button"
-                  className="clearButton"
+                  className="clearButton collapse-button"
                   onClick={handleCollapse}
                 >
                   {downIcon}
@@ -162,7 +162,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
               <div style={{ textAlign: 'right' }}>
                 <button
                   type="button"
-                  className="clearButton"
+                  className="clearButton collab-button"
                   style={{ color: 'black' }}
                   onClick={handleRemove}
                 >
@@ -170,23 +170,14 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
                 </button>
               </div>
             ) : (
-              <div id="col2">
+              <div id="col3">
                 <div />
-                <div
-                  className="verticalCenter"
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'right',
-                    paddingRight: '4%',
-                    alignItems: 'center',
-                    gap: '7%',
-                  }}
-                >
+                <div className="verticalCenter collab-card-buttons-right">
                   <OverlayTrigger placement="top" overlay={addToProjTT} delay={{ show: 750, hide: 0 }}>
                     <button
                       type="button"
-                      className="clearButton"
-                      style={{ color: 'black', marginBottom: '-2px', marginRight: '-5px' }}
+                      className="clearButtonDark collab-button"
+                      style={{ marginBottom: '-2px', marginRight: '-5px' }}
                       onClick={handleAssignToProj}
                     >
                       {plusIconSmol}
@@ -196,8 +187,8 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
                     <button
                       id="update-collab"
                       type="button"
-                      className="clearButton"
-                      style={{ color: 'black', marginLeft: '-3px' }}
+                      className="clearButton collab-button"
+                      style={{ color: 'black', paddingRight: '1px' }}
                       onClick={handleUpdate}
                     >
                       {editIcon}
@@ -206,8 +197,7 @@ export default function CollabCard({ collab, ofProj, projectToAssign }) {
                   <OverlayTrigger placement="top" overlay={deleteCollabTT} delay={{ show: 750, hide: 0 }}>
                     <button
                       type="button"
-                      className="clearButton"
-                      style={{ color: 'black' }}
+                      className="clearButtonDark collab-button"
                       onClick={() => { setOpenDeleteModal((prevVal) => true); }}
                     >
                       {deleteIcon}
