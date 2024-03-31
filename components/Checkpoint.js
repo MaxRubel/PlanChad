@@ -316,7 +316,7 @@ const Checkpoint = memo(({
               <OverlayTrigger placement="top" overlay={deleteSegment} delay={{ show: 750, hide: 0 }}>
                 <button
                   type="button"
-                  className="clearButtonDark"
+                  className="clearButtonDark hide"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
                   style={{ paddingBottom: '4px' }}
                 >

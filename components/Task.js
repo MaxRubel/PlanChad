@@ -329,7 +329,7 @@ const Task = memo(({
               >
                 <button
                   type="button"
-                  className="clearButtonDark fullCenter"
+                  className="clearButtonDark fullCenter hide"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
                   style={{ height: '44px', width: '44px' }}
                 >
