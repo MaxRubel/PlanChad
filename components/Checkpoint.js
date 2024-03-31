@@ -191,7 +191,7 @@ const Checkpoint = memo(({
     };
     createNewTask(emptyTask);
     pauseReorder();
-    setTasks((preVal) => ([...preVal, emptyTask]));
+    setCheckPrefresh((prevVal) => prevVal + 1);
   };
 
   const updateArrayAfterDelete = (array) => {
