@@ -254,20 +254,19 @@ export default function MainProjectView({ projectId }) {
               progressIsShowing={storedProject.progressIsShowing}
             />
           </div>
-          <div className="row">
-            <div className="addPhaseButtonRow">
-              <button
-                type="button"
-                className="btn btn-outline-secondary addPhaseButton"
-                onClick={() => { addCheckpoint(); }}
-              >
-                Add A Segment
-              </button>
-            </div>
-            <div className="verticalCenter hideCompletedTasks">
-              {storedProject?.hideCompletedTasks && '(Completed Tasks are Hidden)'}
-            </div>
+          <div className="addPhaseButtonRow">
+            <button
+              type="button"
+              className="btn btn-outline-secondary addPhaseButton"
+              onClick={() => { addCheckpoint(); }}
+            >
+              Add A Segment
+            </button>
           </div>
+          <div className="verticalCenter hideCompletedTasks">
+            {storedProject?.hideCompletedTasks && '(Completed Tasks are Hidden)'}
+          </div>
+
           <div id="dnd-container">
             <Reorder.Group
               as="div"

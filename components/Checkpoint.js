@@ -318,7 +318,11 @@ const Checkpoint = memo(({
                   type="button"
                   className="clearButtonDark hide"
                   onClick={formInput.fresh ? handleDelete : handleOpenModal}
-                  style={{ paddingBottom: '4px' }}
+                  style={{
+                    paddingBottom: '4px',
+                    height: '44px',
+                    width: '44px',
+                  }}
                 >
                   {trashIcon}
                 </button>

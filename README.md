@@ -19,4 +19,4 @@ Framer-Motion Reorder for drag and drop
 Firebase for the backend as well as firebase listener functions for the chat
 Zustand to manage the state globally of each project
 
-Thank you!
+Thanks and I hope you enjoy!

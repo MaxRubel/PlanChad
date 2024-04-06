@@ -35,7 +35,8 @@
     background-color: transparent;
     border: none;
     color: black;
-    transition: all ease .6s;
+    transition: all ease 1s;
+    border-radius: 30px;
     // height: 44pc;
     // width: 44px;
 }
@@ -45,7 +46,7 @@
 }
 
 .clearButtonDark:hover {
-    color: #484747 !important
+    background-color: #a5a5a5 !important
 }
 
 .btn.btn-close {
