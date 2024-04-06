@@ -226,7 +226,10 @@ const Task = memo(({
           }}
         >
           <div className="task-header verticalCenter">
-            <div className="col-1-task" style={{ padding: '0px 4px' }}>
+            <div
+              className="col-1-task"
+              style={{ padding: '0px 4px' }}
+            >
               <OverlayTrigger
                 placement="top"
                 overlay={closeTaskToolTip}
@@ -287,11 +290,10 @@ const Task = memo(({
               className="verticalCenter hide"
               style={{
                 justifyContent: 'right',
+                marginRight: '-10%',
               }}
             >
               {' '}
-            </div>
-            <div id="col-4" className="fullCenter">
               <OverlayTrigger
                 placement="top"
                 overlay={formInput.deetsExpanded ? viewTaskDeetsToolTipCollapse : viewTaskDeetsToolTip}
@@ -322,6 +324,12 @@ const Task = memo(({
                   {peopleIcon}
                 </button>
               </OverlayTrigger>
+            </div>
+            <div
+              id="col-4"
+              className="fullCenter"
+              style={{}}
+            >
               <OverlayTrigger
                 placement="top"
                 overlay={deleteTaskToolTip}
