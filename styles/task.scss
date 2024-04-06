@@ -6,7 +6,7 @@
 
 .task-header {
   display: grid;
-  grid-template-columns: 20% 44% 25% 11%;
+  grid-template-columns: 20% 44% 11% 25%;
   height: 53px;
 }
 
@@ -77,6 +77,10 @@
 
   .taskDeets {
     grid-template-columns: 8% 92%;
+  }
+
+  .task {
+    grid-template-columns: 5% 10% 74%;
   }
 
   .taskDeets {

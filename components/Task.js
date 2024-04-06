@@ -235,6 +235,7 @@ const Task = memo(({
               >
                 <Checkbox
                   id={`task-completed${task.localId}`}
+                  className="clearButtonDark"
                   checked={formInput.status === 'closed'}
                   onChange={(e) => {
                     handleCheck(e);
@@ -289,6 +290,8 @@ const Task = memo(({
               }}
             >
               {' '}
+            </div>
+            <div id="col-4" className="fullCenter">
               <OverlayTrigger
                 placement="top"
                 overlay={formInput.deetsExpanded ? viewTaskDeetsToolTipCollapse : viewTaskDeetsToolTip}
@@ -319,8 +322,6 @@ const Task = memo(({
                   {peopleIcon}
                 </button>
               </OverlayTrigger>
-            </div>
-            <div id="col-4" className="fullCenter">
               <OverlayTrigger
                 placement="top"
                 overlay={deleteTaskToolTip}
