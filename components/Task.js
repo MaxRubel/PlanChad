@@ -165,7 +165,7 @@ const Task = memo(({
     setOpenDeleteModal((prevVal) => false);
   }, []);
 
-  if (storedProject.hideCompletedTasks && formInput.status === 'closed') {
+  if (storedProject?.hideCompletedTasks && formInput.status === 'closed') {
     return <div style={{ display: 'none', transition: '1s all ease' }} />;
   }
   return (

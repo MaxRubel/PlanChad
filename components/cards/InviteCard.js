@@ -26,13 +26,13 @@ export default function InviteCard({ invitee }) {
             gridTemplateColumns: '1fr 1fr 1fr .3fr ',
           }}
         >
-          <div id="col1" style={{ paddingLeft: '5%' }}>
+          <div id="col1" className="verticalCenter" style={{ paddingLeft: '5%' }}>
             {invitee.name}
           </div>
-          <div id="col2">
+          <div id="col2" className="verticalCenter">
             {invitee.email}
           </div>
-          <div id="col3" style={{ textAlign: 'center', fontStyle: 'italic' }}>
+          <div id="col3" className="fullCenter" style={{ fontStyle: 'italic' }}>
             {invitee.status}
           </div>
 

@@ -44,8 +44,8 @@ export default function MainProjectView({ projectId }) {
   const showProgress = useAnimationStore((state) => state.showProgress);
   const checkpointsAreBeingDragged = useAnimationStore((state) => state.checkpointsAreBeingDragged);
   const checkpointsAreNotBeingDragged = useAnimationStore((state) => state.checkpointsAreNotBeingDragged);
-  // const updateTaskCollaboratorsBatch = useSaveStore((state) => state.updateTaskCollaboratorsBatch);
-  // const updateTaskCollaboratorJoinsBatch = useSaveStore((state) => state.updateTaskCollaboratorJoinsBatch);
+  const updateTaskCollaboratorsBatch = useSaveStore((state) => state.updateTaskCollaboratorsBatch);
+  const updateTaskCollaboratorJoinsBatch = useSaveStore((state) => state.updateTaskCollaboratorJoinsBatch);
   const [isSaving, setIsSaving] = useState(0);
   const { loadProjectCollabs } = useCollabContext();
 
@@ -63,13 +63,13 @@ export default function MainProjectView({ projectId }) {
       getInvitesByProject(projectId).then((projectInvites) => {
         updateInvitesOfProjectBatch(projectInvites);
       });
-      // getTaskCollabsOfProject(projectId).then((taskCollabJoins) => {
-      //   const promiseArray = taskCollabJoins.map((item) => getSingleCollab(item.collabId));
-      //   Promise.all(promiseArray).then((data) => {
-      //     updateTaskCollaboratorJoinsBatch(taskCollabJoins);
-      //     updateTaskCollaboratorsBatch(data);
-      //   });
-      // });
+      getTaskCollabsOfProject(projectId).then((taskCollabJoins) => {
+        const promiseArray = taskCollabJoins.map((item) => getSingleCollab(item.collabId));
+        Promise.all(promiseArray).then((data) => {
+          updateTaskCollaboratorJoinsBatch(taskCollabJoins);
+          updateTaskCollaboratorsBatch(data);
+        });
+      });
     }
   }, [projectId, projectsLoaded, singleProjectRunning]);
 
@@ -264,7 +264,7 @@ export default function MainProjectView({ projectId }) {
                 Add A Segment
               </button>
             </div>
-            <div className="col-lg-8 col-md-8 col-sm-6 mb-1 verticalCenter hideCompletedTasks">
+            <div className="verticalCenter hideCompletedTasks">
               {storedProject?.hideCompletedTasks && '(Completed Tasks are Hidden)'}
             </div>
           </div>
