@@ -37,7 +37,6 @@ export default function MainProjectView({ projectId }) {
   const reorderPaused = useAnimationStore((state) => state.reorderPaused);
   const minimizeAll = useAnimationStore((state) => state.minimizeAll);
   const minAll = useAnimationStore((state) => state.minAll);
-  const hideCompletedTasks = useAnimationStore((state) => state.hideCompletedTasks);
   const hideCompletedTasksProjectData = useSaveStore((state) => state.hideCompletedTasksProjectData);
   const loadASingleProject = useSaveStore((state) => state.loadASingleProject);
   const singleProjectRunning = useSaveStore((state) => state.singleProjectRunning);
@@ -142,7 +141,6 @@ export default function MainProjectView({ projectId }) {
     }
     if (e === 'hideCompleted') {
       pauseReorder();
-      hideCompletedTasks();
       hideCompletedTasksProjectData();
     }
   };
