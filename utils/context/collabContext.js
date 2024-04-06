@@ -23,7 +23,6 @@ const CollabContextProvider = ({ children }) => {
   const [fetchUserData, setFetchUserData] = useState(0);
 
   const clearCollabManager = () => {
-    setAllCollabs((preVal) => []);
     setProjCollabs((preVal) => []);
     setProjCollabJoins((preVal) => []);
     setTaskCollabJoins((preVal) => []);
@@ -33,6 +32,7 @@ const CollabContextProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       getCollabsOfUser(user.uid).then((userCollabs) => {
+        console.log(userCollabs);
         getProjCollabsOfUser(user.uid).then((userProjCollabJoins) => {
           getTaskCollabsOfUser(user.uid).then((taskCollabJoinData) => {
             setAllCollabs((preVal) => userCollabs);

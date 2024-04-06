@@ -207,20 +207,22 @@ export default function CollabCardforProject({ collab, taskToAssign, projectToAs
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <OverlayTrigger
-                placement="top"
-                overlay={addToCollabsTT}
-                delay={{ show: 750, hide: 0 }}
-              >
-                <button
-                  id="add to your collabs"
-                  type="button"
-                  className="clearButtonDark  collab-button"
-                  onClick={() => { setOpenAddCollabModal((preVal) => true); }}
+              {collab.userId !== user.uid && (
+                <OverlayTrigger
+                  placement="top"
+                  overlay={addToCollabsTT}
+                  delay={{ show: 750, hide: 0 }}
                 >
-                  {addPersonMed}
-                </button>
-              </OverlayTrigger>
+                  <button
+                    id="add to your collabs"
+                    type="button"
+                    className="clearButtonDark  collab-button"
+                    onClick={() => { setOpenAddCollabModal((preVal) => true); }}
+                  >
+                    {addPersonMed}
+                  </button>
+                </OverlayTrigger>
+              )}
               <OverlayTrigger
                 placement="top"
                 overlay={sendInviteTT}
