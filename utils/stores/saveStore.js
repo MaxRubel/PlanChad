@@ -71,6 +71,12 @@ const useSaveStore = create(devtools(
     deleteProject: (projectId) => set((state) => ({
       allProjects: state.allProjects.filter((item) => item.projectId !== projectId),
     })),
+    // setHideCompletedTasks: (value) => set((state) => ({
+    //   project: {
+    //     ...state.project,
+    //     hideCompletedTasks: value,
+    //   },
+    // })),
     hideCompletedTasksProjectData: () => set((state) => ({
       project: {
         ...state.project,

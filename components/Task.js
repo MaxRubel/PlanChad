@@ -57,7 +57,7 @@ const Task = memo(({
   const deleteTask = useSaveStore((state) => state.deleteTask);
   const pauseReorder = useAnimationStore((state) => state.pauseReorder);
   const minAll = useAnimationStore((state) => state.minAll);
-  const completeTasksHidden = useAnimationStore((state) => state.completeTasksHidden);
+  const storedProject = useSaveStore((state) => state.project);
   const reorderPaused = useAnimationStore((state) => state.reorderPaused);
 
   useEffect(() => {
@@ -165,7 +165,7 @@ const Task = memo(({
     setOpenDeleteModal((prevVal) => false);
   }, []);
 
-  if (completeTasksHidden && formInput.status === 'closed') {
+  if (storedProject.hideCompletedTasks && formInput.status === 'closed') {
     return <div style={{ display: 'none', transition: '1s all ease' }} />;
   }
   return (

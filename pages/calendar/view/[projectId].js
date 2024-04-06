@@ -474,7 +474,11 @@ export default function CalendarPage() {
               <button type="button" id="decrementMonth" onClick={handleDateCounter} className="clearButton">
                 {caretLeft}
               </button>
-              <div style={{ width: '150px', textAlign: 'center' }}>{chooseMonth(calendarData.month)} &nbsp;{calendarData.year}</div>
+              <div
+                className="fullCenter"
+                style={{ width: '150px', textAlign: 'center' }}
+              >{chooseMonth(calendarData.month)} &nbsp;{calendarData.year}
+              </div>
               <button type="button" id="incrementMonth" onClick={handleDateCounter} className="clearButton">
                 {caretRight}
               </button>

@@ -6,7 +6,6 @@ import {
   deleteProject, getSingleProject, getUserProjects,
 } from '../../api/project';
 import { useAuth } from './authContext';
-import { useCollabContext } from './collabContext';
 import { getInvitesByEmail } from '../../api/invites';
 import useSaveStore from '../stores/saveStore';
 
