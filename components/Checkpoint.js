@@ -366,7 +366,7 @@ const Checkpoint = memo(({
                     placeholder="$$$"
                     onChange={handleChange}
                     name="startDate"
-                    style={{ backgroundColor: 'rgb(225, 225, 225)', border: 'none' }}
+                    style={{ backgroundColor: 'rgb(255, 255, 255)', border: 'none' }}
                     onPointerDownCapture={(e) => e.stopPropagation()}
                   />
                 </div>

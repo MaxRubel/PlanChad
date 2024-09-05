@@ -368,7 +368,7 @@ const Task = memo(({
                         onChange={handleChange}
                         name="startDate"
                         style={{
-                          backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(225, 225, 225)',
+                          backgroundColor: formInput.status === 'closed' ? 'grey' : 'rgb(255, 255, 255)',
                           border: formInput.status === 'closed' ? '1px solid rgb(116, 116, 116)' : '',
                           transition: reorderPaused ? 'none' : '1.5s all ease',
                         }}
