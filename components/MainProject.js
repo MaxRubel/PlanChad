@@ -260,7 +260,7 @@ export default function MainProjectView({ projectId }) {
               className="btn btn-outline-secondary addPhaseButton"
               onClick={() => { addCheckpoint(); }}
             >
-              Add A Segment
+              Add A Phase
             </button>
           </div>
           <div className="verticalCenter hideCompletedTasks">
