@@ -1,190 +1,250 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-bracket-location */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Button } from '@mui/material';
-import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+// import { DragDropContext, Droppable } from '@hello-pangea/dnd';
+import uniqid from 'uniqid';
+import { useRouter } from 'next/router';
+import { Dropdown } from 'react-bootstrap';
+import { Reorder, m } from 'framer-motion';
 import ProjectCard from './ProjectCard';
 import Checkpoint from './Checkpoint';
-import { createNewCheckpoint, getCheckpointsOfProject, updateCheckpoint } from '../api/checkpoint';
+import { useSaveContext } from '../utils/context/saveManager';
+import AddAsigneeModal from './AddAsigneeModal';
 
 export default function BigDaddyProject({ projectId }) {
-  const [save, setSave] = useState(0);
+  const [project, setProject] = useState({});
   const [checkpoints, setCheckpoints] = useState([]);
+  const [save, setSave] = useState(0);
   const [refresh, setRefresh] = useState(0);
-  const [min, setMin] = useState(0);
-  const [saveColor, setSaveColor] = useState(0);
-  const [minColor, setMinColor] = useState(0);
-  const [reOrdered, setReOrdered] = useState(0);
+  const [isLoading, setIsloading] = useState(true);
+  const [progressIsShowing, setProgressIsShowing] = useState(false);
+  const [hideCompletedTasksChild, setHideCompletedTasksChild] = useState(false);
+  const [refreshTasks, setRefreshTasks] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [checkPBeingDragged, setcheckPBeingDragged] = useState(null);
 
-  const saveAll = () => { // trigger save all
-    setSave((prevVal) => prevVal + 1);
-  };
+  const {
+    addToSaveManager,
+    saveInput,
+    sendToServer,
+    min,
+    minAll,
+    loadProject,
+    projectsLoaded,
+    singleProjectRunning,
+    isSaving,
+    hideCompletedTasks,
+  } = useSaveContext();
 
-  const saveSuccess = () => { // trigger save all animation
-    setSaveColor((prevVal) => prevVal + 1);
-  };
+  const router = useRouter();
 
-  useEffect(() => { // save animation
-    let saveColorChange;
-    if (saveColor > 0) {
-      document.getElementById('saveButton').style.color = 'rgb(16, 197, 234)';
-      saveColorChange = setTimeout(() => {
-        document.getElementById('saveButton').style.color = 'rgb(200, 200, 200)';
-      }, 1500);
+  useEffect(() => { // refresh checkpoint from save manager
+    const copy = [...saveInput.checkpoints];
+    const sortedArr = copy.sort((a, b) => a.index - b.index);
+    setCheckpoints(sortedArr);
+  }, [refresh]);
+
+  useEffect(() => { // on Mount
+    if (projectId && projectsLoaded) {
+      if (!singleProjectRunning) {
+        const projectDetails = loadProject(projectId);
+        setProject((preVal) => projectDetails.project);
+        setHideCompletedTasksChild((preVal) => projectDetails.project.hideCompletedTasks);
+        const checkpointsSorted = projectDetails.checkpoints.sort((a, b) => a.index - b.index);
+        setCheckpoints(checkpointsSorted);
+      } else {
+        setProject((preVal) => saveInput.project);
+        const checkpointsSorted = saveInput.checkpoints.sort((a, b) => a.index - b.index);
+        setCheckpoints((preVal) => checkpointsSorted);
+      }
     }
-    return () => {
-      clearTimeout(saveColorChange);
-    };
-  }, [saveColor]);
+  }, [projectId, projectsLoaded]);
 
-  useEffect(() => { // minimize animation
-    let minColorChange;
-    if (minColor > 0) {
-      document.getElementById('minButton').style.color = 'rgb(16, 197, 234)';
-      minColorChange = setTimeout(() => {
-        document.getElementById('minButton').style.color = 'rgb(200, 200, 200)';
-      }, 1000);
-    }
-    return () => {
-      clearTimeout(minColorChange);
-    };
-  }, [minColor]);
-
-  const minAll = () => { // trigger minAll and animation
-    setMin((prevVal) => prevVal + 1);
-    setMinColor((prevVal) => prevVal + 1);
+  const tellProjectIfProgressShowing = (value) => {
+    setProgressIsShowing((preVal) => value);
   };
 
-  useEffect(() => {
-    getCheckpointsOfProject(projectId).then((data) => {
-      const indexedData = data.map((item, index) => (
-        {
-          ...item,
-          index,
-        }
-      ));
-      setCheckpoints(indexedData);
-    });
-  }, [projectId, refresh]);
-
-  const handleRefresh = () => {
+  const handleRefresh = () => { // retreive from save manager
     setRefresh((prevVal) => prevVal + 1);
   };
 
+  useEffect(() => { // minimize animation
+    let minColorChange;
+    const minButton = document.getElementById('minButton');
+    if (min > 0 && minButton) {
+      minButton.style.color = 'rgb(16, 197, 234)';
+      minColorChange = setTimeout(() => {
+        minButton.style.color = 'rgb(200, 200, 200)';
+      }, 1000);
+    }
+    return () => {
+      if (minColorChange) {
+        clearTimeout(minColorChange);
+      }
+    };
+  }, [min]);
+
+  useEffect(() => { // save button color animation
+    let saveColorChange;
+    if (isSaving) {
+      const saveButton = document.getElementById('saveButton');
+      saveButton.style.color = 'rgb(16, 197, 234)';
+      saveColorChange = setTimeout(() => {
+        saveButton.style.color = 'rgb(200, 200, 200)';
+      }, 1000);
+    }
+  }, [isSaving]);
+
   const addCheckpoint = () => {
-    const payload = {
+    const emptyChckP = {
       projectId,
+      localId: uniqid(),
       leadId: '',
       name: '',
       startDate: '',
       deadline: '',
       description: '',
-      listIndex: '',
+      index: checkpoints.length,
       expanded: false,
       fresh: true,
+      checkpointId: null,
+      dragId: uniqid(),
     };
-    saveAll();
-    createNewCheckpoint(payload)
-      .then(({ name }) => {
-        updateCheckpoint({ checkpointId: name })
-          .then(() => {
-            handleRefresh();
-          });
-      });
+    addToSaveManager(emptyChckP, 'create', 'checkpoint');
+    handleRefresh();
   };
 
-  const handleDragEnd = (result) => {
-    saveAll();
-    const { destination, source, draggableId } = result;
-    if (!destination) {
-      return;
+  const handleDragStart = () => {
+    setCheckpoints(saveInput.checkpoints);
+    setIsDragging((preVal) => true);
+  };
+
+  const reOrderCheckPoints = (e) => {
+    const reordered = e.map((item, index) => ({ ...item, index }));
+    setCheckpoints((preVal) => reordered);
+    addToSaveManager(reordered, 'update', 'checkpointsArr');
+  };
+
+  const handleChange = (e) => {
+    if (e === 'minAll') {
+      minAll();
     }
-    const reorderedChecks = Array.from(checkpoints);
-    const [reorderedCheckp] = reorderedChecks.splice(result.source.index, 1);
-    reorderedChecks.splice(result.destination.index, 0, reorderedCheckp);
-    const savedIndexes = reorderedChecks.map((item, index) => (
-      {
-        ...item, index,
-      }
-    ));
-    setCheckpoints(savedIndexes);
-    setReOrdered((prevVal) => prevVal + 1);
+    if (e === 'showProgress') {
+      setProgressIsShowing((preVal) => !preVal);
+    }
+    if (e === 'hideCompleted') {
+      hideCompletedTasks();
+      setHideCompletedTasksChild((preVal) => !preVal);
+    }
   };
 
   return (
     <>
+      <AddAsigneeModal />
       <div className="bigDad">
-        <div id="project-container">
+        <div id="project-container" style={{}}>
           <div id="project-top-bar" style={{ marginBottom: '3%' }}>
             <button
               id="saveButton"
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => saveAll()}>
+              onClick={sendToServer}>
               SAVE
             </button>
+            <Dropdown
+              style={{ outline: 'none' }}
+              onSelect={handleChange}
+            >
+              <Dropdown.Toggle
+                style={{ backgroundColor: 'transparent', border: 'none', color: 'rgb(200, 200, 200)' }}
+                id="dropdown-view-options"
+              >
+                VIEW OPTIONS
+              </Dropdown.Toggle>
+              <Dropdown.Menu style={{ backgroundColor: 'black', color: 'white' }}>
+                <Dropdown.Item eventKey="minAll">Minimize All</Dropdown.Item>
+                <Dropdown.Item eventKey="showProgress">{progressIsShowing ? 'Hide Progress' : 'Show Progress'}</Dropdown.Item>
+                <Dropdown.Item eventKey="hideCompleted">{saveInput.project.hideCompletedTasks ? 'Show Completed Tasks' : 'Hide Completed Tasks'}</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
             <button
-              id="minButton"
+              id="manageCollaborators"
               type="button"
               className="clearButton"
               style={{ color: 'rgb(200, 200, 200)' }}
-              onClick={() => minAll()}>
-              MINIMIZE All
+              onClick={() => { router.push(`/collaborators/${projectId}`); }}>
+              MANAGE COLLABORATORS
             </button>
           </div>
           <ProjectCard
-            projectId={projectId}
             save={save}
-            saveSuccess={saveSuccess}
             min={min}
-            minAll={minAll} />
+            minAll={minAll}
+            project={project}
+            progressIsShowing={progressIsShowing}
+            hideCompletedTasksChild={hideCompletedTasksChild}
+            tellProjectIfProgressShowing={tellProjectIfProgressShowing}
+          />
           <div
             id="add-checkpt-button"
             style={{
               marginTop: '2%',
-              // marginBottom: '.5%',
               paddingLeft: '0%',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
             }}>
-            <Button
-              variant="outlined"
-              onClick={addCheckpoint}
+
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => { addCheckpoint(); }}
               style={{
                 margin: '1% 0%',
                 color: 'rgb(200, 200, 200)',
                 border: '1px solid rgb(100, 100, 100)',
               }}>
-              Add A Checkpoint
-            </Button>
+              Add A Segment
+            </button>
           </div>
           <div id="dnd-container">
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable droppableId="checkPDrop">
-                {(provided) => (
-                  <div ref={provided.innerRef} {...provided.droppableProps}>
-                    {checkpoints.map((checkP, index) => (
-                      <Checkpoint
-                        key={checkP.checkpointId}
-                        checkP={checkP}
-                        handleRefresh={handleRefresh}
-                        save={save}
-                        saveSuccess={saveSuccess}
-                        saveAll={saveAll}
-                        minAll={minAll}
-                        min={min}
-                        index={index}
-                        reOrdered={reOrdered}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+
+            <Reorder.Group
+              as="div"
+              axis="y"
+              values={checkpoints}
+              onReorder={reOrderCheckPoints}>
+              <div>
+                {checkpoints.map((checkP, index) => (
+                  <Reorder.Item
+                    as="div"
+                    key={checkP.localId}
+                    value={checkP}
+                    style={{ cursor: 'grab' }}
+                    onDragStart={handleDragStart}>
+                    <Checkpoint
+                      refreshTasks={refreshTasks}
+                      key={checkP.localId}
+                      checkP={checkP}
+                      handleRefresh={handleRefresh}
+                      save={save}
+                      minAll={minAll}
+                      min={min}
+                      index={index}
+                      refresh={refresh}
+                      isLoading={isLoading}
+                      progressIsShowing={progressIsShowing}
+                      isDragging={isDragging}
+                      checkPBeingDragged={checkPBeingDragged}
+                    />
+                  </Reorder.Item>
+                ))}
+              </div>
+            </Reorder.Group>
+
           </div>
         </div>
       </div>

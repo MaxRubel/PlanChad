@@ -4,12 +4,12 @@ import Link from 'next/link';
 import {
   Navbar, Container, Nav,
 } from 'react-bootstrap';
-import { Button } from '@mui/material';
+
 import { signOut } from '../utils/auth';
 
 export default function NavBar() {
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+    <Navbar collapseOnSelect expand="lg" bg="black" variant="dark">
       <Container>
         <Link passHref href="/">
           <Navbar.Brand>planChad</Navbar.Brand>
@@ -24,9 +24,9 @@ export default function NavBar() {
             <Link passHref href="/project/new">
               <Nav.Link>Create New Project</Nav.Link>
             </Link>
-            <Link passHref href="/404">
+            {/* <Link passHref href="/404">
               <Nav.Link>Collaborators</Nav.Link>
-            </Link>
+            </Link> */}
             <button
               type="button"
               className="clearButton"

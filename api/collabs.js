@@ -2,8 +2,8 @@ import { clientCredentials } from '../utils/client';
 
 const endpoint = clientCredentials.databaseURL;
 
-const getUserProjects = (userId) => new Promise((resolve, reject) => {
-  fetch(`${endpoint}/projects.json?orderBy="userId"&equalTo="${userId}"`, {
+const getCollabsOfUser = (userId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/collabs.json?orderBy="userId"&equalTo="${userId}"`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -20,8 +20,8 @@ const getUserProjects = (userId) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-const getSingleProject = (projectId) => new Promise((resolve, reject) => {
-  fetch(`${endpoint}/projects/${projectId}.json`, {
+const getSingleCollab = (collabId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/collabs/${collabId}.json`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -32,8 +32,8 @@ const getSingleProject = (projectId) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-const createNewProject = (payload) => new Promise((resolve, reject) => {
-  fetch(`${endpoint}/projects.json`, {
+const createNewCollab = (payload) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/collabs.json`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -45,8 +45,8 @@ const createNewProject = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
-const updateProject = (payload) => new Promise((resolve, reject) => {
-  fetch(`${endpoint}/projects/${payload.projectId}.json`, {
+const updateCollab = (payload) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/collabs/${payload.collabId}.json`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -58,9 +58,18 @@ const updateProject = (payload) => new Promise((resolve, reject) => {
     .catch(reject);
 });
 
+const deleteCollab = (collabId) => new Promise((resolve, reject) => {
+  fetch(`${endpoint}/collabs/${collabId}.json`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => resolve(data))
+    .catch(reject);
+});
+
 export {
-  createNewProject,
-  updateProject,
-  getUserProjects,
-  getSingleProject,
+  createNewCollab, updateCollab, getCollabsOfUser, deleteCollab, getSingleCollab,
 };

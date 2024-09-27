@@ -1,4 +1,6 @@
-const endpoint = 'https://planchad-6fcf7-default-rtdb.firebaseio.com';
+import { clientCredentials } from '../utils/client';
+
+const endpoint = clientCredentials.databaseURL;
 
 const createNewTask = (payload) => new Promise((resolve, reject) => {
   fetch(`${endpoint}/tasks.json`, {
